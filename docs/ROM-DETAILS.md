@@ -176,3 +176,58 @@ The `flags` field varies per record (`0xA241`, `0xA221`, `0xA792`, `0xA702`,
 `0xA022`, `0xA042`) in a way that isn't random, but the bit meanings are **not
 decoded**. The code that reads this table wasn't located in the decompiled output —
 it most likely lives in the K-Line SSM diagnostic path.
+
+---
+
+## The rest of the collection
+
+Eleven M32R 5EAT firmwares are held in [`rom/`](../rom/). All eleven have valid
+checksums. Only the first two have had their tables mapped so far.
+
+| Cal ID | ROM ID | Size | Notes | Tables mapped |
+|---|---|---|---|---|
+| `MB431M` | `91D1206000` | 384K | JDM | yes |
+| `MB436G` | `91FE216300` | 512K | USDM, Early 2005 Outback XT | yes |
+| `MB436T` | `91D0207500` | 384K | JDM | not yet |
+| `MB436P` | `91F0217100` | 384K | USDM Outback 03 | not yet |
+| `MB4434` | `ABD1A03100` | 384K | JDM Legacy GT 2005 | not yet |
+| `MB4373` | `91D1207900` | 384K | Hitachi 31711AG589 | not yet |
+| `MB440X` | `AAD1A07100` | 384K | Hitachi 31711AJ782 | not yet |
+| `MB5300` | `ABD1207000` | 384K | 06 JDM Legacy GT | not yet |
+| `MB558D20` | `ACD1A06000` | 512K | JDM 2007 | not yet |
+| `MB558D01` | `ACD1207000` | 512K | LGT06 JDM | not yet |
+| `MB562EH1` | `ADE0236000` | 512K | — | not yet |
+
+`ACD1207000` was uploaded under the filename `AC91207000_...`; the ID here is the
+one actually stored in the binary.
+
+### Two checksum region conventions
+
+Solving for the checksummed range across all eleven shows the family uses two:
+
+- **`0x60000`** — every 384 KB image, and 512 KB images carrying a 384 KB payload
+  with the tail left as blank `0xFF` (`91FE216300`).
+- **Whole file** — 512 KB images that genuinely populate all 512 KB: the later
+  `MB558xx` / `MB562xx` calibrations.
+
+`tools/checksum.py` detects which an image uses rather than assuming, by testing
+which candidate reproduces the value the ROM already stores.
+
+### Why the other nine aren't mapped yet
+
+Porting table addresses by matching known byte patterns is not reliable here. The
+flatter tables (`Pressure B` is all 20s, `Shift Stage D` is `6,6,6,10,10`) occur
+in several places, so multiple candidate offsets pass a structural check. Only
+four of nine families resolve unambiguously that way.
+
+Doing it properly means enumerating lookup-routine call sites in each ROM's
+decompiler output, as was done for the first two — which needs a Ghidra pass per
+image. The addresses shift non-uniformly between firmwares, so there is no single
+offset that can be applied.
+
+### One archive excluded
+
+`A3DE207100` (1 MB) is not in `rom/`. Its reset vector is `0000 0bf8` rather than
+M32R's `ff00 005e`, and its initial stack pointer is `0xFFFFBFA0` — Renesas SH
+territory. It is a Denso SH7055/SH7058 unit, a different chip family that shares
+nothing with this work.
