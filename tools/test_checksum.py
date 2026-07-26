@@ -40,12 +40,36 @@ def check(label, cond):
 
 
 def invariant_holds(path):
-    """Independent check: sum of the region must equal the stored value."""
+    """
+    Independent check: because the value is stored twice, summing the whole
+    checksummed region (INCLUDING both slots) must equal the stored value.
+
+    Two region conventions exist across this family -- 0x60000, and whole file
+    -- so both candidates are tried here. This mirrors what checksum.py does
+    but is computed from scratch, so it still catches an error in that code
+    rather than agreeing with it by construction.
+    """
     d = open(path, "rb").read()
-    end = min(REGION_END, len(d))
-    words = struct.unpack(f">{end // 4}I", d[:end])
-    total = sum(words) & 0xFFFFFFFF
-    return total == words[SLOT1 // 4] == words[SLOT2 // 4], total
+    for end in region_candidates(len(d)):
+        words = struct.unpack(f">{end // 4}I", d[:end])
+        total = sum(words) & 0xFFFFFFFF
+        if total == words[SLOT1 // 4] == words[SLOT2 // 4]:
+            return True, total, end
+    return False, None, None
+
+
+def region_candidates(size):
+    ends = []
+    for r in (REGION_END, size):
+        e = min(r, size)
+        if e > SLOT2 and e % 4 == 0 and e not in ends:
+            ends.append(e)
+    return ends
+
+
+def detected_region(path):
+    ok, _, end = invariant_holds(path)
+    return end if ok else None
 
 
 def run(path, *args):
@@ -64,8 +88,10 @@ def test_rom(src, scratch):
     orig = open(work, "rb").read()
 
     check("stock ROM verifies OK", run(work, "--verify") == 0)
-    ok, total = invariant_holds(work)
-    check(f"stock ROM: independent invariant holds (0x{total:08X})", ok)
+    ok, total, region = invariant_holds(work)
+    check(f"stock ROM: independent invariant holds "
+          f"(0x{total:08X}, region 0x{region:06X})" if ok else
+          "stock ROM: independent invariant holds", ok)
 
     d = bytearray(orig)
     d[EDIT_AT] ^= 0xFF
@@ -75,8 +101,10 @@ def test_rom(src, scratch):
 
     check("--fix exits 0", run(work, "--fix") == 0)
     check("fixed ROM verifies OK", run(work, "--verify") == 0)
-    ok, total = invariant_holds(work)
-    check(f"fixed ROM: independent invariant holds (0x{total:08X})", ok)
+    ok, total, region = invariant_holds(work)
+    check(f"fixed ROM: independent invariant holds "
+          f"(0x{total:08X}, region 0x{region:06X})" if ok else
+          "fixed ROM: independent invariant holds", ok)
 
     fixed = open(work, "rb").read()
     changed = {i for i in range(len(orig)) if orig[i] != fixed[i]}
@@ -96,19 +124,20 @@ def test_rom(src, scratch):
     check("undo edit + re-fix reproduces the byte-exact original",
           open(work, "rb").read() == orig)
 
-    # Only meaningful on images larger than the checksummed region.
-    if len(orig) > REGION_END:
+    # Only meaningful when the checksummed region is smaller than the file.
+    region = detected_region(src)
+    if region is not None and len(orig) > region:
         print("  -- region boundary --")
         shutil.copy(src, work)
         d = bytearray(open(work, "rb").read())
-        d[REGION_END + 0x10000] = 0x00
+        d[region + (len(orig) - region) // 2] = 0x00
         open(work, "wb").write(bytes(d))
         check("edit outside the region leaves the checksum valid",
               run(work, "--verify") == 0)
 
         shutil.copy(src, work)
         d = bytearray(open(work, "rb").read())
-        d[REGION_END - 4] ^= 0xFF
+        d[region - 4] ^= 0xFF
         open(work, "wb").write(bytes(d))
         check("edit at the last word inside the region invalidates it",
               run(work, "--verify") == 1)
