@@ -18,7 +18,7 @@ ROM_ID = "91D1206000"
 
 here = os.path.dirname(os.path.abspath(__file__))
 rom_path = os.path.join(here, "..", "rom", f"{ROM_ID}_5EAT.bin")
-out_path = os.path.join(here, "..", "definitions", f"5eat_tcu_{ROM_ID}_romraider_def.xml")
+out_path = os.path.join(here, "..", "definitions", "5eat_tcu_romraider_defs.xml")
 
 data = open(rom_path, "rb").read()
 
@@ -573,22 +573,84 @@ def build_dtc_table_xml(rec, index, dupe_suffix=""):
    <state name="off" data="{off_bytes}" />
   </table>"""
 
-ROMID = """  <romid>
-   <xmlid>SUBARU_5EAT_91D1206000</xmlid>
+# ---------------------------------------------------------------------------
+# ROM profiles.
+#
+# RomRaider identifies a ROM by matching <internalidstring> at
+# <internalidaddress>, so a single definition file can carry several <rom>
+# blocks and RomRaider picks the right one automatically when a file is opened.
+# That is how production Subaru definitions handle firmware variants (the
+# reference ecu_defs.xml carries 332 of them in one file).
+#
+# The first profile is the BASE and emits full table definitions. Every other
+# profile emits only <table name=... storageaddress=...> overrides and inherits
+# names, scaling, axis labels and descriptions via <rom base="...">.
+#
+# "offsets" maps a family/scalar id to the delta from the base ROM's address.
+# The deltas are NOT uniform across the file, so every derived address is
+# re-verified against the target ROM's own embedded count field before being
+# written (see verify_profile) -- assuming a single global shift produces a
+# definition that looks fine and writes to the wrong bytes.
+# ---------------------------------------------------------------------------
+ROM_PROFILES = [
+    {
+        "id": "91D1206000",
+        "rom_file": "91D1206000_5EAT.bin",
+        "xmlid": "SUBARU_5EAT_91D1206000",
+        "base": None,
+        "internalidstring": "MB431M",
+        "caseid": "R9H",
+        "year": "Pre-2005 (unconfirmed)",
+        "market": "JDM",
+        "submodel": "91D1206000 (JDM)",
+        "filesize": "384kb",
+        "offsets": {},          # base ROM: addresses are as written in FAMILIES
+    },
+    {
+        "id": "91FE216300",
+        "rom_file": "91FE216300.bin",
+        "xmlid": "SUBARU_5EAT_91FE216300",
+        "base": "SUBARU_5EAT_91D1206000",
+        "internalidstring": "MB436G",
+        "caseid": "QS1",
+        "year": "2005",
+        "market": "USDM",
+        "submodel": "91FE216300 (USDM Outback XT)",
+        "filesize": "512kb",
+        # Verified individually from decompiled call sites, not extrapolated.
+        "offsets": {
+            "SpeedTrimA": 144, "PressureB": 144, "PressureC": 144,
+            "ShiftStageD": 144, "PressureThresholdE": 144,
+            "SlipThreshold": 148, "RefSpeedBaseline": 148,
+            "CAN511Threshold": 148, "SignalResponseCurves": 148,
+            "GearRatios": 400,
+            "FilterGainCAN410": 144, "FilterGainSignalFE": 144,
+            "TempCold5thGearLockout": 0, "TempSensorFallback": 150,
+            "TempColdSwitchLow": 0, "TempColdSwitchHigh": 0,
+            "SpeedSensor1PPR": 32, "SpeedSensor2PPR": 32, "SpeedCeiling": 32,
+            "_dtc": 0,
+        },
+    },
+]
+
+
+def build_romid(profile):
+    return f"""  <romid>
+   <xmlid>{profile['xmlid']}</xmlid>
    <internalidaddress>0x8008</internalidaddress>
-   <internalidstring>MB431M</internalidstring>
-   <caseid>R9H</caseid>
-   <ecuid>91D1206000</ecuid>
-   <version>91D1206000</version>
-   <year>Pre-2005 (unconfirmed)</year>
-   <market>JDM</market>
+   <internalidstring>{profile['internalidstring']}</internalidstring>
+   <caseid>{profile['caseid']}</caseid>
+   <ecuid>{profile['id']}</ecuid>
+   <version>{profile['id']}</version>
+   <year>{profile['year']}</year>
+   <market>{profile['market']}</market>
    <make>Subaru</make>
    <model>5EAT TCU</model>
-   <submodel>91D1206000</submodel>
+   <submodel>{escape(profile['submodel'])}</submodel>
    <transmission>5EAT</transmission>
    <memmodel>M32R</memmodel>
    <flashmethod>None</flashmethod>
-   <filesize>384kb</filesize>
+   <filesize>{profile['filesize']}</filesize>
   </romid>"""
 
 # Kept out of the romid banner fields on purpose (they're shown in RomRaider's
@@ -685,56 +747,167 @@ def build_table_xml(family, index, header_addr):
   </table>"""
 
 
-def main():
-    parts = ["<roms>", HEADER_COMMENT, "", " <rom>", ROMID, ""]
-    total = 0
+def build_table_override_xml(family, index, base_addr, addr):
+    """
+    Address-only override for a derived <rom base="...">. Name must match the
+    base definition exactly -- that is what RomRaider keys the inheritance on.
+    Everything else (scaling, units, description, axis label) is inherited.
+    """
+    n, axis_addr, data_addr = table_addrs(addr)
+    overrides = family.get("per_table", {}).get(base_addr, {})
+    if "name" in overrides:
+        base_name = overrides["name"]
+    else:
+        base_name = family["name_template"].format(i=index)
+    return (f'  <table name="{escape(base_name)}" storageaddress="0x{data_addr:06X}">\n'
+            f'   <table type="X Axis" storageaddress="0x{axis_addr:06X}" />\n'
+            f'  </table>')
 
-    parts.append("  <!-- ============ Info ============ -->")
-    parts.append(build_info_table_xml())
-    parts.append("")
-    total += 1
+
+def verify_profile(profile, rom_bytes):
+    """
+    Re-derive every address for this profile and check it against the target
+    ROM's own embedded count field. Returns (checked, errors).
+
+    This is the guard that makes the offset table safe: a family whose delta is
+    wrong still produces a plausible-looking address, and the resulting XML
+    would silently read and write the wrong bytes. Checking the count the ROM
+    itself stores catches that.
+    """
+    errors = []
+    checked = 0
+
+    def u16_at(off):
+        if off + 2 > len(rom_bytes):
+            return None
+        return struct.unpack(">H", rom_bytes[off:off + 2])[0]
 
     for family in FAMILIES:
-        parts.append(f"  <!-- ============ {family['category']} ============ -->")
-        for i, header_addr in enumerate(family["headers"], start=1):
-            parts.append(build_table_xml(family, i, header_addr))
+        delta = profile["offsets"].get(family["id"], 0)
+        for base_addr in family["headers"]:
+            want = u16(base_addr)                 # count in the BASE rom
+            got = u16_at(base_addr + delta)       # count in THIS rom
+            checked += 1
+            if got != want:
+                errors.append(f"{family['id']} @ 0x{base_addr + delta:06X}: "
+                              f"count {got} != expected {want}")
+    return checked, errors
+
+
+def build_rom_block(profile, rom_bytes, is_base):
+    """Full table definitions for the base ROM; address overrides for derived."""
+    global data
+    saved, data = data, rom_bytes            # table_addrs()/extract_dtc_records() read `data`
+    try:
+        off = profile["offsets"]
+        open_tag = " <rom>" if is_base else f' <rom base="{profile["base"]}">'
+        parts = [open_tag, build_romid(profile), ""]
+        total = 0
+
+        if is_base:
+            parts.append("  <!-- ============ Info ============ -->")
+            parts.append(build_info_table_xml())
             parts.append("")
             total += 1
 
-    parts.append("  <!-- ============ Direct contiguous arrays ============ -->")
-    for arr in DIRECT_ARRAYS:
-        parts.append(build_direct_array_xml(arr))
-        parts.append("")
-        total += 1
+        for family in FAMILIES:
+            d = off.get(family["id"], 0)
+            if is_base:
+                parts.append(f"  <!-- ============ {family['category']} ============ -->")
+            for i, base_addr in enumerate(family["headers"], start=1):
+                addr = base_addr + d
+                if is_base:
+                    parts.append(build_table_xml(family, i, addr))
+                else:
+                    parts.append(build_table_override_xml(family, i, base_addr, addr))
+                parts.append("")
+                total += 1
 
-    parts.append("  <!-- ============ Transmission - Calibration Constants ============ -->")
-    for scalar in SCALARS:
-        parts.append(build_scalar_xml(scalar))
-        parts.append("")
-        total += 1
+        if is_base:
+            parts.append("  <!-- ============ Direct contiguous arrays ============ -->")
+        for arr in DIRECT_ARRAYS:
+            d = off.get(arr["id"], 0)
+            a = dict(arr)
+            a["addr"] = arr["addr"] + d
+            if is_base:
+                parts.append(build_direct_array_xml(a))
+            else:
+                parts.append(f'  <table name="{escape(a["name"])}" '
+                             f'storageaddress="0x{a["addr"]:06X}" />')
+            parts.append("")
+            total += 1
 
-    dtc_records = extract_dtc_records()
-    code_counts = {}
-    for rec in dtc_records:
-        code_counts[rec["code"]] = code_counts.get(rec["code"], 0) + 1
-    code_seen = {}
-    parts.append("  <!-- ============ Diagnostic Trouble Codes ============ -->")
-    for i, rec in enumerate(dtc_records):
-        suffix = ""
-        if code_counts[rec["code"]] > 1:
-            code_seen[rec["code"]] = code_seen.get(rec["code"], 0) + 1
-            suffix = f" ({chr(ord('A') + code_seen[rec['code']] - 1)})"
-        parts.append(build_dtc_table_xml(rec, i, suffix))
-        parts.append("")
-        total += 1
+        if is_base:
+            parts.append("  <!-- ============ Transmission - Calibration Constants ============ -->")
+        for scalar in SCALARS:
+            d = off.get(scalar["id"], 0)
+            s = dict(scalar)
+            s["addr"] = scalar["addr"] + d
+            if is_base:
+                parts.append(build_scalar_xml(s))
+            else:
+                parts.append(f'  <table name="{escape(s["name"])}" '
+                             f'storageaddress="0x{s["addr"]:06X}" />')
+            parts.append("")
+            total += 1
 
-    parts.append(" </rom>")
+        dtc_records = extract_dtc_records()
+        code_counts = {}
+        for rec in dtc_records:
+            code_counts[rec["code"]] = code_counts.get(rec["code"], 0) + 1
+        code_seen = {}
+        if is_base:
+            parts.append("  <!-- ============ Diagnostic Trouble Codes ============ -->")
+        for i, rec in enumerate(dtc_records):
+            suffix = ""
+            if code_counts[rec["code"]] > 1:
+                code_seen[rec["code"]] = code_seen.get(rec["code"], 0) + 1
+                suffix = f" ({chr(ord('A') + code_seen[rec['code']] - 1)})"
+            if is_base:
+                parts.append(build_dtc_table_xml(rec, i, suffix))
+            else:
+                # DTC record contents differ per firmware; re-emit states.
+                parts.append(build_dtc_table_xml(rec, i, suffix))
+            parts.append("")
+            total += 1
+
+        parts.append(" </rom>")
+        return parts, total, len(dtc_records)
+    finally:
+        data = saved
+
+
+def main():
+    parts = ["<roms>", HEADER_COMMENT, ""]
+    summary = []
+
+    for idx, profile in enumerate(ROM_PROFILES):
+        path = os.path.join(here, "..", "rom", profile["rom_file"])
+        if not os.path.exists(path):
+            print(f"  skipping {profile['id']}: {profile['rom_file']} not present")
+            continue
+        rom_bytes = open(path, "rb").read()
+
+        checked, errors = verify_profile(profile, rom_bytes)
+        if errors:
+            print(f"ERROR: {profile['id']} address verification failed:")
+            for e in errors:
+                print("   -", e)
+            raise SystemExit(1)
+
+        block, total, n_dtc = build_rom_block(profile, rom_bytes, is_base=(idx == 0))
+        parts.extend(block)
+        parts.append("")
+        summary.append((profile["id"], profile["internalidstring"], total, n_dtc, checked))
+
     parts.append("</roms>")
-    xml = "\n".join(parts) + "\n"
     with open(out_path, "w", encoding="utf-8") as f:
-        f.write(xml)
-    print(f"Wrote {out_path} with {total} tables across {len(FAMILIES)} families + "
-          f"{len(SCALARS)} scalar constants + {len(dtc_records)} DTC entries.")
+        f.write("\n".join(parts) + "\n")
+
+    print(f"Wrote {out_path}")
+    for rid, cal, total, n_dtc, checked in summary:
+        print(f"  {rid} (cal ID {cal}): {total} tables "
+              f"({n_dtc} DTC), {checked} addresses verified against the ROM")
 
 
 if __name__ == "__main__":

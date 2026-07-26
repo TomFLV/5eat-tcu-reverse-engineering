@@ -4,7 +4,7 @@ import os
 
 here = os.path.dirname(os.path.abspath(__file__))
 rom_path = os.path.join(here, "..", "rom", "91D1206000_5EAT.bin")
-xml_path = os.path.join(here, "..", "definitions", "5eat_tcu_91D1206000_romraider_def.xml")
+xml_path = os.path.join(here, "..", "definitions", "5eat_tcu_romraider_defs.xml")
 
 data = open(rom_path, "rb").read()
 

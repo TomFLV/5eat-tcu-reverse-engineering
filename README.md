@@ -4,7 +4,15 @@ Reverse engineering of a Subaru 5EAT (5-speed automatic) transmission control un
 ROM, and a working RomRaider definition file that lets you open and edit the
 calibration tables in it.
 
-**Firmware: `91D1206000` (`MB431M` / `R9H`) — JDM, Mitsubishi/Renesas M32R, 384 KB.**
+**Two firmwares covered**, both Mitsubishi/Renesas M32R:
+
+| Cal ID | ROM ID | Market | Chip | Size |
+|---|---|---|---|---|
+| `MB431M` / `VF000` / `R9H` | `91D1206000` | JDM (pre-2005, unconfirmed) | `M32170F3`/`M32174F3` | 384 KB |
+| `MB436G` / `VF305` / `QS1` | `91FE216300` | USDM, Early 2005 Outback XT | `M32176F4` | 512 KB |
+
+The definition file holds both. **RomRaider selects the right one automatically**
+by matching the cal ID at `0x8008` when you open a ROM — you don't pick anything.
 
 This is an ongoing project. Table addresses, the DTC list, the checksum algorithm,
 and three real-world unit conversions are confirmed. Plenty is still unidentified,
@@ -16,21 +24,21 @@ and that's marked honestly throughout rather than guessed at.
 
 | Path | What it is |
 |---|---|
-| [`definitions/`](definitions/) | The RomRaider definition file — 73 tables. Start here. |
+| [`definitions/`](definitions/) | The RomRaider definition file — both firmwares, auto-selected by cal ID. Start here. |
 | [`docs/ROMRAIDER-SETUP.md`](docs/ROMRAIDER-SETUP.md) | How to actually get this working in your RomRaider install. |
 | [`docs/ROM-DETAILS.md`](docs/ROM-DETAILS.md) | Everything known about this specific binary — provenance, IDs, memory map. |
 | [`docs/TECHNICAL-NOTES.md`](docs/TECHNICAL-NOTES.md) | How the tables, checksum, and unit scales were worked out. |
 | [`tools/`](tools/) | Python tools (checksum fix, definition generator, validators) and Ghidra scripts. |
-| [`decompiled/`](decompiled/) | Full decompiler output for the ROM, ~46,500 lines. |
-| [`rom/`](rom/) | The ROM image itself. |
+| [`decompiled/`](decompiled/) | Full decompiler output for both ROMs, ~46,500 lines each. |
+| [`rom/`](rom/) | The ROM images themselves. |
 
 ---
 
 ## Quick start
 
 1. Install [RomRaider](https://www.romraider.com/) (tested against 1.0.0).
-2. Point it at `definitions/5eat_tcu_91D1206000_romraider_def.xml`.
-3. Open `rom/91D1206000_5EAT.bin`.
+2. Point it at `definitions/5eat_tcu_romraider_defs.xml`.
+3. Open either ROM from `rom/`.
 4. **After any edit, fix the checksum before flashing** — RomRaider cannot do it for
    this ROM:
    ```bash
