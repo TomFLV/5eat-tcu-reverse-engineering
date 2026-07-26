@@ -1,0 +1,20 @@
+# Working files, not part of the published project
+*.pyc
+__pycache__/
+.claude/
+
+# Ghidra projects
+*.gpr
+*.rep/
+
+# Reference material that belongs to other people — cited, not redistributed
+forum_full_thread.txt
+subaru_5eat_service_manual.pdf
+subaru_5eat_service_manual_extract.txt
+
+# Regenerable output
+table_catalog.txt
+
+# Edited ROMs — don't commit work-in-progress tunes
+*_edited.bin
+*_modified.bin

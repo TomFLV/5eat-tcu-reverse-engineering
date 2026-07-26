@@ -1,0 +1,12 @@
+# Never apply line-ending conversion to ROM images — it would corrupt them.
+*.bin binary
+
+# Text files: normalise to LF in the repository.
+*.md   text eol=lf
+*.py   text eol=lf
+*.java text eol=lf
+*.xml  text eol=lf
+*.c    text eol=lf
+
+# Large generated decompiler output — keep it out of diffs and language stats.
+decompiled/full_decompile.c linguist-generated=true -diff

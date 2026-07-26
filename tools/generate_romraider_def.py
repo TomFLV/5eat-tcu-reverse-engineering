@@ -1,0 +1,741 @@
+"""
+Generates 5eat_tcu_91D1206000_romraider_def.xml from the table families
+confirmed in docs/TECHNICAL-NOTES.md. Regenerate any time a new family is confirmed
+rather than hand-editing the XML (avoids copy-paste address errors).
+
+The firmware ID (91D1206000) is baked into the OUTPUT FILENAME, not just
+the file's contents — there will eventually be one of these per distinct
+firmware revision dumped, and the filename needs to disambiguate them at
+a glance before anyone even opens the file. If/when a second firmware's
+ROM shows up, copy this script, change ROM_ID/rom_path, and give it its
+own FAMILIES (table addresses will very likely differ between revisions).
+"""
+import struct
+import os
+from xml.sax.saxutils import escape
+
+ROM_ID = "91D1206000"
+
+here = os.path.dirname(os.path.abspath(__file__))
+rom_path = os.path.join(here, "..", "rom", f"{ROM_ID}_5EAT.bin")
+out_path = os.path.join(here, "..", "definitions", f"5eat_tcu_{ROM_ID}_romraider_def.xml")
+
+data = open(rom_path, "rb").read()
+
+
+def u16(off):
+    return struct.unpack(">H", data[off:off + 2])[0]
+
+
+def table_addrs(header_addr):
+    """Given a table's header (count) address, return (n, axis_addr, data_addr)."""
+    n = u16(header_addr)
+    axis_addr = header_addr + 2
+    data_addr = axis_addr + n * 2
+    return n, axis_addr, data_addr
+
+
+# ---------------------------------------------------------------------------
+# Family definitions. Each family is a set of gear-indexed (or otherwise
+# indexed) 2D tables sharing a naming scheme, category, axis label, and
+# description template. "headers" is the list of ROM header addresses, one
+# per gear/index in order.
+# ---------------------------------------------------------------------------
+FAMILIES = [
+    {
+        "id": "SpeedTrimA",
+        "category": "Transmission - Speed Trim A",
+        "name_template": "Gear {i} Speed Trim A",
+        "headers": [0x01040A, 0x01043C, 0x01046E, 0x0104A0, 0x0104D2],
+        "axis_label": "Engine speed",
+        "value_label": "raw",
+        "axis_units": "RPM",
+        "axis_expr": "x/8",
+        "axis_to_byte": "x*8",
+        "axis_format": "0",
+        "description": (
+            "Gear {i} of 5. Speed-based trim value, indexed by engine speed. The RPM "
+            "axis scale is code-derived (raw/8), not a guess — see the Info entry."
+        ),
+    },
+    {
+        "id": "SlipThreshold",
+        "category": "Transmission - Slip Detection",
+        "name_template": "Gear {i} Slip Detection Threshold",
+        "headers": [0x0114A8, 0x0114D2, 0x0114FC, 0x011526, 0x011550],
+        "axis_label": "Engine speed",
+        "value_label": "raw",
+        "axis_units": "RPM",
+        "axis_expr": "x/8",
+        "axis_to_byte": "x*8",
+        "axis_format": "0",
+        "description": (
+            "Gear {i} of 5. Threshold curve used to detect clutch/converter slip, "
+            "indexed by engine speed. Data values are a speed in the same internal "
+            "units the TCU compares against (engine speed x gear ratio)."
+        ),
+    },
+    {
+        "id": "RefSpeedBaseline",
+        "category": "Transmission - Reference Speed",
+        "name_template": "Gear {i} Reference Speed Baseline",
+        "headers": [0x0115D0, 0x0115FA, 0x011624, 0x01164E, 0x011678],
+        "axis_label": "Engine speed",
+        "value_label": "raw",
+        "axis_units": "RPM",
+        "axis_expr": "x/8",
+        "axis_to_byte": "x*8",
+        "axis_format": "0",
+        "description": (
+            "Gear {i} of 5. Expected/baseline speed curve — the actual speed signal "
+            "is compared against this to detect slip. Feeds the X-axis of the "
+            "Pressure Control B/C and Shift Solenoid Control tables."
+        ),
+    },
+    {
+        "id": "PressureB",
+        "category": "Transmission - Pressure Control B",
+        "name_template": "Gear {i} Slip Comp Pressure B",
+        "headers": [0x010D1A, 0x010D30, 0x010D46, 0x010D5C, 0x010D72],
+        "axis_label": "Slip amount breakpoint (raw)",
+        "value_label": "raw",
+        "description": (
+            "Gear {i} of 5. Pressure/duty correction curve, indexed by slip amount. "
+            "Stock values are flat (20) in every gear — a real, editable value "
+            "even though it isn't currently varying. Real-world units not yet "
+            "confirmed."
+        ),
+    },
+    {
+        "id": "PressureC",
+        "category": "Transmission - Pressure Control C",
+        "name_template": "Gear {i} Slip Comp Pressure C",
+        "headers": [0x010D9C, 0x010DB2, 0x010DC8, 0x010DDE, 0x010DF4],
+        "axis_label": "Slip amount breakpoint (raw)",
+        "value_label": "raw",
+        "description": (
+            "Gear {i} of 5. Alternate-mode counterpart to Pressure Control B — same "
+            "role, used under a different operating condition. Stock values are "
+            "flat (20) in every gear."
+        ),
+    },
+    {
+        "id": "ShiftStageD",
+        "category": "Transmission - Shift Solenoid Control",
+        "name_template": "Gear {i} Shift Stage Value D",
+        "headers": [0x0112D0, 0x0112E6, 0x0112FC, 0x011312, 0x011328],
+        "axis_label": "Slip amount breakpoint (raw)",
+        "value_label": "raw",
+        "description": (
+            "Gear {i} of 5. Shift solenoid control curve, indexed by slip amount. "
+            "Stock data steps up with gear (6, 6, 6, 10, 10)."
+        ),
+    },
+    {
+        "id": "PressureThresholdE",
+        "category": "Transmission - Pressure Control E",
+        "name_template": "Mode {i} Pressure Threshold E",
+        "headers": [0x010844, 0x01086E],
+        "axis_label": "Slip amount breakpoint (raw)",
+        "value_label": "raw",
+        "description": (
+            "Mode {i} of 2 (selected by an internal mode flag, not gear). Same "
+            "slip-amount X-formula as Pressure Control B/C/D (confirmed via "
+            "decompilation: X = smoothed reference * 256 - Reference Speed "
+            "Baseline lookup). Stock data is flat (0) in both modes — a real, "
+            "editable table even though it isn't currently varying."
+        ),
+    },
+    {
+        "id": "CAN511Threshold",
+        "category": "Transmission - CAN Signal Thresholds",
+        "name_template": "CAN 0x511 Byte 4 Threshold Curve",
+        "headers": [0x011836],
+        "axis_label": "CAN ID 0x511, byte 4, raw x1.301 (confirmed input scale; physical meaning of the CAN signal itself is NOT confirmed)",
+        "value_label": "raw",
+        "description": (
+            "Confirmed via decompilation: X-input is CAN ID 0x511 payload byte 4, "
+            "scaled by a fixed 333/256 (~x1.301) factor before this lookup. This is "
+            "the first table found whose input traces directly to a CAN ID other "
+            "than 0x410/0x412. Stock data is flat (0) — real, editable, currently inert."
+        ),
+    },
+    {
+        "id": "SignalResponseCurves",
+        "category": "Transmission - Signal Response Curves",
+        "name_template": "{name}",
+        "headers": [0x011898, 0x0118DA, 0x0117BE],
+        "axis_label": "",
+        "value_label": "raw",
+        "per_table": {
+            0x011898: {
+                "name": "CAN 0x410 Chain Response Curve",
+                "axis_label": "Reference signal breakpoint (raw, pre-scale CAN 0x410 chain value)",
+                "description": (
+                    "X-input confirmed via decompilation: the same ceiling-clamped CAN "
+                    "ID 0x410-derived reference value already traced in docs/TECHNICAL-NOTES.md "
+                    "(before its x256 scale-up), NOT gear-indexed — a single "
+                    "standalone curve. Stock data is a genuine hump shape: rises from 61 "
+                    "to a peak of 127 around the middle of the axis, then falls back to "
+                    "0 at the high end — a real, currently-populated tunable curve."
+                ),
+            },
+            0x0118DA: {
+                "name": "Signal FE Response Curve",
+                "axis_label": "Internal signal breakpoint (raw, source not fully traced)",
+                "description": (
+                    "X-input is an internal RAM value (traced back through several "
+                    "conditional assignments in the decompiled code, but not yet to a "
+                    "specific sensor or CAN ID — see docs/TECHNICAL-NOTES.md). Stock data is a real, "
+                    "populated step curve (64 up to 256), not flat/placeholder."
+                ),
+            },
+            0x0117BE: {
+                "name": "Smoothed Signal Response Curve",
+                "axis_label": "Internal signal breakpoint (raw, x256 of a 0-255 byte)",
+                "description": (
+                    "X-input is the same internal signal as the 'Signal FE Response "
+                    "Curve' table, but smoothed through a calibratable first-order "
+                    "filter before this lookup (confirmed via decompilation: the "
+                    "filter target is that byte shifted left 8, i.e. x256). This is a "
+                    "DIFFERENT signal chain from the engine-speed tables, so the RPM "
+                    "scale used on those does NOT apply here — left raw deliberately. "
+                    "Stock data is a real, populated rising curve (200 up to 1189)."
+                ),
+            },
+        },
+        "description": "",
+    },
+]
+
+# ---------------------------------------------------------------------------
+# Direct contiguous arrays (docs/TECHNICAL-NOTES.md) — plain gear-indexed arrays read
+# with ordinary array access, NOT through a lookup/interpolation function. These
+# are contiguous and fixed-stride, so unlike the hysteresis-record tables they
+# map cleanly onto RomRaider's native storage with no stride problem.
+#
+# The gear ratio table is the FIRST table in this project with a CONFIRMED
+# real-world scale factor: its raw values divided by 1024 match the factory
+# service manual's published 5EAT gear ratios to within 0.0007, AND the
+# decompiled code itself divides by 0x400 (=1024) when using them
+# (full_decompile.c ~line 34051: speed * ratio / 0x400). Both an external
+# authoritative reference and the code agree — this is proven, not estimated.
+# ---------------------------------------------------------------------------
+DIRECT_ARRAYS = [
+    {
+        "id": "GearRatios",
+        "category": "Transmission - Gear Ratios",
+        "name": "Gear Ratios (1st-5th)",
+        "addr": 0x01234C,
+        "size": 5,
+        "storagetype": "uint16",
+        "units": "ratio",
+        "expression": "x/1024",
+        "to_byte": "x*1024",
+        "format": "0.000",
+        "fineincrement": "0.001",
+        "coarseincrement": "0.010",
+        "description": (
+            "The transmission's five forward gear ratios, indexed by current gear. "
+            "Stock values match the Subaru factory service manual exactly: 3.540, "
+            "2.264, 1.471, 1.000, 0.834. The scale factor (raw/1024) is CONFIRMED — "
+            "the decompiled code divides these by 0x400 when computing expected "
+            "speed, and the result matches the published ratios to within 0.0007. "
+            "Used by the TCU to compute expected output speed per gear and to detect "
+            "gear-ratio faults (DTC P0730). Changing these does NOT change the "
+            "physical gearing — it changes what the TCU BELIEVES the gearing is, "
+            "which affects ratio-based fault detection and speed calculations."
+        ),
+    },
+]
+
+# Five parallel 14-entry bitmask arrays, packed contiguously at 0x0087AA-0x0087EF,
+# each indexed by the same shift-state variable and each feeding a different
+# control output. Every value is a power of two (0/1/2/4/8/16/32/64/128) — these
+# are bit patterns, not scalar quantities. See docs/TECHNICAL-NOTES.md.
+_BITMASK_WARNING = (
+    "EXPERT/DANGEROUS. These are BIT PATTERNS (every stock value is a power of "
+    "two), not scalar quantities — editing them as ordinary numbers is very "
+    "likely to produce an invalid pattern. On an automatic transmission an "
+    "invalid clutch/solenoid pattern can command two elements at once, which "
+    "can bind the driveline and cause real mechanical damage. The exact "
+    "output each bit drives is NOT decoded — do not change these unless you "
+    "have independently confirmed what each bit does on this exact firmware."
+)
+
+for _i, (_addr, _out) in enumerate([
+    (0x0087AA, "0x00808885"), (0x0087B8, "0x00808883"), (0x0087C6, "0x00808861"),
+    (0x0087D4, "0x00808863"), (0x0087E2, "0x0080886B"),
+], start=1):
+    DIRECT_ARRAYS.append({
+        "id": f"StatePattern{_i}",
+        "category": "Transmission - Shift State Patterns (Expert)",
+        "name": f"Shift State Bit Pattern {_i} of 5",
+        "addr": _addr,
+        "size": 14,
+        "storagetype": "uint8",
+        "units": "bitmask",
+        "expression": "x",
+        "to_byte": "x",
+        "format": "0",
+        "fineincrement": "1",
+        "coarseincrement": "1",
+        "userlevel": "5",
+        "description": (
+            f"One of five parallel 14-entry bit-pattern arrays (packed contiguously "
+            f"at 0x0087AA-0x0087EF), all indexed by the same internal shift-state "
+            f"variable (0-13) and each driving a different control output (this one "
+            f"feeds RAM {_out}). Confirmed via decompilation. " + _BITMASK_WARNING
+        ),
+    })
+
+
+def build_direct_array_xml(arr):
+    name = escape(arr["name"])
+    category = escape(arr["category"])
+    desc = escape(arr["description"])
+    userlevel = arr.get("userlevel", "1")
+    return f"""  <table type="1D" name="{name}" category="{category}" storageaddress="0x{arr['addr']:06X}" storagetype="{arr['storagetype']}" endian="big" sizex="{arr['size']}" userlevel="{userlevel}">
+   <scaling units="{escape(arr['units'])}" expression="{escape(arr['expression'])}" to_byte="{escape(arr['to_byte'])}" format="{arr['format']}" fineincrement="{arr['fineincrement']}" coarseincrement="{arr['coarseincrement']}" />
+   <description>{desc}</description>
+  </table>"""
+
+
+# ---------------------------------------------------------------------------
+# Standalone scalar calibration constants (docs/TECHNICAL-NOTES.md) — single tunable
+# values (not curves), each confirmed by decompilation to be read directly
+# into a specific, meaningful role (a filter gain or a threshold compare),
+# not just any monotonic byte run. Found by enumerating every direct call
+# site of the confirmed smoothing-filter function (FUN_0005c8a0) and cross-
+# referencing threshold constants already traced while following this session's
+# new lookup tables back to their inputs.
+# ---------------------------------------------------------------------------
+# Temperature scalars. Encoding CONFIRMED (docs/TECHNICAL-NOTES.md): stored byte minus
+# 40 = degrees C, the standard automotive -40..+215 unsigned encoding. Proven by
+# both thermistor linearization tables mapping ADC 0..255 onto output 0..255
+# (= -40..215 C), and validated against the factory service manual (constants at
+# 71/75 C land inside the manual's stated 70-80 C normal operating range; 55 C
+# matches the top of its 45-55 C test range). Displayed in Fahrenheit here.
+_F_EXPR = "(x-40)*9/5+32"
+_F_TOBYTE = "(x-32)*5/9+40"
+
+
+def _temp_scalar(id_, name, addr, desc):
+    return {
+        "id": id_, "category": "Transmission - Temperature", "name": name,
+        "addr": addr, "storagetype": "uint8", "units": "°F",
+        "expression": _F_EXPR, "to_byte": _F_TOBYTE, "format": "0",
+        "fineincrement": "1", "coarseincrement": "9", "description": desc,
+    }
+
+
+SCALARS = [
+    _temp_scalar(
+        "TempCold5thGearLockout", "Cold ATF 5th Gear Lockout Temperature", 0x01000A,
+        "Below this ATF temperature the TCU swaps in a placeholder (disabled) shift "
+        "schedule specifically when in 5th gear — i.e. it restricts 5th until the "
+        "fluid warms up. Stock 15 °C / 59 °F. Confirmed via decompilation: the "
+        "check is gated on current gear == 5th. Raising it keeps 5th locked out "
+        "longer; lowering it releases 5th sooner on a cold transmission."
+    ),
+    _temp_scalar(
+        "TempSensorFallback", "Assumed ATF Temperature (Sensor Fallback)", 0x011CF6,
+        "The temperature the TCU substitutes when the measured ATF temperature is "
+        "flagged unusable. Stock 95 °C / 203 °F — a deliberately warm assumption, "
+        "so a failed sensor does not make the TCU behave as if the fluid were cold."
+    ),
+    _temp_scalar(
+        "TempColdSwitchLow", "Cold Switchover Temperature (Lower)", 0x00806E,
+        "Lower half of a two-point temperature switch with built-in hysteresis "
+        "(pairs with 'Cold Switchover Temperature (Upper)'). Below this the TCU "
+        "selects one calibration constant; at or above the upper point it selects "
+        "another. Stock -10 °C / 14 °F."
+    ),
+    _temp_scalar(
+        "TempColdSwitchHigh", "Cold Switchover Temperature (Upper)", 0x00806F,
+        "Upper half of the cold switchover hysteresis pair. Stock -5 °C / 23 °F. "
+        "Keep this above the lower point — inverting them would remove the "
+        "hysteresis and can cause the selection to chatter."
+    ),
+    {
+        "id": "SpeedSensor1PPR",
+        "category": "Transmission - Speed Sensors",
+        "name": "Speed Sensor 1 Pulses Per Revolution",
+        "addr": 0x01C2C1,
+        "storagetype": "uint8",
+        "description": (
+            "Pulses per revolution for speed sensor channel 1. CONFIRMED: the "
+            "firmware computes RPM as 60,000,000 / (this value x measured pulse "
+            "period) — the standard period-to-RPM formula (60 seconds x a 1 MHz "
+            "timer). Stock value 16, i.e. a 16-tooth tone ring. Change this ONLY "
+            "if the physical tone ring / sensor tooth count actually differs, "
+            "otherwise every speed-derived calculation in the TCU will be wrong."
+        ),
+    },
+    {
+        "id": "SpeedSensor2PPR",
+        "category": "Transmission - Speed Sensors",
+        "name": "Speed Sensor 2 Pulses Per Revolution",
+        "addr": 0x01C2C2,
+        "storagetype": "uint8",
+        "description": (
+            "Pulses per revolution for speed sensor channel 2 — same confirmed "
+            "60,000,000/(N x period) RPM formula as channel 1, on an independent "
+            "input with its own tooth count. Stock value 22. Same warning: only "
+            "change this if the physical tooth count genuinely differs."
+        ),
+    },
+    {
+        "id": "SpeedCeiling",
+        "category": "Transmission - Speed Sensors",
+        "name": "Speed Signal Ceiling (RPM)",
+        "addr": 0x01C2A8,
+        "storagetype": "uint16",
+        "description": (
+            "Upper clamp applied to both speed-sensor channels AND to the "
+            "CAN-received engine speed signal — all three are limited to this "
+            "value. Stock 10000 (RPM). This shared clamp is part of the evidence "
+            "that all three signals carry the same unit; it also sets the ceiling "
+            "the engine-speed table axes are derived against."
+        ),
+    },
+    {
+        "id": "FilterGainCAN410",
+        "category": "Transmission - Calibration Constants",
+        "name": "Signal Smoothing Filter Gain (CAN 0x410 Chain)",
+        "addr": 0x01137C,
+        "storagetype": "uint16",
+        "description": (
+            "Confirmed via decompilation: the calibratable gain argument to the "
+            "first-order smoothing filter that produces the CAN ID 0x410-derived "
+            "reference signal (docs/TECHNICAL-NOTES.md), stock value 128. Larger = "
+            "faster response to changes in the incoming CAN signal, smaller = more "
+            "smoothing/lag."
+        ),
+    },
+    {
+        "id": "FilterGainSignalFE",
+        "category": "Transmission - Calibration Constants",
+        "name": "Signal Smoothing Filter Gain (Signal FE Chain)",
+        "addr": 0x01137E,
+        "storagetype": "uint16",
+        "description": (
+            "Confirmed via decompilation: the calibratable gain argument to the "
+            "smoothing filter that feeds the 'Smoothed Signal Response Curve' table "
+            "(0x0117BE), stock value 128. Larger = faster response, smaller = more "
+            "smoothing/lag."
+        ),
+    },
+    {
+        "id": "GearThresholdConst",
+        "category": "Transmission - Calibration Constants",
+        "name": "Gear Threshold Constant",
+        "addr": 0x010840,
+        "storagetype": "uint8",
+        "description": (
+            "Confirmed via decompilation: a single-byte constant (stock value 2) "
+            "compared directly against the current gear (0x0080885A) and a second "
+            "gear-like index (0x0080886E) in several places in the same function — "
+            "reads like a 'this logic only applies above/below gear N' cutoff. "
+            "Exact effect of changing it is NOT verified on real hardware."
+        ),
+    },
+    {
+        "id": "SignalThresholdConst",
+        "category": "Transmission - Calibration Constants",
+        "name": "Signal Threshold Constant",
+        "addr": 0x010842,
+        "storagetype": "uint8",
+        "description": (
+            "Confirmed via decompilation: a constant compared against a computed "
+            "signal delta in the same fault-detection routine that reads the "
+            "Pressure Threshold E tables. Storage width (byte vs. word) was inferred "
+            "from the surrounding code pattern, not independently double-checked — "
+            "verify before relying on the exact stored value."
+        ),
+    },
+]
+
+
+def build_scalar_xml(scalar):
+    name = escape(scalar["name"])
+    category = escape(scalar["category"])
+    desc = escape(scalar["description"])
+    storagetype = scalar["storagetype"]
+    # Scalars default to raw; ones with a confirmed real-world conversion
+    # (currently the temperature constants) override these keys.
+    units = escape(scalar.get("units", "raw"))
+    expression = escape(scalar.get("expression", "x"))
+    to_byte = escape(scalar.get("to_byte", "x"))
+    fmt = scalar.get("format", "0")
+    fine = scalar.get("fineincrement", "1")
+    coarse = scalar.get("coarseincrement", "16")
+    return f"""  <table type="1D" name="{name}" category="{category}" storageaddress="0x{scalar['addr']:06X}" storagetype="{storagetype}" endian="big" sizex="1" userlevel="1">
+   <scaling units="{units}" expression="{expression}" to_byte="{to_byte}" format="{fmt}" fineincrement="{fine}" coarseincrement="{coarse}" />
+   <description>{desc}</description>
+  </table>"""
+
+
+# ---------------------------------------------------------------------------
+# DTC table (docs/TECHNICAL-NOTES.md). Found by scanning the whole ROM for a cluster
+# of 16-bit values in the standard, publicly-documented Subaru/SAE P07xx
+# transmission DTC range — not a guess, the values themselves ARE the proof
+# (P0730 = Incorrect Gear Ratio, P0745/6/8 = Pressure Control Solenoid,
+# P0750/4 = Shift Solenoid A, etc. all decode correctly). Record format is
+# [flags:uint16][DTC code:uint16][data:4 bytes], 8 bytes each, starting at ROM
+# 0x004090. Extracted programmatically below (not hand-typed) by walking the
+# table until the code field leaves the confirmed 0x0700-0x07FF range.
+#
+# The `flags` field is the strongest candidate for enable/disable control,
+# but its exact bit meaning is NOT decoded yet (see docs/TECHNICAL-NOTES.md) — this
+# exposes it as a plain editable raw 16-bit value so it can be inspected/
+# experimented with, rather than guessing which bit does what.
+#
+# Descriptions below give the GENERAL, publicly-documented SAE J2012 meaning
+# of each P07xx "family" (e.g. P0710-family = transmission fluid temp sensor,
+# P0720-family = output speed sensor). The exact sub-code offset convention
+# this TCU uses internally (+4/+8 between related codes) does NOT necessarily
+# follow the standard SAE sub-type numbering (general/range/electrical/
+# intermittent, usually +1 each) — so treat the family-level description as
+# solid, but don't assume the precise sub-fault distinction is exactly what
+# a generic OBD-II code reader would show for that exact 4-digit number.
+DTC_CODE_NAMES = {
+    0x0700: "Transmission Control System (MIL Request)",
+    0x0704: "Clutch Pedal Position Switch/Sensor circuit family",
+    0x0708: "Transmission Range Sensor circuit family (PRNDL input)",
+    0x070C: "Transmission Fluid Level Sensor circuit family",
+    0x0710: "Transmission Fluid Temperature Sensor circuit family",
+    0x0714: "Transmission Fluid Temperature Sensor circuit family (variant)",
+    0x0720: "Output Speed Sensor circuit family",
+    0x0724: "Output Speed Sensor circuit family (variant) / Brake Switch B in generic SAE numbering",
+    0x0728: "Output Speed Sensor circuit family (variant)",
+    0x072C: "Output/Turbine Speed Sensor circuit family (variant, non-standard offset)",
+    0x0730: "Incorrect Gear Ratio",
+    0x0734: "Incorrect Gear Ratio (specific gear variant)",
+    0x0745: "Pressure Control Solenoid circuit family",
+    0x0746: "Pressure Control Solenoid Performance/Stuck",
+    0x0748: "Pressure Control Solenoid Electrical",
+    0x074C: "Pressure Control Solenoid circuit family (variant)",
+    0x0750: "Shift Solenoid A",
+    0x0754: "Shift Solenoid A (variant)",
+}
+
+
+def extract_dtc_records():
+    dtc_start = 0x004090
+    off = dtc_start
+    records = []
+    while True:
+        code = u16(off + 2)
+        if not (0x0700 <= code <= 0x07FF):
+            break
+        flags = u16(off)
+        raw = data[off:off + 8]
+        records.append({
+            "addr": off, "flags_addr": off, "code": code,
+            "data_addr": off + 4, "raw": raw,
+        })
+        off += 8
+    return records
+
+
+def build_dtc_table_xml(rec, index, dupe_suffix=""):
+    code = rec["code"]
+    name_suffix = DTC_CODE_NAMES.get(code, "meaning not identified — generic P07xx transmission code")
+    dtc_name = escape(f"DTC P{code:04X}{dupe_suffix} Enable")
+    category = escape("Diagnostic Trouble Codes")
+    addr = rec["addr"]
+    raw = rec["raw"]
+
+    on_bytes = " ".join(f"{b:02X}" for b in raw)
+    # "off" hypothesis: zero the 2-byte DTC-code field, leave flags/data untouched.
+    # Modeled directly on a real, confirmed RomRaider convention (Merp/SubaruDefs
+    # ecu_defs.xml's own "Diagnostic Trouble Codes" Switch tables use exactly this
+    # pattern for a different Subaru ECU: e.g. P0011 "on"="04 00 11" / "off"="05 00 00"
+    # — the code bytes get zeroed to disable). NOT independently confirmed for this
+    # M32R TCU — the actual code that reads this table wasn't located this session
+    # (searched full_decompile.c broadly, no hits — it's likely only reachable from
+    # the K-Line SSM diagnostic path, which hasn't been disassembled). Treat "off"
+    # as an experimental hypothesis to verify empirically, not a proven mechanism.
+    off_bytes_list = list(raw)
+    off_bytes_list[2] = 0
+    off_bytes_list[3] = 0
+    off_bytes = " ".join(f"{b:02X}" for b in off_bytes_list)
+
+    desc = escape(
+        f"Subaru transmission DTC P{code:04X} ({name_suffix}). \"Off\" is EXPERIMENTAL — "
+        f"not independently confirmed to actually suppress this code on this TCU. "
+        f"Verify the DTC is genuinely gone after flashing before relying on it."
+    )
+    return f"""  <table type="Switch" name="{dtc_name}" category="{category}" storageaddress="0x{addr:06X}" sizey="8">
+   <description>{desc}</description>
+   <state name="on" data="{on_bytes}" />
+   <state name="off" data="{off_bytes}" />
+  </table>"""
+
+ROMID = """  <romid>
+   <xmlid>SUBARU_5EAT_91D1206000</xmlid>
+   <internalidaddress>0x8008</internalidaddress>
+   <internalidstring>MB431M</internalidstring>
+   <caseid>R9H</caseid>
+   <ecuid>91D1206000</ecuid>
+   <version>91D1206000</version>
+   <year>Pre-2005 (unconfirmed)</year>
+   <market>JDM</market>
+   <make>Subaru</make>
+   <model>5EAT TCU</model>
+   <submodel>91D1206000</submodel>
+   <transmission>5EAT</transmission>
+   <memmodel>M32R</memmodel>
+   <flashmethod>None</flashmethod>
+   <filesize>384kb</filesize>
+  </romid>"""
+
+# Kept out of the romid banner fields on purpose (they're shown in RomRaider's
+# compact top banner alongside the category tree, and long strings there get
+# cut off — user feedback after first seeing it in the real UI). Checked how a
+# real definition (CarBerryROM, github.com/Crowley2012/SubaruTuning) handles
+# this: there's no dedicated "notes" mechanism in RomRaider's schema at all —
+# just an ordinary table with a rich <description>. So: ONE single locked,
+# non-editable table entry holding everything as one block of text, not
+# several small tables (which just looked like clutter — user feedback).
+INFO_README = (
+    "Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/"
+    "Renesas M32R CPU.\n\n"
+    "Firmware: 91D1206000 (MB431M / R9H)\n\n"
+    "Origin: JDM TCU, MCU wa12212953www (M32R, 144-pin, 384KB). Most likely a "
+    "2003-2004 JDM Legacy — the market is stated by the person who dumped it, "
+    "but the exact year/model is NOT confirmed (the unit had no housing or "
+    "part-number label). Note this is NOT the 05-06 USDM TCU, which uses a "
+    "different MCU.\n\n"
+    "Confirmed: table addresses, DTC list, checksum, gear ratios (raw/1024), "
+    "and the RPM axis scale (raw/8) — both verified against the factory service "
+    "manual and the firmware's own arithmetic. Still unidentified: temperature "
+    "and pressure units, and a number of tables. Anything left as \"raw\" has no "
+    "confirmed conversion yet. See docs/TECHNICAL-NOTES.md for full technical detail.\n\n"
+    "This is a static file editor only — cannot connect live to the vehicle "
+    "through RomRaider. Run tools/checksum.py after any edit, before flashing."
+)
+
+
+def build_info_table_xml():
+    # type="1D" was the wrong choice — RomRaider shows a 1D table's raw stored
+    # value as its headline content (byte at 0x008008 is ASCII 'M' = 0x4D = 77
+    # decimal — hence the confusing bare "77" the user saw), with the
+    # description only secondary. A Switch table displays its STATE NAME
+    # instead, so give it exactly one state matching the real, known, never-
+    # edited byte there, so the readable label is what actually shows up.
+    desc = escape(INFO_README)
+    return f"""  <table type="Switch" name="Read This First" category="Info" storageaddress="0x008008" sizey="1" locked="true">
+   <description>{desc}</description>
+   <state name="(see description below)" data="4D" />
+  </table>"""
+
+HEADER_COMMENT = """<!--
+  5EAT TCU (Subaru, M32R CPU) — RomRaider static table definition.
+  GENERATED by tools/generate_romraider_def.py — regenerate from there
+  rather than hand-editing. Full technical derivation in docs/TECHNICAL-NOTES.md.
+
+  Static file editor only — cannot connect live to the vehicle through
+  RomRaider (different CPU/protocol family than supported engine ECUs).
+  After editing, run tools/checksum.py's fix_checksum() before flashing —
+  RomRaider's automatic checksum fix does not know this ROM's algorithm.
+  Real engineering units are not yet confirmed for most tables; scaling
+  is "raw" except where marked "(est.)", which is a labeled estimate,
+  not a proven conversion.
+-->"""
+
+
+def build_table_xml(family, index, header_addr):
+    n, axis_addr, data_addr = table_addrs(header_addr)
+
+    # "per_table" lets a family hold several standalone tables that don't share
+    # a single name/description template (e.g. SignalResponseCurves, where each
+    # entry has a genuinely different confirmed X-input) — override the
+    # family-level fields with the per-address ones when present.
+    overrides = family.get("per_table", {}).get(header_addr, {})
+    eff = dict(family)
+    eff.update(overrides)
+
+    if "name" in overrides:
+        base_name = overrides["name"]
+    else:
+        base_name = family["name_template"].format(i=index)
+    name = escape(base_name)
+    desc_template = eff["description"]
+    desc = escape(desc_template.format(i=index) if "{i}" in desc_template else desc_template)
+    category = escape(family["category"])
+    value_label = escape(eff.get("value_label", family["value_label"]))
+    axis_name = escape(f'{base_name} ({eff.get("axis_label", "")})')
+
+    # Axis scaling defaults to plain raw; families with a structurally-motivated
+    # (but still UNCONFIRMED) estimated scale can override via these keys — see
+    # docs/TECHNICAL-NOTES.md for the reasoning behind any non-raw axis_units used below.
+    axis_units = escape(eff.get("axis_units", "raw"))
+    axis_expr = escape(eff.get("axis_expr", "x"))
+    axis_to_byte = escape(eff.get("axis_to_byte", "x"))
+    axis_format = eff.get("axis_format", "0")
+
+    return f"""  <table type="2D" name="{name}" category="{category}" storagetype="uint16" endian="big" storageaddress="0x{data_addr:06X}" sizex="{n}" userlevel="1">
+   <scaling units="{value_label}" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="{axis_name}" storageaddress="0x{axis_addr:06X}" storagetype="uint16" endian="big">
+    <scaling units="{axis_units}" expression="{axis_expr}" to_byte="{axis_to_byte}" format="{axis_format}" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>{desc}</description>
+  </table>"""
+
+
+def main():
+    parts = ["<roms>", HEADER_COMMENT, "", " <rom>", ROMID, ""]
+    total = 0
+
+    parts.append("  <!-- ============ Info ============ -->")
+    parts.append(build_info_table_xml())
+    parts.append("")
+    total += 1
+
+    for family in FAMILIES:
+        parts.append(f"  <!-- ============ {family['category']} ============ -->")
+        for i, header_addr in enumerate(family["headers"], start=1):
+            parts.append(build_table_xml(family, i, header_addr))
+            parts.append("")
+            total += 1
+
+    parts.append("  <!-- ============ Direct contiguous arrays ============ -->")
+    for arr in DIRECT_ARRAYS:
+        parts.append(build_direct_array_xml(arr))
+        parts.append("")
+        total += 1
+
+    parts.append("  <!-- ============ Transmission - Calibration Constants ============ -->")
+    for scalar in SCALARS:
+        parts.append(build_scalar_xml(scalar))
+        parts.append("")
+        total += 1
+
+    dtc_records = extract_dtc_records()
+    code_counts = {}
+    for rec in dtc_records:
+        code_counts[rec["code"]] = code_counts.get(rec["code"], 0) + 1
+    code_seen = {}
+    parts.append("  <!-- ============ Diagnostic Trouble Codes ============ -->")
+    for i, rec in enumerate(dtc_records):
+        suffix = ""
+        if code_counts[rec["code"]] > 1:
+            code_seen[rec["code"]] = code_seen.get(rec["code"], 0) + 1
+            suffix = f" ({chr(ord('A') + code_seen[rec['code']] - 1)})"
+        parts.append(build_dtc_table_xml(rec, i, suffix))
+        parts.append("")
+        total += 1
+
+    parts.append(" </rom>")
+    parts.append("</roms>")
+    xml = "\n".join(parts) + "\n"
+    with open(out_path, "w", encoding="utf-8") as f:
+        f.write(xml)
+    print(f"Wrote {out_path} with {total} tables across {len(FAMILIES)} families + "
+          f"{len(SCALARS)} scalar constants + {len(dtc_records)} DTC entries.")
+
+
+if __name__ == "__main__":
+    main()

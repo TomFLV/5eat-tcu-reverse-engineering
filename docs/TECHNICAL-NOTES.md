@@ -1,0 +1,272 @@
+# Technical notes
+
+How the tables, the checksum, and the unit conversions in this project were worked
+out. This covers method as much as results, so the same approach can be applied to
+other firmware revisions — the addresses here are specific to `91D1206000` and will
+not transfer.
+
+---
+
+## Toolchain
+
+**Ghidra** with the community [M32R processor module](https://github.com/ripnet/ghidra-m32r).
+radare2 was tried first and rejected — it has no M32R support at all.
+
+Three things had to be fixed to get the module working on a current Ghidra:
+
+1. The bundled `.sla` was stale. Recompile from the `.slaspec` with the installed
+   Ghidra's own `support/sleigh`.
+2. `m32r.pspec` fails schema validation — its `<memory_block>` elements predate a
+   schema change. Add `initialized="false"` to each.
+3. `Module.manifest` must be an **empty** file.
+
+Import as raw binary, language `m32r:2:default`, **base address `0x0`**.
+
+Base address matters. An initial attempt used `0x100000` (the CS0 external
+chip-select region from the chip's memory map) and produced nothing coherent. This
+is a single-chip MCU executing from internal flash at address 0 — the external
+chip-select windows aren't used. Disassembling at `0x0` immediately produces valid
+boot code, which is how the address was confirmed.
+
+### Getting full code coverage
+
+Seeding analysis from the reset vector alone reaches ~130 functions. The rest is
+behind the interrupt table, which is **three levels deep**:
+
+1. Hardware vectors at `0x0`–`0x83` (standard M32R exceptions, each a `BRA`).
+2. A pointer-to-pointer table at `0x94`–`0x10C`.
+3. The real handler address table at `0x20000`–`0x2007C` — 31 slots, most holding
+   the default `0x20100`, with only **four** distinct real handlers:
+   `0x245BC`, `0x20A14`, `0x26748`, `0x25828`.
+
+Seeding those four addresses takes coverage from 167 functions / 25 KB to
+**1,090 functions / 234 KB** — roughly 90% of the code region — in one pass.
+
+Ghidra's decompiler works well on M32R output. `tools/ghidra/DecompileAll.java`
+dumps the whole program; the result is in `decompiled/full_decompile.c`. Grep that
+first before tracing anything by hand.
+
+---
+
+## Table formats
+
+Three distinct formats are used, each with its own lookup routine.
+
+### Format 1 — count-prefixed, interpolated
+
+```
+[count:u16][axis: count × u16][data: count × u16]
+```
+
+Confirmed by decompiling the lookup routine at `0x4515C`, which is textbook linear
+interpolation: find the bracketing pair, then
+`y0 + (X - x0) * (y1 - y0) / (x1 - x0)`, output clamped to unsigned 16-bit.
+`0x45234` is the unsigned-breakpoint variant, `0x45300` a third variant.
+
+Axis values are read signed during interpolation, so negative data (small values in
+two's complement) is meaningful in some tables.
+
+**Every call site of all three routines has been enumerated — there are exactly 13
+in the whole program, and all are accounted for.** This format is fully mined out.
+
+These are the tables exposed in the RomRaider definition.
+
+### Format 2 — 8-byte hysteresis records
+
+```
+[A:u16][B:u16][C:u16][D:u16]  × n, terminated by a leading 0xFFFF
+```
+
+Handled by `0x45070`. Record *i* holds breakpoint *i* in field A and breakpoint
+*i+1* in field C, with B/D a rising/falling value pair — separate up- and
+down-shift trigger points, which is exactly what an automatic transmission shift
+schedule needs.
+
+**This format is not currently exposed in RomRaider.** Its fields are interleaved
+at an 8-byte stride, and RomRaider's table schema has no stride or increment
+attribute — confirmed by decompiling RomRaider's own `TableScaleUnmarshaller`.
+Defining these as if they were contiguous would silently write to the wrong bytes
+on save.
+
+Roughly 28 real tables in this format have been located across two regions
+(`0x15CA8`–`0x15F1E` and `0xF000`–`0x12800`), plus at least 8 further gear-indexed
+families. `0x45070` has around 75 call sites in total.
+
+A possible route to exposing them: RomRaider's `type="3D"` tables give the data
+block, X axis and Y axis three fully independent storage addresses, so a 3D table
+whose data block points at the record array would match the physical layout
+directly. This has not been tested and is not shipped.
+
+### Format 3 — plain contiguous arrays
+
+Ordinary indexed reads, no lookup routine — e.g. `(&DAT_0001234C)[gear]`. Around 90
+of these exist. Being contiguous and fixed-stride, they map onto RomRaider's
+storage with no difficulty. The gear ratio table and the shift-state bit patterns
+come from this group.
+
+---
+
+## Locating tables
+
+Two complementary methods, both needed.
+
+**Pattern scanning** (`tools/extract_tables.py`) finds format-1 candidates by
+looking for a plausible count followed by a monotonic axis. This yields 307
+candidates across the ROM, most of which are coincidence. Cross-referencing against
+32-bit absolute pointers elsewhere in the ROM narrows it to 38 high-confidence hits.
+
+**Call-site enumeration** is far more reliable: grep the decompiled output for every
+call to a known lookup routine and read the table pointer out of the argument. This
+is how the confirmed tables were found, and it's the method to prefer.
+
+A caution learned the hard way: a string match on an address in decompiled output is
+**not** evidence of a table. `0x8688` and `0x1CEE8` both matched, and both turned
+out to be plain scalar reads. Always check how the address is actually used —
+indexed array access means a table, a bare comparison does not.
+
+Another: when several parallel arrays sit adjacently, **the spacing between them is
+their length**. Five bitmask arrays at `0x87AA`–`0x87EF` were initially sampled at 8
+entries; the 14-byte spacing shows they're 14 entries each.
+
+---
+
+## Unit conversions
+
+Three are confirmed. Each was verified two independent ways — against the factory
+service manual *and* against the firmware's own arithmetic. Anything not meeting
+that bar is left labelled `raw`.
+
+### Gear ratios — `raw / 1024`
+
+Table at `0x1234C`, five `u16` values indexed by current gear:
+
+| raw | ÷1024 | manual |
+|---|---|---|
+| 3625 | 3.5400 | 3.540 |
+| 2318 | 2.2637 | 2.264 |
+| 1507 | 1.4717 | 1.471 |
+| 1024 | 1.0000 | 1.000 |
+| 854 | 0.8340 | 0.834 |
+
+Matches to within 0.0007 on every gear. Independently, the firmware divides these
+by `0x400` when computing expected speed — the code confirms the scale factor
+without reference to the manual.
+
+Used for expected-output-speed calculation and gear ratio fault detection
+(`P0730`). Editing these does not change physical gearing — it changes what the TCU
+*believes* the gearing is.
+
+### Engine speed — `raw / 8`
+
+The signal feeding the Speed Trim, Slip Detection and Reference Speed table axes is
+`smoothing_filter(speed << 3)` — an explicit ×8 in code. The pre-scaled value shares
+its ceiling constant (`0x1C2A8` = 10000) with two hardware speed channels whose RPM
+conversion is confirmed, which is what ties the unit down.
+
+Those channels convert as `60000000 / (N × period)` — the standard period-to-RPM
+form (60 s × a 1 MHz timer ÷ pulses per revolution). Two independent channels with
+their own tooth counts: `0x1C2C1` = 16 and `0x1C2C2` = 22.
+
+The resulting axes are clean 640 RPM steps topping out at 6400 RPM, with the
+`0xFFFF` sentinel landing at ~8192 RPM as an "and above" point.
+
+> An earlier revision of this project used `raw / 12.8` here, labelled as an
+> estimate. That was wrong — it produced a 4000 RPM ceiling, implausible for this
+> engine family. Noted because the structural reasoning behind it looked convincing
+> and wasn't.
+
+### Temperature — `raw − 40` °C
+
+Two NTC thermistor channels. Both routines invert the raw reading (`0xFF - raw`)
+before linearising, which is the giveaway — an NTC's voltage falls as temperature
+rises.
+
+Linearisation tables at `0x807E` (45 records) and `0x81E8` (41 records), in format 2,
+read as `[adc, temp, adc, temp]` pairs. The output column steps in 5s against a
+curve that flattens at both ends.
+
+Both map ADC `0..255` onto output `0..255`, which with the −40 offset is exactly
+**−40 °C to +215 °C** — the standard automotive encoding. Without the offset the
+sensor could not represent sub-zero temperatures at all.
+
+Validated against the manual:
+
+| constant | decodes to | manual reference |
+|---|---|---|
+| `0x12930` | 71 °C | normal operating range 70–80 °C |
+| `0x12945` | 75 °C | same range |
+| `0xEFC7` | 55 °C | top of test range 45–55 °C |
+
+23 temperature constants were found in total. Four with fully traced roles are in
+the definition file; the rest are listed but not named, since guessing at their
+purpose in a file intended for real edits is worse than omitting them.
+
+---
+
+## Signal architecture
+
+The TCU is CAN-driven rather than sensor-driven for its primary inputs. The receive
+routine at `0x28E88` handles IDs `0x410`, `0x411`, `0x412`, `0x511`–`0x515`,
+`0x520`, `0x600`, `0x740`, `0x741`.
+
+Traced paths:
+
+- **`0x410` bytes 5:6** → ceiling clamp → first-order smoothing filter → the engine
+  speed axis of the main table families.
+- **`0x412` byte 0** → one operand of the Pressure Control X-formula. (The forum
+  established that bytes 3–4 of this message carry calculated engine torque.)
+- **`0x511` byte 4** → scaled ×333/256 → a threshold curve at `0x11836`.
+- **`0x514`** carries shift events — per the forum, byte value 2 = upshift,
+  4 = downshift.
+
+The general shape, independently confirmed by the forum thread: a CAN torque signal
+is smoothed, factored by a lookup based on ATF temperature, and used to look up a
+line pressure target.
+
+### Gear and shift state
+
+`0x80885A` is the current commanded gear (0–4), written by exactly one function —
+the gear state machine at `0x4CA24`, which includes two distinct limp-mode paths
+(one forcing a configurable fail-safe gear, one hard-coding 3rd).
+
+Shift schedules are selected from a 50-entry pointer array at `0x17714`, indexed as
+`gear × 2 + mode × 10` — five range modes × five gears × two slots. Mode 0 has real
+multi-point curves throughout; modes 1–4 progressively fall back to a shared
+single-record placeholder for higher gears, consistent with range-restricted
+operation.
+
+---
+
+## Line pressure
+
+There is **no pressure sensor on this transmission.** The service manual's own line
+pressure test requires removing a test plug, fitting a mechanical gauge, and
+separately reading the TCU's *"P/L solenoid target pressure"* off the scan tool to
+compare. If the TCU had pressure feedback, the gauge would be redundant.
+
+This is corroborated by the DTC table — `P0745`/`P0746`/`P0748`/`P074C` are all
+pressure control *solenoid* codes (an output), and there is no pressure sensor
+circuit code anywhere in it. The pressure-related status bits found in RAM are
+switch (on/off) feedback, not analogue.
+
+So pressure is commanded open-loop via a duty solenoid. The target for a kPa scale
+factor is the TCU's *computed* value, and the manual gives exact figures to
+validate against: 490 kPa (D, closed throttle), 1370 kPa (D, full open), 1370 kPa
+(R, closed). A brute-force scale search against those numbers has been run and
+produced only coincidental matches — not enough to claim a conversion.
+
+---
+
+## Things deliberately not done
+
+Recorded so they aren't mistaken for oversights:
+
+- **No checksum-fix table in the definition.** RomRaider's checksum support is
+  hardcoded per ECU family in Java and doesn't cover this one. Including a
+  checksum table would imply it works.
+- **Format-2 tables not exposed.** See above — the stride problem is real and
+  defining them anyway would corrupt saves.
+- **Pressure and most temperature constants left unlabelled.** No confirmed
+  conversion, so `raw` is the honest answer.
+- **The `0x5AA5A55A` checksum from FastECU not implemented.** It doesn't hold for
+  this ROM, and its balance address falls inside this ROM's calibration ID block.
