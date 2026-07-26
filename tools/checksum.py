@@ -3,20 +3,31 @@
 
 Two 4-byte slots, at file offsets 0x008000 and 0x008004, hold an identical
 checksum value C such that summing every OTHER 32-bit big-endian word in the
-ROM and adding C once yields 0 (mod 2^32). Both slots must be updated
-together (redundant storage) after any edit to the ROM.
+checksummed region and adding C once yields 0 (mod 2^32). Both slots must be
+updated together (redundant storage) after any edit to the ROM.
+
+The checksummed region is the first 0x60000 bytes (384 KB), NOT the whole
+file. This matters for the 512 KB variant: on a 384 KB image the two are the
+same thing, but a 512 KB image (M32176F4, e.g. the 05-06 USDM TCU) carries
+384 KB of content plus 128 KB of blank 0xFF flash that is excluded from the
+sum. Confirmed by solving for the range on a real 512 KB image
+(91FE216300) — treating the whole file as the region gives a value exactly
+0x80000 too high.
 """
 import struct
 
 CHECKSUM_OFFSET_1 = 0x008000
 CHECKSUM_OFFSET_2 = 0x008004
+CHECKSUM_REGION_END = 0x60000
 
 
 def compute_checksum(data: bytes) -> int:
     """Return the correct checksum value for this ROM image."""
     size = len(data)
     assert size % 4 == 0, "ROM size must be a multiple of 4 bytes"
-    dwords = struct.unpack(f">{size // 4}I", data)
+    end = min(CHECKSUM_REGION_END, size)
+    assert end > CHECKSUM_OFFSET_2, "ROM is too small to contain the checksum slots"
+    dwords = struct.unpack(f">{end // 4}I", data[:end])
     idx1 = CHECKSUM_OFFSET_1 // 4
     idx2 = CHECKSUM_OFFSET_2 // 4
     total = sum(dwords) & 0xFFFFFFFF
