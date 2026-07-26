@@ -90,8 +90,20 @@ python tools/checksum.py --verify edited.bin
 ```
 
 The algorithm is a 32-bit big-endian two's-complement additive checksum stored
-redundantly at `0x8000` and `0x8004`. Details in
-[TECHNICAL-NOTES.md](TECHNICAL-NOTES.md).
+redundantly at `0x8000` and `0x8004`, computed over the first `0x60000` bytes.
+Details in [TECHNICAL-NOTES.md](TECHNICAL-NOTES.md).
+
+If you'd rather not take the tool's word for it, there's a test suite:
+
+```bash
+python tools/test_checksum.py                    # bundled ROM
+python tools/test_checksum.py path/to/other.bin  # any other ROM
+```
+
+It edits a copy, confirms the tool flags it, fixes it, and confirms that undoing
+the edit and re-fixing reproduces the original ROM byte for byte. Verification is
+done by independently re-deriving the checksum invariant rather than by calling
+the same function under test.
 
 ---
 
