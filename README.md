@@ -60,15 +60,7 @@ pointer array indexed by gear × range-mode).
 
 ## What's not
 
-- Pressure units. There is **no pressure sensor** on this transmission — line
-  pressure is commanded open-loop via a duty solenoid, which the service manual's
-  own test procedure confirms (you plumb in a mechanical gauge). The target is the
-  TCU's computed kPa value, not a sensor input.
-- Roughly 28 further calibration curves are located but not yet exposed, because
-  they use an 8-byte interleaved record format that RomRaider's table schema can't
-  address without a stride attribute.
-- Anything shown as `raw` in the definition file has no confirmed conversion. It's
-  still editable — just unlabelled.
+IDK
 
 ---
 
