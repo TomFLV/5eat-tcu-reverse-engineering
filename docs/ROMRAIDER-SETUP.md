@@ -154,3 +154,19 @@ python tools/validate_xml_defs.py
 The validator re-derives every table's address from the ROM's own embedded count
 fields and checks them against what the XML claims. It should report no errors.
 This exists because hand-editing addresses caused real bugs early on.
+
+### Verifying against RomRaider itself
+
+The check above verifies addresses against the *ROM*. It cannot tell you whether
+*RomRaider* will accept the definition — a file can have perfect addresses and
+still be silently ignored if the schema is wrong.
+
+[`tools/romraider-cli/`](../tools/romraider-cli/) loads a definition and a ROM
+through RomRaider's own parser and reports what it built:
+
+```
+91D1206000_5EAT.bin   11 rom blocks  match=SUBARU_5EAT_91D1206000  tables= 81  faulty=0
+```
+
+`NO MATCH` means that ROM would open with no tables at all. All eleven firmwares
+currently match their own block with zero faulty tables.
