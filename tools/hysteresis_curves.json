@@ -1,0 +1,247 @@
+[
+ {
+  "addr": 32894,
+  "rows": 45,
+  "name": "Temp Sensor 1 Linearisation",
+  "category": "Transmission - Sensor Calibration",
+  "desc": "ADC-to-temperature curve for temperature sensor 1. Column 1 is the inverted raw ADC reading, column 2 the resulting temperature as (value - 40) degrees C. This is the calibration that defines what the sensor reads: editing it changes every temperature-dependent decision the TCU makes. Confirmed encoding."
+ },
+ {
+  "addr": 33256,
+  "rows": 41,
+  "name": "Temp Sensor 2 Linearisation",
+  "category": "Transmission - Sensor Calibration",
+  "desc": "ADC-to-temperature curve for temperature sensor 2. Same encoding as sensor 1: column 1 inverted raw ADC, column 2 temperature as (value - 40) degrees C."
+ },
+ {
+  "addr": 33586,
+  "rows": 7,
+  "name": "Signal 82AC Curve 1 of 2",
+  "category": "Transmission - Signal Response Curves",
+  "desc": "Indexed by internal signal 82AC. Physical meaning of the input is not confirmed."
+ },
+ {
+  "addr": 33654,
+  "rows": 12,
+  "name": "Signal 82AC Curve 2 of 2",
+  "category": "Transmission - Signal Response Curves",
+  "desc": "Indexed by internal signal 82AC. Physical meaning of the input is not confirmed."
+ },
+ {
+  "addr": 33752,
+  "rows": 9,
+  "name": "CAN 0x412 Signal Curve",
+  "category": "Transmission - CAN Signal Thresholds",
+  "desc": "Indexed by the CAN ID 0x412 byte 0 signal (the same operand used by the Pressure Control X-formula)."
+ },
+ {
+  "addr": 33832,
+  "rows": 4,
+  "name": "ATF Temp Curve (8428)",
+  "category": "Transmission - Temperature Curves",
+  "desc": "Indexed by ATF temperature from sensor 1."
+ },
+ {
+  "addr": 33928,
+  "rows": 11,
+  "name": "Signal FE Curve 1 of 5",
+  "category": "Transmission - Signal Response Curves",
+  "desc": "Indexed by internal signal FE. Physical meaning of the input is not confirmed."
+ },
+ {
+  "addr": 34018,
+  "rows": 10,
+  "name": "Signal FE Curve 2 of 5",
+  "category": "Transmission - Signal Response Curves",
+  "desc": "Indexed by internal signal FE. Physical meaning of the input is not confirmed."
+ },
+ {
+  "addr": 34100,
+  "rows": 7,
+  "name": "Signal FE Curve 3 of 5",
+  "category": "Transmission - Signal Response Curves",
+  "desc": "Indexed by internal signal FE. Physical meaning of the input is not confirmed."
+ },
+ {
+  "addr": 34158,
+  "rows": 6,
+  "name": "Signal FE Curve 4 of 5",
+  "category": "Transmission - Signal Response Curves",
+  "desc": "Indexed by internal signal FE. Physical meaning of the input is not confirmed."
+ },
+ {
+  "addr": 34218,
+  "rows": 26,
+  "name": "Signal FE Curve 5 of 5",
+  "category": "Transmission - Signal Response Curves",
+  "desc": "Indexed by internal signal FE. Physical meaning of the input is not confirmed."
+ },
+ {
+  "addr": 60976,
+  "rows": 7,
+  "name": "Solenoid Output Curve 1 of 3",
+  "category": "Transmission - Solenoid Curves",
+  "desc": "One of three parallel curves feeding adjacent solenoid output variables, sharing a common input."
+ },
+ {
+  "addr": 61034,
+  "rows": 7,
+  "name": "Solenoid Output Curve 2 of 3",
+  "category": "Transmission - Solenoid Curves",
+  "desc": "One of three parallel curves feeding adjacent solenoid output variables, sharing a common input."
+ },
+ {
+  "addr": 61092,
+  "rows": 7,
+  "name": "Solenoid Output Curve 3 of 3",
+  "category": "Transmission - Solenoid Curves",
+  "desc": "One of three parallel curves feeding adjacent solenoid output variables, sharing a common input."
+ },
+ {
+  "addr": 61478,
+  "rows": 8,
+  "name": "Reference Speed Curve 1 of 3",
+  "category": "Transmission - Reference Speed",
+  "desc": "Indexed by the reference speed signal (a parallel copy of the central CAN-derived speed value)."
+ },
+ {
+  "addr": 61544,
+  "rows": 10,
+  "name": "Signal 82CC Curve 1 of 2",
+  "category": "Transmission - Signal Response Curves",
+  "desc": "Indexed by internal signal 82CC. Physical meaning of the input is not confirmed."
+ },
+ {
+  "addr": 61626,
+  "rows": 10,
+  "name": "Signal 82CC Curve 2 of 2",
+  "category": "Transmission - Signal Response Curves",
+  "desc": "Indexed by internal signal 82CC. Physical meaning of the input is not confirmed."
+ },
+ {
+  "addr": 62992,
+  "rows": 16,
+  "name": "Hysteresis Curve 0x00F610",
+  "category": "Transmission - Uncategorised Curves",
+  "desc": "Record-format curve located by call-site enumeration. Input not identified."
+ },
+ {
+  "addr": 63132,
+  "rows": 11,
+  "name": "Reference Speed Curve 2 of 3",
+  "category": "Transmission - Reference Speed",
+  "desc": "Indexed by the reference speed signal (a parallel copy of the central CAN-derived speed value)."
+ },
+ {
+  "addr": 64022,
+  "rows": 11,
+  "name": "Reference Speed Curve 3 of 3",
+  "category": "Transmission - Reference Speed",
+  "desc": "Indexed by the reference speed signal (a parallel copy of the central CAN-derived speed value)."
+ },
+ {
+  "addr": 67736,
+  "rows": 10,
+  "name": "Smoothed Signal Curve 1 of 7",
+  "category": "Transmission - Signal Response Curves",
+  "desc": "Indexed by the smoothed internal signal AE8. Physical meaning of the input is not confirmed."
+ },
+ {
+  "addr": 67818,
+  "rows": 10,
+  "name": "Smoothed Signal Curve 2 of 7",
+  "category": "Transmission - Signal Response Curves",
+  "desc": "Indexed by the smoothed internal signal AE8. Physical meaning of the input is not confirmed."
+ },
+ {
+  "addr": 68332,
+  "rows": 12,
+  "name": "Smoothed Signal Curve 3 of 7",
+  "category": "Transmission - Signal Response Curves",
+  "desc": "Indexed by the smoothed internal signal AE8. Physical meaning of the input is not confirmed."
+ },
+ {
+  "addr": 68764,
+  "rows": 12,
+  "name": "Smoothed Signal Curve 4 of 7",
+  "category": "Transmission - Signal Response Curves",
+  "desc": "Indexed by the smoothed internal signal AE8. Physical meaning of the input is not confirmed."
+ },
+ {
+  "addr": 69236,
+  "rows": 12,
+  "name": "Engine Speed Curve 1 of 6",
+  "category": "Transmission - Engine Speed Curves",
+  "desc": "Indexed by the smoothed CAN 0x410 engine-speed signal (the same input as the Speed Trim / Slip Detection families). One of six selected by operating mode."
+ },
+ {
+  "addr": 69340,
+  "rows": 12,
+  "name": "Engine Speed Curve 2 of 6",
+  "category": "Transmission - Engine Speed Curves",
+  "desc": "Indexed by the smoothed CAN 0x410 engine-speed signal (the same input as the Speed Trim / Slip Detection families). One of six selected by operating mode."
+ },
+ {
+  "addr": 69444,
+  "rows": 12,
+  "name": "Engine Speed Curve 3 of 6",
+  "category": "Transmission - Engine Speed Curves",
+  "desc": "Indexed by the smoothed CAN 0x410 engine-speed signal (the same input as the Speed Trim / Slip Detection families). One of six selected by operating mode."
+ },
+ {
+  "addr": 69548,
+  "rows": 12,
+  "name": "Engine Speed Curve 4 of 6",
+  "category": "Transmission - Engine Speed Curves",
+  "desc": "Indexed by the smoothed CAN 0x410 engine-speed signal (the same input as the Speed Trim / Slip Detection families). One of six selected by operating mode."
+ },
+ {
+  "addr": 69652,
+  "rows": 12,
+  "name": "Engine Speed Curve 5 of 6",
+  "category": "Transmission - Engine Speed Curves",
+  "desc": "Indexed by the smoothed CAN 0x410 engine-speed signal (the same input as the Speed Trim / Slip Detection families). One of six selected by operating mode."
+ },
+ {
+  "addr": 69756,
+  "rows": 12,
+  "name": "Engine Speed Curve 6 of 6",
+  "category": "Transmission - Engine Speed Curves",
+  "desc": "Indexed by the smoothed CAN 0x410 engine-speed signal (the same input as the Speed Trim / Slip Detection families). One of six selected by operating mode."
+ },
+ {
+  "addr": 70208,
+  "rows": 12,
+  "name": "Smoothed Signal Curve 5 of 7",
+  "category": "Transmission - Signal Response Curves",
+  "desc": "Indexed by the smoothed internal signal AE8. Physical meaning of the input is not confirmed."
+ },
+ {
+  "addr": 71764,
+  "rows": 3,
+  "name": "ATF Temp Curve A (Mode 1)",
+  "category": "Transmission - Temperature Curves",
+  "desc": "Indexed by ATF temperature from sensor 1. Mode-selected pair with Mode 2."
+ },
+ {
+  "addr": 71790,
+  "rows": 3,
+  "name": "ATF Temp Curve A (Mode 2)",
+  "category": "Transmission - Temperature Curves",
+  "desc": "Indexed by ATF temperature from sensor 1. Mode-selected counterpart to Mode 1."
+ },
+ {
+  "addr": 72432,
+  "rows": 12,
+  "name": "Smoothed Signal Curve 6 of 7",
+  "category": "Transmission - Signal Response Curves",
+  "desc": "Indexed by the smoothed internal signal AE8. Physical meaning of the input is not confirmed."
+ },
+ {
+  "addr": 72864,
+  "rows": 5,
+  "name": "Smoothed Signal Curve 7 of 7",
+  "category": "Transmission - Signal Response Curves",
+  "desc": "Indexed by the smoothed internal signal AE8. Physical meaning of the input is not confirmed."
+ }
+]

@@ -534,6 +534,47 @@ def build_shift_curve_xml(name, addr, rows):
   </table>"""
 
 
+
+# ---------------------------------------------------------------------------
+# Record-format ("hysteresis") curves, base ROM addresses.
+#
+# Same 8-byte record layout as the shift schedule: 4 x uint16 per row, array
+# terminated by a leading 0xFFFF. Column 1 is the breakpoint (monotonic), the
+# rest are the values interpolated between.
+#
+# These were located by enumerating every call site of the record-lookup routine
+# (FUN_00045070 in the base ROM) and reading the table pointer out of the
+# argument, then filtering to those whose breakpoint column is genuinely
+# monotonic -- which rejects the gear-indexed pointer arrays that otherwise look
+# like tables.
+#
+# They were previously excluded because RomRaider has no stride support. The
+# shift-schedule work showed that objection was wrong: the record block is
+# contiguous, so a 3D table with sizex=4 maps onto it exactly. RomRaider's own
+# parser accepts them.
+#
+# Inputs are named where traced. Where the input is only known as an internal
+# RAM variable the name says so rather than inventing a meaning.
+# ---------------------------------------------------------------------------
+HYSTERESIS_CURVES = json.load(open(os.path.join(here, "hysteresis_curves.json")))
+
+HYST_DESC_SUFFIX = (
+    "\n\nFormat: each row is one segment, 4 x uint16. Column 1 is the "
+    "breakpoint; columns 2-4 are the values interpolated across it. Rows chain "
+    "(a row's later columns repeat the next row's earlier ones), so keep them "
+    "consistent when editing. The final row is a max clamp.\n\n"
+    "Values are raw: no confirmed real-world conversion for this curve."
+)
+
+
+def build_hyst_curve_xml(c, delta=0):
+    addr = c["addr"] + delta
+    return f"""  <table type="3D" name="{escape(c['name'])}" category="{escape(c['category'])}" storageaddress="0x{addr:06X}" storagetype="uint16" endian="big" sizex="4" sizey="{c['rows']}" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>{escape(c['desc'] + HYST_DESC_SUFFIX)}</description>
+  </table>"""
+
+
 # ---------------------------------------------------------------------------
 # DTC table (docs/TECHNICAL-NOTES.md). Found by scanning the whole ROM for a cluster
 # of 16-bit values in the standard, publicly-documented Subaru/SAE P07xx
@@ -920,6 +961,14 @@ def verify_profile(profile, rom_bytes):
             return None
         return struct.unpack(">H", rom_bytes[off:off + 2])[0]
 
+    if profile.get("base") is None:
+        for c in HYSTERESIS_CURVES:
+            checked += 1
+            term = u16_at(c["addr"] + c["rows"] * 8)
+            if term != 0xFFFF:
+                errors.append(f"{c['name']} @ 0x{c['addr']:06X}: expected 0xFFFF "
+                              f"after {c['rows']} rows, got {term}")
+
     for cname, c in SHIFT_CURVES_BY_ROM.get(profile["id"], {}).items():
         checked += 1
         term = u16_at(c["addr"] + c["rows"] * 8)
@@ -983,6 +1032,13 @@ def build_rom_block(profile, rom_bytes, is_base):
             parts.append(build_scalar_xml(sc))
             parts.append("")
             total += 1
+
+        if is_base:
+            parts.append("  <!-- ============ Record-format curves ============ -->")
+            for c in HYSTERESIS_CURVES:
+                parts.append(build_hyst_curve_xml(c))
+                parts.append("")
+                total += 1
 
         curves = SHIFT_CURVES_BY_ROM.get(profile["id"], {})
         if curves:

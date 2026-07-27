@@ -429,6 +429,322 @@ This is a static file editor only — cannot connect live to the vehicle through
    <description>Confirmed via decompilation: a constant compared against a computed signal delta in the same fault-detection routine that reads the Pressure Threshold E tables. Storage width (byte vs. word) was inferred from the surrounding code pattern, not independently double-checked — verify before relying on the exact stored value.</description>
   </table>
 
+  <!-- ============ Record-format curves ============ -->
+  <table type="3D" name="Temp Sensor 1 Linearisation" category="Transmission - Sensor Calibration" storageaddress="0x00807E" storagetype="uint16" endian="big" sizex="4" sizey="45" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>ADC-to-temperature curve for temperature sensor 1. Column 1 is the inverted raw ADC reading, column 2 the resulting temperature as (value - 40) degrees C. This is the calibration that defines what the sensor reads: editing it changes every temperature-dependent decision the TCU makes. Confirmed encoding.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Temp Sensor 2 Linearisation" category="Transmission - Sensor Calibration" storageaddress="0x0081E8" storagetype="uint16" endian="big" sizex="4" sizey="41" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>ADC-to-temperature curve for temperature sensor 2. Same encoding as sensor 1: column 1 inverted raw ADC, column 2 temperature as (value - 40) degrees C.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Signal 82AC Curve 1 of 2" category="Transmission - Signal Response Curves" storageaddress="0x008332" storagetype="uint16" endian="big" sizex="4" sizey="7" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by internal signal 82AC. Physical meaning of the input is not confirmed.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Signal 82AC Curve 2 of 2" category="Transmission - Signal Response Curves" storageaddress="0x008376" storagetype="uint16" endian="big" sizex="4" sizey="12" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by internal signal 82AC. Physical meaning of the input is not confirmed.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="CAN 0x412 Signal Curve" category="Transmission - CAN Signal Thresholds" storageaddress="0x0083D8" storagetype="uint16" endian="big" sizex="4" sizey="9" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the CAN ID 0x412 byte 0 signal (the same operand used by the Pressure Control X-formula).
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="ATF Temp Curve (8428)" category="Transmission - Temperature Curves" storageaddress="0x008428" storagetype="uint16" endian="big" sizex="4" sizey="4" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by ATF temperature from sensor 1.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Signal FE Curve 1 of 5" category="Transmission - Signal Response Curves" storageaddress="0x008488" storagetype="uint16" endian="big" sizex="4" sizey="11" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by internal signal FE. Physical meaning of the input is not confirmed.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Signal FE Curve 2 of 5" category="Transmission - Signal Response Curves" storageaddress="0x0084E2" storagetype="uint16" endian="big" sizex="4" sizey="10" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by internal signal FE. Physical meaning of the input is not confirmed.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Signal FE Curve 3 of 5" category="Transmission - Signal Response Curves" storageaddress="0x008534" storagetype="uint16" endian="big" sizex="4" sizey="7" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by internal signal FE. Physical meaning of the input is not confirmed.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Signal FE Curve 4 of 5" category="Transmission - Signal Response Curves" storageaddress="0x00856E" storagetype="uint16" endian="big" sizex="4" sizey="6" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by internal signal FE. Physical meaning of the input is not confirmed.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Signal FE Curve 5 of 5" category="Transmission - Signal Response Curves" storageaddress="0x0085AA" storagetype="uint16" endian="big" sizex="4" sizey="26" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by internal signal FE. Physical meaning of the input is not confirmed.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Solenoid Output Curve 1 of 3" category="Transmission - Solenoid Curves" storageaddress="0x00EE30" storagetype="uint16" endian="big" sizex="4" sizey="7" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>One of three parallel curves feeding adjacent solenoid output variables, sharing a common input.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Solenoid Output Curve 2 of 3" category="Transmission - Solenoid Curves" storageaddress="0x00EE6A" storagetype="uint16" endian="big" sizex="4" sizey="7" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>One of three parallel curves feeding adjacent solenoid output variables, sharing a common input.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Solenoid Output Curve 3 of 3" category="Transmission - Solenoid Curves" storageaddress="0x00EEA4" storagetype="uint16" endian="big" sizex="4" sizey="7" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>One of three parallel curves feeding adjacent solenoid output variables, sharing a common input.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Reference Speed Curve 1 of 3" category="Transmission - Reference Speed" storageaddress="0x00F026" storagetype="uint16" endian="big" sizex="4" sizey="8" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the reference speed signal (a parallel copy of the central CAN-derived speed value).
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Signal 82CC Curve 1 of 2" category="Transmission - Signal Response Curves" storageaddress="0x00F068" storagetype="uint16" endian="big" sizex="4" sizey="10" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by internal signal 82CC. Physical meaning of the input is not confirmed.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Signal 82CC Curve 2 of 2" category="Transmission - Signal Response Curves" storageaddress="0x00F0BA" storagetype="uint16" endian="big" sizex="4" sizey="10" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by internal signal 82CC. Physical meaning of the input is not confirmed.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Hysteresis Curve 0x00F610" category="Transmission - Uncategorised Curves" storageaddress="0x00F610" storagetype="uint16" endian="big" sizex="4" sizey="16" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Record-format curve located by call-site enumeration. Input not identified.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Reference Speed Curve 2 of 3" category="Transmission - Reference Speed" storageaddress="0x00F69C" storagetype="uint16" endian="big" sizex="4" sizey="11" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the reference speed signal (a parallel copy of the central CAN-derived speed value).
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Reference Speed Curve 3 of 3" category="Transmission - Reference Speed" storageaddress="0x00FA16" storagetype="uint16" endian="big" sizex="4" sizey="11" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the reference speed signal (a parallel copy of the central CAN-derived speed value).
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Smoothed Signal Curve 1 of 7" category="Transmission - Signal Response Curves" storageaddress="0x010898" storagetype="uint16" endian="big" sizex="4" sizey="10" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the smoothed internal signal AE8. Physical meaning of the input is not confirmed.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Smoothed Signal Curve 2 of 7" category="Transmission - Signal Response Curves" storageaddress="0x0108EA" storagetype="uint16" endian="big" sizex="4" sizey="10" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the smoothed internal signal AE8. Physical meaning of the input is not confirmed.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Smoothed Signal Curve 3 of 7" category="Transmission - Signal Response Curves" storageaddress="0x010AEC" storagetype="uint16" endian="big" sizex="4" sizey="12" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the smoothed internal signal AE8. Physical meaning of the input is not confirmed.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Smoothed Signal Curve 4 of 7" category="Transmission - Signal Response Curves" storageaddress="0x010C9C" storagetype="uint16" endian="big" sizex="4" sizey="12" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the smoothed internal signal AE8. Physical meaning of the input is not confirmed.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Engine Speed Curve 1 of 6" category="Transmission - Engine Speed Curves" storageaddress="0x010E74" storagetype="uint16" endian="big" sizex="4" sizey="12" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the smoothed CAN 0x410 engine-speed signal (the same input as the Speed Trim / Slip Detection families). One of six selected by operating mode.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Engine Speed Curve 2 of 6" category="Transmission - Engine Speed Curves" storageaddress="0x010EDC" storagetype="uint16" endian="big" sizex="4" sizey="12" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the smoothed CAN 0x410 engine-speed signal (the same input as the Speed Trim / Slip Detection families). One of six selected by operating mode.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Engine Speed Curve 3 of 6" category="Transmission - Engine Speed Curves" storageaddress="0x010F44" storagetype="uint16" endian="big" sizex="4" sizey="12" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the smoothed CAN 0x410 engine-speed signal (the same input as the Speed Trim / Slip Detection families). One of six selected by operating mode.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Engine Speed Curve 4 of 6" category="Transmission - Engine Speed Curves" storageaddress="0x010FAC" storagetype="uint16" endian="big" sizex="4" sizey="12" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the smoothed CAN 0x410 engine-speed signal (the same input as the Speed Trim / Slip Detection families). One of six selected by operating mode.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Engine Speed Curve 5 of 6" category="Transmission - Engine Speed Curves" storageaddress="0x011014" storagetype="uint16" endian="big" sizex="4" sizey="12" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the smoothed CAN 0x410 engine-speed signal (the same input as the Speed Trim / Slip Detection families). One of six selected by operating mode.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Engine Speed Curve 6 of 6" category="Transmission - Engine Speed Curves" storageaddress="0x01107C" storagetype="uint16" endian="big" sizex="4" sizey="12" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the smoothed CAN 0x410 engine-speed signal (the same input as the Speed Trim / Slip Detection families). One of six selected by operating mode.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Smoothed Signal Curve 5 of 7" category="Transmission - Signal Response Curves" storageaddress="0x011240" storagetype="uint16" endian="big" sizex="4" sizey="12" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the smoothed internal signal AE8. Physical meaning of the input is not confirmed.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="ATF Temp Curve A (Mode 1)" category="Transmission - Temperature Curves" storageaddress="0x011854" storagetype="uint16" endian="big" sizex="4" sizey="3" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by ATF temperature from sensor 1. Mode-selected pair with Mode 2.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="ATF Temp Curve A (Mode 2)" category="Transmission - Temperature Curves" storageaddress="0x01186E" storagetype="uint16" endian="big" sizex="4" sizey="3" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by ATF temperature from sensor 1. Mode-selected counterpart to Mode 1.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Smoothed Signal Curve 6 of 7" category="Transmission - Signal Response Curves" storageaddress="0x011AF0" storagetype="uint16" endian="big" sizex="4" sizey="12" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the smoothed internal signal AE8. Physical meaning of the input is not confirmed.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
+  <table type="3D" name="Smoothed Signal Curve 7 of 7" category="Transmission - Signal Response Curves" storageaddress="0x011CA0" storagetype="uint16" endian="big" sizex="4" sizey="5" userlevel="4">
+   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Indexed by the smoothed internal signal AE8. Physical meaning of the input is not confirmed.
+
+Format: each row is one segment, 4 x uint16. Column 1 is the breakpoint; columns 2-4 are the values interpolated across it. Rows chain (a row's later columns repeat the next row's earlier ones), so keep them consistent when editing. The final row is a max clamp.
+
+Values are raw: no confirmed real-world conversion for this curve.</description>
+  </table>
+
   <!-- ============ Transmission - Shift Schedule ============ -->
   <table type="3D" name="Shift 1-2 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015CA8" storagetype="uint16" endian="big" sizex="4" sizey="8" userlevel="4">
    <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
