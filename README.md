@@ -100,20 +100,58 @@ IDK
 
 ## Credits
 
-The ROM image originates from the RomRaider forum thread
-[**5EAT TCM JECS ROM Image**](https://www.romraider.com/forum/viewtopic.php?f=40&t=13725),
-a long-running community effort on this TCU family. Several findings here were
-cross-checked against that thread — in particular the CAN message IDs
-(`0x412` carrying engine torque, `0x514` carrying shift events) and the
-identification of the MCU as a 384 KB 144-pin M32R.
+**Almost none of the raw material here is mine.** This project is analysis layered
+on top of other people's work, and the pieces below belong to them.
 
-The checksum algorithm was independently verified against
-[FastECU](https://github.com/miikasyvanen/FastECU), which implements the same
-algorithm for this chip family.
+### The ROM images
 
-Reference specifications (gear ratios, line pressure targets, ATF operating
-temperatures) come from the Subaru factory service manual for the 2004 Legacy.
-That document is Subaru's and is not redistributed here.
+Every firmware in [`rom/`](rom/) was dumped and shared by members of the RomRaider
+forum thread [**5EAT TCM JECS ROM Image**](https://www.romraider.com/forum/viewtopic.php?f=40&t=13725)
+— a years-long community effort. Getting these off a car is slow, fiddly, and
+occasionally risks the TCU. They are included here so the work can continue, not
+because I have any claim to them. If you contributed a dump and want it removed or
+credited differently, open an issue and I'll act on it.
+
+The `91FE216300` image (Early 2005 USDM Outback XT) is the one I dumped myself.
+
+### The shift-curve chart
+
+[`docs/shift-curves-reference.png`](docs/shift-curves-reference.png) was produced
+and posted to that thread by another member. It is reproduced here because it is
+what the shift-schedule units were verified against — the speed and pedal-angle
+encoding could not have been confirmed without it. **It is not my work.**
+
+### Prior and parallel work
+
+- **[FastECU](https://github.com/miikasyvanen/FastECU)** (Miika Syvänen) and
+  **[rimwall's OEM fork](https://github.com/rimwall/fastecu-oem)** — the tooling
+  that makes reading and writing these TCUs possible at all. Its
+  `checksum_tcu_subaru_hitachi_m32r_can` module independently corroborated the
+  checksum algorithm.
+- **rimwall** — much of the protocol and security-access work in the thread, and
+  the Denso-side reverse engineering.
+- **[FreeSSM](https://github.com/Comer352L/FreeSSM)** (Comer352L) — diagnostic
+  tooling, and the branch adding TCU adjustment support.
+- **[ghidra-m32r](https://github.com/ripnet/ghidra-m32r)** (ripnet) — the Ghidra
+  processor module without which none of the disassembly here would exist.
+- Forum members whose findings are used directly: the CAN ID meanings
+  (`0x412` engine torque, `0x514` shift events), the MCU identification, and the
+  observation that gear changes are governed by pedal-angle/speed curves — which
+  is what pointed at the shift tables in the first place.
+
+### Reference documentation
+
+Gear ratios, line-pressure targets and ATF operating temperatures come from the
+Subaru factory service manual (2004 Legacy). That document is Subaru's and is
+**not** redistributed here.
+
+### What is actually mine
+
+The tooling in [`tools/`](tools/), the RomRaider definitions in
+[`definitions/`](definitions/), and the written analysis in [`docs/`](docs/) —
+the table mapping, the unit derivations, the checksum region detection, and the
+multi-firmware porting. That, and nothing else in this repository, is what the
+MIT licence covers.
 
 ---
 
