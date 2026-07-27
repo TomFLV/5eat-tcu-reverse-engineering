@@ -8,9 +8,10 @@
   RomRaider (different CPU/protocol family than supported engine ECUs).
   After editing, run tools/checksum.py's fix_checksum() before flashing —
   RomRaider's automatic checksum fix does not know this ROM's algorithm.
-  Real engineering units are not yet confirmed for most tables; scaling
-  is "raw" except where marked "(est.)", which is a labeled estimate,
-  not a proven conversion.
+  Confirmed units: gear ratios (/1024), engine speed (/8), temperature
+  (-40 C), vehicle speed (km/h), accelerator angle (raw/255). Anything
+  still shown as "raw" has no confirmed conversion; it is the real
+  stored value, just unlabelled. Pressure units are NOT confirmed.
 -->
 
  <rom>

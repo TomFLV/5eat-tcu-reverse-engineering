@@ -13,7 +13,7 @@ You can set this through the GUI (**File → Settings → Definitions**), or edi
 file directly. The relevant element is:
 
 ```xml
-<ecudefinitionfile>C:\path\to\definitions\5eat_tcu_91D1206000_romraider_def.xml</ecudefinitionfile>
+<ecudefinitionfile>C:\path\to\definitions\5eat_tcu_romraider_defs.xml</ecudefinitionfile>
 ```
 
 If you edit `settings.xml` by hand, close RomRaider first — it rewrites the file on
@@ -39,18 +39,19 @@ This is the common failure, and it's almost always one of two things.
 have ended up with a *directory* named `91D1206000_5EAT.bin` containing the real
 file. RomRaider will open it without complaint and show nothing.
 
-**Check the ROM matches.** The definition identifies the ROM by matching the ASCII
-string `MB431M` at offset `0x8008`. If your ROM is a different firmware revision,
-RomRaider will correctly refuse to apply this definition — that's the safety
-mechanism working, not a bug. Confirm with:
+**Check the ROM matches.** The definition identifies a ROM by matching its
+calibration ID at offset `0x8008`, and carries eleven of them. If yours is not one
+of the eleven, RomRaider will correctly refuse to apply anything — that's the
+safety mechanism working, not a bug. Confirm which you have with:
 
 ```bash
 xxd -s 0x8008 -l 16 your_rom.bin
 ```
 
-You should see `MB431M  VF000`. If you see something else, this definition is not
-for your ROM, and the table addresses will not transfer — they differ between
-firmware revisions.
+You should see one of: `MB431M`, `MB436G`, `MB436T`, `MB436P`, `MB4434`, `MB4373`,
+`MB440X`, `MB5300`, `MB558D01`, `MB558D20`, `MB562EH`. If you see something else,
+this definition does not cover your ROM — table addresses differ between firmware
+revisions and cannot be assumed to transfer.
 
 ### Turning on debug logging
 

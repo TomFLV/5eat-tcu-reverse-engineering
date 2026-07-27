@@ -1,14 +1,17 @@
 """
-Generates 5eat_tcu_91D1206000_romraider_def.xml from the table families
-confirmed in docs/TECHNICAL-NOTES.md. Regenerate any time a new family is confirmed
-rather than hand-editing the XML (avoids copy-paste address errors).
+Generates definitions/5eat_tcu_romraider_defs.xml -- a single RomRaider
+definition covering every firmware in rom/.
 
-The firmware ID (91D1206000) is baked into the OUTPUT FILENAME, not just
-the file's contents — there will eventually be one of these per distinct
-firmware revision dumped, and the filename needs to disambiguate them at
-a glance before anyone even opens the file. If/when a second firmware's
-ROM shows up, copy this script, change ROM_ID/rom_path, and give it its
-own FAMILIES (table addresses will very likely differ between revisions).
+Each firmware is emitted as its own <rom> block keyed on the calibration ID at
+0x8008, so RomRaider selects the right one automatically when a ROM is opened.
+The first profile is the base and carries full table definitions; the rest
+inherit names, scaling and descriptions via <rom base="..."> and override only
+addresses.
+
+Regenerate from here rather than hand-editing the XML. Every derived address is
+re-checked against the target ROM's own embedded count field before being
+written, and generation aborts if any disagree -- the offsets between firmwares
+are not uniform and cannot be extrapolated.
 """
 import struct
 import os
@@ -834,9 +837,10 @@ HEADER_COMMENT = """<!--
   RomRaider (different CPU/protocol family than supported engine ECUs).
   After editing, run tools/checksum.py's fix_checksum() before flashing —
   RomRaider's automatic checksum fix does not know this ROM's algorithm.
-  Real engineering units are not yet confirmed for most tables; scaling
-  is "raw" except where marked "(est.)", which is a labeled estimate,
-  not a proven conversion.
+  Confirmed units: gear ratios (/1024), engine speed (/8), temperature
+  (-40 C), vehicle speed (km/h), accelerator angle (raw/255). Anything
+  still shown as "raw" has no confirmed conversion; it is the real
+  stored value, just unlabelled. Pressure units are NOT confirmed.
 -->"""
 
 

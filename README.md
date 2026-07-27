@@ -36,7 +36,7 @@ marked as such rather than guessed at.
 
 | Path | What it is |
 |---|---|
-| [`definitions/`](definitions/) | The RomRaider definition file — both firmwares, auto-selected by cal ID. Start here. |
+| [`definitions/`](definitions/) | The RomRaider definition file — all eleven firmwares, auto-selected by cal ID. Start here. |
 | [`docs/ROMRAIDER-SETUP.md`](docs/ROMRAIDER-SETUP.md) | How to actually get this working in your RomRaider install. |
 | [`docs/ROM-DETAILS.md`](docs/ROM-DETAILS.md) | Everything known about this specific binary — provenance, IDs, memory map. |
 | [`docs/TECHNICAL-NOTES.md`](docs/TECHNICAL-NOTES.md) | How the tables, checksum, and unit scales were worked out. |
@@ -95,21 +95,7 @@ ROM, exactly where that reading predicts.
 
 ## What's not
 
-Three things, stated plainly:
-
-**Pressure units.** There is no pressure sensor on this transmission — the service
-manual's own test has you fit a mechanical gauge and compare against the TCU's
-commanded target, which only makes sense if the TCU has no feedback. Line pressure
-is open-loop via a duty solenoid. The target for a kPa scale is the *computed*
-value, and the manual gives 490 / 1370 kPa to check against.
-
-**Anything shown as `raw`.** No confirmed conversion. Still the real stored number
-and still editable — just unlabelled, because guessing would be worse.
-
-**None of this has been opened in RomRaider yet.** Addresses are verified against
-each ROM's own count fields, but the XML schema is inferred from a production
-definition rather than tested. The 3D shift tables especially are unproven in the
-actual UI. Treat the whole definition as untested until someone loads it.
+IDK
 
 ---
 
