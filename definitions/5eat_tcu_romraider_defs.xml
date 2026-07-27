@@ -3174,6 +3174,287 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
  <rom base="SUBARU_5EAT_91D1206000">
   <romid>
+   <xmlid>SUBARU_5EAT_ADE0236000</xmlid>
+   <internalidaddress>0x8008</internalidaddress>
+   <internalidstring>MB562EH</internalidstring>
+   <caseid>Q8C</caseid>
+   <ecuid>ADE0236000</ecuid>
+   <version>ADE0236000</version>
+   <year>Unknown</year>
+   <market>Unknown</market>
+   <make>Subaru</make>
+   <model>5EAT TCU</model>
+   <submodel>ADE0236000</submodel>
+   <transmission>5EAT</transmission>
+   <memmodel>M32R</memmodel>
+   <flashmethod>None</flashmethod>
+   <filesize>512kb</filesize>
+  </romid>
+
+  <table name="Gear 1 Speed Trim A" storageaddress="0x010674">
+   <table type="X Axis" storageaddress="0x01065C" />
+  </table>
+
+  <table name="Gear 2 Speed Trim A" storageaddress="0x0106A6">
+   <table type="X Axis" storageaddress="0x01068E" />
+  </table>
+
+  <table name="Gear 3 Speed Trim A" storageaddress="0x0106D8">
+   <table type="X Axis" storageaddress="0x0106C0" />
+  </table>
+
+  <table name="Gear 4 Speed Trim A" storageaddress="0x01070A">
+   <table type="X Axis" storageaddress="0x0106F2" />
+  </table>
+
+  <table name="Gear 5 Speed Trim A" storageaddress="0x01073C">
+   <table type="X Axis" storageaddress="0x010724" />
+  </table>
+
+  <table name="Gear 1 Slip Detection Threshold" storageaddress="0x0116E2">
+   <table type="X Axis" storageaddress="0x0116CE" />
+  </table>
+
+  <table name="Gear 2 Slip Detection Threshold" storageaddress="0x01170C">
+   <table type="X Axis" storageaddress="0x0116F8" />
+  </table>
+
+  <table name="Gear 3 Slip Detection Threshold" storageaddress="0x011736">
+   <table type="X Axis" storageaddress="0x011722" />
+  </table>
+
+  <table name="Gear 4 Slip Detection Threshold" storageaddress="0x011760">
+   <table type="X Axis" storageaddress="0x01174C" />
+  </table>
+
+  <table name="Gear 5 Slip Detection Threshold" storageaddress="0x01178A">
+   <table type="X Axis" storageaddress="0x011776" />
+  </table>
+
+  <table name="Gear 1 Reference Speed Baseline" storageaddress="0x01180A">
+   <table type="X Axis" storageaddress="0x0117F6" />
+  </table>
+
+  <table name="Gear 2 Reference Speed Baseline" storageaddress="0x011834">
+   <table type="X Axis" storageaddress="0x011820" />
+  </table>
+
+  <table name="Gear 3 Reference Speed Baseline" storageaddress="0x01185E">
+   <table type="X Axis" storageaddress="0x01184A" />
+  </table>
+
+  <table name="Gear 4 Reference Speed Baseline" storageaddress="0x011888">
+   <table type="X Axis" storageaddress="0x011874" />
+  </table>
+
+  <table name="Gear 5 Reference Speed Baseline" storageaddress="0x0118B2">
+   <table type="X Axis" storageaddress="0x01189E" />
+  </table>
+
+  <table name="Gear 1 Slip Comp Pressure B" storageaddress="0x010F76">
+   <table type="X Axis" storageaddress="0x010F6C" />
+  </table>
+
+  <table name="Gear 2 Slip Comp Pressure B" storageaddress="0x010F8C">
+   <table type="X Axis" storageaddress="0x010F82" />
+  </table>
+
+  <table name="Gear 3 Slip Comp Pressure B" storageaddress="0x010FA2">
+   <table type="X Axis" storageaddress="0x010F98" />
+  </table>
+
+  <table name="Gear 4 Slip Comp Pressure B" storageaddress="0x010FB8">
+   <table type="X Axis" storageaddress="0x010FAE" />
+  </table>
+
+  <table name="Gear 5 Slip Comp Pressure B" storageaddress="0x010FCE">
+   <table type="X Axis" storageaddress="0x010FC4" />
+  </table>
+
+  <table name="Gear 1 Slip Comp Pressure C" storageaddress="0x010FF8">
+   <table type="X Axis" storageaddress="0x010FEE" />
+  </table>
+
+  <table name="Gear 2 Slip Comp Pressure C" storageaddress="0x01100E">
+   <table type="X Axis" storageaddress="0x011004" />
+  </table>
+
+  <table name="Gear 3 Slip Comp Pressure C" storageaddress="0x011024">
+   <table type="X Axis" storageaddress="0x01101A" />
+  </table>
+
+  <table name="Gear 4 Slip Comp Pressure C" storageaddress="0x01103A">
+   <table type="X Axis" storageaddress="0x011030" />
+  </table>
+
+  <table name="Gear 5 Slip Comp Pressure C" storageaddress="0x011050">
+   <table type="X Axis" storageaddress="0x011046" />
+  </table>
+
+  <table name="Gear 1 Shift Stage Value D" storageaddress="0x0114FC">
+   <table type="X Axis" storageaddress="0x0114F2" />
+  </table>
+
+  <table name="Gear 2 Shift Stage Value D" storageaddress="0x011512">
+   <table type="X Axis" storageaddress="0x011508" />
+  </table>
+
+  <table name="Gear 3 Shift Stage Value D" storageaddress="0x011528">
+   <table type="X Axis" storageaddress="0x01151E" />
+  </table>
+
+  <table name="Gear 4 Shift Stage Value D" storageaddress="0x01153E">
+   <table type="X Axis" storageaddress="0x011534" />
+  </table>
+
+  <table name="Gear 5 Shift Stage Value D" storageaddress="0x011554">
+   <table type="X Axis" storageaddress="0x01154A" />
+  </table>
+
+  <table name="Mode 1 Pressure Threshold E" storageaddress="0x010AAA">
+   <table type="X Axis" storageaddress="0x010A96" />
+  </table>
+
+  <table name="Mode 2 Pressure Threshold E" storageaddress="0x010AD4">
+   <table type="X Axis" storageaddress="0x010AC0" />
+  </table>
+
+  <table name="CAN 0x511 Byte 4 Threshold Curve" storageaddress="0x011A68">
+   <table type="X Axis" storageaddress="0x011A5C" />
+  </table>
+
+  <table name="CAN 0x410 Chain Response Curve" storageaddress="0x011ADE">
+   <table type="X Axis" storageaddress="0x011ABE" />
+  </table>
+
+  <table name="Signal FE Response Curve" storageaddress="0x011B20">
+   <table type="X Axis" storageaddress="0x011B00" />
+  </table>
+
+  <table name="Smoothed Signal Response Curve" storageaddress="0x0119FA">
+   <table type="X Axis" storageaddress="0x0119E4" />
+  </table>
+
+  <table name="Gear Ratios (1st-5th)" storageaddress="0x01234C" />
+
+  <table name="Shift State Bit Pattern 1 of 5" storageaddress="0x0087AA" />
+
+  <table name="Shift State Bit Pattern 2 of 5" storageaddress="0x0087B8" />
+
+  <table name="Shift State Bit Pattern 3 of 5" storageaddress="0x0087C6" />
+
+  <table name="Shift State Bit Pattern 4 of 5" storageaddress="0x0087D4" />
+
+  <table name="Shift State Bit Pattern 5 of 5" storageaddress="0x0087E2" />
+
+  <table name="Cold ATF 5th Gear Lockout Temperature" storageaddress="0x01000A" />
+
+  <table name="Assumed ATF Temperature (Sensor Fallback)" storageaddress="0x011CF6" />
+
+  <table name="Cold Switchover Temperature (Lower)" storageaddress="0x00806E" />
+
+  <table name="Cold Switchover Temperature (Upper)" storageaddress="0x00806F" />
+
+  <table name="Speed Sensor 1 Pulses Per Revolution" storageaddress="0x01C2C1" />
+
+  <table name="Speed Sensor 2 Pulses Per Revolution" storageaddress="0x01C2C2" />
+
+  <table name="Speed Signal Ceiling (RPM)" storageaddress="0x01C2A8" />
+
+  <table name="Signal Smoothing Filter Gain (CAN 0x410 Chain)" storageaddress="0x01137C" />
+
+  <table name="Signal Smoothing Filter Gain (Signal FE Chain)" storageaddress="0x01137E" />
+
+  <table name="Gear Threshold Constant" storageaddress="0x010840" />
+
+  <table name="Signal Threshold Constant" storageaddress="0x010842" />
+
+  <table name="Shift 1-2 Upshift Curve" storageaddress="0x016AB8" />
+
+  <table name="Shift 2-1 Downshift Curve" storageaddress="0x016ADA" />
+
+  <table name="Shift 2-3 Upshift Curve" storageaddress="0x016AF4" />
+
+  <table name="Shift 3-2 Downshift Curve" storageaddress="0x016B1E" />
+
+  <table name="Shift 3-4 Upshift Curve" storageaddress="0x016B40" />
+
+  <table name="Shift 4-3 Downshift Curve" storageaddress="0x016B6A" />
+
+  <table name="Shift 4-5 Upshift Curve" storageaddress="0x016B94" />
+
+  <table name="Shift 5-4 Downshift Curve" storageaddress="0x016BBE" />
+
+  <table type="Switch" name="DTC P072C Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040B0" sizey="8">
+   <description>Subaru transmission DTC P072C (Output/Turbine Speed Sensor circuit family (variant, non-standard offset)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 49 07 2C E0 FF 00 00" />
+   <state name="off" data="A0 49 00 00 E0 FF 00 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0730 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040B8" sizey="8">
+   <description>Subaru transmission DTC P0730 (Incorrect Gear Ratio). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 49 07 30 60 00 F0 00" />
+   <state name="off" data="A0 49 00 00 60 00 F0 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0734 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040C0" sizey="8">
+   <description>Subaru transmission DTC P0734 (Incorrect Gear Ratio (specific gear variant)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 29 07 34 60 3F F0 00" />
+   <state name="off" data="A0 29 00 00 60 3F F0 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0736 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040C8" sizey="8">
+   <description>Subaru transmission DTC P0736 (Incorrect Gear Ratio - Reverse). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 36 60 FF 50 18" />
+   <state name="off" data="A0 09 00 00 60 FF 50 18" />
+  </table>
+
+  <table type="Switch" name="DTC P0760 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040D0" sizey="8">
+   <description>Subaru transmission DTC P0760 (Shift Solenoid C). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 60 60 FF 50 18" />
+   <state name="off" data="A0 09 00 00 60 FF 50 18" />
+  </table>
+
+  <table type="Switch" name="DTC P0762 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040D8" sizey="8">
+   <description>Subaru transmission DTC P0762 (meaning not identified — generic P07xx transmission code). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 62 60 FF 50 18" />
+   <state name="off" data="A0 09 00 00 60 FF 50 18" />
+  </table>
+
+  <table type="Switch" name="DTC P0763 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040E0" sizey="8">
+   <description>Subaru transmission DTC P0763 (meaning not identified — generic P07xx transmission code). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 63 90 F0 00 F0" />
+   <state name="off" data="A0 09 00 00 90 F0 00 F0" />
+  </table>
+
+  <table type="Switch" name="DTC P0764 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040E8" sizey="8">
+   <description>Subaru transmission DTC P0764 (Shift Solenoid C (variant)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 64 10 89 F0 00" />
+   <state name="off" data="A0 09 00 00 10 89 F0 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0745 (A) Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040F0" sizey="8">
+   <description>Subaru transmission DTC P0745 (Pressure Control Solenoid circuit family). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A1 90 07 45 62 01 01 E2" />
+   <state name="off" data="A1 90 00 00 62 01 01 E2" />
+  </table>
+
+  <table type="Switch" name="DTC P0745 (B) Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040F8" sizey="8">
+   <description>Subaru transmission DTC P0745 (Pressure Control Solenoid circuit family). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A1 00 07 45 61 0F F0 00" />
+   <state name="off" data="A1 00 00 00 61 0F F0 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0746 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004100" sizey="8">
+   <description>Subaru transmission DTC P0746 (Pressure Control Solenoid Performance/Stuck). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A1 20 07 46 E1 C0 7C 74" />
+   <state name="off" data="A1 20 00 00 E1 C0 7C 74" />
+  </table>
+
+ </rom>
+
+ <rom base="SUBARU_5EAT_91D1206000">
+  <romid>
    <xmlid>SUBARU_5EAT_ACD1A06000</xmlid>
    <internalidaddress>0x8008</internalidaddress>
    <internalidstring>MB558D20</internalidstring>

@@ -747,6 +747,16 @@ ROM_PROFILES = [
         "offsets": {"SpeedTrimA": 142, "PressureB": 144, "PressureC": 144, "ShiftStageD": 96, "PressureThresholdE": 144, "SlipThreshold": 100, "RefSpeedBaseline": 100, "CAN511Threshold": 100, "SignalResponseCurves": 100},
     },
     {
+        "id": "ADE0236000", "rom_file": "5EAT_ADE0236000.bin",
+        "xmlid": "SUBARU_5EAT_ADE0236000", "base": "SUBARU_5EAT_91D1206000",
+        "internalidstring": "MB562EH", "caseid": "Q8C", "year": "Unknown",
+        "market": "Unknown", "submodel": "ADE0236000", "filesize": "512kb",
+        "offsets": {"SpeedTrimA": 592, "PressureB": 592, "PressureC": 592,
+                    "ShiftStageD": 544, "PressureThresholdE": 592,
+                    "SlipThreshold": 548, "RefSpeedBaseline": 548,
+                    "CAN511Threshold": 548, "SignalResponseCurves": 548},
+    },
+    {
         "id": "ACD1A06000", "rom_file": "ACD1A06000_JDM_5EAT_2007_M32176F4V.bin",
         "xmlid": "SUBARU_5EAT_ACD1A06000", "base": "SUBARU_5EAT_91D1206000",
         "internalidstring": "MB558D20", "caseid": "Q6E", "year": "2007",

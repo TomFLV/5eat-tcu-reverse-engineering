@@ -193,10 +193,10 @@ checksums. Only the first two have had their tables mapped so far.
 | `MB4434` | `ABD1A03100` | 384K | JDM Legacy GT 2005 | **yes** |
 | `MB4373` | `91D1207900` | 384K | Hitachi 31711AG589 | **yes** |
 | `MB440X` | `AAD1A07100` | 384K | Hitachi 31711AJ782 | **yes** |
-| `MB5300` | `ABD1207000` | 384K | 06 JDM Legacy GT | **yes** (no DTC) |
-| `MB558D20` | `ACD1A06000` | 512K | JDM 2007 | **yes** (no DTC) |
-| `MB558D01` | `ACD1207000` | 512K | LGT06 JDM | **yes** (no DTC) |
-| `MB562EH1` | `ADE0236000` | 512K | — | not yet |
+| `MB5300` | `ABD1207000` | 384K | 06 JDM Legacy GT | **yes** |
+| `MB558D20` | `ACD1A06000` | 512K | JDM 2007 | **yes** |
+| `MB558D01` | `ACD1207000` | 512K | LGT06 JDM | **yes** |
+| `MB562EH` | `ADE0236000` | 512K | — | **yes** |
 
 `ACD1207000` was uploaded under the filename `AC91207000_...`; the ID here is the
 one actually stored in the binary.
@@ -237,14 +237,34 @@ rather than inspection:
 the target ROM's own embedded count field, refusing to emit anything if they
 disagree.
 
-### Still open
+Both of the gaps noted earlier are now closed:
 
-`ADE0236000` has **13** table call sites rather than 12, so positional mapping is
-unsafe for it; it is excluded until the extra site is identified.
+- `ADE0236000` had **13** call sites rather than 12. The extra one is a second
+  signal-response curve at `0x0119C4`; dropping it restores the standard twelve
+  and all eight families verify.
+- The DTC table is **not** at a fixed address. The later `MB5300` / `MB558xx` /
+  `MB562xx` calibrations relocate it *and* carry a different code set
+  (`P072C`/`P0730`/`P0734`/`P0736`/`P0760` rather than `P0700` onward). It is now
+  located by scanning the `0x4000` block for the longest run of 8-byte records
+  with a valid `P07xx` code field.
 
-`ABD1207000`, `ACD1207000` and `ACD1A06000` emit 53 tables rather than 72 — their
-DTC records did not match the expected layout at `0x4090`. These are the later
-calibrations and may relocate that table.
+### Shift schedule addresses
+
+The `gear x 2 + mode x 10` pointer array also relocates per firmware and cannot be
+offset-derived. It is found by fingerprinting that index expression in each
+decompiler output:
+
+| Firmware | Array | Firmware | Array |
+|---|---|---|---|
+| 91D1206000 | `0x17714` | 91D1207900 | `0x17828` |
+| 91FE216300 | `0x174B4` | AAD1A07100 | `0x17AAC` |
+| 91D0207500 | `0x17DD4` | ABD1207000 | `0x17F9C` |
+| 91F0217100 | `0x176F8` | ACD1207000 | `0x180F0` |
+| ABD1A03100 | `0x17F5C` | ACD1A06000 | `0x180E8` |
+| ADE0236000 | `0x180DC` | | |
+
+All eleven yield 8/8 real curves. The `ACD1A06000` entry independently reproduces
+the `0x180E8` address rimwall stated in the forum thread.
 
 ### One archive excluded
 

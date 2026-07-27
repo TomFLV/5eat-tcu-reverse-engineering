@@ -4,7 +4,7 @@ Reverse engineering of a Subaru 5EAT (5-speed automatic) transmission control un
 ROM, and a working RomRaider definition file that lets you open and edit the
 calibration tables in it.
 
-**Eleven firmwares included**, all Mitsubishi/Renesas M32R, all with verified
+**All eleven firmwares are mapped**, all Mitsubishi/Renesas M32R, all with verified
 checksums. Full decompiler output is provided for every one of them.
 
 | Cal ID | ROM ID | Size | Vehicle / notes | Tables mapped |
@@ -19,7 +19,7 @@ checksums. Full decompiler output is provided for every one of them.
 | `MB5300` | `ABD1207000` | 384K | 06 JDM Legacy GT | not yet |
 | `MB558D20` | `ACD1A06000` | 512K | JDM 2007 | not yet |
 | `MB558D01` | `ACD1207000` | 512K | LGT06 JDM | not yet |
-| `MB562EH1` | `ADE0236000` | 512K | — | not yet |
+| `MB562EH` | `ADE0236000` | 512K | — | **yes** |
 
 The definition file carries every mapped firmware. **RomRaider selects the right
 one automatically** by matching the cal ID at `0x8008` when you open a ROM —
