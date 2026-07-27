@@ -2,11 +2,14 @@
 Generates definitions/5eat_tcu_romraider_defs.xml -- a single RomRaider
 definition covering every firmware in rom/.
 
-Each firmware is emitted as its own <rom> block keyed on the calibration ID at
-0x8008, so RomRaider selects the right one automatically when a ROM is opened.
-The first profile is the base and carries full table definitions; the rest
-inherit names, scaling and descriptions via <rom base="..."> and override only
-addresses.
+Each firmware is emitted as its own STANDALONE <rom> block keyed on the
+calibration ID at 0x8008, so RomRaider selects the right one automatically when
+a ROM is opened.
+
+Inheritance via <rom base="..."> is deliberately NOT used. It silently pulled the
+base firmware's scalars and DTC switches into every derived block at base-ROM
+addresses -- one firmware was building 24 DTC tables when it has 11. Standalone
+blocks cost repetition in the output and remove a whole class of silent error.
 
 Regenerate from here rather than hand-editing the XML. Every derived address is
 re-checked against the target ROM's own embedded count field before being
@@ -498,8 +501,9 @@ def build_scalar_xml(scalar):
 #
 # The record block is CONTIGUOUS, so it maps onto a RomRaider 3D table with
 # sizex=4 (the four fields) and sizey=n (the records) without needing any
-# stride support. Columns 3-4 repeat the following row's columns 1-2; the
-# editor must keep them consistent.
+# a stride attribute -- the record block is contiguous, so sizex=4 maps onto it
+# directly. Columns 3-4 repeat the following row's columns 1-2; the editor must
+# keep them consistent.
 # ---------------------------------------------------------------------------
 # Per-firmware shift curve addresses and row counts, derived by locating the
 # gear x mode pointer array in each ROM's decompiler output (the index expression

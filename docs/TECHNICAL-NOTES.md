@@ -2,8 +2,11 @@
 
 How the tables, the checksum, and the unit conversions in this project were worked
 out. This covers method as much as results, so the same approach can be applied to
-other firmware revisions — the addresses here are specific to `91D1206000` and will
-not transfer.
+firmwares not yet included.
+
+Addresses given below are for **`91D1206000`**, the reference firmware. Eleven are
+mapped in total; structure and formats are shared across the family but **specific
+addresses are not** — they shift non-uniformly and are derived per firmware.
 
 ---
 
@@ -82,20 +85,27 @@ Handled by `0x45070`. Record *i* holds breakpoint *i* in field A and breakpoint
 down-shift trigger points, which is exactly what an automatic transmission shift
 schedule needs.
 
-**This format is not currently exposed in RomRaider.** Its fields are interleaved
-at an 8-byte stride, and RomRaider's table schema has no stride or increment
-attribute — confirmed by decompiling RomRaider's own `TableScaleUnmarshaller`.
-Defining these as if they were contiguous would silently write to the wrong bytes
-on save.
+**This format IS exposed**, as `type="3D"` tables.
 
-Roughly 28 real tables in this format have been located across two regions
-(`0x15CA8`–`0x15F1E` and `0xF000`–`0x12800`), plus at least 8 further gear-indexed
-families. `0x45070` has around 75 call sites in total.
+It was excluded for a long time on the reasoning that the fields are interleaved
+at an 8-byte stride and RomRaider's schema has no stride attribute. That
+reasoning was wrong, and worth recording as a caution: the *fields* are
+interleaved, but the *record block is contiguous*. A 3D table with `sizex=4`
+(the four fields) and `sizey=n` (the records) maps onto the raw bytes exactly,
+with no stride support needed. RomRaider's own parser accepts them.
 
-A possible route to exposing them: RomRaider's `type="3D"` tables give the data
-block, X axis and Y axis three fully independent storage addresses, so a 3D table
-whose data block points at the record array would match the physical layout
-directly. This has not been tested and is not shipped.
+Currently exposed:
+
+- **8 shift schedule curves** per firmware, in real units (see below).
+- **35 further record curves**, including the two temperature sensor
+  linearisation tables. These carry `raw` values — their inputs are named where
+  traced and labelled as unidentified internal signals where not.
+
+They are found by enumerating every call site of the record-lookup routine and
+reading the table pointer from the argument, then filtering to curves whose
+breakpoint column is genuinely monotonic. **That filter is load-bearing**: it
+rejects the gear-indexed pointer arrays, which otherwise walk as
+plausible-looking tables and would ship addresses pointing at pointer bytes.
 
 ### Format 3 — plain contiguous arrays
 
@@ -132,9 +142,18 @@ entries; the 14-byte spacing shows they're 14 entries each.
 
 ## Unit conversions
 
-Three are confirmed. Each was verified two independent ways — against the factory
-service manual *and* against the firmware's own arithmetic. Anything not meeting
-that bar is left labelled `raw`.
+Five are confirmed. Each was verified two independent ways — against an external
+reference (the factory service manual, or a shift chart posted by rimwall) *and*
+against the firmware's own arithmetic. Anything not meeting that bar is left
+labelled `raw`.
+
+| Quantity | Conversion |
+|---|---|
+| Gear ratios | `raw / 1024` |
+| Engine speed | `raw / 8` |
+| Temperature | `raw − 40` °C |
+| Vehicle speed | km/h, no scaling |
+| Accelerator angle | `raw / 255` → 0–100% |
 
 ### Gear ratios — `raw / 1024`
 
@@ -264,8 +283,11 @@ Recorded so they aren't mistaken for oversights:
 - **No checksum-fix table in the definition.** RomRaider's checksum support is
   hardcoded per ECU family in Java and doesn't cover this one. Including a
   checksum table would imply it works.
-- **Format-2 tables not exposed.** See above — the stride problem is real and
-  defining them anyway would corrupt saves.
+- **Five firmwares omit the record curves.** Positional matching against the base
+  ROM's call-site order is only safe where the counts match; five firmwares issue
+  34 or 36 call sites against the base's 35, so the mapping could be off by one
+  somewhere undetectable. Those five keep their fully verified 56-64 tables
+  instead of an approximated set.
 - **Pressure and most temperature constants left unlabelled.** No confirmed
   conversion, so `raw` is the honest answer.
 - **The `0x5AA5A55A` checksum from FastECU not implemented.** It doesn't hold for
