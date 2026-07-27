@@ -40,7 +40,7 @@ marked as such rather than guessed at.
 | [`docs/ROMRAIDER-SETUP.md`](docs/ROMRAIDER-SETUP.md) | How to actually get this working in your RomRaider install. |
 | [`docs/ROM-DETAILS.md`](docs/ROM-DETAILS.md) | Everything known about this specific binary — provenance, IDs, memory map. |
 | [`docs/TECHNICAL-NOTES.md`](docs/TECHNICAL-NOTES.md) | How the tables, checksum, and unit scales were worked out. |
-| [`tools/`](tools/) | Python tools (checksum fix, definition generator, validators), Ghidra scripts, and a [headless RomRaider verifier](tools/romraider-cli/). |
+| [`tools/`](tools/) | Checksum fix, definition generator, validators, Ghidra scripts, and a [headless RomRaider verifier](tools/romraider-cli/). See [`tools/README.md`](tools/README.md). |
 | [`decompiled/`](decompiled/) | Full decompiler output for both ROMs, ~46,500 lines each. |
 | [`rom/`](rom/) | The ROM images themselves. |
 
@@ -110,6 +110,16 @@ ROM, exactly where that reading predicts.
 IDK
 
 ---
+
+## Contributing
+
+Adding a firmware is documented in [`tools/README.md`](tools/README.md#adding-a-firmware).
+Dumps of TCUs not already here are the most useful thing anyone can contribute —
+five of the eleven still need their record-format curves mapped, and that needs a
+Ghidra pass per image rather than any shortcut.
+
+If you contributed a ROM to the forum thread and want it removed or credited
+differently, open an issue.
 
 ## Credits
 

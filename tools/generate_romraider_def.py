@@ -866,14 +866,16 @@ INFO_README = (
 )
 
 
-def build_info_table_xml(profile=None):
+def build_info_table_xml(profile):
     # type="1D" was the wrong choice — RomRaider shows a 1D table's raw stored
     # value as its headline content (byte at 0x008008 is ASCII 'M' = 0x4D = 77
     # decimal — hence the confusing bare "77" the user saw), with the
     # description only secondary. A Switch table displays its STATE NAME
     # instead, so give it exactly one state matching the real, known, never-
     # edited byte there, so the readable label is what actually shows up.
-    desc = escape(INFO_README)
+    ident = f"{profile['id']}  (cal ID {profile['internalidstring']}, "
+    ident += f"{profile['market']}, {profile['filesize']})"
+    desc = escape("Firmware: " + ident + "\n\n" + INFO_README)
     return f"""  <table type="Switch" name="Read This First" category="Info" storageaddress="0x008008" sizey="1" locked="true">
    <description>{desc}</description>
    <state name="(see description below)" data="4D" />
@@ -934,23 +936,6 @@ def build_table_xml(family, index, header_addr, base_addr=None):
    </table>
    <description>{desc}</description>
   </table>"""
-
-
-def build_table_override_xml(family, index, base_addr, addr):
-    """
-    Address-only override for a derived <rom base="...">. Name must match the
-    base definition exactly -- that is what RomRaider keys the inheritance on.
-    Everything else (scaling, units, description, axis label) is inherited.
-    """
-    n, axis_addr, data_addr = table_addrs(addr)
-    overrides = family.get("per_table", {}).get(base_addr, {})
-    if "name" in overrides:
-        base_name = overrides["name"]
-    else:
-        base_name = family["name_template"].format(i=index)
-    return (f'  <table name="{escape(base_name)}" storageaddress="0x{data_addr:06X}">\n'
-            f'   <table type="X Axis" storageaddress="0x{axis_addr:06X}" />\n'
-            f'  </table>')
 
 
 def verify_profile(profile, rom_bytes):

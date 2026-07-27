@@ -35,7 +35,9 @@
 
   <!-- ============ Info ============ -->
   <table type="Switch" name="Read This First" category="Info" storageaddress="0x008008" sizey="1" locked="true">
-   <description>Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
+   <description>Firmware: 91D1206000  (cal ID MB431M, JDM, 384kb)
+
+Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
 
 Firmware: 91D1206000 (MB431M / R9H)
 
@@ -972,7 +974,9 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <!-- ============ Info ============ -->
   <table type="Switch" name="Read This First" category="Info" storageaddress="0x008008" sizey="1" locked="true">
-   <description>Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
+   <description>Firmware: 91FE216300  (cal ID MB436G, USDM, 512kb)
+
+Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
 
 Firmware: 91D1206000 (MB431M / R9H)
 
@@ -1823,7 +1827,9 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <!-- ============ Info ============ -->
   <table type="Switch" name="Read This First" category="Info" storageaddress="0x008008" sizey="1" locked="true">
-   <description>Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
+   <description>Firmware: 91D0207500  (cal ID MB436T, JDM, 384kb)
+
+Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
 
 Firmware: 91D1206000 (MB431M / R9H)
 
@@ -2674,7 +2680,9 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <!-- ============ Info ============ -->
   <table type="Switch" name="Read This First" category="Info" storageaddress="0x008008" sizey="1" locked="true">
-   <description>Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
+   <description>Firmware: 91F0217100  (cal ID MB436P, USDM, 384kb)
+
+Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
 
 Firmware: 91D1206000 (MB431M / R9H)
 
@@ -3525,7 +3533,9 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <!-- ============ Info ============ -->
   <table type="Switch" name="Read This First" category="Info" storageaddress="0x008008" sizey="1" locked="true">
-   <description>Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
+   <description>Firmware: ABD1A03100  (cal ID MB4434, JDM, 384kb)
+
+Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
 
 Firmware: 91D1206000 (MB431M / R9H)
 
@@ -4060,7 +4070,9 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <!-- ============ Info ============ -->
   <table type="Switch" name="Read This First" category="Info" storageaddress="0x008008" sizey="1" locked="true">
-   <description>Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
+   <description>Firmware: 91D1207900  (cal ID MB4373, JDM, 384kb)
+
+Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
 
 Firmware: 91D1206000 (MB431M / R9H)
 
@@ -4911,7 +4923,9 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <!-- ============ Info ============ -->
   <table type="Switch" name="Read This First" category="Info" storageaddress="0x008008" sizey="1" locked="true">
-   <description>Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
+   <description>Firmware: AAD1A07100  (cal ID MB440X, JDM, 384kb)
+
+Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
 
 Firmware: 91D1206000 (MB431M / R9H)
 
@@ -5762,7 +5776,9 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <!-- ============ Info ============ -->
   <table type="Switch" name="Read This First" category="Info" storageaddress="0x008008" sizey="1" locked="true">
-   <description>Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
+   <description>Firmware: ABD1207000  (cal ID MB5300, JDM, 384kb)
+
+Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
 
 Firmware: 91D1206000 (MB431M / R9H)
 
@@ -6249,7 +6265,9 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <!-- ============ Info ============ -->
   <table type="Switch" name="Read This First" category="Info" storageaddress="0x008008" sizey="1" locked="true">
-   <description>Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
+   <description>Firmware: ACD1207000  (cal ID MB558D01, JDM, 512kb)
+
+Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
 
 Firmware: 91D1206000 (MB431M / R9H)
 
@@ -6736,7 +6754,9 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <!-- ============ Info ============ -->
   <table type="Switch" name="Read This First" category="Info" storageaddress="0x008008" sizey="1" locked="true">
-   <description>Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
+   <description>Firmware: ADE0236000  (cal ID MB562EH, Unknown, 512kb)
+
+Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
 
 Firmware: 91D1206000 (MB431M / R9H)
 
@@ -7223,7 +7243,9 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <!-- ============ Info ============ -->
   <table type="Switch" name="Read This First" category="Info" storageaddress="0x008008" sizey="1" locked="true">
-   <description>Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
+   <description>Firmware: ACD1A06000  (cal ID MB558D20, JDM, 512kb)
+
+Subaru 5EAT TCU (5-speed automatic transmission control unit), Mitsubishi/Renesas M32R CPU.
 
 Firmware: 91D1206000 (MB431M / R9H)
 
