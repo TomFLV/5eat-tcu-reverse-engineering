@@ -188,14 +188,14 @@ checksums. Only the first two have had their tables mapped so far.
 |---|---|---|---|---|
 | `MB431M` | `91D1206000` | 384K | JDM | yes |
 | `MB436G` | `91FE216300` | 512K | USDM, Early 2005 Outback XT | yes |
-| `MB436T` | `91D0207500` | 384K | JDM | not yet |
-| `MB436P` | `91F0217100` | 384K | USDM Outback 03 | not yet |
-| `MB4434` | `ABD1A03100` | 384K | JDM Legacy GT 2005 | not yet |
-| `MB4373` | `91D1207900` | 384K | Hitachi 31711AG589 | not yet |
-| `MB440X` | `AAD1A07100` | 384K | Hitachi 31711AJ782 | not yet |
-| `MB5300` | `ABD1207000` | 384K | 06 JDM Legacy GT | not yet |
-| `MB558D20` | `ACD1A06000` | 512K | JDM 2007 | not yet |
-| `MB558D01` | `ACD1207000` | 512K | LGT06 JDM | not yet |
+| `MB436T` | `91D0207500` | 384K | JDM | **yes** |
+| `MB436P` | `91F0217100` | 384K | USDM Outback 03 | **yes** |
+| `MB4434` | `ABD1A03100` | 384K | JDM Legacy GT 2005 | **yes** |
+| `MB4373` | `91D1207900` | 384K | Hitachi 31711AG589 | **yes** |
+| `MB440X` | `AAD1A07100` | 384K | Hitachi 31711AJ782 | **yes** |
+| `MB5300` | `ABD1207000` | 384K | 06 JDM Legacy GT | **yes** (no DTC) |
+| `MB558D20` | `ACD1A06000` | 512K | JDM 2007 | **yes** (no DTC) |
+| `MB558D01` | `ACD1207000` | 512K | LGT06 JDM | **yes** (no DTC) |
 | `MB562EH1` | `ADE0236000` | 512K | — | not yet |
 
 `ACD1207000` was uploaded under the filename `AC91207000_...`; the ID here is the
@@ -213,17 +213,38 @@ Solving for the checksummed range across all eleven shows the family uses two:
 `tools/checksum.py` detects which an image uses rather than assuming, by testing
 which candidate reproduces the value the ROM already stores.
 
-### Why the other nine aren't mapped yet
+### How the mapping was done
 
-Porting table addresses by matching known byte patterns is not reliable here. The
-flatter tables (`Pressure B` is all 20s, `Shift Stage D` is `6,6,6,10,10`) occur
-in several places, so multiple candidate offsets pass a structural check. Only
-four of nine families resolve unambiguously that way.
+Byte-pattern matching was tried first and rejected: the flatter tables
+(`Pressure B` is all 20s, `Shift Stage D` is `6,6,6,10,10`) recur elsewhere in the
+image, so multiple candidate offsets pass a structural check and only four of nine
+families resolve unambiguously.
 
-Doing it properly means enumerating lookup-routine call sites in each ROM's
-decompiler output, as was done for the first two — which needs a Ghidra pass per
-image. The addresses shift non-uniformly between firmwares, so there is no single
-offset that can be applied.
+The mapping instead comes from enumerating lookup-routine call sites in each ROM's
+decompiler output. Every firmware issues the same twelve table call sites in the
+same address order, so roles map positionally; the gear-indexed pointer arrays are
+then dereferenced to get the real table addresses.
+
+**The offsets cannot be extrapolated.** Two traps, both caught by verification
+rather than inspection:
+
+- The pointer-array delta is *not* the gear-table delta. Using it produced
+  plausible-looking wrong addresses.
+- `SpeedTrimA` sits at **+142** on five firmwares where every other family in the
+  same ROM is at +144.
+
+`tools/generate_romraider_def.py` re-derives every address and checks it against
+the target ROM's own embedded count field, refusing to emit anything if they
+disagree.
+
+### Still open
+
+`ADE0236000` has **13** table call sites rather than 12, so positional mapping is
+unsafe for it; it is excluded until the extra site is identified.
+
+`ABD1207000`, `ACD1207000` and `ACD1A06000` emit 53 tables rather than 72 — their
+DTC records did not match the expected layout at `0x4090`. These are the later
+calibrations and may relocate that table.
 
 ### One archive excluded
 
