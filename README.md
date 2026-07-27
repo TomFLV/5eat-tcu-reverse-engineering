@@ -133,9 +133,36 @@ Both claims in that post were checked against the `ACD1A06000` image and hold
 exactly: the pointer array is at `0x180E8`, its first entry points to `0x01683C`,
 and the data there parses as (speed, pedal) pairs ending in `0xFFFF`.
 
-*The author's forum username is not visible to logged-out visitors, so it is not
-recorded here yet. If this is your work, open an issue and I will credit you
-properly.*
+**The chart is rimwall's work.**
+
+### The people in that thread
+
+The thread runs to 380 posts over several years. These are the contributors named
+in it — the work here rests on theirs:
+
+**[rimwall](https://github.com/rimwall)** — by a wide margin the largest
+contributor: the shift-curve chart above, the shift-table encoding, the
+security-access and protocol work that made these TCUs readable at all, the Denso
+side, and the FastECU OEM fork.
+
+**MiikaS** ([miikasyvanen](https://github.com/miikasyvanen)) — FastECU itself,
+without which none of these ROMs could be dumped.
+
+**ajayel**, **riksk**, **jimihimisimi**, **AJ08H65EAT**, **kiki86**,
+**curt4576** — the testing effort: dumping TCUs, running experimental builds,
+posting logs, and bricking-risk on their own vehicles to prove the read/write
+paths.
+
+**Sasha_A80** — the original JDM ROM that opens the thread and the M32R chip
+identification. **V6er**, **trcxsa**, **Blake_Volpex**, **ciper**, **SergArb**,
+**roadie**, **Waselon**, **dschultz**, **b4andrey**, **Tugsay**,
+**Alucard7002**, **alesv**, **lvkeith**, **fenugrec** — analysis, ROM dumps,
+corrections and domain knowledge throughout.
+
+**Comer352L** — FreeSSM, and the branch adding 5EAT TCU adjustment support.
+
+If you are on this list and want your name removed, changed, or your contribution
+described differently, open an issue.
 
 ### Prior and parallel work
 
