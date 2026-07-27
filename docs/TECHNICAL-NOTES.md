@@ -268,11 +268,23 @@ pressure control *solenoid* codes (an output), and there is no pressure sensor
 circuit code anywhere in it. The pressure-related status bits found in RAM are
 switch (on/off) feedback, not analogue.
 
-So pressure is commanded open-loop via a duty solenoid. The target for a kPa scale
-factor is the TCU's *computed* value, and the manual gives exact figures to
-validate against: 490 kPa (D, closed throttle), 1370 kPa (D, full open), 1370 kPa
-(R, closed). A brute-force scale search against those numbers has been run and
-produced only coincidental matches — not enough to claim a conversion.
+So pressure is commanded open-loop via a duty solenoid.
+
+**kPa is not stored in these ROMs.** Four tests across all eleven firmwares:
+the manual's values appear as code immediates **zero** times; no calibration run
+spans the pressure bands; no record curve has a pressure-shaped value range; and
+`490` and `1370` both appear in the calibration region of only **1 of 11**
+firmwares. Those are transmission specs identical across every variant — if the
+TCU stored them they would be in all eleven, so the single hit is chance.
+
+The likely explanation is that the TCU reports a raw duty or target value and the
+**Select Monitor performs the kPa conversion itself** — consistent with there
+being no pressure sensor, and with the DTC table having no reader in the ROM
+either. The diagnostic presentation layer is not on the TCU side.
+
+Settling it needs either an SSM parameter definition for the TCU (FreeSSM ships
+none) or empirical logging against the scan tool's readout. **Neither is a
+static-analysis problem; more ROM searching will not resolve it.**
 
 ---
 
