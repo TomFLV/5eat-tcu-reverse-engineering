@@ -36,9 +36,12 @@ It does NOT cover:
   - decompiled/*.c — machine-generated output derived from those binaries,
     carrying the same status.
 
-  - docs/shift-curves-reference.png — a chart produced by a member of the
-    RomRaider forum community, reproduced for reference. Not my work and not
-    mine to license.
+  - docs/shift-curves-reference.png — a chart produced and posted by a member
+    of the RomRaider forum community (thread "5EAT TCM JECS ROM Image", page 9).
+    Reproduced for reference because the shift-schedule units were verified
+    against it. Not my work and not mine to license. The author's username is
+    not visible to logged-out visitors; if it is yours, open an issue and it
+    will be credited or the file removed on request.
 
 The ROM images were dumped and shared by members of the RomRaider forum thread
 "5EAT TCM JECS ROM Image". They are included for interoperability and repair

@@ -117,9 +117,25 @@ The `91FE216300` image (Early 2005 USDM Outback XT) is the one I dumped myself.
 ### The shift-curve chart
 
 [`docs/shift-curves-reference.png`](docs/shift-curves-reference.png) was produced
-and posted to that thread by another member. It is reproduced here because it is
-what the shift-schedule units were verified against — the speed and pedal-angle
-encoding could not have been confirmed without it. **It is not my work.**
+and posted to the thread by another member, on page 9, alongside this description:
+
+> *"The shift table pointers start at 0x180e8. The first lot of data is at
+> 0x0001683c. The data is structured as words (uint16) in pairs of x, y. x is the
+> Vehicle Speed in km/hr. y is the Accelerator Pedal Angle in % where 0xff = 100%.
+> The data is terminated by 0xffff."*
+
+**It is not my work**, and it is the single most valuable external input to this
+project: the shift-schedule units were verified against it. That post also states
+the encoding outright, which independently confirms what was derived here from the
+chart geometry — same units, same 0xff = 100% mapping, same terminator.
+
+Both claims in that post were checked against the `ACD1A06000` image and hold
+exactly: the pointer array is at `0x180E8`, its first entry points to `0x01683C`,
+and the data there parses as (speed, pedal) pairs ending in `0xFFFF`.
+
+*The author's forum username is not visible to logged-out visitors, so it is not
+recorded here yet. If this is your work, open an issue and I will credit you
+properly.*
 
 ### Prior and parallel work
 
