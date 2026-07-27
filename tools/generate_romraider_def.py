@@ -815,7 +815,7 @@ INFO_README = (
 )
 
 
-def build_info_table_xml():
+def build_info_table_xml(profile=None):
     # type="1D" was the wrong choice — RomRaider shows a 1D table's raw stored
     # value as its headline content (byte at 0x008008 is ASCII 'M' = 0x4D = 77
     # decimal — hence the confusing bare "77" the user saw), with the
@@ -844,14 +844,16 @@ HEADER_COMMENT = """<!--
 -->"""
 
 
-def build_table_xml(family, index, header_addr):
+def build_table_xml(family, index, header_addr, base_addr=None):
+    if base_addr is None:
+        base_addr = header_addr
     n, axis_addr, data_addr = table_addrs(header_addr)
 
     # "per_table" lets a family hold several standalone tables that don't share
     # a single name/description template (e.g. SignalResponseCurves, where each
     # entry has a genuinely different confirmed X-input) — override the
     # family-level fields with the per-address ones when present.
-    overrides = family.get("per_table", {}).get(header_addr, {})
+    overrides = family.get("per_table", {}).get(base_addr, {})
     eff = dict(family)
     eff.update(overrides)
 
@@ -943,54 +945,42 @@ def build_rom_block(profile, rom_bytes, is_base):
     saved, data = data, rom_bytes            # table_addrs()/extract_dtc_records() read `data`
     try:
         off = profile["offsets"]
-        open_tag = " <rom>" if is_base else f' <rom base="{profile["base"]}">'
-        parts = [open_tag, build_romid(profile), ""]
+        # Every profile is emitted STANDALONE. RomRaider's <rom base="..."> would
+        # otherwise inherit the base ROM's scalars and DTC switches into firmwares
+        # where those addresses are simply wrong -- verified by loading a derived
+        # ROM through RomRaider's own parser and finding 24 DTC tables on a
+        # firmware that has 11, at base-ROM addresses.
+        parts = [" <rom>", build_romid(profile), ""]
         total = 0
 
-        if is_base:
-            parts.append("  <!-- ============ Info ============ -->")
-            parts.append(build_info_table_xml())
-            parts.append("")
-            total += 1
+        parts.append("  <!-- ============ Info ============ -->")
+        parts.append(build_info_table_xml(profile))
+        parts.append("")
+        total += 1
 
         for family in FAMILIES:
             d = off.get(family["id"], 0)
-            if is_base:
-                parts.append(f"  <!-- ============ {family['category']} ============ -->")
+            parts.append(f"  <!-- ============ {family['category']} ============ -->")
             for i, base_addr in enumerate(family["headers"], start=1):
-                addr = base_addr + d
-                if is_base:
-                    parts.append(build_table_xml(family, i, addr))
-                else:
-                    parts.append(build_table_override_xml(family, i, base_addr, addr))
+                parts.append(build_table_xml(family, i, base_addr + d, base_addr))
                 parts.append("")
                 total += 1
 
-        if is_base:
-            parts.append("  <!-- ============ Direct contiguous arrays ============ -->")
+        # Only emit arrays/scalars whose address is verified for THIS firmware:
+        # the base ROM, or a derived one that declares an explicit offset.
         for arr in DIRECT_ARRAYS:
-            d = off.get(arr["id"], 0)
-            a = dict(arr)
-            a["addr"] = arr["addr"] + d
-            if is_base:
-                parts.append(build_direct_array_xml(a))
-            else:
-                parts.append(f'  <table name="{escape(a["name"])}" '
-                             f'storageaddress="0x{a["addr"]:06X}" />')
+            if not is_base and arr["id"] not in off:
+                continue
+            a = dict(arr); a["addr"] = arr["addr"] + off.get(arr["id"], 0)
+            parts.append(build_direct_array_xml(a))
             parts.append("")
             total += 1
 
-        if is_base:
-            parts.append("  <!-- ============ Transmission - Calibration Constants ============ -->")
         for scalar in SCALARS:
-            d = off.get(scalar["id"], 0)
-            s = dict(scalar)
-            s["addr"] = scalar["addr"] + d
-            if is_base:
-                parts.append(build_scalar_xml(s))
-            else:
-                parts.append(f'  <table name="{escape(s["name"])}" '
-                             f'storageaddress="0x{s["addr"]:06X}" />')
+            if not is_base and scalar["id"] not in off:
+                continue
+            sc = dict(scalar); sc["addr"] = scalar["addr"] + off.get(scalar["id"], 0)
+            parts.append(build_scalar_xml(sc))
             parts.append("")
             total += 1
 
@@ -1000,11 +990,7 @@ def build_rom_block(profile, rom_bytes, is_base):
                 parts.append("  <!-- ============ Transmission - Shift Schedule ============ -->")
             for cname in sorted(curves):
                 c = curves[cname]
-                if is_base:
-                    parts.append(build_shift_curve_xml(cname, c["addr"], c["rows"]))
-                else:
-                    parts.append(f'  <table name="{escape(cname)}" '
-                                 f'storageaddress="0x{c["addr"]:06X}" />')
+                parts.append(build_shift_curve_xml(cname, c["addr"], c["rows"]))
                 parts.append("")
                 total += 1
 
@@ -1013,18 +999,13 @@ def build_rom_block(profile, rom_bytes, is_base):
         for rec in dtc_records:
             code_counts[rec["code"]] = code_counts.get(rec["code"], 0) + 1
         code_seen = {}
-        if is_base:
-            parts.append("  <!-- ============ Diagnostic Trouble Codes ============ -->")
+        parts.append("  <!-- ============ Diagnostic Trouble Codes ============ -->")
         for i, rec in enumerate(dtc_records):
             suffix = ""
             if code_counts[rec["code"]] > 1:
                 code_seen[rec["code"]] = code_seen.get(rec["code"], 0) + 1
                 suffix = f" ({chr(ord('A') + code_seen[rec['code']] - 1)})"
-            if is_base:
-                parts.append(build_dtc_table_xml(rec, i, suffix))
-            else:
-                # DTC record contents differ per firmware; re-emit states.
-                parts.append(build_dtc_table_xml(rec, i, suffix))
+            parts.append(build_dtc_table_xml(rec, i, suffix))
             parts.append("")
             total += 1
 
