@@ -4,15 +4,26 @@ Reverse engineering of a Subaru 5EAT (5-speed automatic) transmission control un
 ROM, and a working RomRaider definition file that lets you open and edit the
 calibration tables in it.
 
-**Two firmwares covered**, both Mitsubishi/Renesas M32R:
+**Eleven firmwares included**, all Mitsubishi/Renesas M32R, all with verified
+checksums. Full decompiler output is provided for every one of them.
 
-| Cal ID | ROM ID | Market | Chip | Size |
+| Cal ID | ROM ID | Size | Vehicle / notes | Tables mapped |
 |---|---|---|---|---|
-| `MB431M` / `VF000` / `R9H` | `91D1206000` | JDM (pre-2005, unconfirmed) | `M32170F3`/`M32174F3` | 384 KB |
-| `MB436G` / `VF305` / `QS1` | `91FE216300` | USDM, Early 2005 Outback XT | `M32176F4` | 512 KB |
+| `MB431M` | `91D1206000` | 384K | JDM | **yes** |
+| `MB436G` | `91FE216300` | 512K | USDM, Early 2005 Outback XT | **yes** |
+| `MB436T` | `91D0207500` | 384K | JDM | not yet |
+| `MB436P` | `91F0217100` | 384K | USDM Outback 03 | not yet |
+| `MB4434` | `ABD1A03100` | 384K | JDM Legacy GT 2005 | not yet |
+| `MB4373` | `91D1207900` | 384K | Hitachi 31711AG589 | not yet |
+| `MB440X` | `AAD1A07100` | 384K | Hitachi 31711AJ782 | not yet |
+| `MB5300` | `ABD1207000` | 384K | 06 JDM Legacy GT | not yet |
+| `MB558D20` | `ACD1A06000` | 512K | JDM 2007 | not yet |
+| `MB558D01` | `ACD1207000` | 512K | LGT06 JDM | not yet |
+| `MB562EH1` | `ADE0236000` | 512K | — | not yet |
 
-The definition file holds both. **RomRaider selects the right one automatically**
-by matching the cal ID at `0x8008` when you open a ROM — you don't pick anything.
+The definition file carries every mapped firmware. **RomRaider selects the right
+one automatically** by matching the cal ID at `0x8008` when you open a ROM —
+there is nothing to choose.
 
 This is an ongoing project. Table addresses, the DTC list, the checksum algorithm,
 and three real-world unit conversions are confirmed. Plenty is still unidentified,
@@ -60,11 +71,26 @@ ways (against the factory service manual *and* against the firmware's own arithm
 - **Engine speed** — `raw / 8`. Gives clean 640 RPM breakpoints topping out at 6400 RPM.
 - **Temperature** — `raw − 40` °C. Two NTC thermistor channels, standard −40…+215 °C
   automotive encoding.
+- **Vehicle speed** — km/h directly, no scaling.
+- **Accelerator angle** — raw 0–255 mapping to 0–100%.
 
 Also confirmed: the **checksum algorithm** (32-bit big-endian two's-complement
-additive, stored twice at `0x8000`/`0x8004`), the **DTC table** at `0x4090` (19 real
-P07xx transmission codes), and the **shift-schedule architecture** (a 50-entry
-pointer array indexed by gear × range-mode).
+additive, stored twice at `0x8000`/`0x8004` — over two different region
+conventions, which the tool detects rather than assumes), the **DTC table** at
+`0x4090` (19 real P07xx transmission codes), and the **shift schedule**, which is
+fully decoded.
+
+### The shift schedule
+
+The eight shift-point curves are editable, in real units. Each is a polyline in
+**vehicle speed (km/h)** against **accelerator opening angle (%)** — the same form
+as the factory shift chart, which is what the encoding was verified against:
+
+![shift curves](docs/shift-curves-reference.png)
+
+Slot A is the upshift from a given gear and slot B the downshift, which is why 1st
+gear has no downshift curve and 5th has no upshift — both are placeholders in the
+ROM, exactly where that reading predicts.
 
 ## What's not
 
