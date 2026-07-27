@@ -573,24 +573,46 @@ DTC_CODE_NAMES = {
     0x074C: "Pressure Control Solenoid circuit family (variant)",
     0x0750: "Shift Solenoid A",
     0x0754: "Shift Solenoid A (variant)",
+    # Codes appearing only in the later MB5300 / MB558xx / MB562xx calibrations.
+    0x0736: "Incorrect Gear Ratio - Reverse",
+    0x0740: "Torque Converter Clutch Circuit",
+    0x0744: "Torque Converter Clutch Circuit Intermittent",
+    0x0760: "Shift Solenoid C",
+    0x0764: "Shift Solenoid C (variant)",
+    0x0770: "Shift Solenoid E",
+    0x0780: "Shift Malfunction",
+    0x0794: "Intermediate Shaft Speed Sensor circuit family",
+    0x07D0: "Manufacturer-specific transmission code (meaning not identified)",
 }
 
 
 def extract_dtc_records():
-    dtc_start = 0x004090
-    off = dtc_start
+    """
+    Locate and walk the DTC table.
+
+    The table is NOT at a fixed address across firmwares: the earlier
+    calibrations start at 0x4090, while the later MB5300/MB558xx/MB562xx ones
+    relocate it and carry a different code set (P072C/P0730/P0734/P0736/P0760
+    rather than P0700 onward). It is therefore found by scanning the 0x4000
+    block for the longest run of 8-byte records whose code field is a valid
+    P07xx transmission code, instead of assuming an address.
+    """
+    best_n, best_base = 0, None
+    for base in range(0x4000, 0x4200, 2):
+        n = 0
+        while base + n * 8 + 8 <= len(data) and 0x0700 <= u16(base + n * 8 + 2) <= 0x07FF:
+            n += 1
+        if n > best_n:
+            best_n, best_base = n, base
+    if best_base is None or best_n < 4:
+        return []
     records = []
-    while True:
-        code = u16(off + 2)
-        if not (0x0700 <= code <= 0x07FF):
-            break
-        flags = u16(off)
-        raw = data[off:off + 8]
+    for i in range(best_n):
+        off = best_base + i * 8
         records.append({
-            "addr": off, "flags_addr": off, "code": code,
-            "data_addr": off + 4, "raw": raw,
+            "addr": off, "flags_addr": off, "code": u16(off + 2),
+            "data_addr": off + 4, "raw": data[off:off + 8],
         })
-        off += 8
     return records
 
 

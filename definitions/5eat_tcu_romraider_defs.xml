@@ -2823,6 +2823,72 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <table name="Shift 5-4 Downshift Curve" storageaddress="0x0165FE" />
 
+  <table type="Switch" name="DTC P072C Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040F8" sizey="8">
+   <description>Subaru transmission DTC P072C (Output/Turbine Speed Sensor circuit family (variant, non-standard offset)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 49 07 2C E0 FF 00 00" />
+   <state name="off" data="A0 49 00 00 E0 FF 00 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0730 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004100" sizey="8">
+   <description>Subaru transmission DTC P0730 (Incorrect Gear Ratio). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 49 07 30 60 00 F0 00" />
+   <state name="off" data="A0 49 00 00 60 00 F0 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0734 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004108" sizey="8">
+   <description>Subaru transmission DTC P0734 (Incorrect Gear Ratio (specific gear variant)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 29 07 34 60 3F F0 00" />
+   <state name="off" data="A0 29 00 00 60 3F F0 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0736 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004110" sizey="8">
+   <description>Subaru transmission DTC P0736 (Incorrect Gear Ratio - Reverse). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 36 60 FF 50 18" />
+   <state name="off" data="A0 09 00 00 60 FF 50 18" />
+  </table>
+
+  <table type="Switch" name="DTC P0760 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004118" sizey="8">
+   <description>Subaru transmission DTC P0760 (Shift Solenoid C). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 60 60 FF 50 18" />
+   <state name="off" data="A0 09 00 00 60 FF 50 18" />
+  </table>
+
+  <table type="Switch" name="DTC P0762 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004120" sizey="8">
+   <description>Subaru transmission DTC P0762 (meaning not identified — generic P07xx transmission code). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 62 60 FF 50 18" />
+   <state name="off" data="A0 09 00 00 60 FF 50 18" />
+  </table>
+
+  <table type="Switch" name="DTC P0763 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004128" sizey="8">
+   <description>Subaru transmission DTC P0763 (meaning not identified — generic P07xx transmission code). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 63 90 F0 00 F0" />
+   <state name="off" data="A0 09 00 00 90 F0 00 F0" />
+  </table>
+
+  <table type="Switch" name="DTC P0764 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004130" sizey="8">
+   <description>Subaru transmission DTC P0764 (Shift Solenoid C (variant)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 64 10 89 F0 00" />
+   <state name="off" data="A0 09 00 00 10 89 F0 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0745 (A) Enable" category="Diagnostic Trouble Codes" storageaddress="0x004138" sizey="8">
+   <description>Subaru transmission DTC P0745 (Pressure Control Solenoid circuit family). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A4 90 07 45 65 01 04 E5" />
+   <state name="off" data="A4 90 00 00 65 01 04 E5" />
+  </table>
+
+  <table type="Switch" name="DTC P0745 (B) Enable" category="Diagnostic Trouble Codes" storageaddress="0x004140" sizey="8">
+   <description>Subaru transmission DTC P0745 (Pressure Control Solenoid circuit family). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A4 00 07 45 64 0F F0 00" />
+   <state name="off" data="A4 00 00 00 64 0F F0 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0746 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004148" sizey="8">
+   <description>Subaru transmission DTC P0746 (Pressure Control Solenoid Performance/Stuck). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A4 20 07 46 E4 C0 7C 74" />
+   <state name="off" data="A4 20 00 00 E4 C0 7C 74" />
+  </table>
+
  </rom>
 
  <rom base="SUBARU_5EAT_91D1206000">
@@ -3038,6 +3104,72 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <table name="Shift 5-4 Downshift Curve" storageaddress="0x0169CA" />
 
+  <table type="Switch" name="DTC P072C Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040B0" sizey="8">
+   <description>Subaru transmission DTC P072C (Output/Turbine Speed Sensor circuit family (variant, non-standard offset)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 49 07 2C E0 FF 00 00" />
+   <state name="off" data="A0 49 00 00 E0 FF 00 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0730 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040B8" sizey="8">
+   <description>Subaru transmission DTC P0730 (Incorrect Gear Ratio). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 49 07 30 60 00 F0 00" />
+   <state name="off" data="A0 49 00 00 60 00 F0 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0734 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040C0" sizey="8">
+   <description>Subaru transmission DTC P0734 (Incorrect Gear Ratio (specific gear variant)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 29 07 34 60 3F F0 00" />
+   <state name="off" data="A0 29 00 00 60 3F F0 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0736 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040C8" sizey="8">
+   <description>Subaru transmission DTC P0736 (Incorrect Gear Ratio - Reverse). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 36 60 FF 50 18" />
+   <state name="off" data="A0 09 00 00 60 FF 50 18" />
+  </table>
+
+  <table type="Switch" name="DTC P0760 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040D0" sizey="8">
+   <description>Subaru transmission DTC P0760 (Shift Solenoid C). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 60 60 FF 50 18" />
+   <state name="off" data="A0 09 00 00 60 FF 50 18" />
+  </table>
+
+  <table type="Switch" name="DTC P0762 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040D8" sizey="8">
+   <description>Subaru transmission DTC P0762 (meaning not identified — generic P07xx transmission code). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 62 60 FF 50 18" />
+   <state name="off" data="A0 09 00 00 60 FF 50 18" />
+  </table>
+
+  <table type="Switch" name="DTC P0763 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040E0" sizey="8">
+   <description>Subaru transmission DTC P0763 (meaning not identified — generic P07xx transmission code). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 63 90 F0 00 F0" />
+   <state name="off" data="A0 09 00 00 90 F0 00 F0" />
+  </table>
+
+  <table type="Switch" name="DTC P0764 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040E8" sizey="8">
+   <description>Subaru transmission DTC P0764 (Shift Solenoid C (variant)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 64 10 89 F0 00" />
+   <state name="off" data="A0 09 00 00 10 89 F0 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0745 (A) Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040F0" sizey="8">
+   <description>Subaru transmission DTC P0745 (Pressure Control Solenoid circuit family). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A1 90 07 45 62 01 01 E2" />
+   <state name="off" data="A1 90 00 00 62 01 01 E2" />
+  </table>
+
+  <table type="Switch" name="DTC P0745 (B) Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040F8" sizey="8">
+   <description>Subaru transmission DTC P0745 (Pressure Control Solenoid circuit family). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A1 00 07 45 61 0F F0 00" />
+   <state name="off" data="A1 00 00 00 61 0F F0 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0746 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004100" sizey="8">
+   <description>Subaru transmission DTC P0746 (Pressure Control Solenoid Performance/Stuck). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A1 20 07 46 E1 C0 7C 74" />
+   <state name="off" data="A1 20 00 00 E1 C0 7C 74" />
+  </table>
+
  </rom>
 
  <rom base="SUBARU_5EAT_91D1206000">
@@ -3252,6 +3384,72 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
   <table name="Shift 4-5 Upshift Curve" storageaddress="0x016980" />
 
   <table name="Shift 5-4 Downshift Curve" storageaddress="0x0169CA" />
+
+  <table type="Switch" name="DTC P072C Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040B0" sizey="8">
+   <description>Subaru transmission DTC P072C (Output/Turbine Speed Sensor circuit family (variant, non-standard offset)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 49 07 2C E0 FF 00 00" />
+   <state name="off" data="A0 49 00 00 E0 FF 00 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0730 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040B8" sizey="8">
+   <description>Subaru transmission DTC P0730 (Incorrect Gear Ratio). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 49 07 30 60 00 F0 00" />
+   <state name="off" data="A0 49 00 00 60 00 F0 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0734 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040C0" sizey="8">
+   <description>Subaru transmission DTC P0734 (Incorrect Gear Ratio (specific gear variant)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 29 07 34 60 3F F0 00" />
+   <state name="off" data="A0 29 00 00 60 3F F0 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0736 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040C8" sizey="8">
+   <description>Subaru transmission DTC P0736 (Incorrect Gear Ratio - Reverse). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 36 60 FF 50 18" />
+   <state name="off" data="A0 09 00 00 60 FF 50 18" />
+  </table>
+
+  <table type="Switch" name="DTC P0760 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040D0" sizey="8">
+   <description>Subaru transmission DTC P0760 (Shift Solenoid C). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 60 60 FF 50 18" />
+   <state name="off" data="A0 09 00 00 60 FF 50 18" />
+  </table>
+
+  <table type="Switch" name="DTC P0762 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040D8" sizey="8">
+   <description>Subaru transmission DTC P0762 (meaning not identified — generic P07xx transmission code). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 62 60 FF 50 18" />
+   <state name="off" data="A0 09 00 00 60 FF 50 18" />
+  </table>
+
+  <table type="Switch" name="DTC P0763 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040E0" sizey="8">
+   <description>Subaru transmission DTC P0763 (meaning not identified — generic P07xx transmission code). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 63 90 F0 00 F0" />
+   <state name="off" data="A0 09 00 00 90 F0 00 F0" />
+  </table>
+
+  <table type="Switch" name="DTC P0764 Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040E8" sizey="8">
+   <description>Subaru transmission DTC P0764 (Shift Solenoid C (variant)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A0 09 07 64 10 89 F0 00" />
+   <state name="off" data="A0 09 00 00 10 89 F0 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0745 (A) Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040F0" sizey="8">
+   <description>Subaru transmission DTC P0745 (Pressure Control Solenoid circuit family). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A1 90 07 45 62 01 01 E2" />
+   <state name="off" data="A1 90 00 00 62 01 01 E2" />
+  </table>
+
+  <table type="Switch" name="DTC P0745 (B) Enable" category="Diagnostic Trouble Codes" storageaddress="0x0040F8" sizey="8">
+   <description>Subaru transmission DTC P0745 (Pressure Control Solenoid circuit family). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A1 00 07 45 61 0F F0 00" />
+   <state name="off" data="A1 00 00 00 61 0F F0 00" />
+  </table>
+
+  <table type="Switch" name="DTC P0746 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004100" sizey="8">
+   <description>Subaru transmission DTC P0746 (Pressure Control Solenoid Performance/Stuck). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
+   <state name="on" data="A1 20 07 46 E1 C0 7C 74" />
+   <state name="off" data="A1 20 00 00 E1 C0 7C 74" />
+  </table>
 
  </rom>
 
