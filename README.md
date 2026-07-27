@@ -11,14 +11,14 @@ checksums. Full decompiler output is provided for every one of them.
 |---|---|---|---|---|
 | `MB431M` | `91D1206000` | 384K | JDM | **yes** |
 | `MB436G` | `91FE216300` | 512K | USDM, Early 2005 Outback XT | **yes** |
-| `MB436T` | `91D0207500` | 384K | JDM | not yet |
-| `MB436P` | `91F0217100` | 384K | USDM Outback 03 | not yet |
-| `MB4434` | `ABD1A03100` | 384K | JDM Legacy GT 2005 | not yet |
-| `MB4373` | `91D1207900` | 384K | Hitachi 31711AG589 | not yet |
-| `MB440X` | `AAD1A07100` | 384K | Hitachi 31711AJ782 | not yet |
-| `MB5300` | `ABD1207000` | 384K | 06 JDM Legacy GT | not yet |
-| `MB558D20` | `ACD1A06000` | 512K | JDM 2007 | not yet |
-| `MB558D01` | `ACD1207000` | 512K | LGT06 JDM | not yet |
+| `MB436T` | `91D0207500` | 384K | JDM | **yes** |
+| `MB436P` | `91F0217100` | 384K | USDM Outback 03 | **yes** |
+| `MB4434` | `ABD1A03100` | 384K | JDM Legacy GT 2005 | **yes** |
+| `MB4373` | `91D1207900` | 384K | Hitachi 31711AG589 | **yes** |
+| `MB440X` | `AAD1A07100` | 384K | Hitachi 31711AJ782 | **yes** |
+| `MB5300` | `ABD1207000` | 384K | 06 JDM Legacy GT | **yes** |
+| `MB558D20` | `ACD1A06000` | 512K | JDM 2007 | **yes** |
+| `MB558D01` | `ACD1207000` | 512K | LGT06 JDM | **yes** |
 | `MB562EH` | `ADE0236000` | 512K | — | **yes** |
 
 The definition file carries every mapped firmware. **RomRaider selects the right
@@ -26,8 +26,9 @@ one automatically** by matching the cal ID at `0x8008` when you open a ROM —
 there is nothing to choose.
 
 This is an ongoing project. Table addresses, the DTC list, the checksum algorithm,
-and three real-world unit conversions are confirmed. Plenty is still unidentified,
-and that's marked honestly throughout rather than guessed at.
+All eleven firmwares are mapped, the shift schedule is decoded in real units, and
+five real-world unit conversions are confirmed. What remains unidentified is
+marked as such rather than guessed at.
 
 ---
 
@@ -94,7 +95,21 @@ ROM, exactly where that reading predicts.
 
 ## What's not
 
-IDK
+Three things, stated plainly:
+
+**Pressure units.** There is no pressure sensor on this transmission — the service
+manual's own test has you fit a mechanical gauge and compare against the TCU's
+commanded target, which only makes sense if the TCU has no feedback. Line pressure
+is open-loop via a duty solenoid. The target for a kPa scale is the *computed*
+value, and the manual gives 490 / 1370 kPa to check against.
+
+**Anything shown as `raw`.** No confirmed conversion. Still the real stored number
+and still editable — just unlabelled, because guessing would be worse.
+
+**None of this has been opened in RomRaider yet.** Addresses are verified against
+each ROM's own count fields, but the XML schema is inferred from a production
+definition rather than tested. The 3D shift tables especially are unproven in the
+actual UI. Treat the whole definition as untested until someone loads it.
 
 ---
 
