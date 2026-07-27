@@ -430,6 +430,95 @@ This is a static file editor only — cannot connect live to the vehicle through
    <description>Confirmed via decompilation: a constant compared against a computed signal delta in the same fault-detection routine that reads the Pressure Threshold E tables. Storage width (byte vs. word) was inferred from the surrounding code pattern, not independently double-checked — verify before relying on the exact stored value.</description>
   </table>
 
+  <!-- ============ Transmission - Shift Schedule ============ -->
+  <table type="3D" name="Shift 1-2 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015CA8" storagetype="uint16" endian="big" sizex="4" sizey="8" userlevel="4">
+   <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Shift point curve, mode 0 (the fully-populated operating mode). Each row is one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+
+Columns: 1 = speed at the start of the segment, 2 = pedal angle at the start, 3 = speed at the end, 4 = pedal angle at the end. Column 3 of a row repeats column 1 of the next row, and column 4 repeats column 2 - KEEP THEM IN SYNC when editing or the curve will break.
+
+Units are confirmed against the factory shift chart: speed is km/h directly, pedal angle is raw 0-255 shown here as 0-100%. A pedal value of 255 in the final row is a max clamp, not a real 100% point.
+
+Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift.</description>
+  </table>
+
+  <table type="3D" name="Shift 2-3 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015D14" storagetype="uint16" endian="big" sizex="4" sizey="8" userlevel="4">
+   <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Shift point curve, mode 0 (the fully-populated operating mode). Each row is one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+
+Columns: 1 = speed at the start of the segment, 2 = pedal angle at the start, 3 = speed at the end, 4 = pedal angle at the end. Column 3 of a row repeats column 1 of the next row, and column 4 repeats column 2 - KEEP THEM IN SYNC when editing or the curve will break.
+
+Units are confirmed against the factory shift chart: speed is km/h directly, pedal angle is raw 0-255 shown here as 0-100%. A pedal value of 255 in the final row is a max clamp, not a real 100% point.
+
+Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift.</description>
+  </table>
+
+  <table type="3D" name="Shift 3-4 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015D90" storagetype="uint16" endian="big" sizex="4" sizey="9" userlevel="4">
+   <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Shift point curve, mode 0 (the fully-populated operating mode). Each row is one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+
+Columns: 1 = speed at the start of the segment, 2 = pedal angle at the start, 3 = speed at the end, 4 = pedal angle at the end. Column 3 of a row repeats column 1 of the next row, and column 4 repeats column 2 - KEEP THEM IN SYNC when editing or the curve will break.
+
+Units are confirmed against the factory shift chart: speed is km/h directly, pedal angle is raw 0-255 shown here as 0-100%. A pedal value of 255 in the final row is a max clamp, not a real 100% point.
+
+Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift.</description>
+  </table>
+
+  <table type="3D" name="Shift 4-5 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015E1C" storagetype="uint16" endian="big" sizex="4" sizey="9" userlevel="4">
+   <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Shift point curve, mode 0 (the fully-populated operating mode). Each row is one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+
+Columns: 1 = speed at the start of the segment, 2 = pedal angle at the start, 3 = speed at the end, 4 = pedal angle at the end. Column 3 of a row repeats column 1 of the next row, and column 4 repeats column 2 - KEEP THEM IN SYNC when editing or the curve will break.
+
+Units are confirmed against the factory shift chart: speed is km/h directly, pedal angle is raw 0-255 shown here as 0-100%. A pedal value of 255 in the final row is a max clamp, not a real 100% point.
+
+Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift.</description>
+  </table>
+
+  <table type="3D" name="Shift 2-1 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015CEA" storagetype="uint16" endian="big" sizex="4" sizey="5" userlevel="4">
+   <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Shift point curve, mode 0 (the fully-populated operating mode). Each row is one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+
+Columns: 1 = speed at the start of the segment, 2 = pedal angle at the start, 3 = speed at the end, 4 = pedal angle at the end. Column 3 of a row repeats column 1 of the next row, and column 4 repeats column 2 - KEEP THEM IN SYNC when editing or the curve will break.
+
+Units are confirmed against the factory shift chart: speed is km/h directly, pedal angle is raw 0-255 shown here as 0-100%. A pedal value of 255 in the final row is a max clamp, not a real 100% point.
+
+Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift.</description>
+  </table>
+
+  <table type="3D" name="Shift 3-2 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015D56" storagetype="uint16" endian="big" sizex="4" sizey="7" userlevel="4">
+   <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Shift point curve, mode 0 (the fully-populated operating mode). Each row is one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+
+Columns: 1 = speed at the start of the segment, 2 = pedal angle at the start, 3 = speed at the end, 4 = pedal angle at the end. Column 3 of a row repeats column 1 of the next row, and column 4 repeats column 2 - KEEP THEM IN SYNC when editing or the curve will break.
+
+Units are confirmed against the factory shift chart: speed is km/h directly, pedal angle is raw 0-255 shown here as 0-100%. A pedal value of 255 in the final row is a max clamp, not a real 100% point.
+
+Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift.</description>
+  </table>
+
+  <table type="3D" name="Shift 4-3 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015DDA" storagetype="uint16" endian="big" sizex="4" sizey="8" userlevel="4">
+   <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Shift point curve, mode 0 (the fully-populated operating mode). Each row is one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+
+Columns: 1 = speed at the start of the segment, 2 = pedal angle at the start, 3 = speed at the end, 4 = pedal angle at the end. Column 3 of a row repeats column 1 of the next row, and column 4 repeats column 2 - KEEP THEM IN SYNC when editing or the curve will break.
+
+Units are confirmed against the factory shift chart: speed is km/h directly, pedal angle is raw 0-255 shown here as 0-100%. A pedal value of 255 in the final row is a max clamp, not a real 100% point.
+
+Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift.</description>
+  </table>
+
+  <table type="3D" name="Shift 5-4 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015E66" storagetype="uint16" endian="big" sizex="4" sizey="11" userlevel="4">
+   <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Shift point curve, mode 0 (the fully-populated operating mode). Each row is one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+
+Columns: 1 = speed at the start of the segment, 2 = pedal angle at the start, 3 = speed at the end, 4 = pedal angle at the end. Column 3 of a row repeats column 1 of the next row, and column 4 repeats column 2 - KEEP THEM IN SYNC when editing or the curve will break.
+
+Units are confirmed against the factory shift chart: speed is km/h directly, pedal angle is raw 0-255 shown here as 0-100%. A pedal value of 255 in the final row is a max clamp, not a real 100% point.
+
+Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift.</description>
+  </table>
+
   <!-- ============ Diagnostic Trouble Codes ============ -->
   <table type="Switch" name="DTC P0700 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004090" sizey="8">
    <description>Subaru transmission DTC P0700 (Transmission Control System (MIL Request)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>

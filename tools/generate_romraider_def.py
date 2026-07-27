@@ -476,6 +476,63 @@ def build_scalar_xml(scalar):
   </table>"""
 
 
+
+# ---------------------------------------------------------------------------
+# Shift schedule curves (docs/TECHNICAL-NOTES.md).
+#
+# Each curve is an array of 8-byte records, 4 x uint16:
+#     [speed_i, pedal_lo, speed_i+1, pedal_hi]
+# forming a polyline in (vehicle speed, accelerator angle) space. Speed is
+# continuous between consecutive records; pedal may jump, which is how the
+# vertical risers in the factory shift chart are encoded.
+#
+# Units are CONFIRMED against a factory shift chart ("5EAT Shifting, Base
+# Case", accelerator opening angle vs vehicle speed): field A/C is vehicle
+# speed in km/h with no scaling, field B/D is accelerator opening angle as
+# raw 0-255 mapping to 0-100%. The 4-Up curve starting at (58 km/h, 16%)
+# matches the chart's yellow trace point for point.
+#
+# The record block is CONTIGUOUS, so it maps onto a RomRaider 3D table with
+# sizex=4 (the four fields) and sizey=n (the records) without needing any
+# stride support. Columns 3-4 repeat the following row's columns 1-2; the
+# editor must keep them consistent.
+# ---------------------------------------------------------------------------
+SHIFT_CURVES = [
+    {"id": "Shift_1_2_Up",   "name": "Shift 1-2 Upshift Curve",   "addr": 0x015CA8, "rows": 8},
+    {"id": "Shift_2_3_Up",   "name": "Shift 2-3 Upshift Curve",   "addr": 0x015D14, "rows": 8},
+    {"id": "Shift_3_4_Up",   "name": "Shift 3-4 Upshift Curve",   "addr": 0x015D90, "rows": 9},
+    {"id": "Shift_4_5_Up",   "name": "Shift 4-5 Upshift Curve",   "addr": 0x015E1C, "rows": 9},
+    {"id": "Shift_2_1_Down", "name": "Shift 2-1 Downshift Curve", "addr": 0x015CEA, "rows": 5},
+    {"id": "Shift_3_2_Down", "name": "Shift 3-2 Downshift Curve", "addr": 0x015D56, "rows": 7},
+    {"id": "Shift_4_3_Down", "name": "Shift 4-3 Downshift Curve", "addr": 0x015DDA, "rows": 8},
+    {"id": "Shift_5_4_Down", "name": "Shift 5-4 Downshift Curve", "addr": 0x015E66, "rows": 11},
+]
+
+SHIFT_DESC = (
+    "Shift point curve, mode 0 (the fully-populated operating mode). Each row is "
+    "one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU "
+    "shifts when the operating point crosses this line.\n\n"
+    "Columns: 1 = speed at the start of the segment, 2 = pedal angle at the start, "
+    "3 = speed at the end, 4 = pedal angle at the end. Column 3 of a row repeats "
+    "column 1 of the next row, and column 4 repeats column 2 - KEEP THEM IN SYNC "
+    "when editing or the curve will break.\n\n"
+    "Units are confirmed against the factory shift chart: speed is km/h directly, "
+    "pedal angle is raw 0-255 shown here as 0-100%. A pedal value of 255 in the "
+    "final row is a max clamp, not a real 100% point.\n\n"
+    "Lowering a curve makes that shift happen earlier (at lower speed for a given "
+    "pedal); raising it delays the shift."
+)
+
+
+def build_shift_curve_xml(curve, delta=0):
+    addr = curve["addr"] + delta
+    name = escape(curve["name"])
+    return f"""  <table type="3D" name="{name}" category="Transmission - Shift Schedule" storageaddress="0x{addr:06X}" storagetype="uint16" endian="big" sizex="4" sizey="{curve['rows']}" userlevel="4">
+   <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>{escape(SHIFT_DESC)}</description>
+  </table>"""
+
+
 # ---------------------------------------------------------------------------
 # DTC table (docs/TECHNICAL-NOTES.md). Found by scanning the whole ROM for a cluster
 # of 16-bit values in the standard, publicly-documented Subaru/SAE P07xx
@@ -782,6 +839,22 @@ def verify_profile(profile, rom_bytes):
             return None
         return struct.unpack(">H", rom_bytes[off:off + 2])[0]
 
+    is_derived = profile.get("base") is not None
+    for curve in SHIFT_CURVES:
+        # Shift curves are only emitted for the base ROM unless a derived
+        # profile explicitly declares an offset for them, so don't verify
+        # (or reject) addresses that will never be written.
+        if is_derived and curve["id"] not in profile["offsets"]:
+            continue
+        delta = profile["offsets"].get(curve["id"], 0)
+        a = curve["addr"] + delta
+        checked += 1
+        # last record must be the 0xFFFF terminator right after the declared rows
+        term = u16_at(a + curve["rows"] * 8)
+        if term != 0xFFFF:
+            errors.append(f"{curve['id']} @ 0x{a:06X}: expected 0xFFFF terminator "
+                          f"after {curve['rows']} rows, got {term}")
+
     for family in FAMILIES:
         delta = profile["offsets"].get(family["id"], 0)
         for base_addr in family["headers"]:
@@ -850,6 +923,13 @@ def build_rom_block(profile, rom_bytes, is_base):
                              f'storageaddress="0x{s["addr"]:06X}" />')
             parts.append("")
             total += 1
+
+        if is_base:
+            parts.append("  <!-- ============ Transmission - Shift Schedule ============ -->")
+            for curve in SHIFT_CURVES:
+                parts.append(build_shift_curve_xml(curve, off.get(curve["id"], 0)))
+                parts.append("")
+                total += 1
 
         dtc_records = extract_dtc_records()
         code_counts = {}
