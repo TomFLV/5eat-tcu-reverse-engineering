@@ -21,7 +21,8 @@ exit and will overwrite your change.
 
 ## 2. Open the ROM
 
-**File → Open** and select `rom/91D1206000_5EAT.bin`.
+**File → Open** and select any ROM from `rom/` — the definition covers eleven
+firmwares and picks the right one automatically from the calibration ID.
 
 You should get a category tree on the left with entries including *Info*,
 *Transmission - Gear Ratios*, *Transmission - Temperature*,
@@ -36,8 +37,8 @@ Read the **Info → Read This First** entry before editing anything.
 This is the common failure, and it's almost always one of two things.
 
 **Check the file is actually a file.** If you extracted the ROM from a zip, you may
-have ended up with a *directory* named `91D1206000_5EAT.bin` containing the real
-file. RomRaider will open it without complaint and show nothing.
+have ended up with a *directory* named like the `.bin` containing the real file.
+RomRaider will open it without complaint and show nothing.
 
 **Check the ROM matches.** The definition identifies a ROM by matching its
 calibration ID at offset `0x8008`, and carries eleven of them. If yours is not one

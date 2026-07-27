@@ -1,6 +1,12 @@
-# The ROM: `91D1206000`
+# The ROMs
 
-Everything known about this specific binary.
+Eleven M32R 5EAT firmwares are held in [`rom/`](../rom/), all with verified
+checksums and all mapped. The collection table is at the bottom.
+
+The sections below describe **`91D1206000`** in detail — it is the reference
+firmware the others were mapped against. Structure, memory map, checksum
+algorithm and DTC format are shared across the family; **specific addresses are
+not** and differ per firmware.
 
 ---
 
