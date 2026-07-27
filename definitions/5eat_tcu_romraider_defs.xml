@@ -442,40 +442,18 @@ Units are confirmed against the factory shift chart: speed is km/h directly, ped
 Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift.</description>
   </table>
 
-  <table type="3D" name="Shift 2-3 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015D14" storagetype="uint16" endian="big" sizex="4" sizey="8" userlevel="4">
-   <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). Each row is one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Columns: 1 = speed at the start of the segment, 2 = pedal angle at the start, 3 = speed at the end, 4 = pedal angle at the end. Column 3 of a row repeats column 1 of the next row, and column 4 repeats column 2 - KEEP THEM IN SYNC when editing or the curve will break.
-
-Units are confirmed against the factory shift chart: speed is km/h directly, pedal angle is raw 0-255 shown here as 0-100%. A pedal value of 255 in the final row is a max clamp, not a real 100% point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-4 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015D90" storagetype="uint16" endian="big" sizex="4" sizey="9" userlevel="4">
-   <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). Each row is one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Columns: 1 = speed at the start of the segment, 2 = pedal angle at the start, 3 = speed at the end, 4 = pedal angle at the end. Column 3 of a row repeats column 1 of the next row, and column 4 repeats column 2 - KEEP THEM IN SYNC when editing or the curve will break.
-
-Units are confirmed against the factory shift chart: speed is km/h directly, pedal angle is raw 0-255 shown here as 0-100%. A pedal value of 255 in the final row is a max clamp, not a real 100% point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-5 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015E1C" storagetype="uint16" endian="big" sizex="4" sizey="9" userlevel="4">
-   <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). Each row is one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Columns: 1 = speed at the start of the segment, 2 = pedal angle at the start, 3 = speed at the end, 4 = pedal angle at the end. Column 3 of a row repeats column 1 of the next row, and column 4 repeats column 2 - KEEP THEM IN SYNC when editing or the curve will break.
-
-Units are confirmed against the factory shift chart: speed is km/h directly, pedal angle is raw 0-255 shown here as 0-100%. A pedal value of 255 in the final row is a max clamp, not a real 100% point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift.</description>
-  </table>
-
   <table type="3D" name="Shift 2-1 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015CEA" storagetype="uint16" endian="big" sizex="4" sizey="5" userlevel="4">
+   <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Shift point curve, mode 0 (the fully-populated operating mode). Each row is one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+
+Columns: 1 = speed at the start of the segment, 2 = pedal angle at the start, 3 = speed at the end, 4 = pedal angle at the end. Column 3 of a row repeats column 1 of the next row, and column 4 repeats column 2 - KEEP THEM IN SYNC when editing or the curve will break.
+
+Units are confirmed against the factory shift chart: speed is km/h directly, pedal angle is raw 0-255 shown here as 0-100%. A pedal value of 255 in the final row is a max clamp, not a real 100% point.
+
+Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift.</description>
+  </table>
+
+  <table type="3D" name="Shift 2-3 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015D14" storagetype="uint16" endian="big" sizex="4" sizey="8" userlevel="4">
    <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
    <description>Shift point curve, mode 0 (the fully-populated operating mode). Each row is one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
 
@@ -497,7 +475,29 @@ Units are confirmed against the factory shift chart: speed is km/h directly, ped
 Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift.</description>
   </table>
 
+  <table type="3D" name="Shift 3-4 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015D90" storagetype="uint16" endian="big" sizex="4" sizey="9" userlevel="4">
+   <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Shift point curve, mode 0 (the fully-populated operating mode). Each row is one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+
+Columns: 1 = speed at the start of the segment, 2 = pedal angle at the start, 3 = speed at the end, 4 = pedal angle at the end. Column 3 of a row repeats column 1 of the next row, and column 4 repeats column 2 - KEEP THEM IN SYNC when editing or the curve will break.
+
+Units are confirmed against the factory shift chart: speed is km/h directly, pedal angle is raw 0-255 shown here as 0-100%. A pedal value of 255 in the final row is a max clamp, not a real 100% point.
+
+Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift.</description>
+  </table>
+
   <table type="3D" name="Shift 4-3 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015DDA" storagetype="uint16" endian="big" sizex="4" sizey="8" userlevel="4">
+   <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+   <description>Shift point curve, mode 0 (the fully-populated operating mode). Each row is one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+
+Columns: 1 = speed at the start of the segment, 2 = pedal angle at the start, 3 = speed at the end, 4 = pedal angle at the end. Column 3 of a row repeats column 1 of the next row, and column 4 repeats column 2 - KEEP THEM IN SYNC when editing or the curve will break.
+
+Units are confirmed against the factory shift chart: speed is km/h directly, pedal angle is raw 0-255 shown here as 0-100%. A pedal value of 255 in the final row is a max clamp, not a real 100% point.
+
+Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift.</description>
+  </table>
+
+  <table type="3D" name="Shift 4-5 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015E1C" storagetype="uint16" endian="big" sizex="4" sizey="9" userlevel="4">
    <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
    <description>Shift point curve, mode 0 (the fully-populated operating mode). Each row is one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
 
@@ -833,6 +833,22 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <table name="Signal Threshold Constant" storageaddress="0x010842" />
 
+  <table name="Shift 1-2 Upshift Curve" storageaddress="0x015EF0" />
+
+  <table name="Shift 2-1 Downshift Curve" storageaddress="0x015F2A" />
+
+  <table name="Shift 2-3 Upshift Curve" storageaddress="0x015F4C" />
+
+  <table name="Shift 3-2 Downshift Curve" storageaddress="0x015F86" />
+
+  <table name="Shift 3-4 Upshift Curve" storageaddress="0x015FA8" />
+
+  <table name="Shift 4-3 Downshift Curve" storageaddress="0x015FE2" />
+
+  <table name="Shift 4-5 Upshift Curve" storageaddress="0x016004" />
+
+  <table name="Shift 5-4 Downshift Curve" storageaddress="0x01603E" />
+
   <table type="Switch" name="DTC P0700 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004090" sizey="8">
    <description>Subaru transmission DTC P0700 (Transmission Control System (MIL Request)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
    <state name="on" data="A2 41 07 00 62 00 F0 00" />
@@ -1145,6 +1161,22 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
   <table name="Gear Threshold Constant" storageaddress="0x010840" />
 
   <table name="Signal Threshold Constant" storageaddress="0x010842" />
+
+  <table name="Shift 1-2 Upshift Curve" storageaddress="0x015DE8" />
+
+  <table name="Shift 2-1 Downshift Curve" storageaddress="0x015E3A" />
+
+  <table name="Shift 2-3 Upshift Curve" storageaddress="0x015E5C" />
+
+  <table name="Shift 3-2 Downshift Curve" storageaddress="0x015EAE" />
+
+  <table name="Shift 3-4 Upshift Curve" storageaddress="0x015F10" />
+
+  <table name="Shift 4-3 Downshift Curve" storageaddress="0x015F52" />
+
+  <table name="Shift 4-5 Upshift Curve" storageaddress="0x015F94" />
+
+  <table name="Shift 5-4 Downshift Curve" storageaddress="0x015FEE" />
 
   <table type="Switch" name="DTC P0700 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004090" sizey="8">
    <description>Subaru transmission DTC P0700 (Transmission Control System (MIL Request)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
@@ -1459,6 +1491,22 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <table name="Signal Threshold Constant" storageaddress="0x010842" />
 
+  <table name="Shift 1-2 Upshift Curve" storageaddress="0x015E4C" />
+
+  <table name="Shift 2-1 Downshift Curve" storageaddress="0x015E96" />
+
+  <table name="Shift 2-3 Upshift Curve" storageaddress="0x015EB0" />
+
+  <table name="Shift 3-2 Downshift Curve" storageaddress="0x015EFA" />
+
+  <table name="Shift 3-4 Upshift Curve" storageaddress="0x015F1C" />
+
+  <table name="Shift 4-3 Downshift Curve" storageaddress="0x015F66" />
+
+  <table name="Shift 4-5 Upshift Curve" storageaddress="0x015F90" />
+
+  <table name="Shift 5-4 Downshift Curve" storageaddress="0x015FDA" />
+
   <table type="Switch" name="DTC P0700 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004090" sizey="8">
    <description>Subaru transmission DTC P0700 (Transmission Control System (MIL Request)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
    <state name="on" data="A2 41 07 00 62 00 F0 00" />
@@ -1771,6 +1819,22 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
   <table name="Gear Threshold Constant" storageaddress="0x010840" />
 
   <table name="Signal Threshold Constant" storageaddress="0x010842" />
+
+  <table name="Shift 1-2 Upshift Curve" storageaddress="0x016440" />
+
+  <table name="Shift 2-1 Downshift Curve" storageaddress="0x016482" />
+
+  <table name="Shift 2-3 Upshift Curve" storageaddress="0x0164A4" />
+
+  <table name="Shift 3-2 Downshift Curve" storageaddress="0x0164E6" />
+
+  <table name="Shift 3-4 Upshift Curve" storageaddress="0x016520" />
+
+  <table name="Shift 4-3 Downshift Curve" storageaddress="0x01656A" />
+
+  <table name="Shift 4-5 Upshift Curve" storageaddress="0x0165AC" />
+
+  <table name="Shift 5-4 Downshift Curve" storageaddress="0x0165F6" />
 
   <table type="Switch" name="DTC P0700 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004090" sizey="8">
    <description>Subaru transmission DTC P0700 (Transmission Control System (MIL Request)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
@@ -2085,6 +2149,22 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <table name="Signal Threshold Constant" storageaddress="0x010842" />
 
+  <table name="Shift 1-2 Upshift Curve" storageaddress="0x015DAC" />
+
+  <table name="Shift 2-1 Downshift Curve" storageaddress="0x015DEE" />
+
+  <table name="Shift 2-3 Upshift Curve" storageaddress="0x015E18" />
+
+  <table name="Shift 3-2 Downshift Curve" storageaddress="0x015E5A" />
+
+  <table name="Shift 3-4 Upshift Curve" storageaddress="0x015E94" />
+
+  <table name="Shift 4-3 Downshift Curve" storageaddress="0x015EDE" />
+
+  <table name="Shift 4-5 Upshift Curve" storageaddress="0x015F20" />
+
+  <table name="Shift 5-4 Downshift Curve" storageaddress="0x015F6A" />
+
   <table type="Switch" name="DTC P0700 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004090" sizey="8">
    <description>Subaru transmission DTC P0700 (Transmission Control System (MIL Request)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
    <state name="on" data="A2 41 07 00 62 00 F0 00" />
@@ -2397,6 +2477,22 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
   <table name="Gear Threshold Constant" storageaddress="0x010840" />
 
   <table name="Signal Threshold Constant" storageaddress="0x010842" />
+
+  <table name="Shift 1-2 Upshift Curve" storageaddress="0x015F90" />
+
+  <table name="Shift 2-1 Downshift Curve" storageaddress="0x015FD2" />
+
+  <table name="Shift 2-3 Upshift Curve" storageaddress="0x015FF4" />
+
+  <table name="Shift 3-2 Downshift Curve" storageaddress="0x016036" />
+
+  <table name="Shift 3-4 Upshift Curve" storageaddress="0x016070" />
+
+  <table name="Shift 4-3 Downshift Curve" storageaddress="0x0160BA" />
+
+  <table name="Shift 4-5 Upshift Curve" storageaddress="0x0160FC" />
+
+  <table name="Shift 5-4 Downshift Curve" storageaddress="0x016146" />
 
   <table type="Switch" name="DTC P0700 Enable" category="Diagnostic Trouble Codes" storageaddress="0x004090" sizey="8">
    <description>Subaru transmission DTC P0700 (Transmission Control System (MIL Request)). "Off" is EXPERIMENTAL — not independently confirmed to actually suppress this code on this TCU. Verify the DTC is genuinely gone after flashing before relying on it.</description>
@@ -2711,6 +2807,22 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <table name="Signal Threshold Constant" storageaddress="0x010842" />
 
+  <table name="Shift 1-2 Upshift Curve" storageaddress="0x016440" />
+
+  <table name="Shift 2-1 Downshift Curve" storageaddress="0x016482" />
+
+  <table name="Shift 2-3 Upshift Curve" storageaddress="0x0164AC" />
+
+  <table name="Shift 3-2 Downshift Curve" storageaddress="0x0164EE" />
+
+  <table name="Shift 3-4 Upshift Curve" storageaddress="0x016528" />
+
+  <table name="Shift 4-3 Downshift Curve" storageaddress="0x016572" />
+
+  <table name="Shift 4-5 Upshift Curve" storageaddress="0x0165B4" />
+
+  <table name="Shift 5-4 Downshift Curve" storageaddress="0x0165FE" />
+
  </rom>
 
  <rom base="SUBARU_5EAT_91D1206000">
@@ -2910,6 +3022,22 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
 
   <table name="Signal Threshold Constant" storageaddress="0x010842" />
 
+  <table name="Shift 1-2 Upshift Curve" storageaddress="0x01683C" />
+
+  <table name="Shift 2-1 Downshift Curve" storageaddress="0x01687E" />
+
+  <table name="Shift 2-3 Upshift Curve" storageaddress="0x0168A0" />
+
+  <table name="Shift 3-2 Downshift Curve" storageaddress="0x0168E2" />
+
+  <table name="Shift 3-4 Upshift Curve" storageaddress="0x01690C" />
+
+  <table name="Shift 4-3 Downshift Curve" storageaddress="0x016956" />
+
+  <table name="Shift 4-5 Upshift Curve" storageaddress="0x016980" />
+
+  <table name="Shift 5-4 Downshift Curve" storageaddress="0x0169CA" />
+
  </rom>
 
  <rom base="SUBARU_5EAT_91D1206000">
@@ -3108,6 +3236,22 @@ Lowering a curve makes that shift happen earlier (at lower speed for a given ped
   <table name="Gear Threshold Constant" storageaddress="0x010840" />
 
   <table name="Signal Threshold Constant" storageaddress="0x010842" />
+
+  <table name="Shift 1-2 Upshift Curve" storageaddress="0x01683C" />
+
+  <table name="Shift 2-1 Downshift Curve" storageaddress="0x01687E" />
+
+  <table name="Shift 2-3 Upshift Curve" storageaddress="0x0168A0" />
+
+  <table name="Shift 3-2 Downshift Curve" storageaddress="0x0168E2" />
+
+  <table name="Shift 3-4 Upshift Curve" storageaddress="0x01690C" />
+
+  <table name="Shift 4-3 Downshift Curve" storageaddress="0x016956" />
+
+  <table name="Shift 4-5 Upshift Curve" storageaddress="0x016980" />
+
+  <table name="Shift 5-4 Downshift Curve" storageaddress="0x0169CA" />
 
  </rom>
 

@@ -12,6 +12,7 @@ own FAMILIES (table addresses will very likely differ between revisions).
 """
 import struct
 import os
+import json
 from xml.sax.saxutils import escape
 
 ROM_ID = "91D1206000"
@@ -497,16 +498,14 @@ def build_scalar_xml(scalar):
 # stride support. Columns 3-4 repeat the following row's columns 1-2; the
 # editor must keep them consistent.
 # ---------------------------------------------------------------------------
-SHIFT_CURVES = [
-    {"id": "Shift_1_2_Up",   "name": "Shift 1-2 Upshift Curve",   "addr": 0x015CA8, "rows": 8},
-    {"id": "Shift_2_3_Up",   "name": "Shift 2-3 Upshift Curve",   "addr": 0x015D14, "rows": 8},
-    {"id": "Shift_3_4_Up",   "name": "Shift 3-4 Upshift Curve",   "addr": 0x015D90, "rows": 9},
-    {"id": "Shift_4_5_Up",   "name": "Shift 4-5 Upshift Curve",   "addr": 0x015E1C, "rows": 9},
-    {"id": "Shift_2_1_Down", "name": "Shift 2-1 Downshift Curve", "addr": 0x015CEA, "rows": 5},
-    {"id": "Shift_3_2_Down", "name": "Shift 3-2 Downshift Curve", "addr": 0x015D56, "rows": 7},
-    {"id": "Shift_4_3_Down", "name": "Shift 4-3 Downshift Curve", "addr": 0x015DDA, "rows": 8},
-    {"id": "Shift_5_4_Down", "name": "Shift 5-4 Downshift Curve", "addr": 0x015E66, "rows": 11},
-]
+# Per-firmware shift curve addresses and row counts, derived by locating the
+# gear x mode pointer array in each ROM's decompiler output (the index expression
+# `gear * 2 + mode * 10` is a reliable fingerprint) and dereferencing it. The
+# array relocates between firmwares -- 0x17714 on the base ROM, 0x180E8 on
+# ACD1A06000 -- so it cannot be offset-derived.
+#
+# Row counts genuinely differ per firmware: that is the calibration.
+SHIFT_CURVES_BY_ROM = json.load(open(os.path.join(here, "shift_curves.json")))
 
 SHIFT_DESC = (
     "Shift point curve, mode 0 (the fully-populated operating mode). Each row is "
@@ -524,10 +523,9 @@ SHIFT_DESC = (
 )
 
 
-def build_shift_curve_xml(curve, delta=0):
-    addr = curve["addr"] + delta
-    name = escape(curve["name"])
-    return f"""  <table type="3D" name="{name}" category="Transmission - Shift Schedule" storageaddress="0x{addr:06X}" storagetype="uint16" endian="big" sizex="4" sizey="{curve['rows']}" userlevel="4">
+def build_shift_curve_xml(name, addr, rows):
+    name = escape(name)
+    return f"""  <table type="3D" name="{name}" category="Transmission - Shift Schedule" storageaddress="0x{addr:06X}" storagetype="uint16" endian="big" sizex="4" sizey="{rows}" userlevel="4">
    <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
    <description>{escape(SHIFT_DESC)}</description>
   </table>"""
@@ -884,21 +882,12 @@ def verify_profile(profile, rom_bytes):
             return None
         return struct.unpack(">H", rom_bytes[off:off + 2])[0]
 
-    is_derived = profile.get("base") is not None
-    for curve in SHIFT_CURVES:
-        # Shift curves are only emitted for the base ROM unless a derived
-        # profile explicitly declares an offset for them, so don't verify
-        # (or reject) addresses that will never be written.
-        if is_derived and curve["id"] not in profile["offsets"]:
-            continue
-        delta = profile["offsets"].get(curve["id"], 0)
-        a = curve["addr"] + delta
+    for cname, c in SHIFT_CURVES_BY_ROM.get(profile["id"], {}).items():
         checked += 1
-        # last record must be the 0xFFFF terminator right after the declared rows
-        term = u16_at(a + curve["rows"] * 8)
+        term = u16_at(c["addr"] + c["rows"] * 8)
         if term != 0xFFFF:
-            errors.append(f"{curve['id']} @ 0x{a:06X}: expected 0xFFFF terminator "
-                          f"after {curve['rows']} rows, got {term}")
+            errors.append(f"{cname} @ 0x{c['addr']:06X}: expected 0xFFFF terminator "
+                          f"after {c['rows']} rows, got {term}")
 
     for family in FAMILIES:
         delta = profile["offsets"].get(family["id"], 0)
@@ -969,10 +958,17 @@ def build_rom_block(profile, rom_bytes, is_base):
             parts.append("")
             total += 1
 
-        if is_base:
-            parts.append("  <!-- ============ Transmission - Shift Schedule ============ -->")
-            for curve in SHIFT_CURVES:
-                parts.append(build_shift_curve_xml(curve, off.get(curve["id"], 0)))
+        curves = SHIFT_CURVES_BY_ROM.get(profile["id"], {})
+        if curves:
+            if is_base:
+                parts.append("  <!-- ============ Transmission - Shift Schedule ============ -->")
+            for cname in sorted(curves):
+                c = curves[cname]
+                if is_base:
+                    parts.append(build_shift_curve_xml(cname, c["addr"], c["rows"]))
+                else:
+                    parts.append(f'  <table name="{escape(cname)}" '
+                                 f'storageaddress="0x{c["addr"]:06X}" />')
                 parts.append("")
                 total += 1
 
