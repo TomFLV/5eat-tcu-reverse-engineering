@@ -109,6 +109,14 @@ ROM, exactly where that reading predicts.
 
 IDK
 
+More usefully: line pressure in **kPa is not stored in these ROMs** — tested four
+ways across all eleven firmwares. The TCU almost certainly reports a raw duty
+value and the Select Monitor converts. Settling it needs hardware, not analysis.
+Details in [TECHNICAL-NOTES.md](docs/TECHNICAL-NOTES.md).
+
+Five firmwares are missing the record-format curves, and the DTC `flags` field is
+still undecoded — which is why every DTC "off" state is marked experimental.
+
 ---
 
 ## Contributing
