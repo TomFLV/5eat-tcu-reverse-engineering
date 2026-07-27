@@ -81,6 +81,18 @@ conventions, which the tool detects rather than assumes), the **DTC table** at
 `0x4090` (19 real P07xx transmission codes), and the **shift schedule**, which is
 fully decoded.
 
+### Record-format curves
+
+A further 35 curves use an 8-byte record layout rather than a contiguous array —
+including the **temperature sensor linearisation tables**, the calibration that
+defines what the ATF sensors actually read. These were long excluded on the
+grounds that RomRaider has no stride support; the shift-schedule work showed that
+was wrong, since the record block is contiguous and maps onto a 3D table exactly.
+
+They ship as `raw` with their inputs named where traced (ATF temperature, CAN
+0x412 byte 0, engine speed, reference speed) and honestly labelled as
+unidentified internal signals where not.
+
 ### The shift schedule
 
 The eight shift-point curves are editable, in real units. Each is a polyline in

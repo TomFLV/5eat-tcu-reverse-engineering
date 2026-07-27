@@ -558,6 +558,12 @@ def build_shift_curve_xml(name, addr, rows):
 # ---------------------------------------------------------------------------
 HYSTERESIS_CURVES = json.load(open(os.path.join(here, "hysteresis_curves.json")))
 
+# Per-firmware addresses for the same curves, matched positionally against the
+# base ROM's call-site order. Only firmwares whose call-site count matches the
+# base exactly are present -- where it differs, positional matching is unsafe and
+# the firmware is omitted rather than guessed at.
+HYSTERESIS_BY_ROM = json.load(open(os.path.join(here, "hysteresis_by_rom.json")))
+
 HYST_DESC_SUFFIX = (
     "\n\nFormat: each row is one segment, 4 x uint16. Column 1 is the "
     "breakpoint; columns 2-4 are the values interpolated across it. Rows chain "
@@ -961,13 +967,19 @@ def verify_profile(profile, rom_bytes):
             return None
         return struct.unpack(">H", rom_bytes[off:off + 2])[0]
 
-    if profile.get("base") is None:
-        for c in HYSTERESIS_CURVES:
-            checked += 1
-            term = u16_at(c["addr"] + c["rows"] * 8)
-            if term != 0xFFFF:
-                errors.append(f"{c['name']} @ 0x{c['addr']:06X}: expected 0xFFFF "
-                              f"after {c['rows']} rows, got {term}")
+    hyst = HYSTERESIS_BY_ROM.get(profile["id"])
+    for c in HYSTERESIS_CURVES:
+        if profile.get("base") is None:
+            a, r = c["addr"], c["rows"]
+        elif hyst and f"0x{c['addr']:06X}" in hyst:
+            m = hyst[f"0x{c['addr']:06X}"]; a, r = m["addr"], m["rows"]
+        else:
+            continue
+        checked += 1
+        term = u16_at(a + r * 8)
+        if term != 0xFFFF:
+            errors.append(f"{c['name']} @ 0x{a:06X}: expected 0xFFFF "
+                          f"after {r} rows, got {term}")
 
     for cname, c in SHIFT_CURVES_BY_ROM.get(profile["id"], {}).items():
         checked += 1
@@ -1033,10 +1045,18 @@ def build_rom_block(profile, rom_bytes, is_base):
             parts.append("")
             total += 1
 
-        if is_base:
+        hyst = HYSTERESIS_BY_ROM.get(profile["id"])
+        if is_base or hyst:
             parts.append("  <!-- ============ Record-format curves ============ -->")
             for c in HYSTERESIS_CURVES:
-                parts.append(build_hyst_curve_xml(c))
+                if is_base:
+                    parts.append(build_hyst_curve_xml(c))
+                else:
+                    m = hyst.get(f"0x{c['addr']:06X}")
+                    if not m:
+                        continue
+                    cc = dict(c); cc["addr"] = m["addr"]; cc["rows"] = m["rows"]
+                    parts.append(build_hyst_curve_xml(cc))
                 parts.append("")
                 total += 1
 
