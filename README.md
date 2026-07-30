@@ -73,13 +73,17 @@ ways (against the factory service manual *and* against the firmware's own arithm
 - **Temperature** — `raw − 40` °C. Two NTC thermistor channels, standard −40…+215 °C
   automotive encoding.
 - **Vehicle speed** — km/h directly, no scaling.
-- **Accelerator angle** — raw 0–255 mapping to 0–100%.
+- **Accelerator angle** — raw 0–255 mapping to 0–100%. Independently confirmed
+  twice: from the shift chart, and from CAN `0x412` byte 0 being APA at ×100/255.
 
 Also confirmed: the **checksum algorithm** (32-bit big-endian two's-complement
 additive, stored twice at `0x8000`/`0x8004` — over two different region
-conventions, which the tool detects rather than assumes), the **DTC table** at
-`0x4090` (19 real P07xx transmission codes), and the **shift schedule**, which is
-fully decoded.
+conventions, which the tool detects rather than assumes) and the **shift
+schedule**, which is fully decoded.
+
+> **Correction:** earlier versions claimed a DTC table at `0x4090`. That address is
+> instruction stream, not data — port initialisation misread as records. The DTC
+> tables have been removed. See [ROM-DETAILS.md](docs/ROM-DETAILS.md).
 
 ### Record-format curves
 
@@ -114,8 +118,13 @@ ways across all eleven firmwares. The TCU almost certainly reports a raw duty
 value and the Select Monitor converts. Settling it needs hardware, not analysis.
 Details in [TECHNICAL-NOTES.md](docs/TECHNICAL-NOTES.md).
 
-Five firmwares are missing the record-format curves, and the DTC `flags` field is
-still undecoded — which is why every DTC "off" state is marked experimental.
+Five firmwares are missing the record-format curves. **No DTC table has been
+located** — the address previously claimed for one turned out to be instruction
+stream. DTCs are transmitted on CAN `0x422` bytes 3–4 as a 2-bit index plus a
+14-bit code; finding the stored table means locating the code that builds that
+message.
+
+The definition needs **RomRaider 1.0.0 or later** — 0.8.2 cannot load 3D tables.
 
 ---
 

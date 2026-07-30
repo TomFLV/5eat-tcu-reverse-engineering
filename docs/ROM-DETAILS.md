@@ -164,24 +164,45 @@ calibration ID block, so "fixing" a balance value there would corrupt real ID da
 
 ---
 
-## Diagnostic trouble codes
+## There is no known DTC table — a corrected error
 
-19 records at `0x4090`, 8 bytes each, format `[flags:u16][code:u16][data:u32]`:
+An earlier version of this project claimed a DTC table at `0x4090` with 19
+records of `[flags:u16][code:u16][data:u32]`, decoding to `P0700`, `P0704`,
+`P0708` and so on. **That was wrong and has been removed.**
+
+`0x4090` is not data. It is M32R instruction stream inside `FUN_00004000`:
 
 ```
-P0700  P0704  P0708  P070C  P0710  P0714  P0720  P0724  P0728  P072C
-P0730  P0734  P0745  P0745  P0746  P0748  P074C  P0750  P0754
+00004080: a041 0074  a041 0078  a041 007c  6200 f000
+00004090: a241 0700  6200 f000  a241 0704  6200 f000
 ```
 
-All decode as real SAE/Subaru transmission codes — `P0730` is *Incorrect Gear
-Ratio*, `P0745`–`P074C` are pressure control solenoid faults, `P0750`/`P0754` are
-shift solenoid A. `P0745` appears twice at different addresses, presumably two
-trigger conditions for one code.
+`a041` and `a241` are opcodes; `0x0074`, `0x0078`, `0x007C`, `0x0700`, `0x0704`
+are their displacement operands, incrementing by 4 because they address
+consecutive words. It is port and register initialisation, in the region this
+document already described as early boot code.
 
-The `flags` field varies per record (`0xA241`, `0xA221`, `0xA792`, `0xA702`,
-`0xA022`, `0xA042`) in a way that isn't random, but the bit meanings are **not
-decoded**. The code that reads this table wasn't located in the decompiled output —
-it most likely lives in the K-Line SSM diagnostic path.
+The error came from scanning for `uint16` values in `0x0700`–`0x07FF`, finding a
+cluster, and assuming a P07xx code range without checking whether the bytes were
+code. Two tells were missed: the "codes" incremented by exactly 4, which real SAE
+lists do not, and **nothing in the ROM referenced `0x4090` as data**.
+
+It also mattered beyond mislabelling. Each generated switch's "off" state zeroed
+bytes 2–3 of a "record" — instruction operands — so toggling one would have
+corrupted boot code.
+
+Identified by **rimwall**, who pointed out the region is *"just general
+initialisation of ports etc."*
+
+### Where the real DTC handling is
+
+DTCs are transmitted on **CAN `0x422` bytes 3–4**, encoded as a 16-bit word with
+the **top 2 bits as a DTC index (0–3)** and the **remaining 14 bits as the DTC
+number**; successive messages cycle through up to four active codes. Source: the
+community [CAN decoding thread](https://www.romraider.com/forum/viewtopic.php?f=40&t=20850).
+
+Finding the stored table means locating the code that builds that message. That
+has not been done.
 
 ---
 

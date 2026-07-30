@@ -104,13 +104,14 @@ FAMILIES = [
         "category": "Transmission - Pressure Control B",
         "name_template": "Gear {i} Slip Comp Pressure B",
         "headers": [0x010D1A, 0x010D30, 0x010D46, 0x010D5C, 0x010D72],
-        "axis_label": "Slip amount breakpoint (raw)",
+        "axis_label": "Accelerator pedal angle x256 minus reference speed (raw)",
         "value_label": "raw",
         "description": (
-            "Gear {i} of 5. Pressure/duty correction curve, indexed by slip amount. "
-            "Stock values are flat (20) in every gear — a real, editable value "
-            "even though it isn't currently varying. Real-world units not yet "
-            "confirmed."
+            "Gear {i} of 5. Pressure/duty correction curve. The X-input is "
+            "(accelerator pedal angle x 256) minus the Reference Speed Baseline "
+            "lookup — a difference, so the axis itself is raw even though both "
+            "operands are now identified. Pedal angle arrives on CAN 0x412 byte 0 "
+            "as raw 0-255 = 0-100%. Stock values are flat (20) in every gear."
         ),
     },
     {
@@ -118,7 +119,7 @@ FAMILIES = [
         "category": "Transmission - Pressure Control C",
         "name_template": "Gear {i} Slip Comp Pressure C",
         "headers": [0x010D9C, 0x010DB2, 0x010DC8, 0x010DDE, 0x010DF4],
-        "axis_label": "Slip amount breakpoint (raw)",
+        "axis_label": "Accelerator pedal angle x256 minus reference speed (raw)",
         "value_label": "raw",
         "description": (
             "Gear {i} of 5. Alternate-mode counterpart to Pressure Control B — same "
@@ -131,7 +132,7 @@ FAMILIES = [
         "category": "Transmission - Shift Solenoid Control",
         "name_template": "Gear {i} Shift Stage Value D",
         "headers": [0x0112D0, 0x0112E6, 0x0112FC, 0x011312, 0x011328],
-        "axis_label": "Slip amount breakpoint (raw)",
+        "axis_label": "Accelerator pedal angle x256 minus reference speed (raw)",
         "value_label": "raw",
         "description": (
             "Gear {i} of 5. Shift solenoid control curve, indexed by slip amount. "
@@ -143,7 +144,7 @@ FAMILIES = [
         "category": "Transmission - Pressure Control E",
         "name_template": "Mode {i} Pressure Threshold E",
         "headers": [0x010844, 0x01086E],
-        "axis_label": "Slip amount breakpoint (raw)",
+        "axis_label": "Accelerator pedal angle x256 minus reference speed (raw)",
         "value_label": "raw",
         "description": (
             "Mode {i} of 2 (selected by an internal mode flag, not gear). Same "
@@ -158,13 +159,14 @@ FAMILIES = [
         "category": "Transmission - CAN Signal Thresholds",
         "name_template": "CAN 0x511 Byte 4 Threshold Curve",
         "headers": [0x011836],
-        "axis_label": "CAN ID 0x511, byte 4, raw x1.301 (confirmed input scale; physical meaning of the CAN signal itself is NOT confirmed)",
+        "axis_label": "CAN 0x511 byte 4 (from VDC/ABS), raw x1.301",
         "value_label": "raw",
         "description": (
-            "Confirmed via decompilation: X-input is CAN ID 0x511 payload byte 4, "
-            "scaled by a fixed 333/256 (~x1.301) factor before this lookup. This is "
-            "the first table found whose input traces directly to a CAN ID other "
-            "than 0x410/0x412. Stock data is flat (0) — real, editable, currently inert."
+            "X-input is CAN ID 0x511 payload byte 4, scaled by a fixed 333/256 "
+            "(~x1.301) factor before this lookup. CAN 0x511 originates from the "
+            "VDC/ABS module (bytes 0-1 are steering wheel angle, byte 6 vehicle "
+            "G-force); byte 4 is not identified in the community CAN decoding. "
+            "Stock data is flat (0) — real, editable, currently inert."
         ),
     },
     {
@@ -586,143 +588,37 @@ def build_hyst_curve_xml(c, delta=0):
 
 
 # ---------------------------------------------------------------------------
-# DTC table (docs/TECHNICAL-NOTES.md). Found by scanning the whole ROM for a cluster
-# of 16-bit values in the standard, publicly-documented Subaru/SAE P07xx
-# transmission DTC range — not a guess, the values themselves ARE the proof
-# (P0730 = Incorrect Gear Ratio, P0745/6/8 = Pressure Control Solenoid,
-# P0750/4 = Shift Solenoid A, etc. all decode correctly). Record format is
-# [flags:uint16][DTC code:uint16][data:4 bytes], 8 bytes each, starting at ROM
-# 0x004090. Extracted programmatically below (not hand-typed) by walking the
-# table until the code field leaves the confirmed 0x0700-0x07FF range.
+# NO DTC TABLES.
 #
-# The `flags` field is the strongest candidate for enable/disable control,
-# but its exact bit meaning is NOT decoded yet (see docs/TECHNICAL-NOTES.md) — this
-# exposes it as a plain editable raw 16-bit value so it can be inspected/
-# experimented with, rather than guessing which bit does what.
+# An earlier version of this file shipped 19 "DTC" switch tables per firmware,
+# read from 0x4090 as 8-byte [flags][code][data] records. That was WRONG and has
+# been removed.
 #
-# Descriptions below give the GENERAL, publicly-documented SAE J2012 meaning
-# of each P07xx "family" (e.g. P0710-family = transmission fluid temp sensor,
-# P0720-family = output speed sensor). The exact sub-code offset convention
-# this TCU uses internally (+4/+8 between related codes) does NOT necessarily
-# follow the standard SAE sub-type numbering (general/range/electrical/
-# intermittent, usually +1 each) — so treat the family-level description as
-# solid, but don't assume the precise sub-fault distinction is exactly what
-# a generic OBD-II code reader would show for that exact 4-digit number.
-DTC_CODE_NAMES = {
-    0x0700: "Transmission Control System (MIL Request)",
-    0x0704: "Clutch Pedal Position Switch/Sensor circuit family",
-    0x0708: "Transmission Range Sensor circuit family (PRNDL input)",
-    0x070C: "Transmission Fluid Level Sensor circuit family",
-    0x0710: "Transmission Fluid Temperature Sensor circuit family",
-    0x0714: "Transmission Fluid Temperature Sensor circuit family (variant)",
-    0x0720: "Output Speed Sensor circuit family",
-    0x0724: "Output Speed Sensor circuit family (variant) / Brake Switch B in generic SAE numbering",
-    0x0728: "Output Speed Sensor circuit family (variant)",
-    0x072C: "Output/Turbine Speed Sensor circuit family (variant, non-standard offset)",
-    0x0730: "Incorrect Gear Ratio",
-    0x0734: "Incorrect Gear Ratio (specific gear variant)",
-    0x0745: "Pressure Control Solenoid circuit family",
-    0x0746: "Pressure Control Solenoid Performance/Stuck",
-    0x0748: "Pressure Control Solenoid Electrical",
-    0x074C: "Pressure Control Solenoid circuit family (variant)",
-    0x0750: "Shift Solenoid A",
-    0x0754: "Shift Solenoid A (variant)",
-    # Codes appearing only in the later MB5300 / MB558xx / MB562xx calibrations.
-    0x0736: "Incorrect Gear Ratio - Reverse",
-    0x0740: "Torque Converter Clutch Circuit",
-    0x0744: "Torque Converter Clutch Circuit Intermittent",
-    0x0760: "Shift Solenoid C",
-    0x0764: "Shift Solenoid C (variant)",
-    0x0770: "Shift Solenoid E",
-    0x0780: "Shift Malfunction",
-    0x0794: "Intermediate Shaft Speed Sensor circuit family",
-    0x07D0: "Manufacturer-specific transmission code (meaning not identified)",
-}
-
-
-def extract_dtc_records():
-    """
-    Locate and walk the DTC table.
-
-    The table is NOT at a fixed address across firmwares: the earlier
-    calibrations start at 0x4090, while the later MB5300/MB558xx/MB562xx ones
-    relocate it and carry a different code set (P072C/P0730/P0734/P0736/P0760
-    rather than P0700 onward). It is therefore found by scanning the 0x4000
-    block for the longest run of 8-byte records whose code field is a valid
-    P07xx transmission code, instead of assuming an address.
-    """
-    best_n, best_base = 0, None
-    for base in range(0x4000, 0x4200, 2):
-        n = 0
-        while base + n * 8 + 8 <= len(data) and 0x0700 <= u16(base + n * 8 + 2) <= 0x07FF:
-            n += 1
-        if n > best_n:
-            best_n, best_base = n, base
-    if best_base is None or best_n < 4:
-        return []
-    records = []
-    for i in range(best_n):
-        off = best_base + i * 8
-        records.append({
-            "addr": off, "flags_addr": off, "code": u16(off + 2),
-            "data_addr": off + 4, "raw": data[off:off + 8],
-        })
-    return records
-
-
-def build_dtc_table_xml(rec, index, dupe_suffix=""):
-    code = rec["code"]
-    name_suffix = DTC_CODE_NAMES.get(code, "meaning not identified — generic P07xx transmission code")
-    dtc_name = escape(f"DTC P{code:04X}{dupe_suffix} Enable")
-    category = escape("Diagnostic Trouble Codes")
-    addr = rec["addr"]
-    raw = rec["raw"]
-
-    on_bytes = " ".join(f"{b:02X}" for b in raw)
-    # "off" hypothesis: zero the 2-byte DTC-code field, leave flags/data untouched.
-    # Modeled directly on a real, confirmed RomRaider convention (Merp/SubaruDefs
-    # ecu_defs.xml's own "Diagnostic Trouble Codes" Switch tables use exactly this
-    # pattern for a different Subaru ECU: e.g. P0011 "on"="04 00 11" / "off"="05 00 00"
-    # — the code bytes get zeroed to disable). NOT independently confirmed for this
-    # M32R TCU — the actual code that reads this table wasn't located this session
-    # (searched full_decompile.c broadly, no hits — it's likely only reachable from
-    # the K-Line SSM diagnostic path, which hasn't been disassembled). Treat "off"
-    # as an experimental hypothesis to verify empirically, not a proven mechanism.
-    off_bytes_list = list(raw)
-    off_bytes_list[2] = 0
-    off_bytes_list[3] = 0
-    off_bytes = " ".join(f"{b:02X}" for b in off_bytes_list)
-
-    desc = escape(
-        f"Subaru transmission DTC P{code:04X} ({name_suffix}). \"Off\" is EXPERIMENTAL — "
-        f"not independently confirmed to actually suppress this code on this TCU. "
-        f"Verify the DTC is genuinely gone after flashing before relying on it."
-    )
-    return f"""  <table type="Switch" name="{dtc_name}" category="{category}" storageaddress="0x{addr:06X}" sizey="8">
-   <description>{desc}</description>
-   <state name="on" data="{on_bytes}" />
-   <state name="off" data="{off_bytes}" />
-  </table>"""
-
+# 0x4090 is not data. It is M32R instruction stream inside FUN_00004000, in the
+# early boot region:
+#
+#     00004080: a041 0074  a041 0078  a041 007c  6200 f000
+#     00004090: a241 0700  6200 f000  a241 0704  6200 f000
+#
+# a041/a241 are opcodes; 0x0074, 0x0078, 0x007C, 0x0700, 0x0704 ... are their
+# displacement operands, incrementing by 4 because they address consecutive
+# words. It is port/register initialisation.
+#
+# The error came from scanning for uint16 values in 0x0700-0x07FF, finding a
+# cluster, and assuming a P07xx code range without checking whether the bytes
+# were code. Tells that were missed: the codes incremented by exactly 4 (real
+# SAE lists do not), and nothing in the ROM referenced 0x4090 as data.
+#
+# This mattered beyond mislabelling. Each switch's "off" state zeroed bytes 2-3
+# of a record -- instruction operands -- so toggling one would have corrupted
+# boot code. Identified by rimwall, who noted the region is "just general
+# initialisation of ports etc."
+#
+# If the real DTC table is found later, note that DTCs are transmitted on CAN
+# 0x422 bytes 3-4 as [2-bit index][14-bit DTC number], per the CAN decoding
+# thread (f=40&t=20850). Look for the code that builds that message.
 # ---------------------------------------------------------------------------
-# ROM profiles.
-#
-# RomRaider identifies a ROM by matching <internalidstring> at
-# <internalidaddress>, so a single definition file can carry several <rom>
-# blocks and RomRaider picks the right one automatically when a file is opened.
-# That is how production Subaru definitions handle firmware variants (the
-# reference ecu_defs.xml carries 332 of them in one file).
-#
-# The first profile is the BASE and emits full table definitions. Every other
-# profile emits only <table name=... storageaddress=...> overrides and inherits
-# names, scaling, axis labels and descriptions via <rom base="...">.
-#
-# "offsets" maps a family/scalar id to the delta from the base ROM's address.
-# The deltas are NOT uniform across the file, so every derived address is
-# re-verified against the target ROM's own embedded count field before being
-# written (see verify_profile) -- assuming a single global shift produces a
-# definition that looks fine and writes to the wrong bytes.
-# ---------------------------------------------------------------------------
+
 ROM_PROFILES = [
     {
         "id": "91D1206000",
@@ -857,10 +753,14 @@ INFO_README = (
     "part-number label). Note this is NOT the 05-06 USDM TCU, which uses a "
     "different MCU.\n\n"
     "Confirmed: table addresses, DTC list, checksum, gear ratios (raw/1024), "
-    "and the RPM axis scale (raw/8) — both verified against the factory service "
-    "manual and the firmware's own arithmetic. Still unidentified: temperature "
-    "and pressure units, and a number of tables. Anything left as \"raw\" has no "
-    "confirmed conversion yet. See docs/TECHNICAL-NOTES.md for full technical detail.\n\n"
+    "Confirmed conversions: gear ratios (raw/1024), engine speed (raw/8), "
+    "temperature (raw-40 degC), vehicle speed (km/h), accelerator pedal angle "
+    "(raw/255 = 0-100%). Anything left as \"raw\" has no confirmed conversion. "
+    "Pressure units are NOT confirmed and are not stored in the ROM. "
+    "See docs/TECHNICAL-NOTES.md for detail.\n\n"
+    "REQUIRES RomRaider 1.0.0 or later. The shift schedule and record curves are "
+    "3D tables; RomRaider 0.8.2 reports \"There was an error loading table\" for "
+    "them.\n\n"
     "This is a static file editor only — cannot connect live to the vehicle "
     "through RomRaider. Run tools/checksum.py after any edit, before flashing."
 )
@@ -1059,23 +959,9 @@ def build_rom_block(profile, rom_bytes, is_base):
                 parts.append("")
                 total += 1
 
-        dtc_records = extract_dtc_records()
-        code_counts = {}
-        for rec in dtc_records:
-            code_counts[rec["code"]] = code_counts.get(rec["code"], 0) + 1
-        code_seen = {}
-        parts.append("  <!-- ============ Diagnostic Trouble Codes ============ -->")
-        for i, rec in enumerate(dtc_records):
-            suffix = ""
-            if code_counts[rec["code"]] > 1:
-                code_seen[rec["code"]] = code_seen.get(rec["code"], 0) + 1
-                suffix = f" ({chr(ord('A') + code_seen[rec['code']] - 1)})"
-            parts.append(build_dtc_table_xml(rec, i, suffix))
-            parts.append("")
-            total += 1
 
         parts.append(" </rom>")
-        return parts, total, len(dtc_records)
+        return parts, total, 0
     finally:
         data = saved
 
