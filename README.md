@@ -25,7 +25,6 @@ The definition file carries every mapped firmware. **RomRaider selects the right
 one automatically** by matching the cal ID at `0x8008` when you open a ROM —
 there is nothing to choose.
 
-This is an ongoing project. Table addresses, the DTC list, the checksum algorithm,
 All eleven firmwares are mapped, the shift schedule is decoded in real units, and
 five real-world unit conversions are confirmed. What remains unidentified is
 marked as such rather than guessed at.
@@ -38,19 +37,20 @@ marked as such rather than guessed at.
 |---|---|
 | [`definitions/`](definitions/) | The RomRaider definition file — all eleven firmwares, auto-selected by cal ID. Start here. |
 | [`docs/ROMRAIDER-SETUP.md`](docs/ROMRAIDER-SETUP.md) | How to actually get this working in your RomRaider install. |
-| [`docs/ROM-DETAILS.md`](docs/ROM-DETAILS.md) | Everything known about this specific binary — provenance, IDs, memory map. |
+| [`docs/ROM-DETAILS.md`](docs/ROM-DETAILS.md) | The reference firmware in detail — provenance, IDs, memory map, checksum — plus the collection table. |
 | [`docs/TECHNICAL-NOTES.md`](docs/TECHNICAL-NOTES.md) | How the tables, checksum, and unit scales were worked out. |
 | [`tools/`](tools/) | Checksum fix, definition generator, validators, Ghidra scripts, and a [headless RomRaider verifier](tools/romraider-cli/). See [`tools/README.md`](tools/README.md). |
-| [`decompiled/`](decompiled/) | Full decompiler output for both ROMs, ~46,500 lines each. |
+| [`decompiled/`](decompiled/) | Full decompiler output for all eleven ROMs, ~46,500 lines each. |
 | [`rom/`](rom/) | The ROM images themselves. |
 
 ---
 
 ## Quick start
 
-1. Install [RomRaider](https://www.romraider.com/) (tested against 1.0.0).
+1. Install [RomRaider](https://www.romraider.com/) — **1.0.0 or later required**;
+   0.8.2 cannot load the 3D shift-curve tables.
 2. Point it at `definitions/5eat_tcu_romraider_defs.xml`.
-3. Open either ROM from `rom/`.
+3. Open any ROM from `rom/`.
 4. **After any edit, fix the checksum before flashing** — RomRaider cannot do it for
    this ROM:
    ```bash
@@ -64,8 +64,9 @@ logging if tables don't appear, are in [`docs/ROMRAIDER-SETUP.md`](docs/ROMRAIDE
 
 ## What's confirmed
 
-Three real-world unit conversions are nailed down, each verified two independent
-ways (against the factory service manual *and* against the firmware's own arithmetic):
+Five real-world unit conversions are nailed down, each verified two independent
+ways — against an external reference (the factory service manual, rimwall's shift
+chart, or the community CAN decoding) *and* against the firmware's own arithmetic:
 
 - **Gear ratios** — `raw / 1024`. Decodes to 3.540 / 2.264 / 1.471 / 1.000 / 0.834,
   matching the published ratios to within 0.0007.
