@@ -20,7 +20,7 @@ index 45cde25..f091c58 100644
          if (rb == null) return;
          // init debug logging
 diff --git a/src/main/java/com/romraider/editor/ecu/ECUEditor.java b/src/main/java/com/romraider/editor/ecu/ECUEditor.java
-index e145a21..f4c0e61 100644
+index e145a21..7d316c1 100644
 --- a/src/main/java/com/romraider/editor/ecu/ECUEditor.java
 +++ b/src/main/java/com/romraider/editor/ecu/ECUEditor.java
 @@ -53,8 +53,10 @@ import java.io.File;
@@ -51,7 +51,7 @@ index e145a21..f4c0e61 100644
      private static final long serialVersionUID = -7826850987392016292L;
      protected static final ResourceBundle rb = new ResourceUtil().getBundle(
              ECUEditor.class.getName());
-@@ -241,7 +246,61 @@ public class ECUEditor extends AbstractFrame {
+@@ -241,7 +246,66 @@ public class ECUEditor extends AbstractFrame {
          });
      }
      
@@ -103,6 +103,11 @@ index e145a21..f4c0e61 100644
 +            // which is machine-specific and does not survive being copied.
 +            for (File f : findBundledDefinitions()) {
 +                settings.addEcuDefinitionFile(f);
++                // Point the browse directory at the bundled definitions too. Setting
++                // only the file leaves the directory at a default that may not exist,
++                // and the Definitions dialog builds a JFileChooser from it - which is
++                // how a missing folder turns into an error box on a menu click.
++                settings.setLastDefinitionDir(f.getParentFile());
 +                LOGGER.info("Using bundled ECU definition " + f.getAbsolutePath());
 +            }
 +            if (!settings.getEcuDefinitionFiles().isEmpty()) {
@@ -586,6 +591,30 @@ index 0000000..08721a2
 +        d[at + 3] = (byte) (v & 0xFF);
 +    }
 +}
+diff --git a/src/main/java/com/romraider/swing/DefinitionManager.java b/src/main/java/com/romraider/swing/DefinitionManager.java
+index 151dbc5..dc6cd19 100644
+--- a/src/main/java/com/romraider/swing/DefinitionManager.java
++++ b/src/main/java/com/romraider/swing/DefinitionManager.java
+@@ -221,7 +221,18 @@ public class DefinitionManager extends javax.swing.JFrame implements ActionListe
+ 
+     public void addFile() {
+         final Settings settings = SettingsManager.getSettings();
+-        final JFileChooser fc = new JFileChooser(settings.getLastDefinitionDir());
++        // A directory recorded in settings can disappear - the folder gets renamed,
++        // or the settings file is carried to another machine. JFileChooser does not
++        // cope with being handed one, so fall back rather than throw at the user.
++        File defDir = settings.getLastDefinitionDir();
++        if (defDir == null || !defDir.isDirectory()) {
++            final Vector<File> known = settings.getEcuDefinitionFiles();
++            defDir = known.isEmpty() ? null : known.get(0).getParentFile();
++            if (defDir == null || !defDir.isDirectory()) {
++                defDir = new File(System.getProperty("user.home", "."));
++            }
++        }
++        final JFileChooser fc = new JFileChooser(defDir);
+         fc.setMultiSelectionEnabled(true);
+         fc.setFileFilter(new DefinitionFilter());
+ 
 diff --git a/src/main/java/com/romraider/swing/LookAndFeelManager.java b/src/main/java/com/romraider/swing/LookAndFeelManager.java
 index 0f91ca7..6250e6b 100644
 --- a/src/main/java/com/romraider/swing/LookAndFeelManager.java
