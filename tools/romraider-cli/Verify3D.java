@@ -47,10 +47,17 @@ public class Verify3D {
             tables++;
             int base = t.getStorageAddress();
             int sx = t3.getSizeX(), sy = t3.getSizeY();
+            // skipCells is a stride: Table3D.populateTable advances the element
+            // offset by 1 + skipCells after the LAST cell of each row, and by 1
+            // otherwise. Recomputing that here rather than assuming contiguous
+            // row-major is the whole point - the record tables rely on the
+            // stride to pull one quantity out of an interleaved array, so a
+            // checker that ignored it would be validating the wrong bytes.
+            int skip = t3.getSkipCells();
             for (int y=0; y<sy; y++) {
                 for (int x=0; x<sx; x++) {
-                    // definition declares row-major uint16 big-endian
-                    int off = base + (y*sx + x)*2;
+                    int element = y*(sx + skip) + x;
+                    int off = base + element*2;
                     int expect = ((rom[off]&0xFF)<<8) | (rom[off+1]&0xFF);
                     int got = (int) d[x][y].getBinValue();
                     cells++;
@@ -58,8 +65,8 @@ public class Verify3D {
                         bad++;
                         if (firstBad.length()==0)
                             firstBad.append(String.format(
-                              "%s [x=%d,y=%d] rom@0x%06X=%d but RomRaider=%d",
-                              t.getName(), x, y, off, expect, got));
+                              "%s [x=%d,y=%d] skip=%d rom@0x%06X=%d but RomRaider=%d",
+                              t.getName(), x, y, skip, off, expect, got));
                     }
                 }
             }

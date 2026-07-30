@@ -1,0 +1,277 @@
+diff --git a/build.xml b/build.xml
+index d2d419e..f45e0e9 100644
+--- a/build.xml
++++ b/build.xml
+@@ -58,11 +58,11 @@
+             <format property="mnth.day" pattern="MMMdd" locale="en"/>
+         </tstamp>
+ 
+-        <scriptdef language="javascript" name="toUpper">
+-            project.setProperty("mnth.day",
+-                    project.getProperty("mnth.day").toUpperCase());
+-        </scriptdef>
+-        <toUpper/>
++        <!-- Nashorn was removed in Java 15; this only uppercased the month in the
++             version string, so it is done with a plain tstamp pattern instead. -->
++        <tstamp>
++            <format property="mnth.day" pattern="MMMdd" locale="en" />
++        </tstamp>
+ 
+         <!-- set os specific properties -->
+         <property name="os.windows" value="windows" />
+@@ -79,8 +79,8 @@
+         </condition>
+ 
+         <!-- java compiler properties -->
+-        <property name="javac.source" value="1.6" />
+-        <property name="javac.target" value="1.6" />
++        <property name="javac.source" value="21" />
++        <property name="javac.target" value="21" />
+         <condition property="bootclasspath.dir" value="${env.JRE_DIR}/lib"
+                            else="C:\Program Files (x86)\Java\jdk1.6.0_45\jre\lib">
+                     <isset property="env.JRE_DIR" />
+@@ -399,8 +399,7 @@
+                 debug="${debug}"
+                 verbose="${javac.verbose}"
+                 deprecation="${deprecation}"
+-                compiler="javac${javac.target}"
+-                bootclasspath="${toString:bootpath.ref}"
++                compiler="modern"
+                 encoding="UTF-8" >
+                 <!--
+                 <compilerarg value="-Xlint" />
+diff --git a/src/main/java/com/romraider/ECUExec.java b/src/main/java/com/romraider/ECUExec.java
+index 45cde25..f091c58 100644
+--- a/src/main/java/com/romraider/ECUExec.java
++++ b/src/main/java/com/romraider/ECUExec.java
+@@ -61,6 +61,16 @@ public class ECUExec {
+     }
+ 
+     public static void main(String args[]) {
++        // Crisp text. Java on Windows otherwise falls back to grayscale
++        // antialiasing, which looks soft even at 100% display scaling -- which is
++        // the actual cause of the "fuzzy" appearance, not HiDPI scaling.
++        if (System.getProperty("awt.useSystemAAFontSettings") == null) {
++            System.setProperty("awt.useSystemAAFontSettings", "lcd");
++        }
++        if (System.getProperty("swing.aatext") == null) {
++            System.setProperty("swing.aatext", "true");
++        }
++
+         // init i18n resources
+         if (rb == null) return;
+         // init debug logging
+diff --git a/src/main/java/com/romraider/swing/LookAndFeelManager.java b/src/main/java/com/romraider/swing/LookAndFeelManager.java
+index 0f91ca7..6250e6b 100644
+--- a/src/main/java/com/romraider/swing/LookAndFeelManager.java
++++ b/src/main/java/com/romraider/swing/LookAndFeelManager.java
+@@ -28,6 +28,7 @@ import static javax.swing.UIManager.getSystemLookAndFeelClassName;
+ import static javax.swing.UIManager.setLookAndFeel;
+ 
+ import javax.swing.JDialog;
++import javax.swing.UIManager;
+ import javax.swing.JFrame;
+ 
+ import org.apache.log4j.Logger;
+@@ -51,17 +52,72 @@ public final class LookAndFeelManager {
+ 
+             setLookAndFeel(getLookAndFeel());
+ 
+-            // make sure we have nice window decorations.
+-            JFrame.setDefaultLookAndFeelDecorated(true);
+-            JDialog.setDefaultLookAndFeelDecorated(true);
++            // Use a modern UI font. Much of this codebase hardcodes Tahoma 11,
++            // a 2001-era font; where the look and feel font is honoured, prefer
++            // Segoe UI, falling back if it is not installed.
++            applyModernFont();
++
++            // FlatLaf provides its own window decorations and handles HiDPI itself;
++            // forcing LAF decoration on top of it produces blurry, mismatched frames.
++            final boolean flat = UIManager.getLookAndFeel() != null
++                    && UIManager.getLookAndFeel().getClass().getName().startsWith("com.formdev.flatlaf");
++            JFrame.setDefaultLookAndFeelDecorated(!flat);
++            JDialog.setDefaultLookAndFeelDecorated(!flat);
+ 
+         } catch (Exception ex) {
+             LOGGER.error("Error loading system look and feel.", ex);
+         }
+     }
+ 
++    /**
++     * Look and feel selection.
++     *
++     * Prefers FlatLaf when it is on the classpath: it renders correctly on HiDPI
++     * displays, where the Windows look and feel is bitmap-scaled and looks blurry.
++     * Set -Dromraider.theme=light for the light variant, or =system to force the
++     * previous behaviour. Falls back to the old selection if FlatLaf is absent, so
++     * the build works with or without the jar.
++     */
++    /**
++     * Sets a modern default UI font when one is available.
++     *
++     * Only affects components that read UIManager rather than constructing their
++     * own Font. Text crispness itself is handled by the antialiasing properties
++     * set in main(), not here.
++     */
++    private static void applyModernFont() {
++        final String[] preferred = {"Segoe UI", "Inter", "Roboto", "Dialog"};
++        final java.util.Set<String> available = new java.util.HashSet<String>(
++                java.util.Arrays.asList(java.awt.GraphicsEnvironment
++                        .getLocalGraphicsEnvironment().getAvailableFontFamilyNames()));
++        String chosen = null;
++        for (String f : preferred) {
++            if (available.contains(f)) { chosen = f; break; }
++        }
++        if (chosen == null) return;
++        final javax.swing.plaf.FontUIResource font =
++                new javax.swing.plaf.FontUIResource(chosen, java.awt.Font.PLAIN, 12);
++        for (Object key : java.util.Collections.list(UIManager.getDefaults().keys())) {
++            if (UIManager.get(key) instanceof javax.swing.plaf.FontUIResource) {
++                UIManager.put(key, font);
++            }
++        }
++        LOGGER.info("UI font set to " + chosen);
++    }
++
+     private static String getLookAndFeel() {
+-//        if (true) return "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel";
++        final String theme = System.getProperty("romraider.theme", "dark");
++        if (!"system".equalsIgnoreCase(theme)) {
++            final String laf = "light".equalsIgnoreCase(theme)
++                    ? "com.formdev.flatlaf.FlatLightLaf"
++                    : "com.formdev.flatlaf.FlatDarkLaf";
++            try {
++                Class.forName(laf);
++                return laf;
++            } catch (ClassNotFoundException e) {
++                LOGGER.info("FlatLaf not on classpath; using the platform look and feel.");
++            }
++        }
+         // Linux has issues with the gtk look and feel themes.
+         if (isPlatform(LINUX)) return getCrossPlatformLookAndFeelClassName();
+         return getSystemLookAndFeelClassName();
+diff --git a/src/main/java/com/romraider/swing/RomCellRenderer.java b/src/main/java/com/romraider/swing/RomCellRenderer.java
+index fff592a..3fa8259 100644
+--- a/src/main/java/com/romraider/swing/RomCellRenderer.java
++++ b/src/main/java/com/romraider/swing/RomCellRenderer.java
+@@ -30,6 +30,7 @@ import java.awt.GridLayout;
+ import javax.swing.ImageIcon;
+ import javax.swing.JLabel;
+ import javax.swing.JPanel;
++import javax.swing.UIManager;
+ import javax.swing.JTree;
+ import javax.swing.tree.DefaultTreeCellRenderer;
+ import javax.swing.tree.TreeCellRenderer;
+@@ -136,13 +137,15 @@ public class RomCellRenderer implements TreeCellRenderer {
+             renderer.add(carInfo);
+ 
+             if (selected) {
+-                renderer.setBackground(new Color(220, 220, 255));
+-                renderer.setBorder(createLineBorder(new Color(0, 0, 225)));
++                renderer.setBackground(selectionBackground());
++                renderer.setBorder(createLineBorder(selectionBorder()));
+ 
+             } else {
+-                renderer.setBorder(createLineBorder(new Color(220, 0, 0)));
+-                renderer.setBackground(new Color(255, 210, 210));
++                renderer.setBorder(createLineBorder(new Color(160, 60, 60)));
++                renderer.setBackground(romHeaderBackground());
+             }
++            fileName.setForeground(uiColor("Tree.foreground", Color.BLACK));
++            carInfo.setForeground(uiColor("Tree.foreground", Color.BLACK));
+ 
+             renderer.setPreferredSize(new Dimension(tree.getParent().getWidth(), 30));
+             renderer.setMaximumSize(new Dimension(tree.getParent().getWidth(), 30));
+@@ -152,28 +155,31 @@ public class RomCellRenderer implements TreeCellRenderer {
+ 
+             Table table = (Table) (((TableTreeNode)(value)).getUserObject());
+             JPanel renderer = new JPanel(new GridLayout(1, 1));
+-            renderer.setBorder(createLineBorder(Color.WHITE));
++            renderer.setBorder(createLineBorder(treeBackground()));
+             JLabel tableName = new JLabel("");
+-            renderer.setBackground(Color.WHITE);
++            renderer.setBackground(treeBackground());
+             
+             tableName = new JLabel (table.getName() + " ", getIconForTable(table), JLabel.LEFT);
+ 
+             // set color
+             renderer.add(tableName);
+-            tableName.setFont(new Font("Tahoma", Font.PLAIN, 11));
++            tableName.setFont(treeFont(Font.PLAIN));
+ 
++            tableName.setForeground(uiColor("Tree.foreground", Color.BLACK));
+             if (selected) {
+-                renderer.setBackground(new Color(220, 220, 255));
+-                renderer.setBorder(createLineBorder(new Color(0, 0, 225)));
++                renderer.setBackground(selectionBackground());
++                renderer.setBorder(createLineBorder(selectionBorder()));
++                tableName.setForeground(uiColor("Tree.selectionForeground",
++                        uiColor("Tree.foreground", Color.BLACK)));
+             }
+ 
+             if (table.getUserLevel() == 5) {
+-                tableName.setForeground(new Color(255, 150, 150));
+-                tableName.setFont(new Font("Tahoma", Font.ITALIC, 11));
++                tableName.setForeground(expertForeground());
++                tableName.setFont(treeFont(Font.ITALIC));
+ 
+             } else if (table.getUserLevel() > table.getSettings().getUserLevel()) {
+                 //tableName.setForeground(new Color(185, 185, 185));
+-                tableName.setFont(new Font("Tahoma", Font.ITALIC, 11));
++                tableName.setFont(treeFont(Font.ITALIC));
+ 
+             }
+ 
+@@ -188,4 +194,52 @@ public class RomCellRenderer implements TreeCellRenderer {
+         return returnValue;
+ 
+     }
++
++    /**
++     * Colours taken from the active look and feel rather than hardcoded.
++     *
++     * This renderer previously used fixed light colours (Color.WHITE backgrounds,
++     * 220,220,255 for selection). Under a dark theme those produce unreadable
++     * combinations -- dark default text on a white panel, or panels that blend
++     * into each other. Deriving from UIManager keeps it correct under any theme.
++     */
++    private static Color uiColor(String key, Color fallback) {
++        final Color c = UIManager.getColor(key);
++        return c == null ? fallback : c;
++    }
++
++    private static Color treeBackground() {
++        return uiColor("Tree.background", uiColor("Panel.background", Color.WHITE));
++    }
++
++    private static Color selectionBackground() {
++        return uiColor("Tree.selectionBackground", new Color(220, 220, 255));
++    }
++
++    private static Color selectionBorder() {
++        return uiColor("Component.focusColor",
++                uiColor("Tree.selectionBorderColor", new Color(0, 0, 225)));
++    }
++
++    private static boolean isDark() {
++        final Color bg = treeBackground();
++        // perceived luminance; below the midpoint means a dark theme
++        return (0.299 * bg.getRed() + 0.587 * bg.getGreen() + 0.114 * bg.getBlue()) < 128;
++    }
++
++    /** Attention colour for the ROM header row, legible on light or dark. */
++    private static Color romHeaderBackground() {
++        return isDark() ? new Color(90, 40, 40) : new Color(255, 210, 210);
++    }
++
++    private static Color expertForeground() {
++        return isDark() ? new Color(255, 120, 120) : new Color(200, 60, 60);
++    }
++
++    /** The tree font, from the look and feel, so HiDPI scaling applies. */
++    private static Font treeFont(int style) {
++        final Font f = UIManager.getFont("Tree.font");
++        return f == null ? new Font(Font.SANS_SERIF, style, 12) : f.deriveFont(style);
++    }
++
+ }

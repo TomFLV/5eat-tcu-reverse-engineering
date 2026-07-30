@@ -89,11 +89,44 @@ def main():
 
             elif ttype == "3D":
                 sx, sy = int(t.get("sizex")), int(t.get("sizey"))
+                skip = int(t.get("skipCells", "0"))
                 checked += 1
-                term = u16(addr + sy * sx * 2)
-                if term != 0xFFFF:
-                    errors.append(f"{name}: no 0xFFFF terminator after {sy} rows "
-                                  f"(found {term})")
+                if sx == 1 and skip == 1:
+                    # One quantity pulled out of a record array with a stride of
+                    # two uint16. Two record geometries use that same stride and
+                    # cannot be told apart from sizex/skipCells alone:
+                    #
+                    #   8-byte records (shift schedule, hysteresis curves)
+                    #     4 x uint16, two of them this quantity, so sizey counts
+                    #     vertices - two per record - and the array ends with a
+                    #     leading 0xFFFF.
+                    #   4-byte records (line pressure curves)
+                    #     2 x uint16, one of them this quantity, so sizey IS the
+                    #     record count, and the array ends with a 0xFF00
+                    #     breakpoint rather than 0xFFFF.
+                    #
+                    # The table also starts at field 0 or field 1 of the first
+                    # record, and which one is not recoverable from the address
+                    # because record arrays are not 8-aligned (0x00807E is a real
+                    # one). So try every consistent reading and accept if any one
+                    # of them lands on a real terminator.
+                    ok = False
+                    for start in (addr, addr - 2):
+                        if u16(start + (sy // 2) * 8) == 0xFFFF:      # 8-byte
+                            ok = True
+                        if u16(start + (sy - 1) * 4) == 0xFF00:       # 4-byte
+                            ok = True
+                    if not ok:
+                        errors.append(
+                            f"{name}: no record-array terminator found - "
+                            f"neither 0xFFFF after {sy // 2} eight-byte records "
+                            f"nor 0xFF00 at record {sy} of a four-byte array")
+                else:
+                    term = u16(addr + sy * sx * 2)
+                    if term != 0xFFFF:
+                        errors.append(
+                            f"{name}: no 0xFFFF terminator after {sy} rows "
+                            f"(found {term})")
 
             else:  # 1D / Switch
                 checked += 1

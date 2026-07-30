@@ -35,47 +35,67 @@ marked as such rather than guessed at.
 
 | Path | What it is |
 |---|---|
-| [`definitions/`](definitions/) | The RomRaider definition file — all eleven firmwares, auto-selected by cal ID. Start here. |
-| [`docs/ROMRAIDER-SETUP.md`](docs/ROMRAIDER-SETUP.md) | How to actually get this working in your RomRaider install. |
+| [`romraider-5eat/`](romraider-5eat/) | **A ready-to-run Windows build of RomRaider** with the definition and a Java runtime bundled. Download it from [Releases](../../releases). |
+| [`definitions/`](definitions/) | The RomRaider definition file — all eleven firmwares, auto-selected by cal ID. |
+| [`docs/ROMRAIDER-SETUP.md`](docs/ROMRAIDER-SETUP.md) | How to get this working in an existing RomRaider install instead. |
 | [`docs/ROM-DETAILS.md`](docs/ROM-DETAILS.md) | The reference firmware in detail — provenance, IDs, memory map, checksum — plus the collection table. |
 | [`docs/TECHNICAL-NOTES.md`](docs/TECHNICAL-NOTES.md) | How the tables, checksum, and unit scales were worked out. |
 | [`tools/`](tools/) | Checksum fix, definition generator, validators, Ghidra scripts, and a [headless RomRaider verifier](tools/romraider-cli/). See [`tools/README.md`](tools/README.md). |
-| [`decompiled/`](decompiled/) | Full decompiler output for all eleven ROMs, ~46,500 lines each. |
+| [`decompiled/`](decompiled/) | Full decompiler output for all sixteen ROMs. |
 | [`rom/`](rom/) | The ROM images themselves. |
 
 ---
 
 ## Quick start
 
-1. Install [RomRaider](https://www.romraider.com/) — **1.0.0 or later required**;
-   0.8.2 cannot load the 3D shift-curve tables.
-2. Point it at `definitions/5eat_tcu_romraider_defs.xml`.
-3. Open any ROM from `rom/`.
-4. **After any edit, fix the checksum before flashing** — RomRaider cannot do it for
-   this ROM:
-   ```bash
-   python tools/checksum.py --fix edited.bin
-   ```
+**Easiest:** download the standalone Windows package from
+[Releases](../../releases), extract the whole folder, run `RomRaider.vbs`, then
+`File -> Open` a ROM. Nothing to install — a Java runtime and the definition are
+bundled, and the right firmware is selected automatically from the calibration ID.
 
-Full instructions, including the settings RomRaider needs and how to enable debug
-logging if tables don't appear, are in [`docs/ROMRAIDER-SETUP.md`](docs/ROMRAIDER-SETUP.md).
+**Using your own RomRaider install** — 1.0.0 or later; 0.8.2 cannot load the 3D
+tables. Point it at `definitions/5eat_tcu_romraider_defs.xml`. See
+[`docs/ROMRAIDER-SETUP.md`](docs/ROMRAIDER-SETUP.md).
+
+Either way: **after any edit, fix the checksum before flashing** — RomRaider
+cannot do it for this ROM.
+
+```bash
+python tools/checksum.py --fix edited.bin
+```
 
 ---
 
 ## What's confirmed
 
-Five real-world unit conversions are nailed down, each verified two independent
+Six real-world unit conversions are nailed down, each verified two independent
 ways — against an external reference (the factory service manual, rimwall's shift
 chart, or the community CAN decoding) *and* against the firmware's own arithmetic:
 
 - **Gear ratios** — `raw / 1024`. Decodes to 3.540 / 2.264 / 1.471 / 1.000 / 0.834,
   matching the published ratios to within 0.0007.
-- **Engine speed** — `raw / 8`. Gives clean 640 RPM breakpoints topping out at 6400 RPM.
+- **Engine speed** — `raw / 8`. Gives clean 640 RPM breakpoints. **The `uint16`
+  storage caps these tables at 8191 RPM**; the stock calibration already parks a
+  breakpoint at 8160 RPM, so there is headroom for a built engine, but a target
+  above 8191 RPM cannot be represented.
 - **Temperature** — `raw − 40` °C. Two NTC thermistor channels, standard −40…+215 °C
   automotive encoding.
 - **Vehicle speed** — km/h directly, no scaling.
 - **Accelerator angle** — raw 0–255 mapping to 0–100%. Independently confirmed
   twice: from the shift chart, and from CAN `0x412` byte 0 being APA at ×100/255.
+- **Line pressure** — **kPa directly, no scaling.** The service manual's line
+  pressure test (5AT-35) specifies 1370 kPa at full throttle in D and R, and has
+  the TCU reporting "P/L Solenoid Target Pressure" to the Subaru Select Monitor
+  *already in kPa*. That value appears verbatim in a calibration table in all
+  eleven firmwares, at an address that relocates between them.
+
+The pressure result is worth spelling out, because an earlier version of this
+project gave up on pressure units after four separate attempts. The mistake was
+looking for a conversion inside the ROM. There is none to find — the firmware
+already works in kPa, and the answer was in the service manual the whole time.
+The tables are `[engine speed × 8, kPa]`, so both columns carry a confirmed unit.
+What is still *not* known is which hydraulic circuit each of the two curves
+governs, so they are named for what they contain rather than for a guess.
 
 Also confirmed: the **checksum algorithm** (32-bit big-endian two's-complement
 additive, stored twice at `0x8000`/`0x8004` — over two different region
@@ -94,9 +114,22 @@ defines what the ATF sensors actually read. These were long excluded on the
 grounds that RomRaider has no stride support; the shift-schedule work showed that
 was wrong, since the record block is contiguous and maps onto a 3D table exactly.
 
-They ship as `raw` with their inputs named where traced (ATF temperature, CAN
-0x412 byte 0, engine speed, reference speed) and honestly labelled as
-unidentified internal signals where not.
+Each record array now ships as **a pair of single-quantity tables** rather than one
+four-column grid — `Shift 1-2 Upshift Curve - km/h` alongside
+`Shift 1-2 Upshift Curve - % pedal`, lining up row for row. The reason is that
+RomRaider scales a table as a whole, so a grid holding both a speed and a pedal
+angle cannot carry a unit at all and every cell had to be shown as a raw integer.
+
+Splitting them uses RomRaider's own `skipCells` stride: with `sizex="1"` the
+populate loop advances by `1 + skipCells` for every cell, so `skipCells="1"` walks
+every second `uint16` — exactly one quantity out of the interleaved array, with
+nothing skipped and nothing invented. All 640 3D tables across the eleven
+firmwares were then checked cell by cell against the raw ROM bytes: **12,844 cells,
+zero mismatches.**
+
+Curves whose input is traced carry its real unit (engine speed in RPM, reference
+speed in km/h). The rest ship as `raw` and say so. A plausible unit that turns out
+to be wrong is worse than an honest `raw`, because it reads as confirmed.
 
 ### The shift schedule
 

@@ -548,18 +548,17 @@ def build_scalar_xml(scalar):
 SHIFT_CURVES_BY_ROM = json.load(open(os.path.join(here, "shift_curves.json")))
 
 SHIFT_DESC = (
-    "Shift point curve, mode 0 (the fully-populated operating mode). Each row is "
-    "one segment of a polyline in vehicle-speed / accelerator-angle space: the TCU "
-    "shifts when the operating point crosses this line.\n\n"
-    "Columns: 1 = speed at the start of the segment, 2 = pedal angle at the start, "
-    "3 = speed at the end, 4 = pedal angle at the end. Column 3 of a row repeats "
-    "column 1 of the next row, and column 4 repeats column 2 - KEEP THEM IN SYNC "
-    "when editing or the curve will break.\n\n"
-    "Units are confirmed against the factory shift chart: speed is km/h directly, "
-    "pedal angle is raw 0-255 shown here as 0-100%. A pedal value of 255 in the "
-    "final row is a max clamp, not a real 100% point.\n\n"
+    "Shift point curve, mode 0 (the fully-populated operating mode). The curve is a "
+    "polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the "
+    "operating point crosses this line.\n\n"
+    "Units are confirmed against the factory shift chart ('5EAT Shifting, Base "
+    "Case'): vehicle speed is km/h with no scaling, and accelerator opening angle "
+    "is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of "
+    "100% in the final row is a max clamp, not a real operating point.\n\n"
     "Lowering a curve makes that shift happen earlier (at lower speed for a given "
-    "pedal); raising it delays the shift."
+    "pedal); raising it delays the shift. Read this table together with its "
+    "companion - vertex 3a of the km/h table and vertex 3a of the % pedal table "
+    "are the two coordinates of the same point on the curve."
 )
 
 
@@ -579,16 +578,181 @@ def _static_axes(col_labels, rows, y_name="Segment"):
             f'{ys}{nl}   </table>')
 
 
-SHIFT_COLS = ["Speed (km/h)", "Pedal (0-255)", "Next Speed (km/h)", "Next Pedal (0-255)"]
-RECORD_COLS = ["Breakpoint", "Value A", "Next Breakpoint", "Value B"]
+# ---------------------------------------------------------------------------
+# Record arrays, split by physical quantity.
+#
+# An 8-byte record is 4 x uint16: [f0, f1, f2, f3]. f0 and f2 are the segment's
+# start and end BREAKPOINT; f1 and f3 are the corresponding VALUES. Those are
+# two different physical quantities, in different units.
+#
+# The first version of this generator emitted one 4-column table per record
+# array. That was a mistake for two reasons:
+#
+#   * RomRaider scales a table as a whole, so a grid holding both km/h and a
+#     0-255 pedal angle cannot carry a unit at all. Every cell had to be shown
+#     as a raw integer, which is exactly the thing a tuner cannot read.
+#   * Four long column headers do not fit the fixed 42px cell width, so they
+#     were clipped to "Spee...", "Pedal..." and were unreadable anyway.
+#
+# skipCells fixes it. Table3D.populateTable advances the read offset by
+# 1 + skipCells after the last cell of each row, so with sizex=1 EVERY cell is
+# the last in its row and the stride applies to all of them. skipCells=1 walks
+# every second uint16 - which is precisely one quantity's start and end values,
+# in order, with nothing skipped and nothing invented. Each resulting table
+# holds one quantity, so it can carry a real unit.
+#
+# Verified by rendering: the pedal table reads 0.0, 0.0, 18.8, 25.1, 25.1, 37.6
+# ... against raw records [0,0,12,0], [12,48,17,64], [17,64,22,96] - i.e.
+# 48/255 = 18.8%, 64/255 = 25.1%. See tools/romraider-cli/RenderTable.java.
+# ---------------------------------------------------------------------------
+
+# Confirmed unit conversions. Only these five are code- or chart-derived; see
+# docs/TECHNICAL-NOTES.md. Anything else stays raw rather than being guessed.
+Q_SPEED = {"label": "km/h", "units": "km/h",
+           "expression": "x", "to_byte": "x",
+           "format": "0", "fine": "1", "coarse": "5"}
+Q_PEDAL = {"label": "% pedal", "units": "% pedal",
+           "expression": "x/255*100", "to_byte": "x*255/100",
+           "format": "0.0", "fine": "0.4", "coarse": "3.9"}
+# Engine speed is stored as uint16 with a /8 scaling, so 65535 raw is the
+# ceiling: 8191 RPM. That is a limit of the stored format, not of the editor,
+# and it cannot be raised by rescaling without misstating what the TCU reads.
+# There is real headroom for a built engine - the stock calibration already
+# parks a breakpoint at 8160 RPM (65280 raw) in the slip-threshold axis of
+# 91D1206000, which is deliberately just under the ceiling - but 10000 RPM is
+# not representable in these tables at all.
+RPM_CEILING = 8191
+RPM_CEILING_NOTE = (
+    f"\n\nRPM RANGE: engine speed is a uint16 scaled by 1/8, so the highest value "
+    f"these tables can hold is {RPM_CEILING} RPM. The stock calibration already "
+    f"uses breakpoints as high as 8160 RPM elsewhere, so there is room to raise "
+    f"shift and slip breakpoints for a built engine - but a target above "
+    f"{RPM_CEILING} RPM cannot be represented here, and entering one will clip."
+)
+
+Q_RPM = {"label": "RPM", "units": "RPM",
+         "expression": "x/8", "to_byte": "x*8",
+         "format": "0", "fine": "10", "coarse": "100",
+         "note": RPM_CEILING_NOTE}
+Q_RAW_BP = {"label": "Breakpoint", "units": "raw",
+            "expression": "x", "to_byte": "x",
+            "format": "0", "fine": "1", "coarse": "8"}
+Q_RAW_VAL = {"label": "Value", "units": "raw",
+             "expression": "x", "to_byte": "x",
+             "format": "0", "fine": "1", "coarse": "8"}
+
+
+def _seg_labels(rows):
+    """Two vertices per record: 'a' is the segment start, 'b' the segment end.
+
+    Kept to three characters so the fixed cell width does not clip them.
+    """
+    out = []
+    for i in range(rows):
+        out.append(f"{i + 1}a")
+        out.append(f"{i + 1}b")
+    return out
+
+
+def _record_axes(x_label, y_labels):
+    nl = "\n"
+    ys = nl.join(f"    <data>{escape(l)}</data>" for l in y_labels)
+    return (f'   <table type="Static X Axis" name="Field" sizex="1">{nl}'
+            f'    <data>{escape(x_label)}</data>{nl}   </table>{nl}'
+            f'   <table type="Static Y Axis" name="Vertex" sizey="{len(y_labels)}">{nl}'
+            f'{ys}{nl}   </table>')
+
+
+RECORD_SPLIT_NOTE = (
+    "\n\nThis table holds ONE of the two quantities in the record array, so it can "
+    "be shown in real units. Rows are the polyline vertices in order: 1a is the "
+    "start of segment 1, 1b its end, 2a the start of segment 2, and so on. "
+    "A segment's end normally equals the next segment's start; where it does not, "
+    "the curve steps vertically at that point, which is deliberate. The companion "
+    "table in the same category holds the other quantity, row for row."
+)
+
+
+def build_record_tables_xml(name, category, addr, rows, quantities, desc,
+                            userlevel=1):
+    """Emit one table per physical quantity in an 8-byte record array.
+
+    `quantities` is a list of (field_index, quantity_dict). Field 0/2 share one
+    quantity and field 1/3 the other, so only fields 0 and 1 are passed - the
+    skipCells stride picks up 2 and 3 automatically.
+    """
+    out = []
+    for field, q in quantities:
+        out.append(
+            f"""  <table type="3D" name="{escape(name + ' - ' + q['label'])}" category="{escape(category)}" storageaddress="0x{addr + field * 2:06X}" storagetype="uint16" endian="big" sizex="1" sizey="{rows * 2}" skipCells="1" userlevel="{userlevel}">
+   <scaling units="{escape(q['units'])}" expression="{escape(q['expression'])}" to_byte="{escape(q['to_byte'])}" format="{q['format']}" fineincrement="{q['fine']}" coarseincrement="{q['coarse']}" />
+{_record_axes(q['label'], _seg_labels(rows))}
+   <description>{escape(desc + RECORD_SPLIT_NOTE + q.get('note', ''))}</description>
+  </table>"""
+        )
+    return "\n".join(out)
+
 
 def build_shift_curve_xml(name, addr, rows):
-    name = escape(name)
-    return f"""  <table type="3D" name="{name}" category="Transmission - Shift Schedule" storageaddress="0x{addr:06X}" storagetype="uint16" endian="big" sizex="4" sizey="{rows}" userlevel="4">
-   <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
-{_static_axes(SHIFT_COLS, rows, "Segment")}
-   <description>{escape(SHIFT_DESC)}</description>
+    return build_record_tables_xml(
+        name, "Transmission - Shift Schedule", addr, rows,
+        [(0, Q_SPEED), (1, Q_PEDAL)], SHIFT_DESC)
+
+
+# ---------------------------------------------------------------------------
+# Line pressure target curves - the first tables here with a pressure unit that
+# is not a guess. See tools/extract_pressure_curves.py for how they were found
+# and why the earlier "Pressure Control" families are NOT this.
+#
+# Layout differs from the shift curves: 4-byte records, 2 x uint16, one value
+# per record rather than a start/end pair:
+#
+#     [engine speed x 8, pressure in kPa]
+#
+# So the stride is the same (skipCells=1 walks every second uint16) but sizey is
+# the record count, not twice it.
+# ---------------------------------------------------------------------------
+PRESSURE_CURVES_BY_ROM = json.load(open(os.path.join(here, "pressure_curves.json")))
+
+Q_KPA = {"label": "kPa", "units": "kPa",
+         "expression": "x", "to_byte": "x",
+         "format": "0", "fine": "5", "coarse": "50"}
+
+PRESSURE_DESC = (
+    "Line pressure target against engine speed. Both columns are in real units and "
+    "neither is inferred: the breakpoint column uses the same /8 engine-speed "
+    "scaling confirmed elsewhere in this definition, and the value column is "
+    "already in kPa.\n\n"
+    "The kPa unit is confirmed against the factory service manual line pressure "
+    "test (5AT-35), which has the TCU reporting 'P/L Solenoid Target Pressure' to "
+    "the Subaru Select Monitor in kPa and specifies 1370 kPa at full throttle in D "
+    "and R. That value appears verbatim in this table in all eleven firmwares, at "
+    "an address that relocates between them - so it is calibration data, not a "
+    "coincidence.\n\n"
+    "WHAT IS NOT CONFIRMED: which hydraulic circuit each of the two curves "
+    "governs. The value is flat across engine speed within each curve (1370 kPa in "
+    "one, 953 kPa in the other), and the consuming function has not been traced. "
+    "The tables are named for what they demonstrably contain rather than for a "
+    "circuit that would be a guess.\n\n"
+    "The final breakpoint is 8160 RPM (65280 raw), a max sentinel rather than a "
+    "real operating point. Raising line pressure increases clamping force and "
+    "shift firmness; it also increases pump load and wear."
+)
+
+
+def build_pressure_curve_xml(idx, c):
+    """One pressure curve as two single-unit tables (RPM breakpoint, kPa value)."""
+    name = f"Line Pressure Target {idx} ({c['kpa']} kPa)"
+    out = []
+    for field, q in ((0, Q_RPM), (1, Q_KPA)):
+        out.append(
+            f"""  <table type="3D" name="{escape(name + ' - ' + q['label'])}" category="Transmission - Line Pressure" storageaddress="0x{c['addr'] + field * 2:06X}" storagetype="uint16" endian="big" sizex="1" sizey="{c['rows']}" skipCells="1" userlevel="1">
+   <scaling units="{escape(q['units'])}" expression="{escape(q['expression'])}" to_byte="{escape(q['to_byte'])}" format="{q['format']}" fineincrement="{q['fine']}" coarseincrement="{q['coarse']}" />
+{_record_axes(q['label'], [str(i + 1) for i in range(c['rows'])])}
+   <description>{escape(PRESSURE_DESC + q.get('note', ''))}</description>
   </table>"""
+        )
+    return "\n".join(out)
 
 
 
@@ -621,22 +785,34 @@ HYSTERESIS_CURVES = json.load(open(os.path.join(here, "hysteresis_curves.json"))
 # the firmware is omitted rather than guessed at.
 HYSTERESIS_BY_ROM = json.load(open(os.path.join(here, "hysteresis_by_rom.json")))
 
+# Breakpoint units per curve family.
+#
+# The breakpoint is the quantity the TCU searches on, so its unit is whatever
+# feeds the lookup. Only assign one where the input was actually traced through
+# the decompilation - a wrong unit is worse than "raw", because it reads as
+# confirmed. Families not listed here keep raw breakpoints deliberately.
+#
+# Engine Speed Curves: the lookup input is the engine speed register, the same
+# raw/8 scaling already confirmed for the SpeedTrim and SlipThreshold axes.
+# Reference Speed Curves: input is vehicle speed in km/h, as for the shift
+# schedule - same signal, same units.
+RECORD_BREAKPOINT_UNITS = {
+    "Transmission - Engine Speed Curves": Q_RPM,
+    "Transmission - Reference Speed": Q_SPEED,
+}
+
 HYST_DESC_SUFFIX = (
-    "\n\nFormat: each row is one segment, 4 x uint16. Column 1 is the "
-    "breakpoint; columns 2-4 are the values interpolated across it. Rows chain "
-    "(a row's later columns repeat the next row's earlier ones), so keep them "
-    "consistent when editing. The final row is a max clamp.\n\n"
-    "Values are raw: no confirmed real-world conversion for this curve."
+    "\n\nFormat: an array of 8-byte records, each one segment of a piecewise-linear "
+    "curve. The array is terminated by a leading 0xFFFF."
 )
 
 
 def build_hyst_curve_xml(c, delta=0):
     addr = c["addr"] + delta
-    return f"""  <table type="3D" name="{escape(c['name'])}" category="{escape(c['category'])}" storageaddress="0x{addr:06X}" storagetype="uint16" endian="big" sizex="4" sizey="{c['rows']}" userlevel="4">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
-{_static_axes(RECORD_COLS, c['rows'], "Segment")}
-   <description>{escape(c['desc'] + HYST_DESC_SUFFIX)}</description>
-  </table>"""
+    bp = RECORD_BREAKPOINT_UNITS.get(c["category"], Q_RAW_BP)
+    return build_record_tables_xml(
+        c["name"], c["category"], addr, c["rows"],
+        [(0, bp), (1, Q_RAW_VAL)], c["desc"] + HYST_DESC_SUFFIX)
 
 
 # ---------------------------------------------------------------------------
@@ -1017,6 +1193,24 @@ def build_rom_block(profile, rom_bytes, is_base):
                 parts.append("")
                 total += 1
 
+        pcurves = PRESSURE_CURVES_BY_ROM.get(profile["id"], [])
+        if pcurves:
+            if is_base:
+                parts.append("  <!-- ============ Transmission - Line Pressure ============ -->")
+            for i, c in enumerate(pcurves, 1):
+                # Re-derive the record count from the ROM rather than trusting the
+                # extracted JSON: the terminating breakpoint is 0xFF00, so if the
+                # table has moved or resized in this firmware the count will not
+                # land on it and generation must fail loudly.
+                end = c["addr"] + (c["rows"] - 1) * 4
+                if u16(end) != 0xFF00:
+                    raise SystemExit(
+                        f"{profile['id']}: line pressure curve {i} at "
+                        f"0x{c['addr']:06X} does not end with the 0xFF00 sentinel "
+                        f"after {c['rows']} records (found 0x{u16(end):04X})")
+                parts.append(build_pressure_curve_xml(i, c))
+                parts.append("")
+                total += 1
 
         parts.append(" </rom>")
         return parts, total, 0
