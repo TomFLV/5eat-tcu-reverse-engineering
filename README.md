@@ -1,11 +1,26 @@
 # Subaru 5EAT TCU — Reverse Engineering Notes & RomRaider Definition
 
-Reverse engineering of a Subaru 5EAT (5-speed automatic) transmission control unit
-ROM, and a working RomRaider definition file that lets you open and edit the
-calibration tables in it.
+The Subaru 5EAT holds its shift points, line pressures and clutch timing in a
+transmission control unit nobody had published a tuning definition for. This is
+the work of opening one up: notes on how the calibration is laid out, and a
+RomRaider definition that lets you edit it.
 
-**All eleven firmwares are mapped**, all Mitsubishi/Renesas M32R, all with verified
-checksums. Full decompiler output is provided for every one of them.
+### ▶ [Download the ready-to-run Windows package](../../releases/latest)
+
+Extract the folder, double-click `RomRaider.vbs`, open a ROM. A Java runtime and
+the definition are bundled, so there is nothing to install and nothing to
+configure — it picks the right firmware itself.
+
+If you already run RomRaider, just point it at
+[`definitions/5eat_tcu_romraider_defs.xml`](definitions/) instead.
+
+**Everything is in real units.** Shift points in km/h against pedal percentage,
+line pressure in kPa, engine speed in RPM. Where a unit has not actually been
+established, the table says `raw` and means it — a plausible-looking unit that
+turns out to be wrong is worse than no unit at all.
+
+Eleven firmwares are mapped, all Mitsubishi/Renesas M32R, all with verified
+checksums, with full decompiler output for sixteen images.
 
 | Cal ID | ROM ID | Size | Vehicle / notes | Tables mapped |
 |---|---|---|---|---|
@@ -21,13 +36,8 @@ checksums. Full decompiler output is provided for every one of them.
 | `MB558D01` | `ACD1207000` | 512K | LGT06 JDM | **yes** |
 | `MB562EH` | `ADE0236000` | 512K | — | **yes** |
 
-The definition file carries every mapped firmware. **RomRaider selects the right
-one automatically** by matching the cal ID at `0x8008` when you open a ROM —
-there is nothing to choose.
-
-All eleven firmwares are mapped, the shift schedule is decoded in real units, and
-five real-world unit conversions are confirmed. What remains unidentified is
-marked as such rather than guessed at.
+One definition file carries all of them. RomRaider matches the cal ID at `0x8008`
+when you open a ROM and loads the right one, so there is nothing to pick.
 
 ---
 
@@ -40,6 +50,7 @@ marked as such rather than guessed at.
 | [`docs/ROMRAIDER-SETUP.md`](docs/ROMRAIDER-SETUP.md) | How to get this working in an existing RomRaider install instead. |
 | [`docs/ROM-DETAILS.md`](docs/ROM-DETAILS.md) | The reference firmware in detail — provenance, IDs, memory map, checksum — plus the collection table. |
 | [`docs/TECHNICAL-NOTES.md`](docs/TECHNICAL-NOTES.md) | How the tables, checksum, and unit scales were worked out. |
+| [`FINDINGS.md`](FINDINGS.md) | The full research log, in order, including the wrong turns and why they looked right. Long. |
 | [`tools/`](tools/) | Checksum fix, definition generator, validators, Ghidra scripts, and a [headless RomRaider verifier](tools/romraider-cli/). See [`tools/README.md`](tools/README.md). |
 | [`decompiled/`](decompiled/) | Full decompiler output for all sixteen ROMs. |
 | [`rom/`](rom/) | The ROM images themselves. |
