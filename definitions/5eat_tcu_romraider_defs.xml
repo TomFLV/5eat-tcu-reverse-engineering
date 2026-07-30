@@ -3153,6 +3153,22 @@ Cells showing '-' are not editable. They are pedal positions where that particul
 Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
+  <!-- ============ Transmission - Diagnostics ============ -->
+  <table type="1D" name="Trouble Codes" category="Transmission - Diagnostics" storageaddress="0x01CE18" storagetype="uint16" endian="big" sizey="96" userlevel="1">
+   <scaling units="P-code, value is hex" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <description>Diagnostic trouble codes this TCU can report, as stored in the ROM.
+
+READ THIS TO INTERPRET THE VALUES: each code is the P-number in hexadecimal, shown here in decimal because RomRaider cannot display hex. Convert the value to hex and read it as the code - 1797 is 0x705 which is P0705, 1824 is 0x720 which is P0720, and 5894 is 0x1706 which is P1706.
+
+Entries are in the order the firmware scans them: eight consecutive entries per fault-status byte, twelve bytes in all, so entry 8*g+b is the code for bit b of status byte g. When a fault bit is set, that code is what goes out on CAN 0x422 bytes 3-4. 43 of the 96 slots are zero - spare bits with no code assigned.
+
+DISABLING A CODE: set its entry to 0. That makes the slot identical to the 43 the factory already leaves at zero, so the fault bit still sets internally but no code number is attached to it. Useful after a hardware change that leaves a sensor permanently reading a fault.
+
+Be aware of what that is and is not. It suppresses the CODE, not the fault - whatever limp-home or pressure behaviour the TCU applies when that bit sets will still happen, you have only stopped it telling you why. And this is inferred from the table layout, not tested on a car: zero is what the firmware's own unused slots contain, which is the best evidence available, but nobody has confirmed on a vehicle how a scan tool reports it. Note the code you removed before you remove it.
+
+Located from the CAN decoding contributed to the RomRaider forum thread rather than by pattern matching. An earlier version of this definition claimed DTC tables at 0x4090; that was wrong - the address is M32R instruction stream, and editing it would have corrupted the TCU's start-up code.</description>
+  </table>
+
   <!-- ============ Transmission - Line Pressure ============ -->
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x0133EC" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="10" coarseincrement="100" />
@@ -6298,6 +6314,21 @@ Every value is vehicle speed in km/h, confirmed against the factory shift chart.
 Cells showing '-' are not editable. They are pedal positions where that particular curve has no vertex in the ROM, so there is no byte to change. Each curve is stored as its own polyline with its own breakpoints; this table lines them up on the shared pedal axis and leaves a gap where a curve does not use a position, rather than inventing a value.
 
 Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
+  </table>
+
+  <table type="1D" name="Trouble Codes" category="Transmission - Diagnostics" storageaddress="0x01CE44" storagetype="uint16" endian="big" sizey="96" userlevel="1">
+   <scaling units="P-code, value is hex" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <description>Diagnostic trouble codes this TCU can report, as stored in the ROM.
+
+READ THIS TO INTERPRET THE VALUES: each code is the P-number in hexadecimal, shown here in decimal because RomRaider cannot display hex. Convert the value to hex and read it as the code - 1797 is 0x705 which is P0705, 1824 is 0x720 which is P0720, and 5894 is 0x1706 which is P1706.
+
+Entries are in the order the firmware scans them: eight consecutive entries per fault-status byte, twelve bytes in all, so entry 8*g+b is the code for bit b of status byte g. When a fault bit is set, that code is what goes out on CAN 0x422 bytes 3-4. 43 of the 96 slots are zero - spare bits with no code assigned.
+
+DISABLING A CODE: set its entry to 0. That makes the slot identical to the 43 the factory already leaves at zero, so the fault bit still sets internally but no code number is attached to it. Useful after a hardware change that leaves a sensor permanently reading a fault.
+
+Be aware of what that is and is not. It suppresses the CODE, not the fault - whatever limp-home or pressure behaviour the TCU applies when that bit sets will still happen, you have only stopped it telling you why. And this is inferred from the table layout, not tested on a car: zero is what the firmware's own unused slots contain, which is the best evidence available, but nobody has confirmed on a vehicle how a scan tool reports it. Note the code you removed before you remove it.
+
+Located from the CAN decoding contributed to the RomRaider forum thread rather than by pattern matching. An earlier version of this definition claimed DTC tables at 0x4090; that was wrong - the address is M32R instruction stream, and editing it would have corrupted the TCU's start-up code.</description>
   </table>
 
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x0135A4" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
@@ -9452,6 +9483,21 @@ Cells showing '-' are not editable. They are pedal positions where that particul
 Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
+  <table type="1D" name="Trouble Codes" category="Transmission - Diagnostics" storageaddress="0x01D854" storagetype="uint16" endian="big" sizey="96" userlevel="1">
+   <scaling units="P-code, value is hex" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <description>Diagnostic trouble codes this TCU can report, as stored in the ROM.
+
+READ THIS TO INTERPRET THE VALUES: each code is the P-number in hexadecimal, shown here in decimal because RomRaider cannot display hex. Convert the value to hex and read it as the code - 1797 is 0x705 which is P0705, 1824 is 0x720 which is P0720, and 5894 is 0x1706 which is P1706.
+
+Entries are in the order the firmware scans them: eight consecutive entries per fault-status byte, twelve bytes in all, so entry 8*g+b is the code for bit b of status byte g. When a fault bit is set, that code is what goes out on CAN 0x422 bytes 3-4. 43 of the 96 slots are zero - spare bits with no code assigned.
+
+DISABLING A CODE: set its entry to 0. That makes the slot identical to the 43 the factory already leaves at zero, so the fault bit still sets internally but no code number is attached to it. Useful after a hardware change that leaves a sensor permanently reading a fault.
+
+Be aware of what that is and is not. It suppresses the CODE, not the fault - whatever limp-home or pressure behaviour the TCU applies when that bit sets will still happen, you have only stopped it telling you why. And this is inferred from the table layout, not tested on a car: zero is what the firmware's own unused slots contain, which is the best evidence available, but nobody has confirmed on a vehicle how a scan tool reports it. Note the code you removed before you remove it.
+
+Located from the CAN decoding contributed to the RomRaider forum thread rather than by pattern matching. An earlier version of this definition claimed DTC tables at 0x4090; that was wrong - the address is M32R instruction stream, and editing it would have corrupted the TCU's start-up code.</description>
+  </table>
+
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x013508" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="10" coarseincrement="100" />
    <table type="Static X Axis" name="Field" sizex="1">
@@ -12602,6 +12648,21 @@ Cells showing '-' are not editable. They are pedal positions where that particul
 Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
+  <table type="1D" name="Trouble Codes" category="Transmission - Diagnostics" storageaddress="0x01CEE8" storagetype="uint16" endian="big" sizey="96" userlevel="1">
+   <scaling units="P-code, value is hex" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <description>Diagnostic trouble codes this TCU can report, as stored in the ROM.
+
+READ THIS TO INTERPRET THE VALUES: each code is the P-number in hexadecimal, shown here in decimal because RomRaider cannot display hex. Convert the value to hex and read it as the code - 1797 is 0x705 which is P0705, 1824 is 0x720 which is P0720, and 5894 is 0x1706 which is P1706.
+
+Entries are in the order the firmware scans them: eight consecutive entries per fault-status byte, twelve bytes in all, so entry 8*g+b is the code for bit b of status byte g. When a fault bit is set, that code is what goes out on CAN 0x422 bytes 3-4. 43 of the 96 slots are zero - spare bits with no code assigned.
+
+DISABLING A CODE: set its entry to 0. That makes the slot identical to the 43 the factory already leaves at zero, so the fault bit still sets internally but no code number is attached to it. Useful after a hardware change that leaves a sensor permanently reading a fault.
+
+Be aware of what that is and is not. It suppresses the CODE, not the fault - whatever limp-home or pressure behaviour the TCU applies when that bit sets will still happen, you have only stopped it telling you why. And this is inferred from the table layout, not tested on a car: zero is what the firmware's own unused slots contain, which is the best evidence available, but nobody has confirmed on a vehicle how a scan tool reports it. Note the code you removed before you remove it.
+
+Located from the CAN decoding contributed to the RomRaider forum thread rather than by pattern matching. An earlier version of this definition claimed DTC tables at 0x4090; that was wrong - the address is M32R instruction stream, and editing it would have corrupted the TCU's start-up code.</description>
+  </table>
+
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x01356C" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="10" coarseincrement="100" />
    <table type="Static X Axis" name="Field" sizex="1">
@@ -13127,6 +13188,21 @@ Every value is vehicle speed in km/h, confirmed against the factory shift chart.
 Cells showing '-' are not editable. They are pedal positions where that particular curve has no vertex in the ROM, so there is no byte to change. Each curve is stored as its own polyline with its own breakpoints; this table lines them up on the shared pedal axis and leaves a gap where a curve does not use a position, rather than inventing a value.
 
 Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
+  </table>
+
+  <table type="1D" name="Trouble Codes" category="Transmission - Diagnostics" storageaddress="0x01DC34" storagetype="uint16" endian="big" sizey="96" userlevel="1">
+   <scaling units="P-code, value is hex" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <description>Diagnostic trouble codes this TCU can report, as stored in the ROM.
+
+READ THIS TO INTERPRET THE VALUES: each code is the P-number in hexadecimal, shown here in decimal because RomRaider cannot display hex. Convert the value to hex and read it as the code - 1797 is 0x705 which is P0705, 1824 is 0x720 which is P0720, and 5894 is 0x1706 which is P1706.
+
+Entries are in the order the firmware scans them: eight consecutive entries per fault-status byte, twelve bytes in all, so entry 8*g+b is the code for bit b of status byte g. When a fault bit is set, that code is what goes out on CAN 0x422 bytes 3-4. 43 of the 96 slots are zero - spare bits with no code assigned.
+
+DISABLING A CODE: set its entry to 0. That makes the slot identical to the 43 the factory already leaves at zero, so the fault bit still sets internally but no code number is attached to it. Useful after a hardware change that leaves a sensor permanently reading a fault.
+
+Be aware of what that is and is not. It suppresses the CODE, not the fault - whatever limp-home or pressure behaviour the TCU applies when that bit sets will still happen, you have only stopped it telling you why. And this is inferred from the table layout, not tested on a car: zero is what the firmware's own unused slots contain, which is the best evidence available, but nobody has confirmed on a vehicle how a scan tool reports it. Note the code you removed before you remove it.
+
+Located from the CAN decoding contributed to the RomRaider forum thread rather than by pattern matching. An earlier version of this definition claimed DTC tables at 0x4090; that was wrong - the address is M32R instruction stream, and editing it would have corrupted the TCU's start-up code.</description>
   </table>
 
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x013B84" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
@@ -16278,6 +16354,21 @@ Cells showing '-' are not editable. They are pedal positions where that particul
 Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
+  <table type="1D" name="Trouble Codes" category="Transmission - Diagnostics" storageaddress="0x01D4C8" storagetype="uint16" endian="big" sizey="96" userlevel="1">
+   <scaling units="P-code, value is hex" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <description>Diagnostic trouble codes this TCU can report, as stored in the ROM.
+
+READ THIS TO INTERPRET THE VALUES: each code is the P-number in hexadecimal, shown here in decimal because RomRaider cannot display hex. Convert the value to hex and read it as the code - 1797 is 0x705 which is P0705, 1824 is 0x720 which is P0720, and 5894 is 0x1706 which is P1706.
+
+Entries are in the order the firmware scans them: eight consecutive entries per fault-status byte, twelve bytes in all, so entry 8*g+b is the code for bit b of status byte g. When a fault bit is set, that code is what goes out on CAN 0x422 bytes 3-4. 43 of the 96 slots are zero - spare bits with no code assigned.
+
+DISABLING A CODE: set its entry to 0. That makes the slot identical to the 43 the factory already leaves at zero, so the fault bit still sets internally but no code number is attached to it. Useful after a hardware change that leaves a sensor permanently reading a fault.
+
+Be aware of what that is and is not. It suppresses the CODE, not the fault - whatever limp-home or pressure behaviour the TCU applies when that bit sets will still happen, you have only stopped it telling you why. And this is inferred from the table layout, not tested on a car: zero is what the firmware's own unused slots contain, which is the best evidence available, but nobody has confirmed on a vehicle how a scan tool reports it. Note the code you removed before you remove it.
+
+Located from the CAN decoding contributed to the RomRaider forum thread rather than by pattern matching. An earlier version of this definition claimed DTC tables at 0x4090; that was wrong - the address is M32R instruction stream, and editing it would have corrupted the TCU's start-up code.</description>
+  </table>
+
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x0134F0" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="10" coarseincrement="100" />
    <table type="Static X Axis" name="Field" sizex="1">
@@ -19427,6 +19518,21 @@ Cells showing '-' are not editable. They are pedal positions where that particul
 Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
+  <table type="1D" name="Trouble Codes" category="Transmission - Diagnostics" storageaddress="0x01D784" storagetype="uint16" endian="big" sizey="96" userlevel="1">
+   <scaling units="P-code, value is hex" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <description>Diagnostic trouble codes this TCU can report, as stored in the ROM.
+
+READ THIS TO INTERPRET THE VALUES: each code is the P-number in hexadecimal, shown here in decimal because RomRaider cannot display hex. Convert the value to hex and read it as the code - 1797 is 0x705 which is P0705, 1824 is 0x720 which is P0720, and 5894 is 0x1706 which is P1706.
+
+Entries are in the order the firmware scans them: eight consecutive entries per fault-status byte, twelve bytes in all, so entry 8*g+b is the code for bit b of status byte g. When a fault bit is set, that code is what goes out on CAN 0x422 bytes 3-4. 43 of the 96 slots are zero - spare bits with no code assigned.
+
+DISABLING A CODE: set its entry to 0. That makes the slot identical to the 43 the factory already leaves at zero, so the fault bit still sets internally but no code number is attached to it. Useful after a hardware change that leaves a sensor permanently reading a fault.
+
+Be aware of what that is and is not. It suppresses the CODE, not the fault - whatever limp-home or pressure behaviour the TCU applies when that bit sets will still happen, you have only stopped it telling you why. And this is inferred from the table layout, not tested on a car: zero is what the firmware's own unused slots contain, which is the best evidence available, but nobody has confirmed on a vehicle how a scan tool reports it. Note the code you removed before you remove it.
+
+Located from the CAN decoding contributed to the RomRaider forum thread rather than by pattern matching. An earlier version of this definition claimed DTC tables at 0x4090; that was wrong - the address is M32R instruction stream, and editing it would have corrupted the TCU's start-up code.</description>
+  </table>
+
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x0136D4" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="10" coarseincrement="100" />
    <table type="Static X Axis" name="Field" sizex="1">
@@ -19952,6 +20058,21 @@ Every value is vehicle speed in km/h, confirmed against the factory shift chart.
 Cells showing '-' are not editable. They are pedal positions where that particular curve has no vertex in the ROM, so there is no byte to change. Each curve is stored as its own polyline with its own breakpoints; this table lines them up on the shared pedal axis and leaves a gap where a curve does not use a position, rather than inventing a value.
 
 Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
+  </table>
+
+  <table type="1D" name="Trouble Codes" category="Transmission - Diagnostics" storageaddress="0x01DCBC" storagetype="uint16" endian="big" sizey="96" userlevel="1">
+   <scaling units="P-code, value is hex" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <description>Diagnostic trouble codes this TCU can report, as stored in the ROM.
+
+READ THIS TO INTERPRET THE VALUES: each code is the P-number in hexadecimal, shown here in decimal because RomRaider cannot display hex. Convert the value to hex and read it as the code - 1797 is 0x705 which is P0705, 1824 is 0x720 which is P0720, and 5894 is 0x1706 which is P1706.
+
+Entries are in the order the firmware scans them: eight consecutive entries per fault-status byte, twelve bytes in all, so entry 8*g+b is the code for bit b of status byte g. When a fault bit is set, that code is what goes out on CAN 0x422 bytes 3-4. 43 of the 96 slots are zero - spare bits with no code assigned.
+
+DISABLING A CODE: set its entry to 0. That makes the slot identical to the 43 the factory already leaves at zero, so the fault bit still sets internally but no code number is attached to it. Useful after a hardware change that leaves a sensor permanently reading a fault.
+
+Be aware of what that is and is not. It suppresses the CODE, not the fault - whatever limp-home or pressure behaviour the TCU applies when that bit sets will still happen, you have only stopped it telling you why. And this is inferred from the table layout, not tested on a car: zero is what the firmware's own unused slots contain, which is the best evidence available, but nobody has confirmed on a vehicle how a scan tool reports it. Note the code you removed before you remove it.
+
+Located from the CAN decoding contributed to the RomRaider forum thread rather than by pattern matching. An earlier version of this definition claimed DTC tables at 0x4090; that was wrong - the address is M32R instruction stream, and editing it would have corrupted the TCU's start-up code.</description>
   </table>
 
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x013B84" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
@@ -20481,6 +20602,21 @@ Cells showing '-' are not editable. They are pedal positions where that particul
 Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
+  <table type="1D" name="Trouble Codes" category="Transmission - Diagnostics" storageaddress="0x01DE60" storagetype="uint16" endian="big" sizey="96" userlevel="1">
+   <scaling units="P-code, value is hex" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <description>Diagnostic trouble codes this TCU can report, as stored in the ROM.
+
+READ THIS TO INTERPRET THE VALUES: each code is the P-number in hexadecimal, shown here in decimal because RomRaider cannot display hex. Convert the value to hex and read it as the code - 1797 is 0x705 which is P0705, 1824 is 0x720 which is P0720, and 5894 is 0x1706 which is P1706.
+
+Entries are in the order the firmware scans them: eight consecutive entries per fault-status byte, twelve bytes in all, so entry 8*g+b is the code for bit b of status byte g. When a fault bit is set, that code is what goes out on CAN 0x422 bytes 3-4. 43 of the 96 slots are zero - spare bits with no code assigned.
+
+DISABLING A CODE: set its entry to 0. That makes the slot identical to the 43 the factory already leaves at zero, so the fault bit still sets internally but no code number is attached to it. Useful after a hardware change that leaves a sensor permanently reading a fault.
+
+Be aware of what that is and is not. It suppresses the CODE, not the fault - whatever limp-home or pressure behaviour the TCU applies when that bit sets will still happen, you have only stopped it telling you why. And this is inferred from the table layout, not tested on a car: zero is what the firmware's own unused slots contain, which is the best evidence available, but nobody has confirmed on a vehicle how a scan tool reports it. Note the code you removed before you remove it.
+
+Located from the CAN decoding contributed to the RomRaider forum thread rather than by pattern matching. An earlier version of this definition claimed DTC tables at 0x4090; that was wrong - the address is M32R instruction stream, and editing it would have corrupted the TCU's start-up code.</description>
+  </table>
+
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x013B94" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="10" coarseincrement="100" />
    <table type="Static X Axis" name="Field" sizex="1">
@@ -20942,6 +21078,21 @@ Every value is vehicle speed in km/h, confirmed against the factory shift chart.
 Cells showing '-' are not editable. They are pedal positions where that particular curve has no vertex in the ROM, so there is no byte to change. Each curve is stored as its own polyline with its own breakpoints; this table lines them up on the shared pedal axis and leaves a gap where a curve does not use a position, rather than inventing a value.
 
 Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
+  </table>
+
+  <table type="1D" name="Trouble Codes" category="Transmission - Diagnostics" storageaddress="0x01DC14" storagetype="uint16" endian="big" sizey="96" userlevel="1">
+   <scaling units="P-code, value is hex" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <description>Diagnostic trouble codes this TCU can report, as stored in the ROM.
+
+READ THIS TO INTERPRET THE VALUES: each code is the P-number in hexadecimal, shown here in decimal because RomRaider cannot display hex. Convert the value to hex and read it as the code - 1797 is 0x705 which is P0705, 1824 is 0x720 which is P0720, and 5894 is 0x1706 which is P1706.
+
+Entries are in the order the firmware scans them: eight consecutive entries per fault-status byte, twelve bytes in all, so entry 8*g+b is the code for bit b of status byte g. When a fault bit is set, that code is what goes out on CAN 0x422 bytes 3-4. 43 of the 96 slots are zero - spare bits with no code assigned.
+
+DISABLING A CODE: set its entry to 0. That makes the slot identical to the 43 the factory already leaves at zero, so the fault bit still sets internally but no code number is attached to it. Useful after a hardware change that leaves a sensor permanently reading a fault.
+
+Be aware of what that is and is not. It suppresses the CODE, not the fault - whatever limp-home or pressure behaviour the TCU applies when that bit sets will still happen, you have only stopped it telling you why. And this is inferred from the table layout, not tested on a car: zero is what the firmware's own unused slots contain, which is the best evidence available, but nobody has confirmed on a vehicle how a scan tool reports it. Note the code you removed before you remove it.
+
+Located from the CAN decoding contributed to the RomRaider forum thread rather than by pattern matching. An earlier version of this definition claimed DTC tables at 0x4090; that was wrong - the address is M32R instruction stream, and editing it would have corrupted the TCU's start-up code.</description>
   </table>
 
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x013DEC" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
@@ -21469,6 +21620,21 @@ Every value is vehicle speed in km/h, confirmed against the factory shift chart.
 Cells showing '-' are not editable. They are pedal positions where that particular curve has no vertex in the ROM, so there is no byte to change. Each curve is stored as its own polyline with its own breakpoints; this table lines them up on the shared pedal axis and leaves a gap where a curve does not use a position, rather than inventing a value.
 
 Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
+  </table>
+
+  <table type="1D" name="Trouble Codes" category="Transmission - Diagnostics" storageaddress="0x01DE70" storagetype="uint16" endian="big" sizey="96" userlevel="1">
+   <scaling units="P-code, value is hex" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <description>Diagnostic trouble codes this TCU can report, as stored in the ROM.
+
+READ THIS TO INTERPRET THE VALUES: each code is the P-number in hexadecimal, shown here in decimal because RomRaider cannot display hex. Convert the value to hex and read it as the code - 1797 is 0x705 which is P0705, 1824 is 0x720 which is P0720, and 5894 is 0x1706 which is P1706.
+
+Entries are in the order the firmware scans them: eight consecutive entries per fault-status byte, twelve bytes in all, so entry 8*g+b is the code for bit b of status byte g. When a fault bit is set, that code is what goes out on CAN 0x422 bytes 3-4. 43 of the 96 slots are zero - spare bits with no code assigned.
+
+DISABLING A CODE: set its entry to 0. That makes the slot identical to the 43 the factory already leaves at zero, so the fault bit still sets internally but no code number is attached to it. Useful after a hardware change that leaves a sensor permanently reading a fault.
+
+Be aware of what that is and is not. It suppresses the CODE, not the fault - whatever limp-home or pressure behaviour the TCU applies when that bit sets will still happen, you have only stopped it telling you why. And this is inferred from the table layout, not tested on a car: zero is what the firmware's own unused slots contain, which is the best evidence available, but nobody has confirmed on a vehicle how a scan tool reports it. Note the code you removed before you remove it.
+
+Located from the CAN decoding contributed to the RomRaider forum thread rather than by pattern matching. An earlier version of this definition claimed DTC tables at 0x4090; that was wrong - the address is M32R instruction stream, and editing it would have corrupted the TCU's start-up code.</description>
   </table>
 
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x013B94" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">

@@ -788,6 +788,91 @@ def build_shift_map_xml(curves, u16_at):
 
 
 # ---------------------------------------------------------------------------
+# Diagnostic trouble codes.
+#
+# Found from the CAN decoding, not by pattern scanning. CAN 0x422 bytes 3-4 carry
+# a word whose top two bits are a rotating index and whose low 14 bits are the DTC
+# number, and FUN_00032cac builds exactly that:
+#
+#   DAT_008047b6 = (ushort)DAT_008049b5 * 0x4000
+#                + ((&DAT_008047b8)[DAT_008049b5] & 0x3fff);
+#
+# The four RAM slots are filled from a table indexed by status byte times eight
+# plus bit position:
+#
+#   (&DAT_008047b8)[n] = (&DAT_0001ce18)[group * 8 + bit];
+#
+# so DAT_0001ce18 is 12 x 8 = 96 uint16 codes. Stored as the P-number in HEX:
+# 0x705 is P0705, the one code the factory manual names.
+#
+# This replaces an earlier claim of DTC tables at 0x4090, which was wrong - that
+# address is instruction stream, and those tables would have let an edit zero out
+# boot code. See docs/ROM-DETAILS.md.
+#
+# Shipped LOCKED. The codes are real data and worth being able to read, but
+# changing which code the TCU reports for a given fault is not a tuning operation
+# and would only make a fault harder to diagnose.
+# ---------------------------------------------------------------------------
+DTC_TABLE_BY_ROM = json.load(open(os.path.join(here, "dtc_table.json")))
+
+DTC_GROUPS = 12
+DTC_BITS = 8
+
+DTC_DESC = (
+    "Diagnostic trouble codes this TCU can report, as stored in the ROM.\n\n"
+    "READ THIS TO INTERPRET THE VALUES: each code is the P-number in hexadecimal, "
+    "shown here in decimal because RomRaider cannot display hex. Convert the value "
+    "to hex and read it as the code - 1797 is 0x705 which is P0705, 1824 is 0x720 "
+    "which is P0720, and 5894 is 0x1706 which is P1706.\n\n"
+    "Entries are in the order the firmware scans them: eight consecutive entries per "
+    "fault-status byte, twelve bytes in all, so entry 8*g+b is the code for bit b of "
+    "status byte g. When a fault bit is set, that code is what goes out on CAN 0x422 "
+    "bytes 3-4. 43 of the 96 slots are zero - spare bits with no code assigned.\n\n"
+    "DISABLING A CODE: set its entry to 0. That makes the slot identical to the 43 "
+    "the factory already leaves at zero, so the fault bit still sets internally but "
+    "no code number is attached to it. Useful after a hardware change that leaves a "
+    "sensor permanently reading a fault.\n\n"
+    "Be aware of what that is and is not. It suppresses the CODE, not the fault - "
+    "whatever limp-home or pressure behaviour the TCU applies when that bit sets will "
+    "still happen, you have only stopped it telling you why. And this is inferred "
+    "from the table layout, not tested on a car: zero is what the firmware's own "
+    "unused slots contain, which is the best evidence available, but nobody has "
+    "confirmed on a vehicle how a scan tool reports it. Note the code you removed "
+    "before you remove it.\n\n"
+    "Located from the CAN decoding contributed to the RomRaider forum thread rather "
+    "than by pattern matching. An earlier version of this definition claimed DTC "
+    "tables at 0x4090; that was wrong - the address is M32R instruction stream, and "
+    "editing it would have corrupted the TCU's start-up code."
+)
+
+
+def build_dtc_table_xml(entry):
+    """The DTC codes as a flat 1D list - it is a list, not a map.
+
+    A 3D grid was the wrong shape. The firmware does index it as status byte times
+    eight plus bit, but nobody reads a code list as a matrix. It also ran into a
+    RomRaider bug where a LOCKED 3D table renders with null cells and throws out of
+    Table3DView.populateTableVisual, so 1D is both the honest shape and the one that
+    works.
+
+    Left editable on purpose. Blanking an entry is how you stop the TCU reporting
+    that code, which is a real thing someone might want after a hardware change.
+    """
+    nl = "\n"
+    n = DTC_GROUPS * DTC_BITS
+    return (
+        '  <table type="1D" name="Trouble Codes" '
+        'category="Transmission - Diagnostics" '
+        'storageaddress="0x%06X" storagetype="uint16" endian="big" '
+        'sizey="%d" userlevel="1">%s'
+        '   <scaling units="P-code, value is hex" expression="x" to_byte="x" '
+        'format="0" fineincrement="1" coarseincrement="16" />%s'
+        '   <description>%s</description>%s'
+        '  </table>'
+        % (entry["addr"], n, nl, nl, escape(DTC_DESC), nl))
+
+
+# ---------------------------------------------------------------------------
 # Line pressure target curves - the first tables here with a pressure unit that
 # is not a guess. See tools/extract_pressure_curves.py for how they were found
 # and why the earlier "Pressure Control" families are NOT this.
@@ -1283,6 +1368,23 @@ def build_rom_block(profile, rom_bytes, is_base):
                 raise SystemExit(f"{profile['id']}: shift curves present but the "
                                  f"map could not be built")
             parts.append(shift_map)
+            parts.append("")
+            total += 1
+
+        dtc = DTC_TABLE_BY_ROM.get(profile["id"])
+        if dtc:
+            if is_base:
+                parts.append("  <!-- ============ Transmission - Diagnostics ============ -->")
+            # Re-check the table really is here in THIS image rather than trusting
+            # the extracted address: the first code must decode to a plausible
+            # P-number, which garbage will not.
+            first = u16(dtc["addr"])
+            if not (0x0700 <= first <= 0x1899
+                    and (first & 0xF) <= 9 and ((first >> 4) & 0xF) <= 9):
+                raise SystemExit(
+                    "%s: DTC table at 0x%06X does not start with a valid P-code "
+                    "(found 0x%04X)" % (profile["id"], dtc["addr"], first))
+            parts.append(build_dtc_table_xml(dtc))
             parts.append("")
             total += 1
 

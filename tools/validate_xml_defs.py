@@ -196,6 +196,33 @@ def main():
                 if addr >= len(data):
                     errors.append(f"{name}: address 0x{addr:06X} beyond end of ROM")
 
+                if t.get("category") == "Transmission - Diagnostics":
+                    # The DTC list is a plain contiguous array with no terminator, so
+                    # there is nothing structural to check. Check the CONTENT, which
+                    # is stronger anyway: codes are the P-number in hex, so every
+                    # non-empty entry must decode to a real powertrain code. Garbage
+                    # at a wrong address fails immediately - which is exactly what the
+                    # old 0x4090 DTC claim would not have survived.
+                    n = int(t.get("sizey") or t.get("sizex") or 0)
+                    checked += 1
+                    bad, filled = [], 0
+                    for i in range(n):
+                        v = u16(addr + i * 2)
+                        if v is None or v in (0x0000, 0x3FFF, 0xFFFF):
+                            continue
+                        filled += 1
+                        ok = ((0x0700 <= v <= 0x0999 or 0x1600 <= v <= 0x1899)
+                              and (v & 0xF) <= 9 and ((v >> 4) & 0xF) <= 9)
+                        if not ok:
+                            bad.append(v)
+                    if bad:
+                        errors.append(
+                            f"{name}: {len(bad)} entr(ies) do not decode to a P-code, "
+                            f"first 0x{bad[0]:04X}")
+                    elif filled < 30:
+                        errors.append(
+                            f"{name}: only {filled} codes present, expected ~53")
+
         status = "OK" if not errors else f"{len(errors)} ERROR(S)"
         print(f"  {ecuid:12s} {rom_name[:38]:40s} {checked:4d} checks  {status}")
         for e in errors:

@@ -1806,3 +1806,111 @@ Licensing was also wrong and is now fixed. The root LICENSE is MIT and said so o
 everything, but `romraider-5eat/patches/` are diffs against RomRaider - a GPL-2.0
 program - so the patches and any build made from them are GPL-2.0-or-later. That is
 recorded in `romraider-5eat/LICENSE`.
+
+---
+
+## 16. THE DTC TABLE, FOUND VIA THE CAN DECODING (2026-07-30)
+
+DTCs were previously written off as not located. They are located now, and the CAN
+decoding contributed to the forum thread is what did it - not pattern matching,
+which is what produced the wrong answer last time.
+
+### 16a. The encoder gives the search a signature
+
+The thread documents CAN `0x422` bytes 3-4 as a 16-bit word whose top two bits are a
+rotating DTC index and whose low 14 bits are the DTC number. A 14-bit mask is a very
+specific thing to grep for, and `FUN_00032cac` contains exactly it:
+
+    DAT_008047b6 = (ushort)DAT_008049b5 * 0x4000
+                 + ((&DAT_008047b8)[DAT_008049b5] & 0x3fff);
+
+`* 0x4000` is the index shifted into the top two bits, `& 0x3fff` is the 14-bit code.
+`DAT_008049b5` is the index and increments `& 3`, so it cycles 0-3, matching the
+thread's note that successive messages cycle through up to four codes.
+
+### 16b. The table
+
+The four RAM slots are refilled whenever the index wraps to 0:
+
+    if (DAT_008049b5 == 0) {
+        DAT_008047b8 = 0x3fff; ... DAT_008047be = 0x3fff;   // 4 slots, empty
+        for (uVar4 = 0; uVar4 < 0xc; uVar4++) {             // 12 status bytes
+            bVar1 = (&PTR_DAT_0001cdc4)[uVar4][2];          // 8 fault flags each
+            bVar2 = 1;
+            for (uVar3 = 0; uVar3 < 8; uVar3++) {
+                if ((bVar1 & bVar2) != 0 && uVar5 < 4) {
+                    (&DAT_008047b8)[uVar5] = (&DAT_0001ce18)[uVar4 * 8 + uVar3];
+                    uVar5++;
+                }
+                bVar2 <<= 1;
+            }
+        }
+    }
+
+`DAT_0001ce18` indexed by `group * 8 + bit` over 12 groups of 8 bits is a table of
+**96 uint16 DTC codes**. That is the DTC table. `PTR_DAT_0001cdc4` is a separate
+array of 12 pointers to fault-status structures whose byte at `[2]` holds the flags.
+
+### 16c. The encoding: P-numbers in HEX
+
+Codes are stored as the P-number in hexadecimal, not decimal:
+
+    1797 = 0x705  -> P0705      (the one code the factory manual names)
+    1824 = 0x720  -> P0720
+    1841 = 0x731  -> P0731  ... 1844 = 0x734 -> P0734
+    1857 = 0x741  -> P0741
+    5894 = 0x1706 -> P1706
+    6208 = 0x1840 -> P1840  ... 6212 = 0x1844 -> P1844
+
+53 of the 96 slots hold a code; the other 43 are zero, meaning that fault bit has no
+code assigned. Every one of the 53 decodes to a valid powertrain code - none decode
+to something impossible, which is the property the validator now checks.
+
+### 16d. Located per firmware, not assumed
+
+The address is NOT constant across images - `0x01CE18` on the reference ROM is
+garbage in the others. `tools/extract_dtc_table.py` locates it by signature: a
+96-entry window where at least 30 non-empty entries decode to a plausible P-code and
+NONE decode to something impossible. Result, consistent everywhere:
+
+    ADE0236000 0x01DC14   91D0207500 0x01D854   91D1206000 0x01CE18
+    91F0217100 0x01CEE8   91FE216300 0x01CE44   ABD1A03100 0x01DC34
+    ACD1207000 0x01DE60   ACD1A06000 0x01DE70   91D1207900 0x01D4C8
+    AAD1A07100 0x01D784   ABD1207000 0x01DCBC
+
+All eleven: 53 codes, same set. The generator re-checks the first entry decodes to a
+valid P-code before emitting, and aborts if not.
+
+### 16e. Shipped as an editable 1D list, and why
+
+First attempt was a 12 x 8 3D grid mirroring the firmware's indexing. Wrong shape -
+a code list is a list, nobody reads it as a matrix. It also hit a RomRaider bug: a
+**locked 3D table renders with null cells and throws** out of
+`Table3DView.populateTableVisual`, because that method allocates its view array from
+the table dimensions but fills it from the axis sizes while the lock is temporarily
+cleared. Worth fixing in the patch set; a 1D table avoids it entirely.
+
+Left EDITABLE rather than locked, because blanking an entry is a real use: set a code
+to 0 and the slot becomes identical to the 43 the factory already leaves at zero, so
+the fault bit still sets internally but no code is attached to it. That is useful
+after a hardware change that leaves a sensor permanently faulted.
+
+Two honest limits recorded in the table's own description:
+
+- It suppresses the CODE, not the fault. Whatever limp-home or pressure behaviour the
+  TCU applies when that bit sets still happens; you have only stopped it saying why.
+- The zero-to-disable behaviour is INFERRED from the layout, not tested on a car.
+  Zero is what the firmware's own unused slots contain, which is the best evidence
+  available, but nobody has confirmed how a scan tool reports it.
+
+### 16f. Validation checks content, not structure
+
+The list is a plain contiguous array with no terminator, so there is nothing
+structural to verify. The validator checks the CONTENT instead, which is stronger:
+every non-empty entry must decode to a real powertrain P-code. Confirmed to bite -
+moving the address 24 bytes produces "8 entries do not decode to a P-code, first
+0x8000". This is precisely the check the old `0x4090` claim would have failed
+instantly, and it is deliberately attached to the category rather than the table type
+so changing the table's shape cannot silently drop it.
+
+1439 checks across eleven firmwares, no errors.

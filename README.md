@@ -72,6 +72,7 @@ firmware's own arithmetic.
 | Vehicle speed | km/h direct | Factory shift chart |
 | Accelerator angle | `raw × 100/255` | Shift chart, and CAN `0x412` byte 0 |
 | **Line pressure** | **kPa direct** | Manual specifies 1370 kPa at full throttle; that value is in a table in all eleven images |
+| **Trouble codes** | P-number in **hex** | `0x705` = P0705. 53 codes, found via the thread's CAN `0x422` decoding |
 
 Also confirmed: the **checksum** (32-bit BE two's-complement additive, stored twice
 at `0x8000`/`0x8004`, over two region conventions the tool detects rather than
@@ -94,9 +95,10 @@ arrays with the full shift-curve signature; the definition carries 8. The rest a
 per-mode and per-condition shift maps — this transmission has several, and the tool
 shows one. Biggest open lead. See [FINDINGS.md](FINDINGS.md) §15.
 
-**No DTC table located.** The address previously claimed for one was instruction
-stream. DTCs go out on CAN `0x422` bytes 3–4 as a 2-bit index plus 14-bit code;
-finding the stored table means locating the code that builds that message.
+**Zero-to-disable on DTCs is inferred, not tested.** The trouble-code table is
+mapped (see below), and blanking an entry should stop that code being reported —
+zero is what the firmware's own 43 unused slots contain. Nobody has confirmed on a
+car how a scan tool reports it, and it suppresses the *code*, not the fault.
 
 Some tables still read `raw`. Those are the ones whose quantity hasn't been
 established. A wrong unit reads as confirmed; an honest `raw` doesn't.
