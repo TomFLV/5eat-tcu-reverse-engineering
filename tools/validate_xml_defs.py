@@ -154,6 +154,25 @@ def main():
                             f"{name}: strided 3D table, no 0xFFFF terminator after "
                             f"{records} records at 0x{addr + records * stride:06X} "
                             f"or 0x{addr - 2 + records * stride:06X}")
+                elif (sx == 1 and skip == 1
+                      and (t.get("name") or "").startswith("Downshift Ramp")):
+                    # The ramp parameters are a fixed array of {step, duration}
+                    # structs, one per downshift - not a terminated record array,
+                    # so there is no 0xFFFF to look for. Check instead that every
+                    # entry is readable and that the block is not obviously the
+                    # wrong address: a run of all zeros or a 0xFFFF sentinel would
+                    # mean we are reading past the array rather than inside it.
+                    checked += 1
+                    vals = [u16(addr + i * 4) for i in range(sy)]
+                    if any(v is None for v in vals):
+                        errors.append(f"{name}: runs past the end of the ROM")
+                    elif all(v == 0 for v in vals):
+                        errors.append(f"{name}: every entry is zero, so 0x{addr:06X} "
+                                      f"is probably not the ramp array")
+                    elif any(v == 0xFFFF for v in vals):
+                        errors.append(f"{name}: contains a 0xFFFF terminator, so it "
+                                      f"reads past the end of the array")
+
                 elif sx == 1 and skip == 1:
                     # One quantity pulled out of a record array with a stride of
                     # two uint16. Two record geometries use that same stride and

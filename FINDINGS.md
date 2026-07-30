@@ -2202,3 +2202,81 @@ manual, and the two were established independently of each other and of this pro
 Contrast the other candidates thrown up by `tools/classify_raw_tables.py`, which look
 like fixed-point multipliers and are still shipped raw because nothing outside the
 guess supports them.
+
+---
+
+## 20. DOWNSHIFT PRESSURE AND RAMP TIMING - and why it is NOT lock-up (2026-07-30)
+
+Hunting the lock-up control turned up a different thing, which is worth having on
+its own but must not be mislabelled.
+
+### 20a. A second target in the same RAM block
+
+The line pressure target is `DAT_00804a82`. Looking for its neighbours found one
+other lookup writing into that block:
+
+    DAT_00804a94 = FUN_00045070((&PTR_PTR_00012034)[DAT_00804a8e], 0, DAT_008047fe);
+
+Vehicle speed in, pressure out, wrapped in a timed ramp:
+
+    if (timer < duration[idx])   out = floor;
+    else                         out = min(target, start + step[idx]);
+
+`DAT_00804a8c` is the timer, incremented every cycle and reset when the state is
+entered. `step` and `duration` are a 4-byte struct per state at `0x1200C`, and the
+target maps hang off a pointer array at `0x12034`.
+
+That is exactly the shape the factory calls "smooth control - gradually changes
+pressure to provide smooth engagement", which is why it looked like lock-up.
+
+### 20b. The matrix says downshift, not converter clutch
+
+The state index comes from a 5 x 5 byte matrix at `0x1BB6A`, read as `[a * 5 + b]`:
+
+          b=0    1    2    3    4
+    a=0   255  255  255  255  255
+    a=1     0  255  255  255  255
+    a=2     1    2  255  255  255
+    a=3     3    4    5  255  255
+    a=4     6    7    8    9  255
+
+Lower triangular. An index exists only where `b < a`, and 255 marks "no entry".
+With `a` the current gear and `b` the target gear, `b < a` is a downshift, and there
+are exactly ten of them among five gears: 2-1, 3-1, 3-2, 4-1, 4-2, 4-3, 5-1, 5-2,
+5-3, 5-4. Ten valid indices, ten target maps, ten ramp structs.
+
+A gear-transition matrix is not a torque converter clutch. **This is downshift
+pressure control. Lock-up is still not found.** It would have been easy to ship it
+as a "Lock-Up" category on the strength of the ramp shape alone, and it would have
+been wrong.
+
+This is very likely the "shift durations" rimwall mentions in post 227 as something
+he had located.
+
+### 20c. Units
+
+Pressure is /10 = kPa, the scale confirmed against the factory manual in section 19.
+These maps top out at 13720, which is the 1372 kPa that manual gives for full
+throttle in D - the same number, reached independently, in a different table family.
+
+Duration is a loop counter. The controller's task period has NOT been established,
+so it ships as a raw count. Converting it to milliseconds from a guessed task rate
+would produce a number that looks authoritative and is not.
+
+Stock values are interesting: only the 2-1 downshift has a hold period (25 counts)
+and a small step (50); most entries have a step of 32767, which is effectively no
+limit, so the pressure goes straight to target. So the factory only paces one
+downshift and lets the rest apply immediately.
+
+### 20d. Shipped as
+
+`Transmission - Downshift Pressure`, in all eleven firmwares:
+
+- ten `Downshift <n-m> Pressure` maps, vehicle speed against kPa
+- `Downshift Ramp Step`, ten entries, kPa
+- `Downshift Ramp Hold`, ten entries, raw loop counts
+
+The ramp tables are a fixed array rather than a terminated record array, so the
+validator got its own check for them: every entry readable, not all zero, and no
+0xFFFF sentinel - any of which would mean the address is wrong. 3045 checks across
+eleven firmwares, no errors.

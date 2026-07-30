@@ -910,6 +910,118 @@ def build_dtc_tables_xml(entry):
 
 
 # ---------------------------------------------------------------------------
+# Downshift pressure control - target pressure, and how fast it is applied.
+#
+# A second target lookup in the same RAM block as the line pressure target:
+#
+#   DAT_00804a94 = FUN_00045070((&PTR_PTR_00012034)[DAT_00804a8e], 0, DAT_008047fe);
+#
+# Vehicle speed in, pressure out, wrapped in a timed ramp: a counter increments
+# every cycle and is compared against a per-state duration, and once it elapses the
+# output steps toward the target by a per-state amount.
+#
+#   if (timer < duration[idx])  out = floor;
+#   else                        out = min(target, start + step[idx]);
+#
+# The state index comes from a 5x5 byte matrix that is lower triangular - valid only
+# where the target gear is BELOW the current gear, with exactly ten entries. Ten
+# downshifts among five gears. That is a gear transition, so this is downshift
+# control and NOT the torque converter lock-up.
+#
+# Pressure is /10 = kPa, the scale confirmed against the factory manual in section
+# 19: these maps top out at 13720, which is that manual's 1372 kPa for full throttle
+# in D. Duration is a loop counter with no established period and ships raw, because
+# calling it milliseconds without knowing the task rate would be a guess.
+# ---------------------------------------------------------------------------
+DOWNSHIFT_PRESSURE = json.load(
+    open(os.path.join(here, "downshift_pressure.json")))
+
+# Index order is fixed by the matrix: [a*5+b] with b<a, a and b zero-based gears.
+DOWNSHIFT_NAMES = ["2-1", "3-1", "3-2", "4-1", "4-2", "4-3",
+                   "5-1", "5-2", "5-3", "5-4"]
+
+Q_KPA_STEP = {"label": "kPa", "units": "kPa (pressure step)",
+              "expression": "x/10", "to_byte": "x*10",
+              "format": "0", "fine": "5", "coarse": "50"}
+Q_TICKS = {"label": "ticks", "units": "loop counts (period not established)",
+           "expression": "x", "to_byte": "x",
+           "format": "0", "fine": "1", "coarse": "10"}
+
+DS_MAP_DESC = (
+    "DOWNSHIFT PRESSURE TARGET, %s. The pressure commanded during this particular "
+    "downshift, against vehicle speed.\n\n"
+    "Pressure is in kPa on the scale confirmed against the factory manual - these "
+    "maps reach 1372 kPa, which is the manual's figure for full throttle in D.\n\n"
+    "Raising a value makes this downshift firmer and faster; lowering it makes it "
+    "softer and slower, at the cost of more clutch slip during the change. Pair it "
+    "with the ramp step and duration tables in this category, which control how "
+    "quickly the pressure is allowed to get there."
+)
+
+DS_STEP_DESC = (
+    "DOWNSHIFT PRESSURE RAMP STEP, one entry per downshift in the order 2-1, 3-1, "
+    "3-2, 4-1, 4-2, 4-3, 5-1, 5-2, 5-3, 5-4.\n\n"
+    "Once the hold period expires, the commanded pressure moves from where it "
+    "started toward the target by this much. A large value - 32767 appears in the "
+    "stock calibration for most entries - means effectively no limit, so the "
+    "pressure goes straight to target. A small value makes the application gradual, "
+    "which is what the factory calls smooth control.\n\n"
+    "This is the knob for downshift harshness. Smaller steps are softer and slower."
+)
+
+DS_DUR_DESC = (
+    "DOWNSHIFT PRESSURE HOLD DURATION, one entry per downshift in the order 2-1, "
+    "3-1, 3-2, 4-1, 4-2, 4-3, 5-1, 5-2, 5-3, 5-4.\n\n"
+    "How long the pressure is held at its floor before the ramp starts. The value is "
+    "a count of controller loops. The loop period has NOT been established, so this "
+    "is left as a raw count rather than converted to milliseconds - a time unit "
+    "derived from a guessed task rate would look authoritative and be wrong.\n\n"
+    "Larger values delay the pressure rise, which softens the initial engagement."
+)
+
+
+def build_downshift_xml(entry):
+    """Ten target maps, plus the step and duration tables that pace them."""
+    out = []
+    for i, m in enumerate(entry["maps"]):
+        label = DOWNSHIFT_NAMES[i] if i < len(DOWNSHIFT_NAMES) else str(i)
+        out.append(build_record_tables_xml(
+            "Downshift %s Pressure" % label,
+            "Transmission - Downshift Pressure",
+            m["addr"], m["rows"],
+            [(0, Q_SPEED), (1, Q_KPA_10)], DS_MAP_DESC % label))
+
+    ramp = entry["ramp"]
+    n = len(DOWNSHIFT_NAMES)
+    nl = "\n"
+    ys = nl.join("    <data>%s</data>" % d for d in DOWNSHIFT_NAMES)
+
+    def strided(name, addr, q, desc):
+        # {step, duration} is a 4-byte struct, so skipCells=1 walks one field of
+        # each - the same stride trick the record arrays use.
+        return (
+            '  <table type="3D" name="%s" category="Transmission - Downshift Pressure" '
+            'storageaddress="0x%06X" storagetype="uint16" endian="big" '
+            'sizex="1" sizey="%d" skipCells="1" userlevel="1">%s'
+            '   <scaling units="%s" expression="%s" to_byte="%s" format="%s" '
+            'fineincrement="%s" coarseincrement="%s" />%s'
+            '   <table type="Static X Axis" name="%s" sizex="1">%s    <data>%s</data>%s   </table>%s'
+            '   <table type="Static Y Axis" name="Downshift" sizey="%d">%s%s%s   </table>%s'
+            '   <description>%s</description>%s'
+            '  </table>'
+            % (name, addr, n, nl,
+               escape(q["units"]), q["expression"], q["to_byte"], q["format"],
+               q["fine"], q["coarse"], nl,
+               escape(q["label"]), nl, escape(q["label"]), nl, nl,
+               n, nl, ys, nl, nl,
+               escape(desc), nl))
+
+    out.append(strided("Downshift Ramp Step", ramp, Q_KPA_STEP, DS_STEP_DESC))
+    out.append(strided("Downshift Ramp Hold", ramp + 2, Q_TICKS, DS_DUR_DESC))
+    return out
+
+
+# ---------------------------------------------------------------------------
 # Line pressure TARGET maps - engine torque in, line pressure out.
 #
 # The end of the chain described in forum post 184 and scaled in FINDINGS 18:
@@ -1544,6 +1656,15 @@ def build_rom_block(profile, rom_bytes, is_base):
             parts.append(shift_map)
             parts.append("")
             total += 1
+
+        dsp = DOWNSHIFT_PRESSURE.get(profile["id"])
+        if dsp:
+            if is_base:
+                parts.append("  <!-- ======= Downshift pressure and ramp timing ======= -->")
+            for tbl in build_downshift_xml(dsp):
+                parts.append(tbl)
+                parts.append("")
+                total += 1
 
         lpt = LINE_PRESSURE_TARGETS.get(profile["id"])
         if lpt:
