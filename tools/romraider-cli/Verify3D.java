@@ -38,7 +38,7 @@ public class Verify3D {
         r.populateTables(rom, new com.romraider.swing.JProgressPane());
         System.out.println("populateTables returned"); System.out.flush();
 
-        int tables=0, cells=0, bad=0;
+        int tables=0, cells=0, bad=0, placeholders=0;
         StringBuilder firstBad = new StringBuilder();
         for (Table t : r.getTables()) {
             if (!(t instanceof Table3D)) continue;
@@ -54,9 +54,20 @@ public class Verify3D {
             // stride to pull one quantity out of an interleaved array, so a
             // checker that ignored it would be validating the wrong bytes.
             int skip = t3.getSkipCells();
+            // A sparse table maps every cell explicitly, so geometry says nothing
+            // about where a cell reads from. Use the map when there is one, and
+            // skip the placeholder cells - they have no storage to compare against.
+            int[] map = t3.getCellIndices();
             for (int y=0; y<sy; y++) {
                 for (int x=0; x<sx; x++) {
-                    int element = y*(sx + skip) + x;
+                    int element;
+                    if (map != null) {
+                        int at = y*sx + x;
+                        if (at >= map.length || map[at] < 0) { placeholders++; continue; }
+                        element = map[at];
+                    } else {
+                        element = y*(sx + skip) + x;
+                    }
                     int off = base + element*2;
                     int expect = ((rom[off]&0xFF)<<8) | (rom[off+1]&0xFF);
                     int got = (int) d[x][y].getBinValue();
@@ -71,8 +82,8 @@ public class Verify3D {
                 }
             }
         }
-        System.out.printf("%-40s 3D tables=%d cells=%d mismatched=%d%n",
-                new File(a[1]).getName(), tables, cells, bad);
+        System.out.printf("%-40s 3D tables=%d cells=%d mismatched=%d placeholders=%d%n",
+                new File(a[1]).getName(), tables, cells, bad, placeholders);
         if (bad>0) System.out.println("   first mismatch: "+firstBad);
         else System.out.println("   every 3D cell matches the raw ROM bytes");
     }

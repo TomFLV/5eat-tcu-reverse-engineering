@@ -693,36 +693,98 @@ def build_record_tables_xml(name, category, addr, rows, quantities, desc,
     return "\n".join(out)
 
 
-def build_shift_curve_xml(name, addr, rows):
-    """One shift curve as a real Table3D, so RomRaider's 3D graph editor accepts it.
+SHIFT_ORDER = [
+    ("Shift 1-2 Upshift Curve", "1-2 Up"),
+    ("Shift 2-3 Upshift Curve", "2-3 Up"),
+    ("Shift 3-4 Upshift Curve", "3-4 Up"),
+    ("Shift 4-5 Upshift Curve", "4-5 Up"),
+    ("Shift 2-1 Downshift Curve", "2-1 Down"),
+    ("Shift 3-2 Downshift Curve", "3-2 Down"),
+    ("Shift 4-3 Downshift Curve", "4-3 Down"),
+    ("Shift 5-4 Downshift Curve", "5-4 Down"),
+]
 
-    Needs the patched RomRaider in romraider-5eat/ for two reasons.
+SHIFT_MAP_DESC = (
+    "THE SHIFT MAP. All eight shift points in one table, in the form a five-speed "
+    "automatic is normally calibrated: vehicle speed against accelerator pedal "
+    "angle, one row per shift event.\n\n"
+    "Read a cell as: this shift happens at this road speed when the pedal is at "
+    "this position. Raise a value to delay the shift, lower it to bring the shift on "
+    "earlier. The upshift rows come first, then the downshifts - the gap between an "
+    "upshift and its matching downshift is the hysteresis that stops the "
+    "transmission hunting between two gears, so move the pair together unless you "
+    "specifically intend to change it.\n\n"
+    "Every value is vehicle speed in km/h, confirmed against the factory shift "
+    "chart. The axis is accelerator opening angle, stored as 0-255 for 0-100%.\n\n"
+    "Cells showing '-' are not editable. They are pedal positions where that "
+    "particular curve has no vertex in the ROM, so there is no byte to change. Each "
+    "curve is stored as its own polyline with its own breakpoints; this table lines "
+    "them up on the shared pedal axis and leaves a gap where a curve does not use a "
+    "position, rather than inventing a value.\n\n"
+    "Requires the patched RomRaider in romraider-5eat/. The eight curves sit at "
+    "eight separate addresses with different lengths, which upstream cannot express "
+    "as one table - see Table3D.cellIndices."
+)
 
-    First, skipCells had to move off Table3D onto Table so an AXIS can stride;
-    without that the speed axis and the pedal data cannot both be read out of the
-    same interleaved record array.
 
-    Second, the geometry. Table3D.populateTable only applies the stride after the
-    LAST cell of each row, so a plain sizex=N/sizey=1 table would read N-1 cells
-    contiguously and stride only once. swapxy flips the iteration so the row length
-    becomes the Y size - which is 1 - making every cell the last in its row, and the
-    stride then applies to all of them. skipCells=3 is one value per 8-byte record.
+def build_shift_map_xml(curves, u16_at):
+    """All eight shift curves as ONE sparse 3D table.
 
-    Type 3D matters beyond appearance: TableToolBar gates its 3D graph button on
-    Table3D, and that button opens Graph3dFrameManager with a GraphDataListener -
-    an interactive surface that writes edits back through the table. That is the
-    curve editor, and it already exists upstream.
+    X axis is the pedal positions this firmware actually uses: the union of every
+    curve's breakpoints. That union is verified to contain each individual curve's
+    set as a subset, in all eleven firmwares.
+
+    Speed cannot be the shared axis - all eight curves use different speed
+    breakpoints, so there is no common grid to hang them on. Pedal can, and that is
+    what makes one physically meaningful surface possible instead of eight strips.
+
+    Cells are mapped individually because the curves are neither one contiguous
+    block nor equal in length, and because any given curve only has a vertex at some
+    of the pedal positions. Absent cells get -1 and render as read-only placeholders.
     """
-    return f"""  <table type="3D" name="{escape(name)}" category="Transmission - Shift Schedule" storageaddress="0x{addr + 2:06X}" storagetype="uint16" endian="big" sizex="{rows}" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="{escape(Q_PEDAL['units'])}" expression="{Q_PEDAL['expression']}" to_byte="{Q_PEDAL['to_byte']}" format="{Q_PEDAL['format']}" fineincrement="{Q_PEDAL['fine']}" coarseincrement="{Q_PEDAL['coarse']}" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x{addr:06X}" storagetype="uint16" endian="big" sizex="{rows}" skipCells="3">
-    <scaling units="{escape(Q_SPEED['units'])}" expression="{Q_SPEED['expression']}" to_byte="{Q_SPEED['to_byte']}" format="{Q_SPEED['format']}" fineincrement="{Q_SPEED['fine']}" coarseincrement="{Q_SPEED['coarse']}" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>{escape(SHIFT_DESC)}</description>
-  </table>"""
+    present = [(name, label, curves[name]) for name, label in SHIFT_ORDER
+               if name in curves]
+    if not present:
+        return None
+
+    pedals = sorted({u16_at(c["addr"] + r * 8 + 2)
+                     for _, _, c in present for r in range(c["rows"])})
+
+    # Cell indices are measured from the lowest field-0 address, so they all stay
+    # small and positive.
+    base = min(c["addr"] for _, _, c in present)
+
+    indices = []
+    for _, _, c in present:
+        by_pedal = {u16_at(c["addr"] + r * 8 + 2): c["addr"] + r * 8
+                    for r in range(c["rows"])}
+        for p in pedals:
+            speed_addr = by_pedal.get(p)
+            indices.append(-1 if speed_addr is None else (speed_addr - base) // 2)
+
+    nl = "\n"
+    xs = nl.join('    <data>%.1f</data>' % (p * 100.0 / 255.0) for p in pedals)
+    ys = nl.join('    <data>%s</data>' % escape(label) for _, label, _ in present)
+    axes = ('   <table type="Static X Axis" name="Pedal %%" sizex="%d">%s%s%s   </table>%s'
+            % (len(pedals), nl, xs, nl, nl)
+            + '   <table type="Static Y Axis" name="Shift" sizey="%d">%s%s%s   </table>'
+            % (len(present), nl, ys, nl))
+
+    return (
+        '  <table type="3D" name="Shift Map" category="Transmission - Shift Schedule"'
+        ' storageaddress="0x%06X" storagetype="uint16" endian="big" sizex="%d"'
+        ' sizey="%d" cellIndices="%s" userlevel="1">%s'
+        '   <scaling units="%s" expression="%s" to_byte="%s" format="%s"'
+        ' fineincrement="%s" coarseincrement="%s" />%s'
+        '%s%s'
+        '   <description>%s</description>%s'
+        '  </table>'
+        % (base, len(pedals), len(present),
+           ",".join(str(i) for i in indices), nl,
+           escape(Q_SPEED["units"]), Q_SPEED["expression"], Q_SPEED["to_byte"],
+           Q_SPEED["format"], Q_SPEED["fine"], Q_SPEED["coarse"], nl,
+           axes, nl,
+           escape(SHIFT_MAP_DESC), nl))
 
 
 # ---------------------------------------------------------------------------
@@ -1213,11 +1275,16 @@ def build_rom_block(profile, rom_bytes, is_base):
         if curves:
             if is_base:
                 parts.append("  <!-- ============ Transmission - Shift Schedule ============ -->")
-            for cname in sorted(curves):
-                c = curves[cname]
-                parts.append(build_shift_curve_xml(cname, c["addr"], c["rows"]))
-                parts.append("")
-                total += 1
+            # One table, not one per curve. Eight strips of numbers was the single
+            # most-reported problem with this definition; the shift schedule is one
+            # thing and belongs in one table.
+            shift_map = build_shift_map_xml(curves, u16)
+            if shift_map is None:
+                raise SystemExit(f"{profile['id']}: shift curves present but the "
+                                 f"map could not be built")
+            parts.append(shift_map)
+            parts.append("")
+            total += 1
 
         pcurves = PRESSURE_CURVES_BY_ROM.get(profile["id"], [])
         if pcurves:

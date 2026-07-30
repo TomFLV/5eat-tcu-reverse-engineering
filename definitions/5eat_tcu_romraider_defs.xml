@@ -3117,124 +3117,40 @@ This table holds ONE of the two quantities in the record array, so it can be sho
   </table>
 
   <!-- ============ Transmission - Shift Schedule ============ -->
-  <table type="3D" name="Shift 1-2 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015CAA" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015CA8" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+  <table type="3D" name="Shift Map" category="Transmission - Shift Schedule" storageaddress="0x015CA8" storagetype="uint16" endian="big" sizex="11" sizey="8" cellIndices="0,-1,-1,4,8,12,16,20,24,-1,28,54,-1,-1,58,62,66,70,74,78,-1,82,116,-1,120,124,128,132,136,140,144,-1,148,186,-1,190,194,198,202,206,210,214,-1,218,33,-1,-1,-1,-1,-1,37,41,-1,45,49,87,-1,-1,-1,-1,91,95,99,103,107,111,153,-1,-1,-1,157,161,165,169,173,177,181,223,227,231,235,239,243,247,251,255,259,263" userlevel="1">
+   <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+   <table type="Static X Axis" name="Pedal %" sizex="11">
+    <data>0.0</data>
+    <data>12.5</data>
+    <data>15.7</data>
+    <data>18.8</data>
+    <data>25.1</data>
+    <data>37.6</data>
+    <data>50.2</data>
+    <data>62.7</data>
+    <data>75.3</data>
+    <data>87.8</data>
+    <data>100.0</data>
    </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
+   <table type="Static Y Axis" name="Shift" sizey="8">
+    <data>1-2 Up</data>
+    <data>2-3 Up</data>
+    <data>3-4 Up</data>
+    <data>4-5 Up</data>
+    <data>2-1 Down</data>
+    <data>3-2 Down</data>
+    <data>4-3 Down</data>
+    <data>5-4 Down</data>
    </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+   <description>THE SHIFT MAP. All eight shift points in one table, in the form a five-speed automatic is normally calibrated: vehicle speed against accelerator pedal angle, one row per shift event.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
+Read a cell as: this shift happens at this road speed when the pedal is at this position. Raise a value to delay the shift, lower it to bring the shift on earlier. The upshift rows come first, then the downshifts - the gap between an upshift and its matching downshift is the hysteresis that stops the transmission hunting between two gears, so move the pair together unless you specifically intend to change it.
 
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
+Every value is vehicle speed in km/h, confirmed against the factory shift chart. The axis is accelerator opening angle, stored as 0-255 for 0-100%.
 
-  <table type="3D" name="Shift 2-1 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015CEC" storagetype="uint16" endian="big" sizex="5" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015CEA" storagetype="uint16" endian="big" sizex="5" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+Cells showing '-' are not editable. They are pedal positions where that particular curve has no vertex in the ROM, so there is no byte to change. Each curve is stored as its own polyline with its own breakpoints; this table lines them up on the shared pedal axis and leaves a gap where a curve does not use a position, rather than inventing a value.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 2-3 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015D16" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015D14" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-2 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015D58" storagetype="uint16" endian="big" sizex="7" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015D56" storagetype="uint16" endian="big" sizex="7" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-4 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015D92" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015D90" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-3 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015DDC" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015DDA" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-5 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015E1E" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015E1C" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 5-4 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015E68" storagetype="uint16" endian="big" sizex="11" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015E66" storagetype="uint16" endian="big" sizex="11" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
+Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
   <!-- ============ Transmission - Line Pressure ============ -->
@@ -6351,124 +6267,37 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Shift 1-2 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015EF2" storagetype="uint16" endian="big" sizex="7" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015EF0" storagetype="uint16" endian="big" sizex="7" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+  <table type="3D" name="Shift Map" category="Transmission - Shift Schedule" storageaddress="0x015EF0" storagetype="uint16" endian="big" sizex="8" sizey="8" cellIndices="0,4,8,12,16,20,-1,24,46,50,54,58,62,66,-1,70,92,96,100,104,108,112,-1,116,138,142,146,150,154,158,-1,162,29,-1,33,-1,-1,-1,37,41,75,-1,79,-1,-1,-1,83,87,121,-1,125,-1,-1,-1,129,133,167,-1,171,-1,-1,-1,175,179" userlevel="1">
+   <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+   <table type="Static X Axis" name="Pedal %" sizex="8">
+    <data>0.0</data>
+    <data>25.1</data>
+    <data>37.6</data>
+    <data>50.2</data>
+    <data>62.7</data>
+    <data>75.3</data>
+    <data>87.8</data>
+    <data>100.0</data>
    </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
+   <table type="Static Y Axis" name="Shift" sizey="8">
+    <data>1-2 Up</data>
+    <data>2-3 Up</data>
+    <data>3-4 Up</data>
+    <data>4-5 Up</data>
+    <data>2-1 Down</data>
+    <data>3-2 Down</data>
+    <data>4-3 Down</data>
+    <data>5-4 Down</data>
    </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+   <description>THE SHIFT MAP. All eight shift points in one table, in the form a five-speed automatic is normally calibrated: vehicle speed against accelerator pedal angle, one row per shift event.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
+Read a cell as: this shift happens at this road speed when the pedal is at this position. Raise a value to delay the shift, lower it to bring the shift on earlier. The upshift rows come first, then the downshifts - the gap between an upshift and its matching downshift is the hysteresis that stops the transmission hunting between two gears, so move the pair together unless you specifically intend to change it.
 
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
+Every value is vehicle speed in km/h, confirmed against the factory shift chart. The axis is accelerator opening angle, stored as 0-255 for 0-100%.
 
-  <table type="3D" name="Shift 2-1 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015F2C" storagetype="uint16" endian="big" sizex="4" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015F2A" storagetype="uint16" endian="big" sizex="4" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+Cells showing '-' are not editable. They are pedal positions where that particular curve has no vertex in the ROM, so there is no byte to change. Each curve is stored as its own polyline with its own breakpoints; this table lines them up on the shared pedal axis and leaves a gap where a curve does not use a position, rather than inventing a value.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 2-3 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015F4E" storagetype="uint16" endian="big" sizex="7" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015F4C" storagetype="uint16" endian="big" sizex="7" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-2 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015F88" storagetype="uint16" endian="big" sizex="4" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015F86" storagetype="uint16" endian="big" sizex="4" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-4 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015FAA" storagetype="uint16" endian="big" sizex="7" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015FA8" storagetype="uint16" endian="big" sizex="7" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-3 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015FE4" storagetype="uint16" endian="big" sizex="4" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015FE2" storagetype="uint16" endian="big" sizex="4" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-5 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016006" storagetype="uint16" endian="big" sizex="7" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016004" storagetype="uint16" endian="big" sizex="7" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 5-4 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016040" storagetype="uint16" endian="big" sizex="4" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x01603E" storagetype="uint16" endian="big" sizex="4" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
+Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x0135A4" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
@@ -9584,124 +9413,43 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Shift 1-2 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015DEA" storagetype="uint16" endian="big" sizex="10" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015DE8" storagetype="uint16" endian="big" sizex="10" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+  <table type="3D" name="Shift Map" category="Transmission - Shift Schedule" storageaddress="0x015DE8" storagetype="uint16" endian="big" sizex="14" sizey="8" cellIndices="0,-1,4,8,-1,12,16,20,-1,24,28,32,-1,36,58,-1,62,66,-1,70,74,78,-1,82,86,90,-1,94,148,-1,-1,-1,-1,152,156,160,-1,164,168,172,-1,176,214,218,222,226,-1,230,234,238,-1,242,246,250,-1,254,41,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,45,49,53,99,-1,-1,103,107,111,115,119,123,127,131,135,139,143,181,-1,-1,-1,-1,-1,-1,185,189,193,197,201,205,209,259,-1,263,267,271,275,279,283,287,291,295,299,303,307" userlevel="1">
+   <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+   <table type="Static X Axis" name="Pedal %" sizex="14">
+    <data>0.0</data>
+    <data>18.8</data>
+    <data>22.0</data>
+    <data>25.1</data>
+    <data>28.2</data>
+    <data>31.4</data>
+    <data>34.5</data>
+    <data>37.6</data>
+    <data>40.8</data>
+    <data>50.2</data>
+    <data>62.7</data>
+    <data>75.3</data>
+    <data>87.8</data>
+    <data>100.0</data>
    </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
+   <table type="Static Y Axis" name="Shift" sizey="8">
+    <data>1-2 Up</data>
+    <data>2-3 Up</data>
+    <data>3-4 Up</data>
+    <data>4-5 Up</data>
+    <data>2-1 Down</data>
+    <data>3-2 Down</data>
+    <data>4-3 Down</data>
+    <data>5-4 Down</data>
    </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+   <description>THE SHIFT MAP. All eight shift points in one table, in the form a five-speed automatic is normally calibrated: vehicle speed against accelerator pedal angle, one row per shift event.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
+Read a cell as: this shift happens at this road speed when the pedal is at this position. Raise a value to delay the shift, lower it to bring the shift on earlier. The upshift rows come first, then the downshifts - the gap between an upshift and its matching downshift is the hysteresis that stops the transmission hunting between two gears, so move the pair together unless you specifically intend to change it.
 
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
+Every value is vehicle speed in km/h, confirmed against the factory shift chart. The axis is accelerator opening angle, stored as 0-255 for 0-100%.
 
-  <table type="3D" name="Shift 2-1 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015E3C" storagetype="uint16" endian="big" sizex="4" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015E3A" storagetype="uint16" endian="big" sizex="4" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+Cells showing '-' are not editable. They are pedal positions where that particular curve has no vertex in the ROM, so there is no byte to change. Each curve is stored as its own polyline with its own breakpoints; this table lines them up on the shared pedal axis and leaves a gap where a curve does not use a position, rather than inventing a value.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 2-3 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015E5E" storagetype="uint16" endian="big" sizex="10" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015E5C" storagetype="uint16" endian="big" sizex="10" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-2 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015EB0" storagetype="uint16" endian="big" sizex="12" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015EAE" storagetype="uint16" endian="big" sizex="12" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-4 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015F12" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015F10" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-3 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015F54" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015F52" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-5 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015F96" storagetype="uint16" endian="big" sizex="11" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015F94" storagetype="uint16" endian="big" sizex="11" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 5-4 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015FF0" storagetype="uint16" endian="big" sizex="13" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015FEE" storagetype="uint16" endian="big" sizex="13" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
+Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x013508" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
@@ -12817,124 +12565,41 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Shift 1-2 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015E4E" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015E4C" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+  <table type="3D" name="Shift Map" category="Transmission - Shift Schedule" storageaddress="0x015E4C" storagetype="uint16" endian="big" sizex="12" sizey="8" cellIndices="0,4,8,12,16,-1,20,-1,24,-1,28,32,50,54,58,62,66,-1,70,-1,74,-1,78,82,104,108,112,116,120,-1,124,-1,128,-1,132,136,162,166,170,174,178,-1,182,-1,186,-1,190,194,37,-1,-1,-1,-1,-1,-1,-1,-1,-1,41,45,87,-1,-1,-1,-1,91,-1,-1,-1,95,-1,99,141,-1,-1,-1,149,-1,-1,-1,153,-1,-1,157,199,-1,-1,-1,207,-1,-1,211,-1,-1,-1,215" userlevel="1">
+   <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+   <table type="Static X Axis" name="Pedal %" sizex="12">
+    <data>0.0</data>
+    <data>12.5</data>
+    <data>18.8</data>
+    <data>25.1</data>
+    <data>37.6</data>
+    <data>43.9</data>
+    <data>50.2</data>
+    <data>56.5</data>
+    <data>62.7</data>
+    <data>69.0</data>
+    <data>75.3</data>
+    <data>100.0</data>
    </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
+   <table type="Static Y Axis" name="Shift" sizey="8">
+    <data>1-2 Up</data>
+    <data>2-3 Up</data>
+    <data>3-4 Up</data>
+    <data>4-5 Up</data>
+    <data>2-1 Down</data>
+    <data>3-2 Down</data>
+    <data>4-3 Down</data>
+    <data>5-4 Down</data>
    </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+   <description>THE SHIFT MAP. All eight shift points in one table, in the form a five-speed automatic is normally calibrated: vehicle speed against accelerator pedal angle, one row per shift event.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
+Read a cell as: this shift happens at this road speed when the pedal is at this position. Raise a value to delay the shift, lower it to bring the shift on earlier. The upshift rows come first, then the downshifts - the gap between an upshift and its matching downshift is the hysteresis that stops the transmission hunting between two gears, so move the pair together unless you specifically intend to change it.
 
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
+Every value is vehicle speed in km/h, confirmed against the factory shift chart. The axis is accelerator opening angle, stored as 0-255 for 0-100%.
 
-  <table type="3D" name="Shift 2-1 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015E98" storagetype="uint16" endian="big" sizex="3" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015E96" storagetype="uint16" endian="big" sizex="3" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+Cells showing '-' are not editable. They are pedal positions where that particular curve has no vertex in the ROM, so there is no byte to change. Each curve is stored as its own polyline with its own breakpoints; this table lines them up on the shared pedal axis and leaves a gap where a curve does not use a position, rather than inventing a value.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 2-3 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015EB2" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015EB0" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-2 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015EFC" storagetype="uint16" endian="big" sizex="4" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015EFA" storagetype="uint16" endian="big" sizex="4" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-4 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015F1E" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015F1C" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-3 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015F68" storagetype="uint16" endian="big" sizex="5" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015F66" storagetype="uint16" endian="big" sizex="5" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-5 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015F92" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015F90" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 5-4 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015FDC" storagetype="uint16" endian="big" sizex="5" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015FDA" storagetype="uint16" endian="big" sizex="5" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
+Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x01356C" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
@@ -13428,124 +13093,40 @@ This family was only found after correcting the Ghidra M32R processor definition
    <description>X-input is the same internal signal as the 'Signal FE Response Curve' table, but smoothed through a calibratable first-order filter before this lookup (confirmed via decompilation: the filter target is that byte shifted left 8, i.e. x256). This is a DIFFERENT signal chain from the engine-speed tables, so the RPM scale used on those does NOT apply here — left raw deliberately. Stock data is a real, populated rising curve (200 up to 1189).</description>
   </table>
 
-  <table type="3D" name="Shift 1-2 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016442" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016440" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+  <table type="3D" name="Shift Map" category="Transmission - Shift Schedule" storageaddress="0x016440" storagetype="uint16" endian="big" sizex="11" sizey="8" cellIndices="0,-1,-1,4,8,12,16,20,24,-1,28,50,-1,-1,54,58,62,66,70,74,-1,78,112,-1,116,120,124,128,132,136,140,-1,144,182,-1,186,190,194,198,202,206,210,-1,214,33,-1,-1,-1,-1,-1,-1,37,-1,41,45,83,-1,-1,-1,-1,87,91,95,99,103,107,149,-1,-1,-1,153,157,161,165,169,173,177,219,223,227,231,235,239,243,247,251,255,259" userlevel="1">
+   <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+   <table type="Static X Axis" name="Pedal %" sizex="11">
+    <data>0.0</data>
+    <data>12.5</data>
+    <data>15.7</data>
+    <data>18.8</data>
+    <data>25.1</data>
+    <data>37.6</data>
+    <data>50.2</data>
+    <data>62.7</data>
+    <data>75.3</data>
+    <data>87.8</data>
+    <data>100.0</data>
    </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
+   <table type="Static Y Axis" name="Shift" sizey="8">
+    <data>1-2 Up</data>
+    <data>2-3 Up</data>
+    <data>3-4 Up</data>
+    <data>4-5 Up</data>
+    <data>2-1 Down</data>
+    <data>3-2 Down</data>
+    <data>4-3 Down</data>
+    <data>5-4 Down</data>
    </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+   <description>THE SHIFT MAP. All eight shift points in one table, in the form a five-speed automatic is normally calibrated: vehicle speed against accelerator pedal angle, one row per shift event.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
+Read a cell as: this shift happens at this road speed when the pedal is at this position. Raise a value to delay the shift, lower it to bring the shift on earlier. The upshift rows come first, then the downshifts - the gap between an upshift and its matching downshift is the hysteresis that stops the transmission hunting between two gears, so move the pair together unless you specifically intend to change it.
 
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
+Every value is vehicle speed in km/h, confirmed against the factory shift chart. The axis is accelerator opening angle, stored as 0-255 for 0-100%.
 
-  <table type="3D" name="Shift 2-1 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016484" storagetype="uint16" endian="big" sizex="4" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016482" storagetype="uint16" endian="big" sizex="4" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+Cells showing '-' are not editable. They are pedal positions where that particular curve has no vertex in the ROM, so there is no byte to change. Each curve is stored as its own polyline with its own breakpoints; this table lines them up on the shared pedal axis and leaves a gap where a curve does not use a position, rather than inventing a value.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 2-3 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x0164A6" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x0164A4" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-2 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x0164E8" storagetype="uint16" endian="big" sizex="7" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x0164E6" storagetype="uint16" endian="big" sizex="7" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-4 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016522" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016520" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-3 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x01656C" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x01656A" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-5 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x0165AE" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x0165AC" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 5-4 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x0165F8" storagetype="uint16" endian="big" sizex="11" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x0165F6" storagetype="uint16" endian="big" sizex="11" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
+Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x013B84" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
@@ -16661,124 +16242,40 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Shift 1-2 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015DAE" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015DAC" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+  <table type="3D" name="Shift Map" category="Transmission - Shift Schedule" storageaddress="0x015DAC" storagetype="uint16" endian="big" sizex="11" sizey="8" cellIndices="0,-1,-1,4,8,12,16,20,24,-1,28,54,-1,-1,58,62,66,70,74,78,-1,82,116,-1,120,124,128,132,136,140,144,-1,148,186,-1,190,194,198,202,206,210,214,-1,218,33,-1,-1,-1,-1,-1,37,41,-1,45,49,87,-1,-1,-1,-1,91,95,99,103,107,111,153,-1,-1,-1,157,161,165,169,173,177,181,223,227,231,235,239,243,247,251,255,259,263" userlevel="1">
+   <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+   <table type="Static X Axis" name="Pedal %" sizex="11">
+    <data>0.0</data>
+    <data>12.5</data>
+    <data>15.7</data>
+    <data>18.8</data>
+    <data>25.1</data>
+    <data>37.6</data>
+    <data>50.2</data>
+    <data>62.7</data>
+    <data>75.3</data>
+    <data>87.8</data>
+    <data>100.0</data>
    </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
+   <table type="Static Y Axis" name="Shift" sizey="8">
+    <data>1-2 Up</data>
+    <data>2-3 Up</data>
+    <data>3-4 Up</data>
+    <data>4-5 Up</data>
+    <data>2-1 Down</data>
+    <data>3-2 Down</data>
+    <data>4-3 Down</data>
+    <data>5-4 Down</data>
    </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+   <description>THE SHIFT MAP. All eight shift points in one table, in the form a five-speed automatic is normally calibrated: vehicle speed against accelerator pedal angle, one row per shift event.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
+Read a cell as: this shift happens at this road speed when the pedal is at this position. Raise a value to delay the shift, lower it to bring the shift on earlier. The upshift rows come first, then the downshifts - the gap between an upshift and its matching downshift is the hysteresis that stops the transmission hunting between two gears, so move the pair together unless you specifically intend to change it.
 
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
+Every value is vehicle speed in km/h, confirmed against the factory shift chart. The axis is accelerator opening angle, stored as 0-255 for 0-100%.
 
-  <table type="3D" name="Shift 2-1 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015DF0" storagetype="uint16" endian="big" sizex="5" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015DEE" storagetype="uint16" endian="big" sizex="5" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+Cells showing '-' are not editable. They are pedal positions where that particular curve has no vertex in the ROM, so there is no byte to change. Each curve is stored as its own polyline with its own breakpoints; this table lines them up on the shared pedal axis and leaves a gap where a curve does not use a position, rather than inventing a value.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 2-3 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015E1A" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015E18" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-2 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015E5C" storagetype="uint16" endian="big" sizex="7" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015E5A" storagetype="uint16" endian="big" sizex="7" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-4 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015E96" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015E94" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-3 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015EE0" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015EDE" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-5 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015F22" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015F20" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 5-4 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015F6C" storagetype="uint16" endian="big" sizex="11" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015F6A" storagetype="uint16" endian="big" sizex="11" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
+Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x0134F0" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
@@ -19894,124 +19391,40 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Shift 1-2 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015F92" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015F90" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+  <table type="3D" name="Shift Map" category="Transmission - Shift Schedule" storageaddress="0x015F90" storagetype="uint16" endian="big" sizex="11" sizey="8" cellIndices="0,-1,-1,4,8,12,16,20,24,-1,28,50,-1,-1,54,58,62,66,70,74,-1,78,112,-1,116,120,124,128,132,136,140,-1,144,182,-1,186,190,194,198,202,206,210,-1,214,33,-1,-1,-1,-1,-1,-1,37,-1,41,45,83,-1,-1,-1,-1,87,91,95,99,103,107,149,-1,-1,-1,153,157,161,165,169,173,177,219,223,227,231,235,239,243,247,251,255,259" userlevel="1">
+   <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+   <table type="Static X Axis" name="Pedal %" sizex="11">
+    <data>0.0</data>
+    <data>12.5</data>
+    <data>15.7</data>
+    <data>18.8</data>
+    <data>25.1</data>
+    <data>37.6</data>
+    <data>50.2</data>
+    <data>62.7</data>
+    <data>75.3</data>
+    <data>87.8</data>
+    <data>100.0</data>
    </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
+   <table type="Static Y Axis" name="Shift" sizey="8">
+    <data>1-2 Up</data>
+    <data>2-3 Up</data>
+    <data>3-4 Up</data>
+    <data>4-5 Up</data>
+    <data>2-1 Down</data>
+    <data>3-2 Down</data>
+    <data>4-3 Down</data>
+    <data>5-4 Down</data>
    </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+   <description>THE SHIFT MAP. All eight shift points in one table, in the form a five-speed automatic is normally calibrated: vehicle speed against accelerator pedal angle, one row per shift event.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
+Read a cell as: this shift happens at this road speed when the pedal is at this position. Raise a value to delay the shift, lower it to bring the shift on earlier. The upshift rows come first, then the downshifts - the gap between an upshift and its matching downshift is the hysteresis that stops the transmission hunting between two gears, so move the pair together unless you specifically intend to change it.
 
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
+Every value is vehicle speed in km/h, confirmed against the factory shift chart. The axis is accelerator opening angle, stored as 0-255 for 0-100%.
 
-  <table type="3D" name="Shift 2-1 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015FD4" storagetype="uint16" endian="big" sizex="4" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015FD2" storagetype="uint16" endian="big" sizex="4" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+Cells showing '-' are not editable. They are pedal positions where that particular curve has no vertex in the ROM, so there is no byte to change. Each curve is stored as its own polyline with its own breakpoints; this table lines them up on the shared pedal axis and leaves a gap where a curve does not use a position, rather than inventing a value.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 2-3 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x015FF6" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x015FF4" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-2 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016038" storagetype="uint16" endian="big" sizex="7" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016036" storagetype="uint16" endian="big" sizex="7" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-4 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016072" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016070" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-3 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x0160BC" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x0160BA" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-5 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x0160FE" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x0160FC" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 5-4 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016148" storagetype="uint16" endian="big" sizex="11" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016146" storagetype="uint16" endian="big" sizex="11" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
+Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x0136D4" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
@@ -20505,124 +19918,40 @@ This family was only found after correcting the Ghidra M32R processor definition
    <description>X-input is the same internal signal as the 'Signal FE Response Curve' table, but smoothed through a calibratable first-order filter before this lookup (confirmed via decompilation: the filter target is that byte shifted left 8, i.e. x256). This is a DIFFERENT signal chain from the engine-speed tables, so the RPM scale used on those does NOT apply here — left raw deliberately. Stock data is a real, populated rising curve (200 up to 1189).</description>
   </table>
 
-  <table type="3D" name="Shift 1-2 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016442" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016440" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+  <table type="3D" name="Shift Map" category="Transmission - Shift Schedule" storageaddress="0x016440" storagetype="uint16" endian="big" sizex="11" sizey="8" cellIndices="0,-1,-1,4,8,12,16,20,24,-1,28,54,-1,-1,58,62,66,70,74,78,-1,82,116,-1,120,124,128,132,136,140,144,-1,148,186,-1,190,194,198,202,206,210,214,-1,218,33,-1,-1,-1,-1,-1,37,41,-1,45,49,87,-1,-1,-1,-1,91,95,99,103,107,111,153,-1,-1,-1,157,161,165,169,173,177,181,223,227,231,235,239,243,247,251,255,259,263" userlevel="1">
+   <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+   <table type="Static X Axis" name="Pedal %" sizex="11">
+    <data>0.0</data>
+    <data>12.5</data>
+    <data>15.7</data>
+    <data>18.8</data>
+    <data>25.1</data>
+    <data>37.6</data>
+    <data>50.2</data>
+    <data>62.7</data>
+    <data>75.3</data>
+    <data>87.8</data>
+    <data>100.0</data>
    </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
+   <table type="Static Y Axis" name="Shift" sizey="8">
+    <data>1-2 Up</data>
+    <data>2-3 Up</data>
+    <data>3-4 Up</data>
+    <data>4-5 Up</data>
+    <data>2-1 Down</data>
+    <data>3-2 Down</data>
+    <data>4-3 Down</data>
+    <data>5-4 Down</data>
    </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+   <description>THE SHIFT MAP. All eight shift points in one table, in the form a five-speed automatic is normally calibrated: vehicle speed against accelerator pedal angle, one row per shift event.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
+Read a cell as: this shift happens at this road speed when the pedal is at this position. Raise a value to delay the shift, lower it to bring the shift on earlier. The upshift rows come first, then the downshifts - the gap between an upshift and its matching downshift is the hysteresis that stops the transmission hunting between two gears, so move the pair together unless you specifically intend to change it.
 
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
+Every value is vehicle speed in km/h, confirmed against the factory shift chart. The axis is accelerator opening angle, stored as 0-255 for 0-100%.
 
-  <table type="3D" name="Shift 2-1 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016484" storagetype="uint16" endian="big" sizex="5" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016482" storagetype="uint16" endian="big" sizex="5" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+Cells showing '-' are not editable. They are pedal positions where that particular curve has no vertex in the ROM, so there is no byte to change. Each curve is stored as its own polyline with its own breakpoints; this table lines them up on the shared pedal axis and leaves a gap where a curve does not use a position, rather than inventing a value.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 2-3 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x0164AE" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x0164AC" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-2 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x0164F0" storagetype="uint16" endian="big" sizex="7" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x0164EE" storagetype="uint16" endian="big" sizex="7" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-4 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x01652A" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016528" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-3 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016574" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016572" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-5 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x0165B6" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x0165B4" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 5-4 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016600" storagetype="uint16" endian="big" sizex="11" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x0165FE" storagetype="uint16" endian="big" sizex="11" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
+Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x013B84" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
@@ -21116,124 +20445,40 @@ This family was only found after correcting the Ghidra M32R processor definition
    <description>X-input is the same internal signal as the 'Signal FE Response Curve' table, but smoothed through a calibratable first-order filter before this lookup (confirmed via decompilation: the filter target is that byte shifted left 8, i.e. x256). This is a DIFFERENT signal chain from the engine-speed tables, so the RPM scale used on those does NOT apply here — left raw deliberately. Stock data is a real, populated rising curve (200 up to 1189).</description>
   </table>
 
-  <table type="3D" name="Shift 1-2 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x01683E" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x01683C" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+  <table type="3D" name="Shift Map" category="Transmission - Shift Schedule" storageaddress="0x01683C" storagetype="uint16" endian="big" sizex="11" sizey="8" cellIndices="0,-1,4,8,12,16,20,-1,24,-1,28,50,-1,54,58,62,66,70,-1,74,-1,78,104,108,112,116,120,124,128,-1,132,-1,136,162,166,170,174,178,182,186,-1,190,-1,194,33,-1,-1,-1,-1,-1,37,-1,-1,41,45,83,-1,-1,-1,-1,-1,87,-1,91,95,99,141,-1,-1,-1,-1,145,-1,149,-1,153,157,199,-1,-1,-1,203,-1,207,-1,-1,211,215" userlevel="1">
+   <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+   <table type="Static X Axis" name="Pedal %" sizex="11">
+    <data>0.0</data>
+    <data>15.7</data>
+    <data>18.8</data>
+    <data>25.1</data>
+    <data>37.6</data>
+    <data>50.2</data>
+    <data>62.7</data>
+    <data>69.0</data>
+    <data>75.3</data>
+    <data>87.8</data>
+    <data>100.0</data>
    </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
+   <table type="Static Y Axis" name="Shift" sizey="8">
+    <data>1-2 Up</data>
+    <data>2-3 Up</data>
+    <data>3-4 Up</data>
+    <data>4-5 Up</data>
+    <data>2-1 Down</data>
+    <data>3-2 Down</data>
+    <data>4-3 Down</data>
+    <data>5-4 Down</data>
    </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+   <description>THE SHIFT MAP. All eight shift points in one table, in the form a five-speed automatic is normally calibrated: vehicle speed against accelerator pedal angle, one row per shift event.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
+Read a cell as: this shift happens at this road speed when the pedal is at this position. Raise a value to delay the shift, lower it to bring the shift on earlier. The upshift rows come first, then the downshifts - the gap between an upshift and its matching downshift is the hysteresis that stops the transmission hunting between two gears, so move the pair together unless you specifically intend to change it.
 
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
+Every value is vehicle speed in km/h, confirmed against the factory shift chart. The axis is accelerator opening angle, stored as 0-255 for 0-100%.
 
-  <table type="3D" name="Shift 2-1 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016880" storagetype="uint16" endian="big" sizex="4" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x01687E" storagetype="uint16" endian="big" sizex="4" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+Cells showing '-' are not editable. They are pedal positions where that particular curve has no vertex in the ROM, so there is no byte to change. Each curve is stored as its own polyline with its own breakpoints; this table lines them up on the shared pedal axis and leaves a gap where a curve does not use a position, rather than inventing a value.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 2-3 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x0168A2" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x0168A0" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-2 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x0168E4" storagetype="uint16" endian="big" sizex="5" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x0168E2" storagetype="uint16" endian="big" sizex="5" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-4 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x01690E" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x01690C" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-3 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016958" storagetype="uint16" endian="big" sizex="5" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016956" storagetype="uint16" endian="big" sizex="5" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-5 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016982" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016980" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 5-4 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x0169CC" storagetype="uint16" endian="big" sizex="5" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x0169CA" storagetype="uint16" endian="big" sizex="5" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
+Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x013B94" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
@@ -21666,124 +20911,37 @@ This is a static file editor only — cannot connect live to the vehicle through
    <description>X-input is the same internal signal as the 'Signal FE Response Curve' table, but smoothed through a calibratable first-order filter before this lookup (confirmed via decompilation: the filter target is that byte shifted left 8, i.e. x256). This is a DIFFERENT signal chain from the engine-speed tables, so the RPM scale used on those does NOT apply here — left raw deliberately. Stock data is a real, populated rising curve (200 up to 1189).</description>
   </table>
 
-  <table type="3D" name="Shift 1-2 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016ABA" storagetype="uint16" endian="big" sizex="4" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016AB8" storagetype="uint16" endian="big" sizex="4" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+  <table type="3D" name="Shift Map" category="Transmission - Shift Schedule" storageaddress="0x016AB8" storagetype="uint16" endian="big" sizex="8" sizey="8" cellIndices="0,4,8,-1,-1,-1,-1,12,30,34,38,-1,-1,42,-1,46,68,72,76,-1,-1,80,-1,84,110,114,118,-1,-1,122,-1,126,17,-1,-1,-1,-1,-1,21,25,51,-1,-1,-1,55,-1,59,63,89,-1,-1,93,97,-1,101,105,131,-1,-1,135,139,-1,143,147" userlevel="1">
+   <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+   <table type="Static X Axis" name="Pedal %" sizex="8">
+    <data>0.0</data>
+    <data>31.4</data>
+    <data>43.9</data>
+    <data>50.2</data>
+    <data>62.7</data>
+    <data>69.0</data>
+    <data>87.8</data>
+    <data>100.0</data>
    </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
+   <table type="Static Y Axis" name="Shift" sizey="8">
+    <data>1-2 Up</data>
+    <data>2-3 Up</data>
+    <data>3-4 Up</data>
+    <data>4-5 Up</data>
+    <data>2-1 Down</data>
+    <data>3-2 Down</data>
+    <data>4-3 Down</data>
+    <data>5-4 Down</data>
    </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+   <description>THE SHIFT MAP. All eight shift points in one table, in the form a five-speed automatic is normally calibrated: vehicle speed against accelerator pedal angle, one row per shift event.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
+Read a cell as: this shift happens at this road speed when the pedal is at this position. Raise a value to delay the shift, lower it to bring the shift on earlier. The upshift rows come first, then the downshifts - the gap between an upshift and its matching downshift is the hysteresis that stops the transmission hunting between two gears, so move the pair together unless you specifically intend to change it.
 
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
+Every value is vehicle speed in km/h, confirmed against the factory shift chart. The axis is accelerator opening angle, stored as 0-255 for 0-100%.
 
-  <table type="3D" name="Shift 2-1 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016ADC" storagetype="uint16" endian="big" sizex="3" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016ADA" storagetype="uint16" endian="big" sizex="3" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+Cells showing '-' are not editable. They are pedal positions where that particular curve has no vertex in the ROM, so there is no byte to change. Each curve is stored as its own polyline with its own breakpoints; this table lines them up on the shared pedal axis and leaves a gap where a curve does not use a position, rather than inventing a value.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 2-3 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016AF6" storagetype="uint16" endian="big" sizex="5" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016AF4" storagetype="uint16" endian="big" sizex="5" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-2 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016B20" storagetype="uint16" endian="big" sizex="4" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016B1E" storagetype="uint16" endian="big" sizex="4" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-4 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016B42" storagetype="uint16" endian="big" sizex="5" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016B40" storagetype="uint16" endian="big" sizex="5" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-3 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016B6C" storagetype="uint16" endian="big" sizex="5" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016B6A" storagetype="uint16" endian="big" sizex="5" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-5 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016B96" storagetype="uint16" endian="big" sizex="5" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016B94" storagetype="uint16" endian="big" sizex="5" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 5-4 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016BC0" storagetype="uint16" endian="big" sizex="5" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016BBE" storagetype="uint16" endian="big" sizex="5" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
+Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x013DEC" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">
@@ -22277,124 +21435,40 @@ This family was only found after correcting the Ghidra M32R processor definition
    <description>X-input is the same internal signal as the 'Signal FE Response Curve' table, but smoothed through a calibratable first-order filter before this lookup (confirmed via decompilation: the filter target is that byte shifted left 8, i.e. x256). This is a DIFFERENT signal chain from the engine-speed tables, so the RPM scale used on those does NOT apply here — left raw deliberately. Stock data is a real, populated rising curve (200 up to 1189).</description>
   </table>
 
-  <table type="3D" name="Shift 1-2 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x01683E" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x01683C" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+  <table type="3D" name="Shift Map" category="Transmission - Shift Schedule" storageaddress="0x01683C" storagetype="uint16" endian="big" sizex="11" sizey="8" cellIndices="0,-1,4,8,12,16,20,-1,24,-1,28,50,-1,54,58,62,66,70,-1,74,-1,78,104,108,112,116,120,124,128,-1,132,-1,136,162,166,170,174,178,182,186,-1,190,-1,194,33,-1,-1,-1,-1,-1,37,-1,-1,41,45,83,-1,-1,-1,-1,-1,87,-1,91,95,99,141,-1,-1,-1,-1,145,-1,149,-1,153,157,199,-1,-1,-1,203,-1,207,-1,-1,211,215" userlevel="1">
+   <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
+   <table type="Static X Axis" name="Pedal %" sizex="11">
+    <data>0.0</data>
+    <data>15.7</data>
+    <data>18.8</data>
+    <data>25.1</data>
+    <data>37.6</data>
+    <data>50.2</data>
+    <data>62.7</data>
+    <data>69.0</data>
+    <data>75.3</data>
+    <data>87.8</data>
+    <data>100.0</data>
    </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
+   <table type="Static Y Axis" name="Shift" sizey="8">
+    <data>1-2 Up</data>
+    <data>2-3 Up</data>
+    <data>3-4 Up</data>
+    <data>4-5 Up</data>
+    <data>2-1 Down</data>
+    <data>3-2 Down</data>
+    <data>4-3 Down</data>
+    <data>5-4 Down</data>
    </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+   <description>THE SHIFT MAP. All eight shift points in one table, in the form a five-speed automatic is normally calibrated: vehicle speed against accelerator pedal angle, one row per shift event.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
+Read a cell as: this shift happens at this road speed when the pedal is at this position. Raise a value to delay the shift, lower it to bring the shift on earlier. The upshift rows come first, then the downshifts - the gap between an upshift and its matching downshift is the hysteresis that stops the transmission hunting between two gears, so move the pair together unless you specifically intend to change it.
 
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
+Every value is vehicle speed in km/h, confirmed against the factory shift chart. The axis is accelerator opening angle, stored as 0-255 for 0-100%.
 
-  <table type="3D" name="Shift 2-1 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016880" storagetype="uint16" endian="big" sizex="4" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x01687E" storagetype="uint16" endian="big" sizex="4" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
+Cells showing '-' are not editable. They are pedal positions where that particular curve has no vertex in the ROM, so there is no byte to change. Each curve is stored as its own polyline with its own breakpoints; this table lines them up on the shared pedal axis and leaves a gap where a curve does not use a position, rather than inventing a value.
 
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 2-3 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x0168A2" storagetype="uint16" endian="big" sizex="8" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x0168A0" storagetype="uint16" endian="big" sizex="8" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-2 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x0168E4" storagetype="uint16" endian="big" sizex="5" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x0168E2" storagetype="uint16" endian="big" sizex="5" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 3-4 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x01690E" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x01690C" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-3 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016958" storagetype="uint16" endian="big" sizex="5" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016956" storagetype="uint16" endian="big" sizex="5" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 4-5 Upshift Curve" category="Transmission - Shift Schedule" storageaddress="0x016982" storagetype="uint16" endian="big" sizex="9" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x016980" storagetype="uint16" endian="big" sizex="9" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
-  </table>
-
-  <table type="3D" name="Shift 5-4 Downshift Curve" category="Transmission - Shift Schedule" storageaddress="0x0169CC" storagetype="uint16" endian="big" sizex="5" sizey="1" swapxy="true" skipCells="3" userlevel="1">
-   <scaling units="% pedal" expression="x/255*100" to_byte="x*255/100" format="0.0" fineincrement="0.4" coarseincrement="3.9" />
-   <table type="X Axis" name="Vehicle speed" storageaddress="0x0169CA" storagetype="uint16" endian="big" sizex="5" skipCells="3">
-    <scaling units="km/h" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="5" />
-   </table>
-   <table type="Static Y Axis" name="Pedal" sizey="1">
-    <data>Pedal %</data>
-   </table>
-   <description>Shift point curve, mode 0 (the fully-populated operating mode). The curve is a polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the operating point crosses this line.
-
-Units are confirmed against the factory shift chart ('5EAT Shifting, Base Case'): vehicle speed is km/h with no scaling, and accelerator opening angle is stored as 0-255 for 0-100%, shown here as a percentage. A pedal value of 100% in the final row is a max clamp, not a real operating point.
-
-Lowering a curve makes that shift happen earlier (at lower speed for a given pedal); raising it delays the shift. Read this table together with its companion - vertex 3a of the km/h table and vertex 3a of the % pedal table are the two coordinates of the same point on the curve.</description>
+Requires the patched RomRaider in romraider-5eat/. The eight curves sit at eight separate addresses with different lengths, which upstream cannot express as one table - see Table3D.cellIndices.</description>
   </table>
 
   <table type="3D" name="Line Pressure Target 1 (1370 kPa) - RPM" category="Transmission - Line Pressure" storageaddress="0x013B94" storagetype="uint16" endian="big" sizex="1" sizey="7" skipCells="1" userlevel="1">

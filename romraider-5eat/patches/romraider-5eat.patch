@@ -1,4 +1,4 @@
-﻿diff --git a/build.xml b/build.xml
+diff --git a/build.xml b/build.xml
 index d2d419e..f45e0e9 100644
 --- a/build.xml
 +++ b/build.xml
@@ -155,6 +155,59 @@ index e145a21..f4c0e61 100644
          if (settings.getEcuDefinitionFiles().size() <= 0) {
              // no ECU definitions configured - let user choose to get latest or configure later
              Object[] options = {rb.getString("YES"), rb.getString("NO")};
+diff --git a/src/main/java/com/romraider/maps/DataCell.java b/src/main/java/com/romraider/maps/DataCell.java
+index eef75d0..b68cacc 100644
+--- a/src/main/java/com/romraider/maps/DataCell.java
++++ b/src/main/java/com/romraider/maps/DataCell.java
+@@ -479,6 +479,14 @@ public class DataCell implements Serializable  {
+     }
+ 
+     public void setBinValue(double newBinValue) throws UserLevelException {
++        // A cell carrying static text has no storage behind it. That was only ever
++        // true for whole static tables before, where nothing was editable anyway;
++        // a sparse table mixes real cells and placeholder cells in one grid, so the
++        // guard has to be per cell. Without it, editing a placeholder would compute
++        // its address as storageAddress + 0 and quietly corrupt the first real cell.
++        if (staticText != null) {
++            return;
++        }
+         if (binValue == newBinValue || table.locked || table.getName().contains("Checksum Fix")) {
+             return;
+         }
+diff --git a/src/main/java/com/romraider/maps/DataCellView.java b/src/main/java/com/romraider/maps/DataCellView.java
+index 4010c4e..ce5292a 100644
+--- a/src/main/java/com/romraider/maps/DataCellView.java
++++ b/src/main/java/com/romraider/maps/DataCellView.java
+@@ -125,6 +125,13 @@ public class DataCellView extends JLabel implements MouseListener, Serializable
+         Settings settings = getSettings();
+         Color backgroundColor;
+ 
++        // Cells with no storage are not part of the data, so they should not be
++        // painted as though they were the low end of the range.
++        if (!tableView.getTable().isStaticDataTable()
++                && dataCell.getStaticText() != null) {
++            return settings.getAxisColor();
++        }
++
+         if(highlighted) {
+             backgroundColor = settings.getHighlightColor();
+         } else if(dataCell.isSelected()) {
+@@ -280,6 +287,15 @@ public class DataCellView extends JLabel implements MouseListener, Serializable
+     	if(tableView.getTable().isStaticDataTable()) {
+             return getStaticText();
+         }
++
++        // A single cell may be static inside an otherwise editable table. A sparse
++        // table has cells at positions where the ROM holds nothing, and formatting
++        // those through the scale would print 0 - a value that looks real, sits in
++        // the middle of the colour scale, and invites someone to tune it. Show the
++        // placeholder text instead.
++        if (dataCell.getStaticText() != null) {
++            return dataCell.getStaticText();
++        }
+                
+         FORMATTER.applyPattern(tableView.getTable().getCurrentScale().getFormat());
+         String displayString = "";
 diff --git a/src/main/java/com/romraider/maps/Table.java b/src/main/java/com/romraider/maps/Table.java
 index db7f9de..a651ca8 100644
 --- a/src/main/java/com/romraider/maps/Table.java
@@ -197,10 +250,43 @@ index db7f9de..a651ca8 100644
  
          // reset locked status
 diff --git a/src/main/java/com/romraider/maps/Table3D.java b/src/main/java/com/romraider/maps/Table3D.java
-index ece4055..4042421 100644
+index ece4055..ecdb802 100644
 --- a/src/main/java/com/romraider/maps/Table3D.java
 +++ b/src/main/java/com/romraider/maps/Table3D.java
-@@ -39,7 +39,6 @@ public class Table3D extends Table {
+@@ -27,6 +27,32 @@ import com.romraider.util.NumberUtil;
+ import com.romraider.util.SettingsManager;
+ 
+ public class Table3D extends Table {
++    /**
++     * Explicit element index for every cell, row-major as (y * sizeX + x), or -1
++     * where the cell has no storage in the ROM.
++     *
++     * Ordinary tables derive each cell's index from the geometry, which requires a
++     * rectangular block with a uniform stride. The 5EAT shift schedule is neither:
++     * the eight curves live at eight separate addresses with different lengths, and
++     * a given curve only has a vertex at some of the pedal positions. Mapping the
++     * cells explicitly is what lets all eight become one editable surface instead
++     * of eight tables, and it keeps every cell pointing at the byte it really owns.
++     *
++     * Null for every other table, which leaves the normal path untouched.
++     */
++    private int[] cellIndices = null;
++
++    /** Shown in cells that have no storage. Deliberately not a number. */
++    public static final String NO_CELL = "-";
++
++    public int[] getCellIndices() {
++        return cellIndices;
++    }
++
++    public void setCellIndices(int[] cellIndices) {
++        this.cellIndices = cellIndices;
++    }
++
+ 
+     private static final long serialVersionUID = 3103448753263606599L;
+ 
+@@ -39,7 +65,6 @@ public class Table3D extends Table {
      private boolean flipY = false;
      
      // Skip cells after row/column ends before next row/column starts
@@ -208,7 +294,7 @@ index ece4055..4042421 100644
  
      @Override
      public TableType getType() {
-@@ -108,13 +107,7 @@ public class Table3D extends Table {
+@@ -108,13 +133,7 @@ public class Table3D extends Table {
          return data[0].length;
      }
      
@@ -222,6 +308,70 @@ index ece4055..4042421 100644
  
     
      @Override
+@@ -183,6 +202,24 @@ public class Table3D extends Table {
+             throw new ArrayIndexOutOfBoundsException();
+         }
+ 
++        if (cellIndices != null) {
++            final int sizeX = xAxis.getDataSize();
++            final int sizeY = yAxis.getDataSize();
++            for (int y = 0; y < sizeY; y++) {
++                for (int x = 0; x < sizeX; x++) {
++                    final int at = y * sizeX + x;
++                    final int idx = at < cellIndices.length ? cellIndices[at] : -1;
++                    data[x][y] = idx < 0
++                            ? new DataCell(this, NO_CELL, rom)
++                            : new DataCell(this, idx, rom);
++                }
++            }
++            locked = tempLock;
++            calcCellRanges();
++            addScale(new Scale());
++            return;
++        }
++
+         int offset = 0;
+         int iMax = swapXY ? xAxis.getDataSize() : yAxis.getDataSize();
+         int jMax = swapXY ? yAxis.getDataSize() : xAxis.getDataSize();
+@@ -222,14 +259,34 @@ public class Table3D extends Table {
+ 
+     @Override
+     public void calcCellRanges() {
+-        double binMax = data[0][0].getBinValue();
+-        double binMin = data[0][0].getBinValue();
++        // Seed from the first cell that actually has storage. In a sparse table the
++        // corner cell may be a placeholder, and seeding the range from its zero
++        // would put 0 at one end of the colour scale for every table - making a
++        // shift map of 40 to 200 km/h render as one flat colour.
++        DataCell seed = null;
++        for (DataCell[] column : data) {
++            for (DataCell cell : column) {
++                if (cell.getStaticText() == null) {
++                    seed = cell;
++                    break;
++                }
++            }
++            if (seed != null) break;
++        }
++        if (seed == null) seed = data[0][0];
+ 
+-        double compareMax = data[0][0].getCompareValue();
+-        double compareMin = data[0][0].getCompareValue();
++        double binMax = seed.getBinValue();
++        double binMin = seed.getBinValue();
++
++        double compareMax = seed.getCompareValue();
++        double compareMin = seed.getCompareValue();
+ 
+         for(DataCell[] column : data) {
+             for(DataCell cell : column) {
++                if (cell.getStaticText() != null) {
++                    // No storage, so no value to include in the range.
++                    continue;
++                }
+                 // Calc bin
+                 if(binMax < cell.getBinValue()) {
+                     binMax = cell.getBinValue();
 diff --git a/src/main/java/com/romraider/swing/LookAndFeelManager.java b/src/main/java/com/romraider/swing/LookAndFeelManager.java
 index 0f91ca7..6250e6b 100644
 --- a/src/main/java/com/romraider/swing/LookAndFeelManager.java
@@ -459,10 +609,10 @@ index 20798e0..562abfd 100644
          } catch (Exception e) {
              throw new RuntimeException(e);
 diff --git a/src/main/java/com/romraider/xml/TableScaleUnmarshaller.java b/src/main/java/com/romraider/xml/TableScaleUnmarshaller.java
-index 08138b6..045d5de 100644
+index 08138b6..60fec8c 100644
 --- a/src/main/java/com/romraider/xml/TableScaleUnmarshaller.java
 +++ b/src/main/java/com/romraider/xml/TableScaleUnmarshaller.java
-@@ -195,6 +195,11 @@ public class TableScaleUnmarshaller {
+@@ -195,6 +195,30 @@ public class TableScaleUnmarshaller {
          table.setStringMask(
                  unmarshallAttribute(tableNode, "mask", ""));
  
@@ -471,10 +621,29 @@ index 08138b6..045d5de 100644
 +        table.setSkipCells(unmarshallAttribute(tableNode, "skipCells",
 +                table.getSkipCells()));
 +
++        if (table instanceof Table3D) {
++            // Comma-separated element index per cell, row-major, -1 where the cell
++            // has no storage. Lets a table map cells that are not a rectangular
++            // block with a uniform stride - see Table3D.cellIndices.
++            final String cells = unmarshallAttribute(tableNode, "cellIndices", "");
++            if (!cells.trim().isEmpty()) {
++                final String[] parts = cells.trim().split("\s*,\s*");
++                final int[] idx = new int[parts.length];
++                for (int ci = 0; ci < parts.length; ci++) {
++                    try {
++                        idx[ci] = Integer.parseInt(parts[ci].trim());
++                    } catch (NumberFormatException nfe) {
++                        idx[ci] = -1;
++                    }
++                }
++                ((Table3D) table).setCellIndices(idx);
++            }
++        }
++
          if (table.getType() == Table.TableType.TABLE_3D) {
              ((Table3D) table).setSwapXY(unmarshallAttribute(tableNode,
                      "swapxy", ((Table3D) table).getSwapXY()));
-@@ -206,8 +211,7 @@ public class TableScaleUnmarshaller {
+@@ -206,8 +230,7 @@ public class TableScaleUnmarshaller {
                      ((Table3D) table).getSizeX()));
              ((Table3D) table).setSizeY(unmarshallAttribute(tableNode, "sizey",
                      ((Table3D) table).getSizeY()));

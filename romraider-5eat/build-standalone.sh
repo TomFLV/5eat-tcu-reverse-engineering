@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Build the standalone Windows package from source.
 #
-# Produces RomRaider-5EAT/ containing a bundled Java runtime, so the end user
+# Produces RomRaider-TCU/ containing a bundled Java runtime, so the end user
 # installs nothing. This is the script that made the release ZIP; run it if you
 # would rather build from source than trust a binary, or to rebuild against a
 # newer upstream.
@@ -13,7 +13,7 @@ set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd "$HERE/.." && pwd)"
-OUT="${1:-$REPO/build/RomRaider-5EAT}"
+OUT="${1:-$REPO/build/RomRaider-TCU}"
 WORK="${TMPDIR:-/tmp}/rr5eat-build"
 
 # Pinned so the patch applies cleanly. Upstream moves and the patch touches
@@ -56,11 +56,18 @@ cp -r "$WORK/src/lib/common" "$OUT/lib"
 cp -r "$WORK/src/src/main/resources/i18n" "$OUT/i18n"
 cp "$WORK/src/LICENSE" "$OUT/license.txt" 2>/dev/null \
   || cp "$WORK/src/license.txt" "$OUT/license.txt"
-cp "$HERE/launchers/"*.vbs "$HERE/launchers/"*.bat "$OUT/"
-cp "$HERE/launchers/log4j.properties" "$OUT/lib/"
+
+cp "$HERE/log4j.properties" "$OUT/"
 mkdir -p "$OUT/definitions"
 cp "$REPO/definitions/5eat_tcu_romraider_defs.xml" "$OUT/definitions/"
-cp "$HERE/README.md" "$OUT/README.txt"
+cp "/README.md" "/README.txt"
+
+# The ROM images and the checksum tool ship with the application so it is usable
+# the moment it is extracted. The images are other people's dumps - roms/README.txt
+# records that, and the project README carries the full provenance.
+mkdir -p "/roms"
+cp ""/rom/*.bin "/roms/"
+cp "/tools/checksum.py" "/"
 
 say "fetching Temurin 21 JRE"
 curl -fSL "$JRE_URL" -o "$WORK/jre.zip"
@@ -72,8 +79,8 @@ du -sh "$OUT"
 cat <<EOF
 
 Built: $OUT
-Run it with RomRaider.vbs on Windows. Nothing needs installing.
+Run RomRaider-TCU.exe. Nothing needs installing.
 
 To make the release archive:
-  cd "$(dirname "$OUT")" && zip -qr RomRaider-5EAT-windows-x64.zip RomRaider-5EAT
+  cd "$(dirname "$OUT")" && zip -qr RomRaider-TCU-windows-x64.zip RomRaider-TCU
 EOF

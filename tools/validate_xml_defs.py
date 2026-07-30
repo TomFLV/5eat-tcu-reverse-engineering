@@ -114,6 +114,30 @@ def main():
             elif ttype == "3D":
                 sx, sy = int(t.get("sizex")), int(t.get("sizey"))
                 skip = int(t.get("skipCells", "0"))
+                cell_map = t.get("cellIndices")
+                if cell_map:
+                    # A sparse table addresses every cell explicitly, so there is no
+                    # geometry to check. What matters is that the map is well formed:
+                    # the right number of entries, every real index inside the ROM,
+                    # and no two cells claiming the same bytes - an alias would mean
+                    # editing one cell silently changed another.
+                    idx = [int(v) for v in cell_map.split(",")]
+                    checked += 1
+                    if len(idx) != sx * sy:
+                        errors.append(f"{name}: cellIndices has {len(idx)} entries, "
+                                      f"expected sizex*sizey = {sx * sy}")
+                    real = [v for v in idx if v >= 0]
+                    checked += 1
+                    oob = [v for v in real if addr + v * 2 + 2 > len(data)]
+                    if oob:
+                        errors.append(f"{name}: {len(oob)} cell(s) point past the "
+                                      f"end of the ROM")
+                    checked += 1
+                    if len(set(real)) != len(real):
+                        errors.append(f"{name}: cellIndices contains duplicates - "
+                                      f"{len(real) - len(set(real))} cell(s) alias "
+                                      f"the same ROM bytes")
+                    continue
                 checked += 1
                 if skip and not (sx == 1 and skip == 1):
                     # Strided 3D: cells = sx*sy values taken at (skip+1) uint16
