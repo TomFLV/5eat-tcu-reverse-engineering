@@ -175,10 +175,45 @@ index eef75d0..b68cacc 100644
              return;
          }
 diff --git a/src/main/java/com/romraider/maps/DataCellView.java b/src/main/java/com/romraider/maps/DataCellView.java
-index 4010c4e..ce5292a 100644
+index 4010c4e..f34f09c 100644
 --- a/src/main/java/com/romraider/maps/DataCellView.java
 +++ b/src/main/java/com/romraider/maps/DataCellView.java
-@@ -125,6 +125,13 @@ public class DataCellView extends JLabel implements MouseListener, Serializable
+@@ -20,6 +20,7 @@
+ package com.romraider.maps;
+ 
+ import static com.romraider.util.ColorScaler.getScaledColor;
++import com.romraider.util.ColorScaler;
+ import static com.romraider.util.ParamChecker.isNullOrEmpty;
+ import static javax.swing.BorderFactory.createLineBorder;
+ 
+@@ -39,6 +40,11 @@ import com.romraider.util.JEPUtil;
+ import com.romraider.util.SettingsManager;
+ 
+ public class DataCellView extends JLabel implements MouseListener, Serializable {
++    // Not pure black/white: slightly softened reads better against a saturated
++    // background and avoids the harsh edge that pure contrast gives on LCDs.
++    private static final Color CELL_TEXT_ON_DARK = new Color(245, 247, 250);
++    private static final Color CELL_TEXT_ON_LIGHT = new Color(24, 26, 30);
++
+ 	private static final long serialVersionUID = 1L;
+ 	static final Font DEFAULT_FONT = new Font("Arial", Font.BOLD, 12);
+     static final String ST_DELIMITER = "\t\n\r\f";
+@@ -62,7 +68,13 @@ public class DataCellView extends JLabel implements MouseListener, Serializable
+     private boolean traced = false;
+     private boolean tracedStale = false;
+  
+-    private static final Border DEFAULT_BORDER = createLineBorder(new Color(0, 0, 0), 1);
++    // A 1px pure-black line around every cell is what made tables look like a
++    // spreadsheet from 2006. The grid does not need drawing: adjacent cells differ
++    // in colour, which separates them on its own. Keep one pixel so cells of the
++    // same value stay distinguishable, but in a translucent dark that reads as a
++    // seam rather than a rule.
++    private static final Border DEFAULT_BORDER =
++            createLineBorder(new Color(0, 0, 0, 48), 1);
+     private static final Border INCREASE_BORDER = createLineBorder(getSettings().getIncreaseBorder(), 2);
+     private static final Border DECREASE_BORDER = createLineBorder(getSettings().getDecreaseBorder(), 2);
+     private static final Border CURLIVE_BORDER = createLineBorder(getSettings().getCurLiveValueColor(), 2);
+@@ -125,6 +137,13 @@ public class DataCellView extends JLabel implements MouseListener, Serializable
          Settings settings = getSettings();
          Color backgroundColor;
  
@@ -192,7 +227,21 @@ index 4010c4e..ce5292a 100644
          if(highlighted) {
              backgroundColor = settings.getHighlightColor();
          } else if(dataCell.isSelected()) {
-@@ -280,6 +287,15 @@ public class DataCellView extends JLabel implements MouseListener, Serializable
+@@ -242,7 +261,12 @@ public class DataCellView extends JLabel implements MouseListener, Serializable
+         } else if (dataCell.isSelected()) {
+             textColor = Settings.selectTextColor;
+         } else {
+-            textColor = Settings.scaleTextColor;
++            // Pick against the cell's actual background instead of always using
++            // black. With a real heat map the cold end is a deep blue, and black
++            // text on it cannot be read at all.
++            textColor = ColorScaler.luminance(getCellBackgroundColor()) < 0.35
++                    ? CELL_TEXT_ON_DARK
++                    : CELL_TEXT_ON_LIGHT;
+         }
+ 
+         return textColor;
+@@ -280,6 +304,15 @@ public class DataCellView extends JLabel implements MouseListener, Serializable
      	if(tableView.getTable().isStaticDataTable()) {
              return getStaticText();
          }
@@ -372,6 +421,30 @@ index ece4055..ecdb802 100644
                  // Calc bin
                  if(binMax < cell.getBinValue()) {
                      binMax = cell.getBinValue();
+diff --git a/src/main/java/com/romraider/maps/Table3DView.java b/src/main/java/com/romraider/maps/Table3DView.java
+index 5e415e5..61f92ab 100644
+--- a/src/main/java/com/romraider/maps/Table3DView.java
++++ b/src/main/java/com/romraider/maps/Table3DView.java
+@@ -126,12 +126,16 @@ public class Table3DView extends TableView {
+                     y = z;
+                 }
+ 
+-                // show locked cell
++                data[x][y] = new DataCellView(table.get3dData()[x][y], this, x,y);
++
++                // Show locked cells greyed. This has to happen AFTER the view is
++                // created: the original order called setForeground on data[x][y]
++                // one line before assigning it, so the first cell of any locked 3D
++                // table dereferenced null and populateTableVisual threw. The effect
++                // was that a locked 3D table could not be opened at all.
+                 if (tempLock) {
+                     data[x][y].setForeground(Color.GRAY);
+                 }
+-                            
+-                data[x][y] = new DataCellView(table.get3dData()[x][y], this, x,y);
+             }
+         }
+ 
 diff --git a/src/main/java/com/romraider/swing/LookAndFeelManager.java b/src/main/java/com/romraider/swing/LookAndFeelManager.java
 index 0f91ca7..6250e6b 100644
 --- a/src/main/java/com/romraider/swing/LookAndFeelManager.java
@@ -586,6 +659,101 @@ index fff592a..3fa8259 100644
 +    }
 +
  }
+diff --git a/src/main/java/com/romraider/util/ColorScaler.java b/src/main/java/com/romraider/util/ColorScaler.java
+index 42b2a0a..3700be6 100644
+--- a/src/main/java/com/romraider/util/ColorScaler.java
++++ b/src/main/java/com/romraider/util/ColorScaler.java
+@@ -28,32 +28,72 @@ public final class ColorScaler {
+     private ColorScaler() {
+     }
+ 
+-    public static Color getScaledColor(double scale) {
++    /**
++     * Heat-map stops, cold to hot, as every other calibration tool draws them.
++     *
++     * The original scaled between two pastel colours in HSB. That is why tables
++     * looked washed out: 153,153,255 to 255,102,102 travels the long way round the
++     * hue wheel through magenta and never reaches a saturated colour, so a table
++     * with real spread rendered as mauve. An explicit ramp fixes both the route and
++     * the saturation, and reading a gradient is most of what a calibration table is
++     * for - if it does not show shape at a glance it is not doing its job.
++     */
++    private static final Color[] HEAT = {
++        new Color(  8,  32,  92),   // deep blue
++        new Color( 22,  92, 190),   // blue
++        new Color( 26, 168, 196),   // cyan
++        new Color( 42, 174,  92),   // green
++        new Color(214, 198,  54),   // yellow
++        new Color(226, 128,  36),   // orange
++        new Color(206,  52,  44),   // red
++    };
+ 
+-        Settings settings = SettingsManager.getSettings();
+-        if(0.0 == scale) {
+-            return settings.getMinColor();
++    public static Color getScaledColor(double scale) {
++        if (Double.isNaN(scale)) {
++            return HEAT[HEAT.length - 1];
+         }
+-
+-        if(Double.NaN == scale) {
+-            return settings.getMaxColor();
++        if (scale <= 0.0) {
++            return HEAT[0];
++        }
++        if (scale >= 1.0) {
++            return HEAT[HEAT.length - 1];
+         }
+ 
+-        Color minColor = settings.getMinColor();
+-        Color maxColor = settings.getMaxColor();
+-
+-        float[] minColorHSB = new float[3];
+-        float[] maxColorHSB = new float[3];
++        // Interpolate in linear light rather than straight sRGB. Averaging sRGB
++        // values darkens the midpoint between two stops and is what makes naive
++        // gradients look muddy in the middle.
++        final double pos = scale * (HEAT.length - 1);
++        final int i = (int) pos;
++        final double t = pos - i;
++        final Color a = HEAT[i];
++        final Color b = HEAT[Math.min(i + 1, HEAT.length - 1)];
++        return new Color(mix(a.getRed(), b.getRed(), t),
++                         mix(a.getGreen(), b.getGreen(), t),
++                         mix(a.getBlue(), b.getBlue(), t));
++    }
+ 
+-        rgbToHsb(minColor, minColorHSB);
+-        rgbToHsb(maxColor, maxColorHSB);
++    private static int mix(int a, int b, double t) {
++        final double la = srgbToLinear(a);
++        final double lb = srgbToLinear(b);
++        return linearToSrgb(la + (lb - la) * t);
++    }
+ 
+-        float h = minColorHSB[0] + (maxColorHSB[0] - minColorHSB[0]) * (float) scale;
+-        float s = minColorHSB[1] + (maxColorHSB[1] - minColorHSB[1]) * (float) scale;
+-        float b = minColorHSB[2] + (maxColorHSB[2] - minColorHSB[2]) * (float) scale;
++    private static double srgbToLinear(int v) {
++        final double c = v / 255.0;
++        return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
++    }
+ 
+-        return Color.getHSBColor(h, s, b);
++    private static int linearToSrgb(double c) {
++        final double v = c <= 0.0031308 ? c * 12.92
++                                        : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
++        return Math.max(0, Math.min(255, (int) Math.round(v * 255.0)));
++    }
+ 
++    /** Perceived luminance 0..1, for deciding whether text should be light or dark. */
++    public static double luminance(Color c) {
++        return (0.2126 * srgbToLinear(c.getRed())
++              + 0.7152 * srgbToLinear(c.getGreen())
++              + 0.0722 * srgbToLinear(c.getBlue()));
+     }
+ 
+     private static void rgbToHsb(Color color, float[] colorHSB) {
 diff --git a/src/main/java/com/romraider/util/SettingsManager.java b/src/main/java/com/romraider/util/SettingsManager.java
 index 20798e0..562abfd 100644
 --- a/src/main/java/com/romraider/util/SettingsManager.java
