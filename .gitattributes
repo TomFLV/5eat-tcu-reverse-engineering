@@ -9,4 +9,6 @@
 *.c    text eol=lf
 
 # Large generated decompiler output — keep it out of diffs and language stats.
-decompiled/full_decompile.c linguist-generated=true -diff
+# This is Ghidra output, not hand-written source: a diff of it is noise, and
+# letting it count toward language statistics would label the whole project C.
+decompiled/*.c linguist-generated=true -diff
