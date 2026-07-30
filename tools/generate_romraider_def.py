@@ -532,10 +532,30 @@ SHIFT_DESC = (
 )
 
 
+
+# Field labels for the 4 columns of a record. RomRaider's Table3D cannot load
+# without X and Y axis children: Table3D.calcCellRanges() dereferences the axis
+# DataCells, so an axis-less 3D table throws inside populateTable() and shows
+# "There was an error loading table". Static axes solve it with literal labels
+# and need no ROM storage.
+def _static_axes(col_labels, rows, y_name="Segment"):
+    nl = "\n"
+    xs = nl.join(f"    <data>{escape(c)}</data>" for c in col_labels)
+    ys = nl.join(f"    <data>{i + 1}</data>" for i in range(rows))
+    return (f'   <table type="Static X Axis" name="Field" sizex="{len(col_labels)}">{nl}'
+            f'{xs}{nl}   </table>{nl}'
+            f'   <table type="Static Y Axis" name="{escape(y_name)}" sizey="{rows}">{nl}'
+            f'{ys}{nl}   </table>')
+
+
+SHIFT_COLS = ["Speed (km/h)", "Pedal (0-255)", "Next Speed (km/h)", "Next Pedal (0-255)"]
+RECORD_COLS = ["Breakpoint", "Value A", "Next Breakpoint", "Value B"]
+
 def build_shift_curve_xml(name, addr, rows):
     name = escape(name)
     return f"""  <table type="3D" name="{name}" category="Transmission - Shift Schedule" storageaddress="0x{addr:06X}" storagetype="uint16" endian="big" sizex="4" sizey="{rows}" userlevel="4">
    <scaling units="raw (col 1,3 = km/h; col 2,4 = pedal 0-255)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+{_static_axes(SHIFT_COLS, rows, "Segment")}
    <description>{escape(SHIFT_DESC)}</description>
   </table>"""
 
@@ -583,6 +603,7 @@ def build_hyst_curve_xml(c, delta=0):
     addr = c["addr"] + delta
     return f"""  <table type="3D" name="{escape(c['name'])}" category="{escape(c['category'])}" storageaddress="0x{addr:06X}" storagetype="uint16" endian="big" sizex="4" sizey="{c['rows']}" userlevel="4">
    <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+{_static_axes(RECORD_COLS, c['rows'], "Segment")}
    <description>{escape(c['desc'] + HYST_DESC_SUFFIX)}</description>
   </table>"""
 

@@ -53,7 +53,38 @@ Output:
 - **tables** — how many RomRaider actually built, after inheritance
 - **faulty** — tables RomRaider parsed but rejected. Should always be 0
 
+## Verify3D — checking values, not just structure
+
+`DefCheck` proves RomRaider *builds* the tables. It does not prove the values are
+read correctly, because `unmarshallXMLDefinition` only creates table shells —
+`Rom.populateTables()` is what reads the bytes.
+
+`Verify3D` calls `populateTables()` and then compares **every 3D cell** against the
+raw big-endian uint16 at the address the definition declares:
+
+```bash
+xvfb-run -a java -cp "out:i18n:lib/*" Verify3D definitions.xml rom.bin
+./runall3d.sh
+```
+
+It also calls `SettingsManager.setTesting(true)`, which makes `populateTables()`
+print stack traces instead of opening a modal "error loading table" dialog — under
+xvfb that dialog blocks forever with no output, which is genuinely hard to diagnose.
+
+### This caught a real bug
+
+The 3D tables originally had **no X/Y axis children**. `Table3D.calcCellRanges()`
+dereferences the axis DataCells, so `populateTable()` threw a NullPointerException
+for every one of them, and RomRaider showed *"There was an error loading table"* —
+exactly the error rimwall reported on 0.8.2.
+
+`DefCheck` alone did **not** catch it: the tables unmarshalled fine and reported
+`faulty=0`, because nothing had tried to read data yet.
+
+The fix was `Static X Axis` / `Static Y Axis` children with literal `<data>`
+labels, which RomRaider already supports. **No RomRaider modification was needed.**
+
 ## Current result
 
-All eleven firmwares match their own `<rom>` block and produce 81–86 tables with
-zero faulty.
+All eleven firmwares match their own `<rom>` block, and every 3D cell in every
+firmware matches the ROM — **12,536 cells, zero mismatches**.

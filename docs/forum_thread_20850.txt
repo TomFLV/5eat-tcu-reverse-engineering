@@ -1,0 +1,363 @@
+=== page 1 post ===
+Here is a summary of current status of decoding various CAN messages. I'll add to this post as I get time to complete the information. The decoding comes from reverse engineering of an ECU, BIU and TCU.
+
+Credits go to the Subaru Diesel Crew which was useful as a starting point for some CAN messages 
+
+ Code: CAN ID 0x410, from ECU
+Byte  Bit  Conversion  Units  Description
+0     -    x2.0        Nm     Engine Torque Output* looked up from IPW & ES, adjusted via factors for MAP, Timing
+1     -    x1.6        Nm     Max Engine Torque looked up from ES & TPOA, adjusted for MRP
+2     -    x1.6        Nm     Max Torque Allowed by ABS/VDC**
+3     -    x1.6        Nm     Torque Loss looked up from ES^
+4     -    x100/255    %      APA
+5     -    -           rpm    ES, low byte
+6     -    -           rpm    ES, high byte
+7     0    -           -      S56 Torque Permission Signal
+      1    -           -      ?
+      2    -           -      S9 AC on
+      3    -           -      S8 Power Steering
+      4    -           -      ECT low
+      5    -           -      ?
+      6    -           -      S5 Idle Switch
+      7    -           -      AF Learning
+      
+* appears to be after engine losses (eg) the lookup value is 0 at IPW of 1000. 
+** if S53 Request Torque Down has been triggered by ABS/VDC, the Allowed Torque is received by CAN 0x501, converted to a percentage of Max Engine Torque (looked up from ES & IPW), which is rounded to quarters (ie) 0%, 25%, 50%, 75% or 100% and then applied to the same Max Engine Torque
+^ this closely matches the gap between Engine Torque Output and Max Engine Torque 
+
+CAN ID 0x411, from ECU
+Byte  Bit  Conversion  Units  Description
+0     0    -           -      S52 Ban of Torque Down
+      1    -           -      0
+      2    -           -      0
+      3    -           -      Ban of Torque Conditions met
+      4    -           -      ECT low
+      5    -           -      ?
+      6    -           -      0
+      7    -           -      0
+1     -    -           -      DTC, low byte*
+2     -    -           -      DTC, high byte*
+3     -    x100/255    %      TPOA as a percent of range of movement in degrees
+4     -    -           -      Current Gear inferred from ratio between ES & VS
+5     -    -           km/hr  Memorised Cruise Speed
+6     0    -           -      ?
+      1    -           -      ?CC related
+      2    -           -      0
+      3    -           -      0
+      4    -           -      Brake Switch
+      5    -           -      CC Speed Low
+      6    -           -      CC on
+      7    -           -      CC set
+7     0    -           -      MIL on
+      1    -           -      0
+      2    -           -      0
+      3    -           -      0
+      4    -           -      0
+      5    -           -      0
+      6    -           -      0
+      7    -           -      S82 Kick Down switch
+      
+* successive CAN messages cycle through whatever 4 DTCs are present. The top two bits of the word represent the DTC index (0, 1, 2, 3) and the remaining 14 bits represent the DTC number
+
+CAN ID 0x412, from ECU
+Byte  Bit  Conversion  Units  Description
+0     -    x100/255    %      APA
+1     -    x10         Nm     Reduced Torque*, low byte
+2     -    x10         Nm     Reduced Torque*, high byte
+3     -    x10         Nm     Engine Torque Output**, low byte
+4     -    x10         Nm     Engine Torque Output**, high byte
+5     -    x100/255    %      TPOA as a percent of fully open
+6     -    -           -      Counter since car on
+7     -    -           -      Counter since car on and ECT in range
+
+
+* Reduced Torque is (Engine Torque Output x (100 - percent Torque reduction from CAN 0x421))
+** this is a word version of CAN ID 0x410 Byte 0
+
+CAN ID 0x420, from TCU
+Byte  Bit  Conversion  Units  Description
+0     0    -           -      0
+      1    -           -      0
+      2    -           -      0
+      3    -           -      0
+      4    -           -      0
+      5    -           -      0
+      6    -           -      0
+      7    -           -      ?
+1     -    -           -      Next Gear (high nybble), Current Gear (low nybble)*
+2     0    -           -      Lockup state A**
+      1    -           -      Lockup state B**
+      2    -           -      Lockup state C**
+      3    -           -      ?hard accel / braking / cornering control**
+      4    -           -      ?hard accel / braking / cornering control**
+      5    -           -      ?hard accel / braking / cornering control**
+      6    -           -      In I mode
+      7    -           -      ?error state
+3     -    -           -      ?relates to 4WD Solenoid**
+4     -    /4          rpm    Turbine Speed
+5     -    -           -      ?**
+6     -    -           -      ?**
+7     0    -           -      1 
+      1    -           -      1
+      2    -           -      1
+      3    -           -      0
+      4    -           -      0
+      5    -           -      0
+      6    -           -      Diagnostic Mode
+      7    -           -      ?error state
+
+* Values of 0x00, 0x77, 0x88 when in Neutral, Reverse, Park respectively. 
+** work in progress
+
+CAN ID 0x421, from TCU
+Byte  Bit  Conversion  Units  Description
+0     -    x2          Nm     Requested Torque Limit
+1     -    x100/255    %      Reduction to Torque
+2     -    -           -      0
+3     -    -           -      Message counter
+4     -    -           -      0
+5     -    -           -      Drive mode (high nybble)*, 2bit ? state bitflipped + 2bit ? state
+6     -    /32         rpm    Wheel Rotational Speed x Gear Ratio**, low byte
+7     -    /32         rpm    Wheel Rotational Speed x Gear Ratio**, high byte
+ 
+* Drive Modes
+  0x0: Normal (Sport)
+  0x1: Sport#
+  0x3: ?
+  0x4: ?
+  0x6: Request Torque Down (S53)
+  0x8: ?
+  0x9: ?
+  0xb: I-mode
+  0xd: Kickdown
+  
+** this can be compared to Turbine Speed to determine slip. Need to check the conversion factor.
+
+CAN ID 0x422, from TCU
+Byte  Bit  Conversion  Units  Description
+0     0    -           -      Sport Lamp On
+      1    -           -      Sport Lamp Blink
+      2    -           -      ATF Temp Lamp On
+      3    -           -      ATF Temp Lamp Blink
+      4    -           -      Economy Lamp on
+      5    -           -      ?
+      6    -           -      Tyre diameter 1
+      7    -           -      Tyre diameter 2
+1     0    -           -      ?
+      1    -           -      ?
+      2    -           -      ?
+      3    -           -      Shift Up
+      4    -           -      Shift Down
+      5    -           -      Sport Shift buzzer 1
+      6    -           -      Sport Shift buzzer 2
+      7    -           -      ?
+2     -    -           -      Shift position (low nybble)*
+3     -    -           -      DTC, low byte**
+4     -    -           -      DTC, high byte**
+5     -    x1-40       degC   ATF Temp 1 (pan)
+6     -    x1-40       degC   ATF Temp 2 (torque converter)***
+7     -    -           rpm    Idle Speed Target for AT
+
+* D:4, N:5, R:6, P:7, Manual:8
+** successive CAN messages cycle through whatever 4 DTCs are present. The top two bits of the word represent the DTC index (0, 1, 2, 3) and the remaining 14 bits represent the DTC number
+*** may not always be present
+
+CAN ID 0x501, from VDC/ABS
+Byte  Bit  Conversion  Units  Description
+0     -    -           -      ?
+1     -    -           -      ?
+2     -    -           -      ?
+3     -    x1.6        Nm     Torque Allowed
+4     0    -           -      S53 Request Torque Down
+      1    -           -      ?
+      2    -           -      ?
+      3    -           -      ?
+      4    -           -      ?
+      5    -           -      ?
+      6    -           -      ?
+      7    -           -      ?
+5     -    -           -      Message counter
+6     -    -           -      ?
+7     -    -           -      ?
+
+CAN ID 0x511, from VDC/ABS
+Byte  Bit  Conversion  Units  Description
+0     -    x1          deg    Steering Wheel angle, low byte
+1     -    x1          deg    Steering Wheel angle, high byte
+2     -    -           -      ?, low byte
+3     -    -           -      ?, high byte
+4     -    -           -      ?
+5     -    -           -      ?
+6     -    x0.1235     m/s^2  Vehicle G-force
+7     -    -           -      VDC/ABS condition (bits0-2)
+
+CAN ID 0x512, from VDC/ABS
+Byte  Bit  Conversion  Units  Description
+0     0    -           -      ?
+      1    -           -      ?
+      2    -           -      ?
+      3    -           -      ?
+      4    -           -      VDC switch
+      5    -           -      EBD warning
+      6    -           -      ABS warning
+      7    -           -      ?
+1     0    -           -      ?
+      1    -           -      ?
+      2    -           -      ?
+      3    -           -      ?
+      4    -           -      ?
+      5    -           -      VDC/ABS ok
+      6    -           -      ?
+      7    -           -      ?
+2     -    x0.05625    km/hr  Vehicle Speed, low byte
+3     -    x0.05625    km/hr  Vehicle Speed, high byte
+4     0    -           -      ?
+      1    -           -      ?
+      2    -           -      ?
+      3    -           -      ?
+      4    -           -      Brake Switch
+      5    -           -      ?
+      6    -           -      ?
+      7    -           -      ABS/VDC judging
+5     -    -           -      message counter
+6     -    -           -      DTC, low byte*
+7     -    -           -      DTC, high byte*
+
+* successive CAN messages cycle through whatever 4 DTCs are present. The top two bits of the word represent the DTC index (0, 1, 2, 3) and the remaining 14 bits represent the DTC number
+
+CAN ID 0x513, from VDC/ABS
+Byte  Bit  Conversion  Units  Description
+0     -    x0.05625    km/hr  Wheel Speed, Front Left, low byte
+1     -    x0.05625    km/hr  Wheel Speed, Front Left, high byte
+2     -    x0.05625    km/hr  Wheel Speed, Front Right, low byte
+3     -    x0.05625    km/hr  Wheel Speed, Front Right, high byte
+4     -    x0.05625    km/hr  Wheel Speed, Rear Left, low byte
+5     -    x0.05625    km/hr  Wheel Speed, Rear Left, high byte
+6     -    x0.05625    km/hr  Wheel Speed, Rear Right, low byte
+7     -    x0.05625    km/hr  Wheel Speed, Rear Right, high byte
+
+CAN ID 0x514, from BIU
+Byte  Bit  Conversion  Units  Description
+0     0    -           -      Tiptronic Mode Switch
+      1    -           -      S108 Economy Switch
+      2    -           -      Reverse Gear
+      3    -           -      Stop Light Switch
+      4    -           -      ?
+      5    -           -      Upshift (paddle?)
+      6    -           -      Downshift (paddle?)?
+      7    -           -      ADA existence judging
+1     0    -           -      BIU internal error
+      1    -           -      ?
+      2    -           -      Shift Lock circuit short
+      3    -           -      ?
+      4    -           -      ?
+      5    -           -      ?
+      6    -           -      ?
+      7    -           -      ?     
+2     -    /2-40       degC   Ambient Temp
+3     0    -           -      Defogger Switch
+      1    -           -      Light Switch
+      2    -           -      Low Beam
+      3    -           -      High Beam
+      4    -           -      Turn Signal LH
+      5    -           -      Turn Signal RH
+      6    -           -      Wiper Switch
+      7    -           -      ?
+4     0    -           -      Blower Fan Low
+      1    -           -      Blower Fan High
+      2    -           -      Australia judging flag
+      3    -           -      ?
+      4    -           -      ?
+      5    -           -      ?
+      6    -           -      ABS/VDC condition
+      7    -           -      ABS/VDC condition
+5     -    x100/256    ohms   Fuel Level Resistance
+6     -    -           -      BIU main loop counter (bits0-3), large diameter tyre (bit4) 
+7     0    -           -      ?
+      1    -           -      ?
+      2    -           -      ?
+      3    -           -      ?
+      4    -           -      ?
+      5    -           -      ?
+      6    -           -      ?
+      7    -           -      Park Brake Switch    
+
+CAN ID 0x600, from ECU
+Byte  Bit  Conversion  Units  Description
+0     -    -           -      0
+1     -    x0.001      cc/s   Fuel Consumption, low byte
+2     -    x0.001      cc/s   Fuel Consumption, high byte
+3     -    x1-40       degC   ECT
+4     -    -           -      message counter
+5     0    -           -      Number of cylinders (0 = 4 cyl, 1 = 6cyl)
+      1    -           -      Camshaft Type (0 = SOHC, 1 = DOHC)
+      2    -           -      Turbo (0 = NA, 1 = Turbo)
+      3    -           -      2.5L engine
+      4    -           -      3.0L engine
+      5    -           -      MT/AT (0 = AT, 1 = MT)
+      6    -           -      ?
+      7    -           -      ?
+6     0    -           -      S21 Fan Blower Switch
+      1    -           -      Economy Lamp
+      2    -           -      Clutch Switch
+      3    -           -      ?
+      4    -           -      ?
+      5    -           -      ?
+      6    -           -      ?
+      7    -           -      ?
+7     -    -           -      0xff
+
+CAN ID 0x601, from ECU
+Byte  Bit  Conversion  Units  Description
+0     -    -           -      E33 CLOL Fueling*
+1     -    -           -      0
+2     -    x100/255    %      Engine Load Relative
+3     -   -128x100/128 %      AF Correction 1
+4     -   -128x100/128 %      AF Learning 1
+5     -   -128x100/128 %      AF Correction 2
+6     -   -128x100/128 %      AF Learning 2
+7     -    x0.1333     kPa    Manifold Pressure
+
+* 1 = cranking, 2 = normal closed loop, 4 = open loop no errors, 8 = open loop sensor error
+     
+CAN ID 0x620, from ECU
+Byte  Bit  Conversion  Units  Description
+0     0    -           -      ?
+      1    -           -      Blower Fan Steps
+      2    -           -      Blower Fan Steps
+      3    -           -      Blower Fan Steps
+      4    -           -      A/C ECM setting
+      5    -           -      Door open
+      6    -           -      One interior heater on
+      7    -           -      Two interior heaters on
+1     0    -           -      AC switch
+      1    -           -      AC compressor on request
+      2    -           -      Radiator fan request
+      3    -           -      ?
+      4    -           -      ?
+      5    -           -      ?
+      6    -           -      ?
+      7    -           -      ?
+3     -    -           -      ?
+4     -    -           -      ?
+5     -    -           -      ?     
+6     -    -           -      ?
+7     -    -           -      ?     
+
+Abbreviations:
+? - unknown or unused
+ABS - Antilock Braking System
+APA - Accelerator Pedal Angle
+ATF - Automatic Transmission Fluid
+CC - Cruise Control
+CLOL - Closed Loop / Open Loop
+DTC - Diagnostic Trouble Code
+ECT - Engine Coolant Temperature
+ES - Engine Speed
+IPW - Injection Pulse Width
+MAP - Manifold Absolute Pressure
+MIL - Malfunction Indicator Light
+MRP - Manifold Relative Pressure
+TPOA - Throttle Plate Opening Angle
+VDC - Vehicle Dynamic Control
+VS - Vehicle Speed
