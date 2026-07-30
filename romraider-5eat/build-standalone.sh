@@ -39,6 +39,12 @@ git -C "$WORK/src" remote add origin "$UPSTREAM_URL"
 git -C "$WORK/src" fetch -q --depth 1 origin "$UPSTREAM_REV"
 git -C "$WORK/src" checkout -q FETCH_HEAD
 
+say "fetching FlatLaf"
+# Upstream does not ship FlatLaf, and the look-and-feel patch needs it. Pinned so a
+# rebuild is reproducible rather than tracking whatever is current.
+FLATLAF_VER=3.4.1
+curl -fSL "https://repo1.maven.org/maven2/com/formdev/flatlaf//flatlaf-.jar"      -o "/src/lib/common/flatlaf.jar"
+
 say "applying 5EAT patches"
 # jdk21-build.patch makes it compile at all on a modern JDK; upstream targets
 # Java 1.6, which no current javac accepts. romraider-5eat.patch is the UI work

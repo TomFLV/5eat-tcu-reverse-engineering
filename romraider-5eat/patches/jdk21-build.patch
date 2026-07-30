@@ -1,5 +1,7 @@
---- build.xml.orig	2026-07-29 20:53:13.896466577 -0400
-+++ build.xml	2026-07-29 20:54:12.455938928 -0400
+diff --git a/build.xml b/build.xml
+index d2d419e..f45e0e9 100644
+--- a/build.xml
++++ b/build.xml
 @@ -58,11 +58,11 @@
              <format property="mnth.day" pattern="MMMdd" locale="en"/>
          </tstamp>

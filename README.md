@@ -23,22 +23,27 @@ instead. Needs 1.0.0+; 0.8.2 can't load 3D tables.
 
 ---
 
-## The shift map
+## What you can actually tune
 
-`Transmission - Shift Schedule → Shift Map` — all eight shift points in one table:
-vehicle speed in km/h, across accelerator pedal angle, one row per shift event.
+| Category | What it is |
+|---|---|
+| **Shift Schedule** | **Ten** complete shift maps — speed in km/h against % pedal, one row per shift event. Plus a **drag-and-drop curve editor** on the toolbar. |
+| **Line Pressure** | Nine target maps, **engine torque (Nm) → line pressure (kPa)**, plus the slip and ATF-temperature multipliers that feed them |
+| **Downshift Pressure** | Per-downshift target pressure in kPa, and the ramp step and hold that set how harshly each one applies |
+| **Diagnostic Codes** | All 53 trouble codes, individually, each Enabled/Disabled |
+| **Sensor Calibration** | ATF temperature sensor linearisation, ADC counts → °C |
 
-Raise a value to delay a shift, lower it to bring it on earlier. Upshift rows come
-first, then downshifts; the gap between a pair is the hysteresis that stops the
-transmission hunting, so move them together unless you mean not to.
-
-Cells showing `-` aren't editable — that curve has no vertex at that pedal
-position, so there's no byte to change. Left blank rather than invented.
+Ten shift maps, because the transmission carries ten complete schedules and switches
+between them by operating condition. The definition used to ship one. Each also has
+four gear-limited variants for manual mode, which reuse the same curves.
 
 ![shift curves](docs/shift-curves-reference.png)
 
 *Chart by [rimwall](https://github.com/rimwall), not mine — it's what the units were
 verified against.*
+
+In the shift maps, cells showing `-` aren't editable: that curve has no vertex at
+that pedal position, so there's no byte to change. Left blank rather than invented.
 
 ## Firmwares
 
@@ -75,6 +80,9 @@ firmware's own arithmetic.
 | Accelerator angle | `raw × 100/255` | Shift chart, and CAN `0x412` byte 0 |
 | **Line pressure** | **kPa direct** | Manual specifies 1370 kPa at full throttle; that value is in a table in all eleven images |
 | **Trouble codes** | P-number in **hex** | `0x705` = P0705. 53 codes, found via the thread's CAN `0x422` decoding |
+| **Line pressure targets** | torque `/10` = Nm, pressure `/10` = kPa | Two *different* maps hit the manual's two figures: 490 kPa closed throttle, 1372 at 400 Nm |
+| **Slip pressure factor** | `/1024` both axes | Reproduces rimwall's stated numbers: 0.5 slip → 1.392 ("~1.4"), 0.9 → exactly 1.000 ("~1.0") |
+| **ATF temp factor** | `/256` | From the arithmetic, not the shape — unity is `0x100` and the product is `>>16`, exact only at `/256` |
 
 Also confirmed: the **checksum** (32-bit BE two's-complement additive, stored twice
 at `0x8000`/`0x8004`, over two region conventions the tool detects rather than

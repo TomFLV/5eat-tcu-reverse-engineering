@@ -502,10 +502,10 @@ This family was only found after correcting the Ghidra M32R processor definition
   </table>
 
   <!-- ============ Record-format curves ============ -->
-  <table type="3D" name="Temp Sensor 1 Linearisation - Breakpoint" category="Transmission - Sensor Calibration" storageaddress="0x00807E" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 1 Linearisation - ADC" category="Transmission - Sensor Calibration" storageaddress="0x00807E" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
+   <scaling units="ADC counts (raw sensor reading)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>ADC</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="90">
     <data>1a</data>
@@ -603,12 +603,16 @@ This family was only found after correcting the Ghidra M32R processor definition
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION. Converts the raw ADC reading from the sensor into a temperature. The breakpoint is the ADC count, the value is what the TCU believes that count means.
+
+This is what every temperature-dependent behaviour in the transmission ultimately reads, so changing it shifts the apparent temperature everywhere at once - including the cold-fluid pressure boost and the overheat protection. It is a calibration for the sensor, not a tuning knob.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Temp Sensor 1 Linearisation - Value" category="Transmission - Sensor Calibration" storageaddress="0x008080" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 1 Linearisation - °C" category="Transmission - Sensor Calibration" storageaddress="0x008080" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="90">
     <data>1a</data>
@@ -706,13 +710,17 @@ This table holds ONE of the two quantities in the record array, so it can be sho
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION. Converts the raw ADC reading from the sensor into a temperature. The breakpoint is the ADC count, the value is what the TCU believes that count means.
+
+This is what every temperature-dependent behaviour in the transmission ultimately reads, so changing it shifts the apparent temperature everywhere at once - including the cold-fluid pressure boost and the overheat protection. It is a calibration for the sensor, not a tuning knob.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Temp Sensor 2 Linearisation - Breakpoint" category="Transmission - Sensor Calibration" storageaddress="0x0081E8" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 2 Linearisation - ADC" category="Transmission - Sensor Calibration" storageaddress="0x0081E8" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
+   <scaling units="ADC counts (raw sensor reading)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>ADC</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="82">
     <data>1a</data>
@@ -802,12 +810,14 @@ This table holds ONE of the two quantities in the record array, so it can be sho
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION, second channel. See the notes on Temp Sensor 1: same role, same warning.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Temp Sensor 2 Linearisation - Value" category="Transmission - Sensor Calibration" storageaddress="0x0081EA" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 2 Linearisation - °C" category="Transmission - Sensor Calibration" storageaddress="0x0081EA" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="82">
     <data>1a</data>
@@ -896,6 +906,8 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>ADC-to-temperature curve for temperature sensor 2. Same encoding as sensor 1: column 1 inverted raw ADC, column 2 temperature as (value - 40) degrees C.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE SENSOR CALIBRATION, second channel. See the notes on Temp Sensor 1: same role, same warning.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -6152,10 +6164,10 @@ This family was only found after correcting the Ghidra M32R processor definition
   </table>
 
   <!-- ============ Record-format curves ============ -->
-  <table type="3D" name="Temp Sensor 1 Linearisation - Breakpoint" category="Transmission - Sensor Calibration" storageaddress="0x008080" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 1 Linearisation - ADC" category="Transmission - Sensor Calibration" storageaddress="0x008080" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
+   <scaling units="ADC counts (raw sensor reading)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>ADC</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="90">
     <data>1a</data>
@@ -6253,12 +6265,16 @@ This family was only found after correcting the Ghidra M32R processor definition
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION. Converts the raw ADC reading from the sensor into a temperature. The breakpoint is the ADC count, the value is what the TCU believes that count means.
+
+This is what every temperature-dependent behaviour in the transmission ultimately reads, so changing it shifts the apparent temperature everywhere at once - including the cold-fluid pressure boost and the overheat protection. It is a calibration for the sensor, not a tuning knob.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Temp Sensor 1 Linearisation - Value" category="Transmission - Sensor Calibration" storageaddress="0x008082" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 1 Linearisation - °C" category="Transmission - Sensor Calibration" storageaddress="0x008082" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="90">
     <data>1a</data>
@@ -6356,13 +6372,17 @@ This table holds ONE of the two quantities in the record array, so it can be sho
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION. Converts the raw ADC reading from the sensor into a temperature. The breakpoint is the ADC count, the value is what the TCU believes that count means.
+
+This is what every temperature-dependent behaviour in the transmission ultimately reads, so changing it shifts the apparent temperature everywhere at once - including the cold-fluid pressure boost and the overheat protection. It is a calibration for the sensor, not a tuning knob.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Temp Sensor 2 Linearisation - Breakpoint" category="Transmission - Sensor Calibration" storageaddress="0x0081EA" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 2 Linearisation - ADC" category="Transmission - Sensor Calibration" storageaddress="0x0081EA" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
+   <scaling units="ADC counts (raw sensor reading)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>ADC</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="82">
     <data>1a</data>
@@ -6452,12 +6472,14 @@ This table holds ONE of the two quantities in the record array, so it can be sho
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION, second channel. See the notes on Temp Sensor 1: same role, same warning.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Temp Sensor 2 Linearisation - Value" category="Transmission - Sensor Calibration" storageaddress="0x0081EC" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 2 Linearisation - °C" category="Transmission - Sensor Calibration" storageaddress="0x0081EC" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="82">
     <data>1a</data>
@@ -6546,6 +6568,8 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>ADC-to-temperature curve for temperature sensor 2. Same encoding as sensor 1: column 1 inverted raw ADC, column 2 temperature as (value - 40) degrees C.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE SENSOR CALIBRATION, second channel. See the notes on Temp Sensor 1: same role, same warning.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -11825,10 +11849,10 @@ This family was only found after correcting the Ghidra M32R processor definition
   </table>
 
   <!-- ============ Record-format curves ============ -->
-  <table type="3D" name="Temp Sensor 1 Linearisation - Breakpoint" category="Transmission - Sensor Calibration" storageaddress="0x008080" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 1 Linearisation - ADC" category="Transmission - Sensor Calibration" storageaddress="0x008080" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
+   <scaling units="ADC counts (raw sensor reading)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>ADC</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="90">
     <data>1a</data>
@@ -11926,12 +11950,16 @@ This family was only found after correcting the Ghidra M32R processor definition
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION. Converts the raw ADC reading from the sensor into a temperature. The breakpoint is the ADC count, the value is what the TCU believes that count means.
+
+This is what every temperature-dependent behaviour in the transmission ultimately reads, so changing it shifts the apparent temperature everywhere at once - including the cold-fluid pressure boost and the overheat protection. It is a calibration for the sensor, not a tuning knob.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Temp Sensor 1 Linearisation - Value" category="Transmission - Sensor Calibration" storageaddress="0x008082" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 1 Linearisation - °C" category="Transmission - Sensor Calibration" storageaddress="0x008082" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="90">
     <data>1a</data>
@@ -12029,13 +12057,17 @@ This table holds ONE of the two quantities in the record array, so it can be sho
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION. Converts the raw ADC reading from the sensor into a temperature. The breakpoint is the ADC count, the value is what the TCU believes that count means.
+
+This is what every temperature-dependent behaviour in the transmission ultimately reads, so changing it shifts the apparent temperature everywhere at once - including the cold-fluid pressure boost and the overheat protection. It is a calibration for the sensor, not a tuning knob.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Temp Sensor 2 Linearisation - Breakpoint" category="Transmission - Sensor Calibration" storageaddress="0x0081EA" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 2 Linearisation - ADC" category="Transmission - Sensor Calibration" storageaddress="0x0081EA" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
+   <scaling units="ADC counts (raw sensor reading)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>ADC</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="82">
     <data>1a</data>
@@ -12125,12 +12157,14 @@ This table holds ONE of the two quantities in the record array, so it can be sho
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION, second channel. See the notes on Temp Sensor 1: same role, same warning.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Temp Sensor 2 Linearisation - Value" category="Transmission - Sensor Calibration" storageaddress="0x0081EC" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 2 Linearisation - °C" category="Transmission - Sensor Calibration" storageaddress="0x0081EC" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="82">
     <data>1a</data>
@@ -12219,6 +12253,8 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>ADC-to-temperature curve for temperature sensor 2. Same encoding as sensor 1: column 1 inverted raw ADC, column 2 temperature as (value - 40) degrees C.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE SENSOR CALIBRATION, second channel. See the notes on Temp Sensor 1: same role, same warning.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -17502,10 +17538,10 @@ This family was only found after correcting the Ghidra M32R processor definition
   </table>
 
   <!-- ============ Record-format curves ============ -->
-  <table type="3D" name="Temp Sensor 1 Linearisation - Breakpoint" category="Transmission - Sensor Calibration" storageaddress="0x008080" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 1 Linearisation - ADC" category="Transmission - Sensor Calibration" storageaddress="0x008080" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
+   <scaling units="ADC counts (raw sensor reading)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>ADC</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="90">
     <data>1a</data>
@@ -17603,12 +17639,16 @@ This family was only found after correcting the Ghidra M32R processor definition
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION. Converts the raw ADC reading from the sensor into a temperature. The breakpoint is the ADC count, the value is what the TCU believes that count means.
+
+This is what every temperature-dependent behaviour in the transmission ultimately reads, so changing it shifts the apparent temperature everywhere at once - including the cold-fluid pressure boost and the overheat protection. It is a calibration for the sensor, not a tuning knob.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Temp Sensor 1 Linearisation - Value" category="Transmission - Sensor Calibration" storageaddress="0x008082" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 1 Linearisation - °C" category="Transmission - Sensor Calibration" storageaddress="0x008082" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="90">
     <data>1a</data>
@@ -17706,13 +17746,17 @@ This table holds ONE of the two quantities in the record array, so it can be sho
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION. Converts the raw ADC reading from the sensor into a temperature. The breakpoint is the ADC count, the value is what the TCU believes that count means.
+
+This is what every temperature-dependent behaviour in the transmission ultimately reads, so changing it shifts the apparent temperature everywhere at once - including the cold-fluid pressure boost and the overheat protection. It is a calibration for the sensor, not a tuning knob.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Temp Sensor 2 Linearisation - Breakpoint" category="Transmission - Sensor Calibration" storageaddress="0x0081EA" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 2 Linearisation - ADC" category="Transmission - Sensor Calibration" storageaddress="0x0081EA" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
+   <scaling units="ADC counts (raw sensor reading)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>ADC</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="82">
     <data>1a</data>
@@ -17802,12 +17846,14 @@ This table holds ONE of the two quantities in the record array, so it can be sho
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION, second channel. See the notes on Temp Sensor 1: same role, same warning.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Temp Sensor 2 Linearisation - Value" category="Transmission - Sensor Calibration" storageaddress="0x0081EC" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 2 Linearisation - °C" category="Transmission - Sensor Calibration" storageaddress="0x0081EC" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="82">
     <data>1a</data>
@@ -17896,6 +17942,8 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>ADC-to-temperature curve for temperature sensor 2. Same encoding as sensor 1: column 1 inverted raw ADC, column 2 temperature as (value - 40) degrees C.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE SENSOR CALIBRATION, second channel. See the notes on Temp Sensor 1: same role, same warning.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -26155,10 +26203,10 @@ This family was only found after correcting the Ghidra M32R processor definition
   </table>
 
   <!-- ============ Record-format curves ============ -->
-  <table type="3D" name="Temp Sensor 1 Linearisation - Breakpoint" category="Transmission - Sensor Calibration" storageaddress="0x008080" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 1 Linearisation - ADC" category="Transmission - Sensor Calibration" storageaddress="0x008080" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
+   <scaling units="ADC counts (raw sensor reading)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>ADC</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="90">
     <data>1a</data>
@@ -26256,12 +26304,16 @@ This family was only found after correcting the Ghidra M32R processor definition
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION. Converts the raw ADC reading from the sensor into a temperature. The breakpoint is the ADC count, the value is what the TCU believes that count means.
+
+This is what every temperature-dependent behaviour in the transmission ultimately reads, so changing it shifts the apparent temperature everywhere at once - including the cold-fluid pressure boost and the overheat protection. It is a calibration for the sensor, not a tuning knob.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Temp Sensor 1 Linearisation - Value" category="Transmission - Sensor Calibration" storageaddress="0x008082" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 1 Linearisation - °C" category="Transmission - Sensor Calibration" storageaddress="0x008082" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="90">
     <data>1a</data>
@@ -26359,13 +26411,17 @@ This table holds ONE of the two quantities in the record array, so it can be sho
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION. Converts the raw ADC reading from the sensor into a temperature. The breakpoint is the ADC count, the value is what the TCU believes that count means.
+
+This is what every temperature-dependent behaviour in the transmission ultimately reads, so changing it shifts the apparent temperature everywhere at once - including the cold-fluid pressure boost and the overheat protection. It is a calibration for the sensor, not a tuning knob.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Temp Sensor 2 Linearisation - Breakpoint" category="Transmission - Sensor Calibration" storageaddress="0x0081EA" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 2 Linearisation - ADC" category="Transmission - Sensor Calibration" storageaddress="0x0081EA" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
+   <scaling units="ADC counts (raw sensor reading)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>ADC</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="82">
     <data>1a</data>
@@ -26455,12 +26511,14 @@ This table holds ONE of the two quantities in the record array, so it can be sho
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION, second channel. See the notes on Temp Sensor 1: same role, same warning.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Temp Sensor 2 Linearisation - Value" category="Transmission - Sensor Calibration" storageaddress="0x0081EC" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 2 Linearisation - °C" category="Transmission - Sensor Calibration" storageaddress="0x0081EC" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="82">
     <data>1a</data>
@@ -26549,6 +26607,8 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>ADC-to-temperature curve for temperature sensor 2. Same encoding as sensor 1: column 1 inverted raw ADC, column 2 temperature as (value - 40) degrees C.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE SENSOR CALIBRATION, second channel. See the notes on Temp Sensor 1: same role, same warning.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -31800,10 +31860,10 @@ This family was only found after correcting the Ghidra M32R processor definition
   </table>
 
   <!-- ============ Record-format curves ============ -->
-  <table type="3D" name="Temp Sensor 1 Linearisation - Breakpoint" category="Transmission - Sensor Calibration" storageaddress="0x008080" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 1 Linearisation - ADC" category="Transmission - Sensor Calibration" storageaddress="0x008080" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
+   <scaling units="ADC counts (raw sensor reading)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>ADC</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="90">
     <data>1a</data>
@@ -31901,12 +31961,16 @@ This family was only found after correcting the Ghidra M32R processor definition
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION. Converts the raw ADC reading from the sensor into a temperature. The breakpoint is the ADC count, the value is what the TCU believes that count means.
+
+This is what every temperature-dependent behaviour in the transmission ultimately reads, so changing it shifts the apparent temperature everywhere at once - including the cold-fluid pressure boost and the overheat protection. It is a calibration for the sensor, not a tuning knob.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Temp Sensor 1 Linearisation - Value" category="Transmission - Sensor Calibration" storageaddress="0x008082" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 1 Linearisation - °C" category="Transmission - Sensor Calibration" storageaddress="0x008082" storagetype="uint16" endian="big" sizex="1" sizey="90" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="90">
     <data>1a</data>
@@ -32004,13 +32068,17 @@ This table holds ONE of the two quantities in the record array, so it can be sho
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION. Converts the raw ADC reading from the sensor into a temperature. The breakpoint is the ADC count, the value is what the TCU believes that count means.
+
+This is what every temperature-dependent behaviour in the transmission ultimately reads, so changing it shifts the apparent temperature everywhere at once - including the cold-fluid pressure boost and the overheat protection. It is a calibration for the sensor, not a tuning knob.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Temp Sensor 2 Linearisation - Breakpoint" category="Transmission - Sensor Calibration" storageaddress="0x0081EA" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 2 Linearisation - ADC" category="Transmission - Sensor Calibration" storageaddress="0x0081EA" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
+   <scaling units="ADC counts (raw sensor reading)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>ADC</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="82">
     <data>1a</data>
@@ -32100,12 +32168,14 @@ This table holds ONE of the two quantities in the record array, so it can be sho
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
 
+ATF TEMPERATURE SENSOR CALIBRATION, second channel. See the notes on Temp Sensor 1: same role, same warning.
+
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Temp Sensor 2 Linearisation - Value" category="Transmission - Sensor Calibration" storageaddress="0x0081EC" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Temp Sensor 2 Linearisation - °C" category="Transmission - Sensor Calibration" storageaddress="0x0081EC" storagetype="uint16" endian="big" sizex="1" sizey="82" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="82">
     <data>1a</data>
@@ -32194,6 +32264,8 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>ADC-to-temperature curve for temperature sensor 2. Same encoding as sensor 1: column 1 inverted raw ADC, column 2 temperature as (value - 40) degrees C.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE SENSOR CALIBRATION, second channel. See the notes on Temp Sensor 1: same role, same warning.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>

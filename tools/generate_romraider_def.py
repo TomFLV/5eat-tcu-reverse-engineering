@@ -634,6 +634,10 @@ Q_RPM = {"label": "RPM", "units": "RPM",
          "expression": "x/8", "to_byte": "x*8",
          "format": "0", "fine": "10", "coarse": "100",
          "note": RPM_CEILING_NOTE}
+Q_ADC = {"label": "ADC", "units": "ADC counts (raw sensor reading)",
+         "expression": "x", "to_byte": "x",
+         "format": "0", "fine": "1", "coarse": "8"}
+
 Q_TEMP_C = {"label": "\u00b0C", "units": "\u00b0C",
             "expression": "x-40", "to_byte": "x+40",
             "format": "0", "fine": "1", "coarse": "5"}
@@ -1241,6 +1245,13 @@ Q_RATIO_1024 = {"label": "slip ratio", "units": "turbine/engine ratio",
 # scale has actually been established appear here; everything else stays raw.
 RECORD_UNIT_OVERRIDES = {
     "Signal 82AC Curve 1 of 2": (Q_RATIO_1024, Q_FACTOR_1024),
+    # The linearisation tables turn a raw ADC reading into a temperature, so the
+    # value column IS a temperature and uses the -40 encoding already confirmed for
+    # this family. The stored values are a clean five-step ladder - 0, 15, 20, 25,
+    # 30 ... 245 - which decodes to -40 C through 205 C in 5 C steps, the standard
+    # automotive range. The breakpoint is a raw ADC count and has no better unit.
+    "Temp Sensor 1 Linearisation": (Q_ADC, Q_TEMP_C),
+    "Temp Sensor 2 Linearisation": (Q_ADC, Q_TEMP_C),
     "ATF Temp Curve (8428)": (Q_TEMP_C, Q_FACTOR_256),
     "ATF Temp Curve A (Mode 1)": (Q_TEMP_C, Q_FACTOR_256),
     "ATF Temp Curve A (Mode 2)": (Q_TEMP_C, Q_FACTOR_256),
@@ -1252,6 +1263,17 @@ RECORD_RENAMES = {
 }
 
 RECORD_EXTRA_DESC = {
+    "Temp Sensor 1 Linearisation": (
+        "\n\nATF TEMPERATURE SENSOR CALIBRATION. Converts the raw ADC reading from "
+        "the sensor into a temperature. The breakpoint is the ADC count, the value "
+        "is what the TCU believes that count means.\n\nThis is what every "
+        "temperature-dependent behaviour in the transmission ultimately reads, so "
+        "changing it shifts the apparent temperature everywhere at once - including "
+        "the cold-fluid pressure boost and the overheat protection. It is a "
+        "calibration for the sensor, not a tuning knob."),
+    "Temp Sensor 2 Linearisation": (
+        "\n\nATF TEMPERATURE SENSOR CALIBRATION, second channel. See the notes on "
+        "Temp Sensor 1: same role, same warning."),
     "Signal 82AC Curve 1 of 2": (
         "\n\nTORQUE CONVERTER SLIP FACTOR. Part of the line pressure chain: engine "
         "torque from CAN 0x412 is multiplied by this factor, smoothed, multiplied "
