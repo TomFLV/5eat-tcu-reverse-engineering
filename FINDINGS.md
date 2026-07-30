@@ -2366,3 +2366,88 @@ Three leads eliminated so far: the paired curve block at `0x018060` (shift decis
 the timed pressure ramp at `0x12034` (downshift control), and the SFR search. What
 remains is to name the MJT timer registers in the processor module and work forward
 from the output, which is a bigger piece of work than any of the above.
+
+---
+
+## 22. THE SOLENOID OUTPUT PATH, END TO END (2026-07-30)
+
+### 22a. Correcting section 21d - the output route was never blocked
+
+Section 21d said the output-first approach was blocked because the only hardware
+registers in the decompilation were `0x8007EA` to `0x8007F2`, the Interrupt
+Controller. **That was wrong, and it was my own error, not a property of the ROM.**
+
+The search used `DAT_008[0-3][0-9a-f]{3}` with no end anchor, which matched
+truncated prefixes of ordinary RAM symbols like `DAT_00804855` and found nothing
+useful. More importantly it was looking for the wrong thing entirely: the M32R
+processor module defines 1749 named memory-mapped registers, so anything the
+firmware touches appears by NAME, not as a `DAT_` symbol.
+
+Searching for the register names instead shows the firmware drives **167 of them**.
+
+### 22b. Seven PWM solenoid channels
+
+The output stage is one function driving seven timer channels, each a
+period/duty pair:
+
+    TIO2CT  = duty - 1;
+    TIO2RL1 = period - duty - 1;
+    TIO2RL0 = duty - 1;
+
+with two special cases per channel: duty 0 drives the port pin low and disables the
+timer, and a specific full-scale value drives it high, so the solenoid can be held
+fully off or fully on without PWM.
+
+    channel   duty var     command var   driver
+    TIO2      0x804EBE     0x805026      FUN_0002E4BC
+    TIO4      0x804EBC     0x805024      FUN_0002DFAC
+    TIO5      0x804EB2     0x80501C      FUN_0002CB70
+    TIO6      0x804EB4     0x80501A      FUN_0002C3F8
+    TIO7      0x804EB6     0x80501E      FUN_0002D07C
+    TIO8      0x804EB8     0x805020      FUN_0002D58C
+    TIO9      0x804EBA     0x805022      FUN_0002DA9C
+
+Seven channels matches the 5EAT's solenoid count - line pressure, lock-up, transfer,
+and the shift and timing solenoids.
+
+### 22c. The full chain
+
+    pressure command   0x804A62 .. 0x804A6E   seven uint16, one per solenoid
+        |              computed per solenoid by seven parallel functions
+        v
+    duty command       0x80501A .. 0x805026
+        |              clamped between 0x804EC2 and 0x804EC4
+        v
+    duty              0x804EB2 .. 0x804EBE
+        |
+        v
+    TIOnRL0 / TIOnRL1  hardware PWM
+
+Each pressure command is interpolated on ATF TEMPERATURE between two computed
+pressures:
+
+    if (temp between DAT_0001c3bd and DAT_0001c3be)
+        cmd = (lo * (hi_bp - temp) + hi * (temp - lo_bp)) / (hi_bp - lo_bp) * 0x20
+
+so `0x1C3BD` and `0x1C3BE` are the temperature breakpoints for that blend - a pair of
+calibration constants worth exposing later, and a third place ATF temperature
+influences pressure alongside the factor curve in section 18b.
+
+### 22d. Lock-up: still not identified, and why
+
+All seven driver functions are structurally identical, so nothing about the output
+stage distinguishes lock-up from a clutch or brake solenoid. The obvious
+discriminator - that lock-up only operates in fifth - does not appear either: none of
+the seven functions references the gear variable `DAT_0080486e`. Whatever gates
+lock-up by gear happens further upstream, in whatever computes the pressures at
+`0x804298`, `0x80427C`, `0x80428A` and `0x80426E`.
+
+So the honest position after four attempts is: the whole output path is now mapped
+and any one of seven solenoids could be the converter clutch. Identifying which needs
+either the upstream pressure computation traced, or a log from a car showing which
+duty changes when lock-up engages. The second would settle it in minutes and needs no
+further disassembly.
+
+Leads eliminated so far: the paired curve block at `0x018060` (shift decision), the
+timed pressure ramp at `0x12034` (downshift control), and the claim that the SFR
+route was unavailable (my error).
