@@ -323,6 +323,67 @@ This is a static file editor only — cannot connect live to the vehicle through
    <description>X-input is CAN ID 0x511 payload byte 4, scaled by a fixed 333/256 (~x1.301) factor before this lookup. CAN 0x511 originates from the VDC/ABS module (bytes 0-1 are steering wheel angle, byte 6 vehicle G-force); byte 4 is not identified in the community CAN decoding. Stock data is flat (0) — real, editable, currently inert.</description>
   </table>
 
+  <!-- ============ Transmission - Shift Correction ============ -->
+  <table type="2D" name="Gear 1 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0116D2" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 1 Shift Correction (Engine speed)" storageaddress="0x0116BC" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 1 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 2 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011700" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 2 Shift Correction (Engine speed)" storageaddress="0x0116EA" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 2 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 3 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x01172E" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 3 Shift Correction (Engine speed)" storageaddress="0x011718" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 3 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 4 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x01175C" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 4 Shift Correction (Engine speed)" storageaddress="0x011746" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 4 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 5 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x01178A" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 5 Shift Correction (Engine speed)" storageaddress="0x011774" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 5 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
   <!-- ============ Transmission - Signal Response Curves ============ -->
   <table type="2D" name="CAN 0x410 Chain Response Curve" category="Transmission - Signal Response Curves" storagetype="uint16" endian="big" storageaddress="0x0118BA" sizex="16" userlevel="1">
    <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
@@ -1974,6 +2035,67 @@ This is a static file editor only — cannot connect live to the vehicle through
    <description>X-input is CAN ID 0x511 payload byte 4, scaled by a fixed 333/256 (~x1.301) factor before this lookup. CAN 0x511 originates from the VDC/ABS module (bytes 0-1 are steering wheel angle, byte 6 vehicle G-force); byte 4 is not identified in the community CAN decoding. Stock data is flat (0) — real, editable, currently inert.</description>
   </table>
 
+  <!-- ============ Transmission - Shift Correction ============ -->
+  <table type="2D" name="Gear 1 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011766" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 1 Shift Correction (Engine speed)" storageaddress="0x011750" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 1 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 2 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011794" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 2 Shift Correction (Engine speed)" storageaddress="0x01177E" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 2 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 3 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0117C2" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 3 Shift Correction (Engine speed)" storageaddress="0x0117AC" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 3 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 4 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0117F0" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 4 Shift Correction (Engine speed)" storageaddress="0x0117DA" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 4 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 5 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x01181E" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 5 Shift Correction (Engine speed)" storageaddress="0x011808" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 5 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
   <!-- ============ Transmission - Signal Response Curves ============ -->
   <table type="2D" name="CAN 0x410 Chain Response Curve" category="Transmission - Signal Response Curves" storagetype="uint16" endian="big" storageaddress="0x01194E" sizex="16" userlevel="1">
    <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
@@ -3516,6 +3638,67 @@ This is a static file editor only — cannot connect live to the vehicle through
     <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="16" coarseincrement="256" />
    </table>
    <description>X-input is CAN ID 0x511 payload byte 4, scaled by a fixed 333/256 (~x1.301) factor before this lookup. CAN 0x511 originates from the VDC/ABS module (bytes 0-1 are steering wheel angle, byte 6 vehicle G-force); byte 4 is not identified in the community CAN decoding. Stock data is flat (0) — real, editable, currently inert.</description>
+  </table>
+
+  <!-- ============ Transmission - Shift Correction ============ -->
+  <table type="2D" name="Gear 1 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011702" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 1 Shift Correction (Engine speed)" storageaddress="0x0116EC" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 1 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 2 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011730" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 2 Shift Correction (Engine speed)" storageaddress="0x01171A" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 2 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 3 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x01175E" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 3 Shift Correction (Engine speed)" storageaddress="0x011748" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 3 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 4 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x01178C" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 4 Shift Correction (Engine speed)" storageaddress="0x011776" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 4 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 5 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0117BA" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 5 Shift Correction (Engine speed)" storageaddress="0x0117A4" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 5 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
   </table>
 
   <!-- ============ Transmission - Signal Response Curves ============ -->
@@ -5094,6 +5277,67 @@ This is a static file editor only — cannot connect live to the vehicle through
    <description>X-input is CAN ID 0x511 payload byte 4, scaled by a fixed 333/256 (~x1.301) factor before this lookup. CAN 0x511 originates from the VDC/ABS module (bytes 0-1 are steering wheel angle, byte 6 vehicle G-force); byte 4 is not identified in the community CAN decoding. Stock data is flat (0) — real, editable, currently inert.</description>
   </table>
 
+  <!-- ============ Transmission - Shift Correction ============ -->
+  <table type="2D" name="Gear 1 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011766" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 1 Shift Correction (Engine speed)" storageaddress="0x011750" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 1 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 2 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011794" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 2 Shift Correction (Engine speed)" storageaddress="0x01177E" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 2 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 3 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0117C2" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 3 Shift Correction (Engine speed)" storageaddress="0x0117AC" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 3 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 4 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0117F0" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 4 Shift Correction (Engine speed)" storageaddress="0x0117DA" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 4 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 5 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x01181E" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 5 Shift Correction (Engine speed)" storageaddress="0x011808" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 5 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
   <!-- ============ Transmission - Signal Response Curves ============ -->
   <table type="2D" name="CAN 0x410 Chain Response Curve" category="Transmission - Signal Response Curves" storagetype="uint16" endian="big" storageaddress="0x01194E" sizex="16" userlevel="1">
    <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
@@ -6647,6 +6891,67 @@ This is a static file editor only — cannot connect live to the vehicle through
    <description>X-input is CAN ID 0x511 payload byte 4, scaled by a fixed 333/256 (~x1.301) factor before this lookup. CAN 0x511 originates from the VDC/ABS module (bytes 0-1 are steering wheel angle, byte 6 vehicle G-force); byte 4 is not identified in the community CAN decoding. Stock data is flat (0) — real, editable, currently inert.</description>
   </table>
 
+  <!-- ============ Transmission - Shift Correction ============ -->
+  <table type="2D" name="Gear 1 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011766" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 1 Shift Correction (Engine speed)" storageaddress="0x011750" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 1 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 2 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011794" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 2 Shift Correction (Engine speed)" storageaddress="0x01177E" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 2 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 3 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0117C2" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 3 Shift Correction (Engine speed)" storageaddress="0x0117AC" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 3 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 4 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0117F0" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 4 Shift Correction (Engine speed)" storageaddress="0x0117DA" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 4 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 5 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x01181E" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 5 Shift Correction (Engine speed)" storageaddress="0x011808" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 5 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
   <!-- ============ Transmission - Signal Response Curves ============ -->
   <table type="2D" name="CAN 0x410 Chain Response Curve" category="Transmission - Signal Response Curves" storagetype="uint16" endian="big" storageaddress="0x01194E" sizex="16" userlevel="1">
    <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
@@ -7197,6 +7502,67 @@ This is a static file editor only — cannot connect live to the vehicle through
     <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="16" coarseincrement="256" />
    </table>
    <description>X-input is CAN ID 0x511 payload byte 4, scaled by a fixed 333/256 (~x1.301) factor before this lookup. CAN 0x511 originates from the VDC/ABS module (bytes 0-1 are steering wheel angle, byte 6 vehicle G-force); byte 4 is not identified in the community CAN decoding. Stock data is flat (0) — real, editable, currently inert.</description>
+  </table>
+
+  <!-- ============ Transmission - Shift Correction ============ -->
+  <table type="2D" name="Gear 1 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011702" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 1 Shift Correction (Engine speed)" storageaddress="0x0116EC" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 1 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 2 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011730" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 2 Shift Correction (Engine speed)" storageaddress="0x01171A" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 2 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 3 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x01175E" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 3 Shift Correction (Engine speed)" storageaddress="0x011748" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 3 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 4 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x01178C" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 4 Shift Correction (Engine speed)" storageaddress="0x011776" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 4 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 5 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0117BA" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 5 Shift Correction (Engine speed)" storageaddress="0x0117A4" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 5 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
   </table>
 
   <!-- ============ Transmission - Signal Response Curves ============ -->
@@ -8764,6 +9130,67 @@ This is a static file editor only — cannot connect live to the vehicle through
    <description>X-input is CAN ID 0x511 payload byte 4, scaled by a fixed 333/256 (~x1.301) factor before this lookup. CAN 0x511 originates from the VDC/ABS module (bytes 0-1 are steering wheel angle, byte 6 vehicle G-force); byte 4 is not identified in the community CAN decoding. Stock data is flat (0) — real, editable, currently inert.</description>
   </table>
 
+  <!-- ============ Transmission - Shift Correction ============ -->
+  <table type="2D" name="Gear 1 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x01177A" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 1 Shift Correction (Engine speed)" storageaddress="0x011764" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 1 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 2 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0117A8" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 2 Shift Correction (Engine speed)" storageaddress="0x011792" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 2 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 3 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0117D6" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 3 Shift Correction (Engine speed)" storageaddress="0x0117C0" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 3 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 4 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011804" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 4 Shift Correction (Engine speed)" storageaddress="0x0117EE" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 4 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 5 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011832" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 5 Shift Correction (Engine speed)" storageaddress="0x01181C" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 5 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
   <!-- ============ Transmission - Signal Response Curves ============ -->
   <table type="2D" name="CAN 0x410 Chain Response Curve" category="Transmission - Signal Response Curves" storagetype="uint16" endian="big" storageaddress="0x011962" sizex="16" userlevel="1">
    <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
@@ -10328,6 +10755,67 @@ This is a static file editor only — cannot connect live to the vehicle through
    <description>X-input is CAN ID 0x511 payload byte 4, scaled by a fixed 333/256 (~x1.301) factor before this lookup. CAN 0x511 originates from the VDC/ABS module (bytes 0-1 are steering wheel angle, byte 6 vehicle G-force); byte 4 is not identified in the community CAN decoding. Stock data is flat (0) — real, editable, currently inert.</description>
   </table>
 
+  <!-- ============ Transmission - Shift Correction ============ -->
+  <table type="2D" name="Gear 1 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011766" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 1 Shift Correction (Engine speed)" storageaddress="0x011750" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 1 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 2 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011794" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 2 Shift Correction (Engine speed)" storageaddress="0x01177E" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 2 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 3 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0117C2" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 3 Shift Correction (Engine speed)" storageaddress="0x0117AC" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 3 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 4 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0117F0" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 4 Shift Correction (Engine speed)" storageaddress="0x0117DA" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 4 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 5 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x01181E" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 5 Shift Correction (Engine speed)" storageaddress="0x011808" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 5 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
   <!-- ============ Transmission - Signal Response Curves ============ -->
   <table type="2D" name="CAN 0x410 Chain Response Curve" category="Transmission - Signal Response Curves" storagetype="uint16" endian="big" storageaddress="0x01194E" sizex="16" userlevel="1">
    <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
@@ -10879,6 +11367,67 @@ This is a static file editor only — cannot connect live to the vehicle through
     <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="16" coarseincrement="256" />
    </table>
    <description>X-input is CAN ID 0x511 payload byte 4, scaled by a fixed 333/256 (~x1.301) factor before this lookup. CAN 0x511 originates from the VDC/ABS module (bytes 0-1 are steering wheel angle, byte 6 vehicle G-force); byte 4 is not identified in the community CAN decoding. Stock data is flat (0) — real, editable, currently inert.</description>
+  </table>
+
+  <!-- ============ Transmission - Shift Correction ============ -->
+  <table type="2D" name="Gear 1 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011736" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 1 Shift Correction (Engine speed)" storageaddress="0x011720" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 1 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 2 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011764" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 2 Shift Correction (Engine speed)" storageaddress="0x01174E" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 2 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 3 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011792" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 3 Shift Correction (Engine speed)" storageaddress="0x01177C" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 3 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 4 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0117C0" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 4 Shift Correction (Engine speed)" storageaddress="0x0117AA" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 4 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 5 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0117EE" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 5 Shift Correction (Engine speed)" storageaddress="0x0117D8" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 5 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
   </table>
 
   <!-- ============ Transmission - Signal Response Curves ============ -->
@@ -11944,6 +12493,67 @@ This is a static file editor only — cannot connect live to the vehicle through
     <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="16" coarseincrement="256" />
    </table>
    <description>X-input is CAN ID 0x511 payload byte 4, scaled by a fixed 333/256 (~x1.301) factor before this lookup. CAN 0x511 originates from the VDC/ABS module (bytes 0-1 are steering wheel angle, byte 6 vehicle G-force); byte 4 is not identified in the community CAN decoding. Stock data is flat (0) — real, editable, currently inert.</description>
+  </table>
+
+  <!-- ============ Transmission - Shift Correction ============ -->
+  <table type="2D" name="Gear 1 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011736" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 1 Shift Correction (Engine speed)" storageaddress="0x011720" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 1 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 2 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011764" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 2 Shift Correction (Engine speed)" storageaddress="0x01174E" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 2 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 3 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x011792" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 3 Shift Correction (Engine speed)" storageaddress="0x01177C" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 3 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 4 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0117C0" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 4 Shift Correction (Engine speed)" storageaddress="0x0117AA" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 4 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
+  </table>
+
+  <table type="2D" name="Gear 5 Shift Correction" category="Transmission - Shift Correction" storagetype="int16" endian="big" storageaddress="0x0117EE" sizex="11" userlevel="1">
+   <scaling units="correction (raw, signed)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <table type="X Axis" name="Gear 5 Shift Correction (Engine speed)" storageaddress="0x0117D8" storagetype="uint16" endian="big">
+    <scaling units="RPM" expression="x/8" to_byte="x*8" format="0" fineincrement="16" coarseincrement="256" />
+   </table>
+   <description>Gear 5 of 5. Signed correction curve against engine speed, selected by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no correction), and the magnitude falls with each higher gear (about -1970 at the top of gear 2 down to -390 in gear 5) — the shape of a shift-shock or torque-phase correction.
+
+Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world units are not confirmed.
+
+This family was only found after correcting the Ghidra M32R processor definition: the pointer array that selects it was unreadable before.</description>
   </table>
 
   <!-- ============ Transmission - Signal Response Curves ============ -->

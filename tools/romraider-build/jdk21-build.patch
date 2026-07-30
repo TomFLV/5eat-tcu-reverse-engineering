@@ -1,0 +1,40 @@
+--- build.xml.orig	2026-07-29 20:53:13.896466577 -0400
++++ build.xml	2026-07-29 20:54:12.455938928 -0400
+@@ -58,11 +58,11 @@
+             <format property="mnth.day" pattern="MMMdd" locale="en"/>
+         </tstamp>
+ 
+-        <scriptdef language="javascript" name="toUpper">
+-            project.setProperty("mnth.day",
+-                    project.getProperty("mnth.day").toUpperCase());
+-        </scriptdef>
+-        <toUpper/>
++        <!-- Nashorn was removed in Java 15; this only uppercased the month in the
++             version string, so it is done with a plain tstamp pattern instead. -->
++        <tstamp>
++            <format property="mnth.day" pattern="MMMdd" locale="en" />
++        </tstamp>
+ 
+         <!-- set os specific properties -->
+         <property name="os.windows" value="windows" />
+@@ -79,8 +79,8 @@
+         </condition>
+ 
+         <!-- java compiler properties -->
+-        <property name="javac.source" value="1.6" />
+-        <property name="javac.target" value="1.6" />
++        <property name="javac.source" value="21" />
++        <property name="javac.target" value="21" />
+         <condition property="bootclasspath.dir" value="${env.JRE_DIR}/lib"
+                            else="C:\Program Files (x86)\Java\jdk1.6.0_45\jre\lib">
+                     <isset property="env.JRE_DIR" />
+@@ -399,8 +399,7 @@
+                 debug="${debug}"
+                 verbose="${javac.verbose}"
+                 deprecation="${deprecation}"
+-                compiler="javac${javac.target}"
+-                bootclasspath="${toString:bootpath.ref}"
++                compiler="modern"
+                 encoding="UTF-8" >
+                 <!--
+                 <compilerarg value="-Xlint" />

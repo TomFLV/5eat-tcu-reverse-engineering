@@ -47,7 +47,14 @@ def table_addrs(header_addr):
 # indexed) 2D tables sharing a naming scheme, category, axis label, and
 # description template. "headers" is the list of ROM header addresses, one
 # per gear/index in order.
+#
+# PER-FIRMWARE families: these are only emitted for a firmware that declares an
+# explicit offset. Defaulting them to the base address would write addresses that
+# are simply wrong for the other firmwares -- generation aborts if that happens,
+# but omitting is the correct behaviour.
 # ---------------------------------------------------------------------------
+OPTIONAL_FAMILIES = {"ShiftCorrection"}
+
 FAMILIES = [
     {
         "id": "SpeedTrimA",
@@ -167,6 +174,30 @@ FAMILIES = [
             "VDC/ABS module (bytes 0-1 are steering wheel angle, byte 6 vehicle "
             "G-force); byte 4 is not identified in the community CAN decoding. "
             "Stock data is flat (0) — real, editable, currently inert."
+        ),
+    },
+    {
+        "id": "ShiftCorrection",
+        "category": "Transmission - Shift Correction",
+        "name_template": "Gear {i} Shift Correction",
+        "headers": [0x0116BA, 0x0116E8, 0x011716, 0x011744, 0x011772],
+        "axis_label": "Engine speed",
+        "value_label": "correction (raw, signed)",
+        "value_storagetype": "int16",
+        "axis_units": "RPM",
+        "axis_expr": "x/8",
+        "axis_to_byte": "x*8",
+        "axis_format": "0",
+        "description": (
+            "Gear {i} of 5. Signed correction curve against engine speed, selected "
+            "by a gear-indexed pointer array at 0x117A0. Gear 1 is all zeros (no "
+            "correction), and the magnitude falls with each higher gear (about "
+            "-1970 at the top of gear 2 down to -390 in gear 5) — the shape of a "
+            "shift-shock or torque-phase correction.\n\n"
+            "Values are genuinely NEGATIVE and stored as signed 16-bit. Real-world "
+            "units are not confirmed.\n\n"
+            "This family was only found after correcting the Ghidra M32R processor "
+            "definition: the pointer array that selects it was unreadable before."
         ),
     },
     {
@@ -666,56 +697,56 @@ ROM_PROFILES = [
         "submodel": "91FE216300 (USDM Outback XT)",
         "filesize": "512kb",
         # Verified individually from decompiled call sites, not extrapolated.
-        "offsets": {"SpeedTrimA": 144, "PressureB": 144, "PressureC": 144, "ShiftStageD": 144, "PressureThresholdE": 144, "SlipThreshold": 148, "RefSpeedBaseline": 148, "CAN511Threshold": 148, "SignalResponseCurves": 148},
+        "offsets": {"SpeedTrimA": 144, "PressureB": 144, "PressureC": 144, "ShiftStageD": 144, "PressureThresholdE": 144, "SlipThreshold": 148, "RefSpeedBaseline": 148, "CAN511Threshold": 148, "SignalResponseCurves": 148, "ShiftCorrection": 148},
     },
     {
         "id": "91D0207500", "rom_file": "91D0207500_MB436T_AH572_5EAT_JDM.bin",
         "xmlid": "SUBARU_5EAT_91D0207500", "base": "SUBARU_5EAT_91D1206000",
         "internalidstring": "MB436T", "caseid": "Q3E", "year": "Unknown",
         "market": "JDM", "submodel": "91D0207500 (JDM)", "filesize": "384kb",
-        "offsets": {"SpeedTrimA": 44, "PressureB": 44, "PressureC": 44, "ShiftStageD": 44, "PressureThresholdE": 44, "SlipThreshold": 48, "RefSpeedBaseline": 48, "CAN511Threshold": 48, "SignalResponseCurves": 48},
+        "offsets": {"SpeedTrimA": 44, "PressureB": 44, "PressureC": 44, "ShiftStageD": 44, "PressureThresholdE": 44, "SlipThreshold": 48, "RefSpeedBaseline": 48, "CAN511Threshold": 48, "SignalResponseCurves": 48, "ShiftCorrection": 48},
     },
     {
         "id": "91F0217100", "rom_file": "91F0217100_MB436P_AG810_OBK03USDM.bin",
         "xmlid": "SUBARU_5EAT_91F0217100", "base": "SUBARU_5EAT_91D1206000",
         "internalidstring": "MB436P", "caseid": "Q3B", "year": "2003",
         "market": "USDM", "submodel": "91F0217100 (USDM Outback 03)", "filesize": "384kb",
-        "offsets": {"SpeedTrimA": 144, "PressureB": 144, "PressureC": 144, "ShiftStageD": 144, "PressureThresholdE": 144, "SlipThreshold": 148, "RefSpeedBaseline": 148, "CAN511Threshold": 148, "SignalResponseCurves": 148},
+        "offsets": {"SpeedTrimA": 144, "PressureB": 144, "PressureC": 144, "ShiftStageD": 144, "PressureThresholdE": 144, "SlipThreshold": 148, "RefSpeedBaseline": 148, "CAN511Threshold": 148, "SignalResponseCurves": 148, "ShiftCorrection": 148},
     },
     {
         "id": "ABD1A03100", "rom_file": "ABD1A03100_A61022_LGT_JDM_2005_5EAT.bin",
         "xmlid": "SUBARU_5EAT_ABD1A03100", "base": "SUBARU_5EAT_91D1206000",
         "internalidstring": "MB4434", "caseid": "Q1F", "year": "2005",
         "market": "JDM", "submodel": "ABD1A03100 (JDM Legacy GT 2005)", "filesize": "384kb",
-        "offsets": {"SpeedTrimA": 142, "PressureB": 144, "PressureC": 144, "ShiftStageD": 144, "PressureThresholdE": 144, "SlipThreshold": 148, "RefSpeedBaseline": 148, "CAN511Threshold": 148, "SignalResponseCurves": 148},
+        "offsets": {"SpeedTrimA": 142, "PressureB": 144, "PressureC": 144, "ShiftStageD": 144, "PressureThresholdE": 144, "SlipThreshold": 148, "RefSpeedBaseline": 148, "CAN511Threshold": 148, "SignalResponseCurves": 148, "ShiftCorrection": 148},
     },
     {
         "id": "91D1207900", "rom_file": "[91D1207900-A61022]_31711AG589.bin",
         "xmlid": "SUBARU_5EAT_91D1207900", "base": "SUBARU_5EAT_91D1206000",
         "internalidstring": "MB4373", "caseid": "Q3P", "year": "Unknown",
         "market": "JDM", "submodel": "91D1207900 (Hitachi 31711AG589)", "filesize": "384kb",
-        "offsets": {"SpeedTrimA": 42, "PressureB": 44, "PressureC": 44, "ShiftStageD": 44, "PressureThresholdE": 44, "SlipThreshold": 48, "RefSpeedBaseline": 48, "CAN511Threshold": 48, "SignalResponseCurves": 48},
+        "offsets": {"SpeedTrimA": 42, "PressureB": 44, "PressureC": 44, "ShiftStageD": 44, "PressureThresholdE": 44, "SlipThreshold": 48, "RefSpeedBaseline": 48, "CAN511Threshold": 48, "SignalResponseCurves": 48, "ShiftCorrection": 48},
     },
     {
         "id": "AAD1A07100", "rom_file": "[AAD1A07100-A61022]_31711AJ782.bin",
         "xmlid": "SUBARU_5EAT_AAD1A07100", "base": "SUBARU_5EAT_91D1206000",
         "internalidstring": "MB440X", "caseid": "Q2P", "year": "Unknown",
         "market": "JDM", "submodel": "AAD1A07100 (Hitachi 31711AJ782)", "filesize": "384kb",
-        "offsets": {"SpeedTrimA": 162, "PressureB": 164, "PressureC": 164, "ShiftStageD": 164, "PressureThresholdE": 164, "SlipThreshold": 168, "RefSpeedBaseline": 168, "CAN511Threshold": 168, "SignalResponseCurves": 168},
+        "offsets": {"SpeedTrimA": 162, "PressureB": 164, "PressureC": 164, "ShiftStageD": 164, "PressureThresholdE": 164, "SlipThreshold": 168, "RefSpeedBaseline": 168, "CAN511Threshold": 168, "SignalResponseCurves": 168, "ShiftCorrection": 168},
     },
     {
         "id": "ABD1207000", "rom_file": "[ABD1207000-A61022].bin",
         "xmlid": "SUBARU_5EAT_ABD1207000", "base": "SUBARU_5EAT_91D1206000",
         "internalidstring": "MB5300", "caseid": "Q5L", "year": "2006",
         "market": "JDM", "submodel": "ABD1207000 (06 JDM Legacy GT)", "filesize": "384kb",
-        "offsets": {"SpeedTrimA": 142, "PressureB": 144, "PressureC": 144, "ShiftStageD": 144, "PressureThresholdE": 144, "SlipThreshold": 148, "RefSpeedBaseline": 148, "CAN511Threshold": 148, "SignalResponseCurves": 148},
+        "offsets": {"SpeedTrimA": 142, "PressureB": 144, "PressureC": 144, "ShiftStageD": 144, "PressureThresholdE": 144, "SlipThreshold": 148, "RefSpeedBaseline": 148, "CAN511Threshold": 148, "SignalResponseCurves": 148, "ShiftCorrection": 148},
     },
     {
         "id": "ACD1207000", "rom_file": "ACD1207000_MB558D01_LGT06_JDM.bin",
         "xmlid": "SUBARU_5EAT_ACD1207000", "base": "SUBARU_5EAT_91D1206000",
         "internalidstring": "MB558D01", "caseid": "Q7W", "year": "2006",
         "market": "JDM", "submodel": "ACD1207000 (LGT06 JDM)", "filesize": "512kb",
-        "offsets": {"SpeedTrimA": 142, "PressureB": 144, "PressureC": 144, "ShiftStageD": 96, "PressureThresholdE": 144, "SlipThreshold": 100, "RefSpeedBaseline": 100, "CAN511Threshold": 100, "SignalResponseCurves": 100},
+        "offsets": {"SpeedTrimA": 142, "PressureB": 144, "PressureC": 144, "ShiftStageD": 96, "PressureThresholdE": 144, "SlipThreshold": 100, "RefSpeedBaseline": 100, "CAN511Threshold": 100, "SignalResponseCurves": 100, "ShiftCorrection": 100},
     },
     {
         "id": "ADE0236000", "rom_file": "5EAT_ADE0236000.bin",
@@ -732,7 +763,7 @@ ROM_PROFILES = [
         "xmlid": "SUBARU_5EAT_ACD1A06000", "base": "SUBARU_5EAT_91D1206000",
         "internalidstring": "MB558D20", "caseid": "Q6E", "year": "2007",
         "market": "JDM", "submodel": "ACD1A06000 (JDM 2007)", "filesize": "512kb",
-        "offsets": {"SpeedTrimA": 142, "PressureB": 144, "PressureC": 144, "ShiftStageD": 96, "PressureThresholdE": 144, "SlipThreshold": 100, "RefSpeedBaseline": 100, "CAN511Threshold": 100, "SignalResponseCurves": 100},
+        "offsets": {"SpeedTrimA": 142, "PressureB": 144, "PressureC": 144, "ShiftStageD": 96, "PressureThresholdE": 144, "SlipThreshold": 100, "RefSpeedBaseline": 100, "CAN511Threshold": 100, "SignalResponseCurves": 100, "ShiftCorrection": 100},
     },
 ]
 
@@ -850,7 +881,8 @@ def build_table_xml(family, index, header_addr, base_addr=None):
     axis_to_byte = escape(eff.get("axis_to_byte", "x"))
     axis_format = eff.get("axis_format", "0")
 
-    return f"""  <table type="2D" name="{name}" category="{category}" storagetype="uint16" endian="big" storageaddress="0x{data_addr:06X}" sizex="{n}" userlevel="1">
+    value_storagetype = eff.get("value_storagetype", "uint16")
+    return f"""  <table type="2D" name="{name}" category="{category}" storagetype="{value_storagetype}" endian="big" storageaddress="0x{data_addr:06X}" sizex="{n}" userlevel="1">
    <scaling units="{value_label}" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
    <table type="X Axis" name="{axis_name}" storageaddress="0x{axis_addr:06X}" storagetype="uint16" endian="big">
     <scaling units="{axis_units}" expression="{axis_expr}" to_byte="{axis_to_byte}" format="{axis_format}" fineincrement="16" coarseincrement="256" />
@@ -899,6 +931,9 @@ def verify_profile(profile, rom_bytes):
                           f"after {c['rows']} rows, got {term}")
 
     for family in FAMILIES:
+        if (profile.get("base") is not None and family["id"] in OPTIONAL_FAMILIES
+                and family["id"] not in profile["offsets"]):
+            continue
         delta = profile["offsets"].get(family["id"], 0)
         for base_addr in family["headers"]:
             want = u16(base_addr)                 # count in the BASE rom
@@ -930,6 +965,8 @@ def build_rom_block(profile, rom_bytes, is_base):
         total += 1
 
         for family in FAMILIES:
+            if not is_base and family["id"] in OPTIONAL_FAMILIES and family["id"] not in off:
+                continue
             d = off.get(family["id"], 0)
             parts.append(f"  <!-- ============ {family['category']} ============ -->")
             for i, base_addr in enumerate(family["headers"], start=1):
