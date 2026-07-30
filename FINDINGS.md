@@ -2134,3 +2134,71 @@ Asked and answered honestly: there is no TCU harness pinout in what this project
 
 A real harness pinout would come from the wiring diagram section of a full FSM, which
 is not in the repository and is Subaru's document.
+
+---
+
+## 19. THE LINE PRESSURE TARGET MAPS - TORQUE IN, kPa OUT (2026-07-30)
+
+Section 18 scaled the two multipliers in the line pressure chain. This is the lookup
+they feed, which is the part a tuner actually wants.
+
+### 19a. Found by following the value, not by scanning
+
+The twice-factored torque is written to `DAT_008042fa`. It has exactly two consumers:
+
+    DAT_00804a82 = FUN_00045070((&PTR_DAT_00012478)[uVar2 & 0xff], 0, DAT_008042fa);
+    DAT_00804a82 = FUN_00045070((&PTR_PTR_00012314)[DAT_0080485f], 0, DAT_008042fa);
+
+So `0x12478` and `0x12314` are arrays of pointers to target maps, chosen by
+operating state, and `DAT_00804a82` is the resulting target. Nine distinct maps,
+consistently, in all eleven firmwares.
+
+### 19b. Both axes confirmed, from two different outside documents
+
+INPUT, /10 = Nm. The community CAN decoding gives 0x412 bytes 3-4 as Engine Torque
+Output. The breakpoints then read 0, 50, 100, 150, 200, 250, 300, 350, 400, 600,
+800, 1000 Nm - round numbers over a sensible range.
+
+OUTPUT, /10 = kPa. The factory manual's line pressure test (5AT-35) gives two
+figures, and two different maps land on them exactly:
+
+    Target 7   base            490 kPa    manual: 490 nominal, 385-555 band,
+                                          D range, throttle full closed
+    Target 9   at 400 Nm      1372 kPa    manual: 1370, D range, throttle full open
+
+Not the same map, which is the point - they apply in different operating states, and
+each reproduces the figure for the condition the manual measured. A single
+coincidence would be unremarkable; two, on separate maps, from a document written
+twenty years before this analysis, is not.
+
+The nine maps at a glance (91D1206000):
+
+    Target 1  base  750 kPa   at 400 Nm  1260
+    Target 2  base  750           1780
+    Target 3  base  860           1880
+    Target 4  base  800           1300
+    Target 5  base  800           1300
+    Target 6  base  850           1300
+    Target 7  base  490           1300
+    Target 8  base  450           1300
+    Target 9  base  524           1372
+
+### 19c. What is still open
+
+Which operating state selects which map is NOT established. The selector reads
+`DAT_008047db` and `DAT_0080485a` for one array and `DAT_0080485f` for the other,
+and those have not been traced to a named condition. The table descriptions say so
+and advise changing the family as a set unless the active map has been logged.
+
+The per-clutch plate-count factors rimwall mentions in post 227 are also still
+unlocated. They are a separate mechanism from these targets.
+
+### 19d. Why this one gets real units when most raw tables do not
+
+The standing rule here is that a plausible scale is not adopted without evidence,
+because a wrong unit reads as confirmed. This one clears that bar comfortably: the
+input scale comes from the community CAN decoding, the output scale from the factory
+manual, and the two were established independently of each other and of this project.
+Contrast the other candidates thrown up by `tools/classify_raw_tables.py`, which look
+like fixed-point multipliers and are still shipped raw because nothing outside the
+guess supports them.

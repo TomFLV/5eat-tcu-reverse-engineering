@@ -910,6 +910,58 @@ def build_dtc_tables_xml(entry):
 
 
 # ---------------------------------------------------------------------------
+# Line pressure TARGET maps - engine torque in, line pressure out.
+#
+# The end of the chain described in forum post 184 and scaled in FINDINGS 18:
+# engine torque from CAN 0x412 is multiplied by the slip factor, smoothed,
+# multiplied again by the ATF temperature factor, and the result looks up a target
+# here. Found by following DAT_008042fa (the twice-factored torque) to its only
+# consumers, which read pointer arrays at 0x12478 and 0x12314.
+#
+# Both axes confirmed against documents outside this project:
+#   input  /10 = Nm   - community CAN decoding, 0x412 bytes 3-4 = Engine Torque
+#   output /10 = kPa  - factory manual 5AT-35, which specifies 490 kPa nominal at
+#                       closed throttle (this reads 524) and 1370 kPa at full
+#                       throttle in D (this reads 1372 at 400 Nm)
+# ---------------------------------------------------------------------------
+LINE_PRESSURE_TARGETS = json.load(
+    open(os.path.join(here, "line_pressure_targets.json")))
+
+Q_TORQUE_NM = {"label": "Nm", "units": "Nm (engine torque)",
+               "expression": "x/10", "to_byte": "x*10",
+               "format": "0", "fine": "1", "coarse": "10"}
+Q_KPA_10 = {"label": "kPa", "units": "kPa (line pressure)",
+            "expression": "x/10", "to_byte": "x*10",
+            "format": "0", "fine": "5", "coarse": "50"}
+
+LP_TARGET_DESC = (
+    "LINE PRESSURE TARGET. Engine torque in, commanded line pressure out. This is "
+    "what the pressure control solenoid is driven to achieve.\n\n"
+    "The torque axis is the engine torque the ECU reports on CAN 0x412, after the "
+    "TCU has multiplied it by the Torque Converter Slip Pressure Factor, smoothed "
+    "it, and multiplied it again by the ATF temperature factor. So the axis is "
+    "effective torque, not raw crank torque.\n\n"
+    "Both units are confirmed against outside sources rather than inferred. The "
+    "torque axis comes from the community CAN decoding of 0x412 bytes 3-4. The "
+    "pressure axis reproduces the two figures in the factory manual's line pressure "
+    "test: about 524 kPa at low torque against a specified 490 nominal (385-555 "
+    "band), and 1372 kPa at 400 Nm against a specified 1370 at full throttle in D.\n\n"
+    "RAISING THESE RAISES CLAMPING FORCE. Firmer, faster shifts and more clutch "
+    "holding capacity, at the cost of harsher engagement, more pump load and more "
+    "heat. Several maps exist and the TCU selects between them by operating state - "
+    "which state picks which map has NOT been established, so change them as a set "
+    "unless you have logged which one is active."
+)
+
+
+def build_line_pressure_target_xml(idx, m):
+    name = "Line Pressure Target %d" % idx
+    return build_record_tables_xml(
+        name, "Transmission - Line Pressure", m["addr"], m["rows"],
+        [(0, Q_TORQUE_NM), (1, Q_KPA_10)], LP_TARGET_DESC)
+
+
+# ---------------------------------------------------------------------------
 # Line pressure target curves - the first tables here with a pressure unit that
 # is not a guess. See tools/extract_pressure_curves.py for how they were found
 # and why the earlier "Pressure Control" families are NOT this.
@@ -1492,6 +1544,23 @@ def build_rom_block(profile, rom_bytes, is_base):
             parts.append(shift_map)
             parts.append("")
             total += 1
+
+        lpt = LINE_PRESSURE_TARGETS.get(profile["id"])
+        if lpt:
+            if is_base:
+                parts.append("  <!-- ======= Line pressure targets (torque -> kPa) ======= -->")
+            for i, m in enumerate(lpt["maps"], 1):
+                # Re-check in THIS image rather than trusting the extract: the map
+                # must still end with the 0xFFFF terminator where the row count says.
+                end = m["addr"] + m["rows"] * 8
+                if u16(end) != 0xFFFF:
+                    raise SystemExit(
+                        "%s: line pressure target %d at 0x%06X does not end with "
+                        "0xFFFF after %d records" % (profile["id"], i, m["addr"],
+                                                     m["rows"]))
+                parts.append(build_line_pressure_target_xml(i, m))
+                parts.append("")
+                total += 1
 
         dtc = DTC_TABLE_BY_ROM.get(profile["id"])
         if dtc:
