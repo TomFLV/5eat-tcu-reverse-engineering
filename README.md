@@ -86,16 +86,19 @@ works in kPa, and the answer was in the service manual all along.
 
 ## What's not
 
-**Torque converter lockup — not found.** A paired curve block at `0x018060` looked
-right (pairs suggest apply/release, and it sits at the 5th-gear index) but it's
-consumed by the shift-decision code, so it isn't lockup. The manual has one
-qualitative paragraph and no numbers. Nothing has been added for it, because a
-"Lock-Up" category full of shift thresholds is worse than none.
+**Torque converter lockup — not found, but no longer being looked for in the wrong
+place.** The factory describes engagement as *"Smooth control — in lock-up clutch
+engagement, gradually changes pressure to provide smooth engagement"*, so it's a
+**pressure ramp over time**, not a speed/pedal threshold curve. That's why scanning
+for shift-curve-shaped arrays never found it. See [FINDINGS.md](FINDINGS.md) §17e.
 
-**74 of 82 threshold curves are unmapped.** `scan_threshold_curves.py` finds 82
-arrays with the full shift-curve signature; the definition carries 8. The rest are
-per-mode and per-condition shift maps — this transmission has several, and the tool
-shows one. Biggest open lead. See [FINDINGS.md](FINDINGS.md) §15.
+**74 of 82 threshold curves are unmapped, and we now know what they are.** The
+definition ships **one cell of a 5 × 10 grid**: rimwall established the transmission
+carries 50 sets of shift curves, 5 fuelling states (closed loop / open loop / sensor
+error) × 10 operating conditions. Sasha_A80 listed the likely conditions — cold and
+warm engine, cold and warm ATF, catalyst preheat, quick shift, hill assist, driver
+style adaptation. *Which* condition is which is still unknown, so nothing is named on
+that basis. Biggest open lead. See [FINDINGS.md](FINDINGS.md) §15 and §17a.
 
 **Zero-to-disable on DTCs is inferred, not tested.** The trouble-code table is
 mapped (see below), and blanking an entry should stop that code being reported —
@@ -116,6 +119,7 @@ established. A wrong unit reads as confirmed; an honest `raw` doesn't.
 | [`rom/`](rom/) | The ROM images |
 | [`docs/`](docs/) | [ROM details](docs/ROM-DETAILS.md) · [technical notes](docs/TECHNICAL-NOTES.md) · [manual setup](docs/ROMRAIDER-SETUP.md) |
 | [`FINDINGS.md`](FINDINGS.md) | Full research log, in order, wrong turns included. Long |
+| [`docs/forum_thread_13725.txt`](docs/) | All 385 posts of the RomRaider thread this work builds on, archived |
 
 ## Contributing
 
