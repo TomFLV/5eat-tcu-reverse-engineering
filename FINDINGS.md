@@ -1687,3 +1687,99 @@ byte analysis and the service manual.
 RomRaider now lives in `romraider-5eat/` with its patches, launchers and a
 `build-standalone.sh` that reproduces the package from upstream source, and the
 58.6 MB standalone Windows package is published as release v1.0.0.
+
+---
+
+## 15. THE SHIFT SCHEDULE IS ONE SLICE OF 82 THRESHOLD CURVES (2026-07-30)
+
+### 15a. The scan
+
+`tools/scan_threshold_curves.py` looks for arrays with the full shape of a known
+shift curve: 8-byte records of 4 x uint16 terminated by a leading `0xFFFF`, field 0
+ascending from 0 and under 400 (vehicle speed km/h), field 1 ascending within 0..255
+(accelerator angle), and â€” the strongest filter â€” segments that chain, each record's
+field 2 equalling the next record's field 0.
+
+On `91D1206000` that finds **82 curves. The definition carries 8.**
+
+They fall in two regions:
+
+    0x015CA8 .. 0x0176AC    shift-schedule-shaped, in groups of eight
+    0x018060 .. 0x0192D2    a second block, paired, different pedal ladder
+
+### 15b. How they are indexed â€” mode x gear, several arrays
+
+The curves are not referenced directly in the decompilation; they are reached
+through pointer arrays. `FUN_000443d8` does:
+
+    iVar2 = iVar3 * 5 + uVar4;              // iVar3 from DAT_00804858, uVar4 = gear
+    DAT_008049e0 = (&PTR_DAT_0001a308)[iVar2 * 2];
+    DAT_008049e4 = (&PTR_DAT_0001a30c)[iVar2 * 2];
+
+So an array at `0x01A308`, two pointers per entry, indexed by `mode * 5 + gear`.
+25 entries is 200 bytes = `0xC8`, which is exactly the spacing observed between the
+pointer runs found by searching for the curve addresses as 32-bit big-endian values.
+There are therefore SEVERAL such arrays, each a full mode x gear set, plus a second
+pair of arrays at `0x01AAD8`/`0x01AADC`.
+
+A dummy pointer (`0x00019324`) fills entries that have no curve, and the code
+special-cases a few (mode, gear) combinations with hardcoded addresses rather than
+going through the array.
+
+This also confirms the earlier reading of the array at `0x17714` indexed by
+`gear * 2 + mode * 10` â€” same structure, different base. The eight curves currently
+in the definition are one (mode, condition) slice.
+
+### 15c. What the curves DO â€” shift decision, not lock-up
+
+`FUN_00040174` consumes them:
+
+    bVar1 = FUN_00045070(DAT_008049e0, 0, DAT_008047fe);   // lookup on vehicle speed
+    if ((DAT_00804879 < bVar1) || (bVar1 == 0xff))         // compare against pedal
+        *pbVar2 = *pbVar2 | 4;                             // set a flag bit
+    else
+        *pbVar2 = *pbVar2 & 0xfb;
+
+Two curves produce two flag bits (`0x02` and `0x04`) in `DAT_008054b8`, and a third
+bit (`0x01`) is then set only when neither of the first two is. `DAT_008048a5`
+selects between three variants of which curve pair to use, so it is a small state
+machine.
+
+Two threshold curves per (mode, gear), compared against pedal at the current speed,
+producing want-up / want-down flags, is the shift decision. **These are more shift
+schedules, not the torque converter lock-up.**
+
+### 15d. Lock-up: NOT FOUND YET. Do not assume the above is it.
+
+Searching for lock-up produced nothing usable:
+
+- The factory manual has one qualitative paragraph (5AT-33, "LOCK-UP FUNCTION")
+  and no schedule, thresholds or duty figures.
+- The `0x018060` paired block looked promising - pairs are what an apply/release
+  schedule looks like, and the pair sits at index 4 of its array, which is 5th gear,
+  matching lock-up being a top-gear function. But it is reached by the same
+  `mode * 5 + gear` arrays and consumed by the same shift-decision code, so the
+  pairing is up/down, not apply/release.
+
+The next probe should start from the OUTPUT, not the tables: find the code that
+drives the lock-up solenoid duty and work back to whatever curve feeds it. The
+candidates already in the definition as "Solenoid Output Curve 1-3 of 3"
+(`0x00EE30`, `0x00EE6A`, `0x00EEA4`) are worth checking first - they are in
+speed/pedal space and their consumer has not been traced.
+
+Nothing has been added to the definition for lock-up. A category named "Lock-Up"
+holding curves that turn out to be shift thresholds would be worse than no category
+at all.
+
+### 15e. The real opportunity here
+
+74 of the 82 curves are not in the definition. They are per-mode and per-condition
+shift schedules - which is to say, this transmission has several shift maps and the
+tool currently exposes one of them. Mapping the pointer arrays properly would give
+a Shift Map per mode instead of a single map, and that is a bigger win for anyone
+tuning than any remaining unit conversion.
+
+Scan any image with:
+
+    python tools/scan_threshold_curves.py rom/<image>.bin --unmapped-only
+
