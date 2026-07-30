@@ -1914,3 +1914,133 @@ instantly, and it is deliberately attached to the category rather than the table
 so changing the table's shape cannot silently drop it.
 
 1439 checks across eleven firmwares, no errors.
+
+---
+
+## 17. THE FORUM THREAD, ARCHIVED AND READ (2026-07-30)
+
+This project had one page of one thread on disk. The shift-table discussion turned
+out to be in a different thread entirely, and page 4 of it answers a question §15
+left open. `tools/fetch_forum_thread.py` now archives a whole topic to
+`docs/forum_thread_<id>.txt`; topic 13725 is all 385 posts.
+
+Two practical notes about the scraper. The board runs phpBB2, not phpBB3 - posts are
+table rows anchored by `<a name="p12345">` with the text in `<div class="postbody">`
+- and a phpBB3 parser looking for `id="p12345"` silently reports an empty thread.
+And it refuses to overwrite an existing archive with a much smaller scrape, because
+the copy of topic 20850 here is hand-curated (its CAN tables came from an attachment,
+not the post body, which is only 536 characters) and scraping it destroyed that once.
+
+### 17a. The 5 x 10 states - what all those curves ARE
+
+§15 found 82 shift-shaped curves against the 8 in the definition and could only say
+they were "per-mode and per-condition". Posts 54, 55 and 57 name them.
+
+rimwall, post 54:
+
+> Here is a teaser - the 5EAT base case shifting curves. There are 50 sets of these
+> curves. 5 different unknown states x 10 different other unknown states.
+
+rimwall, post 57, having worked one axis out:
+
+> I've worked out the 5 states relate to fuelling (CL / OL / sensor error states).
+> So the other 10 states must be the ones you have listed.
+
+Sasha_A80's list, post 55, of what the other axis is likely to be:
+
+> default / cold engine / warm engine / cold ATF / warm ATF / cold catalyst /
+> preheat catalyst / quick shift (or selector RND43L plus winter mode) / hill assist
+> ... There are 2-5 driver style adaptation levels for a part or for all variants
+> above. And for "road curveness". Kickdown redlines may be defined separately.
+
+That lines up with the decompilation. `FUN_000443d8` computes `iVar2 = iVar3 * 5 +
+gear`, where `iVar3` is 0..4 selected by comparing `DAT_00804858` against six
+constants - five states, which is rimwall's fuelling axis. The several pointer arrays
+at `0x01A308 + n * 0xC8` are then the second axis. So the definition currently ships
+one cell of a 5 x 10 grid.
+
+NOT confirmed: which condition is which. Sasha's list is a candidate list, offered as
+"there should be", and rimwall never pinned it down either. Naming a table "Cold ATF
+Shift Map" on that basis would be a guess wearing a confident label.
+
+### 17b. Pointer array addresses, cross-checked
+
+rimwall posted the shift-pointer-array address for several ROMs. Checked against the
+images rather than taken on trust:
+
+    ACD1A06000   0x180E8   CONFIRMED - 12/12 in-ROM pointers, first target 0x1683C,
+                           exactly as posted; 5 of the first 6 land on real curves
+    91D1206000   0x17714   ours, from the decompilation - same structure, first
+                           target 0x15CA8, which is the Shift 1-2 Upshift curve
+    91FE216300   0x174B4   matches an address rimwall posted without naming the ROM
+    91A0217400   0x170FC   DOES NOT match the image here. Either his dump differs
+                           from ours or the address was approximate. Not adopted.
+
+`0x17A94`, the other unattributed address, matched seven different images under the
+same test, which means the test is too permissive there rather than that the address
+is right. Recorded as unreliable, not as a finding.
+
+The useful generalisation: on every image checked, the array sits between `0x17000`
+and `0x18100` and is a run of twelve big-endian in-ROM pointers, most of which land
+on a curve. That is a much cheaper way to locate it per firmware than tracing the
+decompilation each time.
+
+### 17c. Table structure, from rimwall (post 131)
+
+> ECU - tables have a table header with number of items, data type, pointers to
+> table data. This makes the table data 'clean' (not mixed with other data)
+>
+> TCU - no table header, only a pointer to the start of the data. Some tables have
+> the number of elements at the start of the data. Other tables are terminated with
+> 0xffff to signify end of data. Arrangement of data varies. 2D table data is
+> generally intermixed (ie) x1, y1, x2, y2 and so on. 3D table data is generally
+> split into the columns (ie) d11, d12, d13, d21, d22, d23, d31, d32, d33.
+
+Independent agreement with what this project derived: the count-prefixed and
+0xFFFF-terminated formats, and the interleaved 2D layout that the `skipCells` work
+in §14b exists to read.
+
+### 17d. FP = 0x808000, independently confirmed a second time
+
+Post 22 quotes the instruction pair directly:
+
+> seth fp, #0x81 ; add3 fp, fp, #-0x8000 -> The result is FP = #0x808000
+
+§14a reached the same value by scanning every image for `LD24 R13, #imm24`. Two
+independent derivations, and the upstream Ghidra module's `0x80c000` is wrong in
+both of them.
+
+### 17e. LOCK-UP: the best lead so far, and it is not a shift table
+
+§16d had lock-up unfound. Post 125 explains why it does not look like the shift
+curves, and quotes the factory description:
+
+> the factory lock-up control is exceptionally slippy - seems to extend over a number
+> of seconds - which per FSM is 'Smooth control - In lock-up clutch engagement,
+> gradually changes pressure to provide smooth engagement.' I would say the gradual
+> is about 5 or 10 times slower than it should be. Not sure how hard it is to locate
+> those tables.
+
+So lock-up engagement is a PRESSURE RAMP over time, not a speed/pedal threshold
+polyline. That is why scanning for shift-curve-shaped arrays never found it, and it
+redirects the search: look for a time-indexed pressure or duty ramp feeding the
+lock-up solenoid, not a curve in (speed, pedal) space. rimwall had not located these
+either as of that post, so there is nothing to copy.
+
+The phrase "Smooth control" is the factory term and is worth searching a full service
+manual for; the extract in this project does not contain that section.
+
+### 17f. Other findings worth having
+
+- Line pressure (post 227): rimwall located the Engine Torque to Line Pressure
+  conversion, which "uses factors for each brake / clutch which account for the
+  number of plates in each brake/clutch". That is a separate mechanism from the kPa
+  target curves found in §14c and suggests more pressure tables exist.
+- Shift durations (posts 227, 272) are located and adjustable in his work. Not
+  mapped here.
+- Denso TCUs are a different animal: 12 table headers at `0xe9080`, each 15 x 5, and
+  a ROM integrity table at `0xffb80` of [start][end][balance] triples that must sum
+  to `0x5aa5a55a`. None of that applies to the Hitachi M32R images here.
+- Security access and the on-board kernel (post 61): CAN IDs 0x1f21 / 0x1f29, the
+  0x27 seed-key exchange, and the encryption words. Relevant to FastECU, not to this
+  definition.
