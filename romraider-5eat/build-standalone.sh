@@ -59,7 +59,21 @@ say "assembling $OUT"
 rm -rf "$OUT"; mkdir -p "$OUT"
 cp "$WORK/src/dist/RomRaider.jar" "$OUT/"
 cp -r "$WORK/src/lib/common" "$OUT/lib"
-cp -r "$WORK/src/src/main/resources/i18n" "$OUT/i18n"
+# Merge the translation bundles INTO the jar rather than shipping them beside it.
+# They live at the repo root, not under src/main/resources, and ResourceBundle looks
+# for them on the CLASSPATH - a loose directory that is not on the classpath gives
+# "Can't find bundle for base name com.romraider.ECUExec" at startup and nothing
+# else useful. Merging also survives `ant clean`, which rebuilds the jar without
+# them; the check below fails the build rather than shipping one that is missing.
+( cd "$WORK/src/i18n" && jar uf "$OUT/RomRaider.jar" . )
+
+BUNDLES=$(unzip -l "$OUT/RomRaider.jar" | grep -c '\.properties$' || true)
+if [ "$BUNDLES" -lt 50 ]; then
+    echo "ERROR: only $BUNDLES translation bundles in the jar, expected about 78." >&2
+    echo "Shipping this would fail at startup with a missing-bundle error." >&2
+    exit 1
+fi
+say "$BUNDLES translation bundles merged into the jar"
 cp "$WORK/src/LICENSE" "$OUT/license.txt" 2>/dev/null \
   || cp "$WORK/src/license.txt" "$OUT/license.txt"
 
