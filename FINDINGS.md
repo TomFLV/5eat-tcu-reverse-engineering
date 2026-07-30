@@ -2280,3 +2280,89 @@ The ramp tables are a fixed array rather than a terminated record array, so the
 validator got its own check for them: every entry readable, not all zero, and no
 0xFFFF sentinel - any of which would mean the address is wrong. 3045 checks across
 eleven firmwares, no errors.
+
+---
+
+## 21. ALL FIFTY SHIFT MODES DECODED - the 5 axis is GEAR LIMIT (2026-07-30)
+
+Section 15 found 82 shift-shaped curves against the 8 in the definition. Section 17
+learned from the thread that they are "50 sets, 5 states x 10 states". This resolves
+the structure and ships the result.
+
+### 21a. Fifty modes, ten groups of five
+
+The curves hang off a pointer array indexed `gear * 2 + direction`, ten entries per
+mode. Slots 1 and 8 are always placeholders - first gear has no downshift, fifth has
+no upshift - which is what confirms the indexing rather than assuming it.
+
+Walking past the first ten entries gives FIFTY modes, matching rimwall's "50 sets"
+exactly. They are ten groups of five, and within every group the number of live
+upshifts steps down as the mode rises, the highest one replaced by the placeholder
+each time:
+
+    limit 0   1-2, 2-3, 3-4, 4-5 live     D, all gears
+    limit 1   4-5 disabled                hold 4th
+    limit 2   3-4, 4-5 disabled           hold 3rd
+    limit 3   only 1-2 live               hold 2nd
+    limit 4   no upshifts at all          hold 1st
+
+**The five axis is manual gear limiting.** That is read off the data, not assumed:
+nothing else progressively disables upshifts from the top down, one per step, five
+times over, in every one of the ten groups.
+
+This DIFFERS from rimwall's reading, where the five were fuelling states (closed
+loop, open loop, sensor error). No contradiction is implied - his index came from a
+different array, the one at `0x01A308` computed as `iVar3 * 5 + gear` in
+`FUN_000443d8`. Two different five-way selectors exist. The one that reaches these
+curves is the gear limit.
+
+### 21b. The ten groups are the conditions, and stay unnamed
+
+Ten groups, each a complete eight-curve schedule. These are the operating
+conditions. Sasha_A80's candidate list from the thread - cold and warm engine, cold
+and warm ATF, catalyst preheat, quick shift, hill assist, driver style adaptation -
+was offered as "there should be", and neither he nor rimwall pinned any of them to a
+specific slot. They ship numbered.
+
+Naming "Shift Map 6" as "Cold ATF" on the strength of a candidate list would be a
+guess wearing a confident label, and would be the same error as the DTC table at
+0x4090.
+
+### 21c. Shipped
+
+`tools/extract_shift_modes.py` locates the pointer array by shape - ten in-ROM
+pointers where slots 1 and 8 are placeholders and the other eight are curves - which
+is specific enough to find it without tracing the decompilation per firmware. It
+independently landed on `0x180E8` for ACD1A06000, the address rimwall posted for that
+exact ROM, and on `0x174B4` for 91FE216300, another address he posted without naming
+the image.
+
+Ten complete schedules per firmware (eight on the three 512 KB calibrations), each a
+single sparse Shift Map with pedal across, shift event down, km/h in the cells - the
+same form as before, ten times over. The gear-limited variants are not listed
+separately because they reuse these curves with the upper upshifts disabled.
+
+    91D1206000  10 maps      ACD1207000   8 maps
+    91FE216300  10           ADE0236000   8
+    91D0207500  10           ACD1A06000   8
+    91F0217100  10
+    ABD1A03100  10
+    91D1207900  10
+    AAD1A07100  10
+    ABD1207000  10
+
+Verified through RomRaider's own parser: 124 3D tables on the base ROM, 2994 cells,
+zero mismatches. Validator at 3324 checks across eleven firmwares, no errors.
+
+### 21d. Lock-up: a third lead eliminated
+
+The output-first approach did not work either. The only hardware registers the
+decompilation names in the SFR range are `0x8007EA` through `0x8007F2`, which is the
+Interrupt Controller - the same block this project once misidentified as a solenoid
+PWM bank. The M32R processor module does not name the timer registers that would
+actually drive a solenoid, so there is nothing to search for by name.
+
+Three leads eliminated so far: the paired curve block at `0x018060` (shift decision),
+the timed pressure ramp at `0x12034` (downshift control), and the SFR search. What
+remains is to name the MJT timer registers in the processor module and work forward
+from the output, which is a bigger piece of work than any of the above.

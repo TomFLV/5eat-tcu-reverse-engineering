@@ -1,0 +1,3916 @@
+{
+ "91D0207500": {
+  "array": 97748,
+  "groups": [
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 89576,
+      "rows": 10
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 89658,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 89692,
+      "rows": 10
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 89774,
+      "rows": 12
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 89872,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 89938,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 90004,
+      "rows": 11
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 90094,
+      "rows": 13
+     }
+    },
+    "mode": 0
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 90312,
+      "rows": 11
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 90402,
+      "rows": 5
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 90444,
+      "rows": 12
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 90542,
+      "rows": 12
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 90640,
+      "rows": 12
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 90738,
+      "rows": 12
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 90836,
+      "rows": 12
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 90934,
+      "rows": 13
+     }
+    },
+    "mode": 5
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 91152,
+      "rows": 11
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 91242,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 91292,
+      "rows": 12
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 91390,
+      "rows": 12
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 91488,
+      "rows": 12
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 91586,
+      "rows": 12
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 91684,
+      "rows": 12
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 91782,
+      "rows": 13
+     }
+    },
+    "mode": 10
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 92000,
+      "rows": 11
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92090,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92140,
+      "rows": 12
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92238,
+      "rows": 12
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92336,
+      "rows": 12
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 92434,
+      "rows": 12
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 92532,
+      "rows": 12
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 92630,
+      "rows": 13
+     }
+    },
+    "mode": 15
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 92848,
+      "rows": 2
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92866,
+      "rows": 2
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92884,
+      "rows": 2
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92902,
+      "rows": 2
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92920,
+      "rows": 2
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 92938,
+      "rows": 2
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 92956,
+      "rows": 2
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 92974,
+      "rows": 2
+     }
+    },
+    "mode": 20
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93568,
+      "rows": 10
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93650,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93684,
+      "rows": 10
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 93766,
+      "rows": 12
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 93864,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93930,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93996,
+      "rows": 11
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 94086,
+      "rows": 13
+     }
+    },
+    "mode": 25
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 94760,
+      "rows": 10
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 94842,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 94900,
+      "rows": 12
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 94998,
+      "rows": 12
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 95096,
+      "rows": 12
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 95194,
+      "rows": 12
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 95292,
+      "rows": 12
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 95390,
+      "rows": 12
+     }
+    },
+    "mode": 30
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 95600,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 95666,
+      "rows": 5
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 95708,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 95774,
+      "rows": 12
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 95872,
+      "rows": 12
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 95970,
+      "rows": 12
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 96068,
+      "rows": 12
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 96166,
+      "rows": 13
+     }
+    },
+    "mode": 35
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 96384,
+      "rows": 2
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 96402,
+      "rows": 2
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 96420,
+      "rows": 2
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 96438,
+      "rows": 2
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 96456,
+      "rows": 2
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 96474,
+      "rows": 2
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 96492,
+      "rows": 2
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 96510,
+      "rows": 2
+     }
+    },
+    "mode": 40
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 97104,
+      "rows": 6
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 97154,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 97180,
+      "rows": 6
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 97230,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 97288,
+      "rows": 6
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 97338,
+      "rows": 6
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 97388,
+      "rows": 6
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 97438,
+      "rows": 7
+     }
+    },
+    "mode": 45
+   }
+  ],
+  "modes": 50
+ },
+ "91D1206000": {
+  "array": 96020,
+  "groups": [
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 89256,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 89322,
+      "rows": 5
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 89364,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 89430,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 89488,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 89562,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 89628,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 89702,
+      "rows": 11
+     }
+    },
+    "mode": 0
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 89904,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 89978,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 90028,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 90102,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 90160,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 90226,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 90292,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 90374,
+      "rows": 11
+     }
+    },
+    "mode": 5
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 90576,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 90650,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 90700,
+      "rows": 10
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 90782,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 90840,
+      "rows": 11
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 90930,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 90996,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 91078,
+      "rows": 11
+     }
+    },
+    "mode": 10
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 91280,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 91354,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 91404,
+      "rows": 10
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 91486,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 91544,
+      "rows": 11
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 91634,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 91700,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 91782,
+      "rows": 11
+     }
+    },
+    "mode": 15
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 91984,
+      "rows": 2
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92002,
+      "rows": 2
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92020,
+      "rows": 2
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92038,
+      "rows": 2
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92056,
+      "rows": 2
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 92074,
+      "rows": 2
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 92092,
+      "rows": 2
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 92110,
+      "rows": 2
+     }
+    },
+    "mode": 20
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 92624,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92690,
+      "rows": 5
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92732,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92798,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92856,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 92930,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 92996,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93070,
+      "rows": 11
+     }
+    },
+    "mode": 25
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93272,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93346,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93396,
+      "rows": 10
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 93478,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 93536,
+      "rows": 10
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93618,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93684,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93766,
+      "rows": 11
+     }
+    },
+    "mode": 30
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93968,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 94042,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 94092,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 94166,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 94224,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 94290,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 94356,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 94438,
+      "rows": 11
+     }
+    },
+    "mode": 35
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 94640,
+      "rows": 2
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 94658,
+      "rows": 2
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 94676,
+      "rows": 2
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 94694,
+      "rows": 2
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 94712,
+      "rows": 2
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 94730,
+      "rows": 2
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 94748,
+      "rows": 2
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 94766,
+      "rows": 2
+     }
+    },
+    "mode": 40
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 95280,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 95346,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 95380,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 95446,
+      "rows": 8
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 95512,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 95578,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 95644,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 95710,
+      "rows": 9
+     }
+    },
+    "mode": 45
+   }
+  ],
+  "modes": 50
+ },
+ "91D1207900": {
+  "array": 96296,
+  "groups": [
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 89516,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 89582,
+      "rows": 5
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 89624,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 89690,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 89748,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 89822,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 89888,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 89962,
+      "rows": 11
+     }
+    },
+    "mode": 0
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 90164,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 90238,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 90288,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 90362,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 90420,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 90486,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 90552,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 90634,
+      "rows": 11
+     }
+    },
+    "mode": 5
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 90836,
+      "rows": 10
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 90918,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 90968,
+      "rows": 10
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 91050,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 91108,
+      "rows": 11
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 91198,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 91264,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 91346,
+      "rows": 11
+     }
+    },
+    "mode": 10
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 91548,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 91622,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 91672,
+      "rows": 10
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 91754,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 91812,
+      "rows": 11
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 91902,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 91968,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 92050,
+      "rows": 11
+     }
+    },
+    "mode": 15
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 92252,
+      "rows": 2
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92270,
+      "rows": 2
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92288,
+      "rows": 2
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92306,
+      "rows": 2
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92324,
+      "rows": 2
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 92342,
+      "rows": 2
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 92360,
+      "rows": 2
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 92378,
+      "rows": 2
+     }
+    },
+    "mode": 20
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 92892,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92958,
+      "rows": 5
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93000,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 93066,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 93124,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93198,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93264,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93338,
+      "rows": 11
+     }
+    },
+    "mode": 25
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93540,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93614,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93664,
+      "rows": 10
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 93746,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 93804,
+      "rows": 10
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93886,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93952,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 94034,
+      "rows": 11
+     }
+    },
+    "mode": 30
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 94236,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 94310,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 94360,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 94434,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 94492,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 94558,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 94624,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 94706,
+      "rows": 11
+     }
+    },
+    "mode": 35
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 94908,
+      "rows": 2
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 94926,
+      "rows": 2
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 94944,
+      "rows": 2
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 94962,
+      "rows": 2
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 94980,
+      "rows": 2
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 94998,
+      "rows": 2
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 95016,
+      "rows": 2
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 95034,
+      "rows": 2
+     }
+    },
+    "mode": 40
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 95556,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 95622,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 95656,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 95722,
+      "rows": 8
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 95788,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 95854,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 95920,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 95986,
+      "rows": 9
+     }
+    },
+    "mode": 45
+   }
+  ],
+  "modes": 50
+ },
+ "91F0217100": {
+  "array": 95992,
+  "groups": [
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 89676,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 89750,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 89776,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 89850,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 89884,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 89958,
+      "rows": 5
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 90000,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 90074,
+      "rows": 5
+     }
+    },
+    "mode": 0
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 90228,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 90302,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 90328,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 90402,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 90436,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 90510,
+      "rows": 5
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 90552,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 90626,
+      "rows": 5
+     }
+    },
+    "mode": 5
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 90780,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 90846,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 90872,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 90938,
+      "rows": 5
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 90980,
+      "rows": 6
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 91030,
+      "rows": 5
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 91072,
+      "rows": 5
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 91114,
+      "rows": 5
+     }
+    },
+    "mode": 10
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 91268,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 91334,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 91360,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 91426,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 91460,
+      "rows": 6
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 91510,
+      "rows": 4
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 91544,
+      "rows": 6
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 91594,
+      "rows": 5
+     }
+    },
+    "mode": 15
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 91748,
+      "rows": 2
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 91766,
+      "rows": 2
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 91784,
+      "rows": 2
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 91802,
+      "rows": 2
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 91820,
+      "rows": 2
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 91838,
+      "rows": 2
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 91856,
+      "rows": 2
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 91874,
+      "rows": 2
+     }
+    },
+    "mode": 20
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 92468,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92542,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92576,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92650,
+      "rows": 10
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92732,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 92798,
+      "rows": 9
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 92872,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 92954,
+      "rows": 13
+     }
+    },
+    "mode": 25
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93588,
+      "rows": 6
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93638,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93664,
+      "rows": 5
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 93706,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 93740,
+      "rows": 4
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93774,
+      "rows": 5
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93816,
+      "rows": 7
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93874,
+      "rows": 5
+     }
+    },
+    "mode": 30
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 94028,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 94102,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 94128,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 94202,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 94236,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 94310,
+      "rows": 5
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 94352,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 94426,
+      "rows": 5
+     }
+    },
+    "mode": 35
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 94580,
+      "rows": 2
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 94598,
+      "rows": 2
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 94616,
+      "rows": 2
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 94634,
+      "rows": 2
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 94652,
+      "rows": 2
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 94670,
+      "rows": 2
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 94688,
+      "rows": 2
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 94706,
+      "rows": 2
+     }
+    },
+    "mode": 40
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 95300,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 95374,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 95400,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 95474,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 95508,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 95582,
+      "rows": 5
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 95624,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 95698,
+      "rows": 5
+     }
+    },
+    "mode": 45
+   }
+  ],
+  "modes": 50
+ },
+ "91FE216300": {
+  "array": 95412,
+  "groups": [
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 89840,
+      "rows": 7
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 89898,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 89932,
+      "rows": 7
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 89990,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 90024,
+      "rows": 7
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 90082,
+      "rows": 4
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 90116,
+      "rows": 7
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 90174,
+      "rows": 4
+     }
+    },
+    "mode": 0
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 90320,
+      "rows": 7
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 90378,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 90412,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 90478,
+      "rows": 5
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 90520,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 90586,
+      "rows": 4
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 90620,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 90686,
+      "rows": 8
+     }
+    },
+    "mode": 5
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 90864,
+      "rows": 6
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 90914,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 90948,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 91014,
+      "rows": 5
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 91056,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 91122,
+      "rows": 5
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 91164,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 91230,
+      "rows": 8
+     }
+    },
+    "mode": 10
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 91408,
+      "rows": 7
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 91466,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 91500,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 91574,
+      "rows": 5
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 91616,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 91690,
+      "rows": 5
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 91732,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 91806,
+      "rows": 8
+     }
+    },
+    "mode": 15
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 91984,
+      "rows": 2
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92002,
+      "rows": 2
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92020,
+      "rows": 2
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92038,
+      "rows": 2
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92056,
+      "rows": 2
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 92074,
+      "rows": 2
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 92092,
+      "rows": 2
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 92110,
+      "rows": 2
+     }
+    },
+    "mode": 20
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 92624,
+      "rows": 7
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92682,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92716,
+      "rows": 7
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92774,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92808,
+      "rows": 7
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 92866,
+      "rows": 4
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 92900,
+      "rows": 7
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 92958,
+      "rows": 4
+     }
+    },
+    "mode": 25
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93104,
+      "rows": 4
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93138,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93164,
+      "rows": 7
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 93222,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 93256,
+      "rows": 7
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93314,
+      "rows": 4
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93348,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93414,
+      "rows": 8
+     }
+    },
+    "mode": 30
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93592,
+      "rows": 7
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93650,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93684,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 93750,
+      "rows": 5
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 93792,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93858,
+      "rows": 4
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93892,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93958,
+      "rows": 8
+     }
+    },
+    "mode": 35
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 94136,
+      "rows": 2
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 94154,
+      "rows": 2
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 94172,
+      "rows": 2
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 94190,
+      "rows": 2
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 94208,
+      "rows": 2
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 94226,
+      "rows": 2
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 94244,
+      "rows": 2
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 94262,
+      "rows": 2
+     }
+    },
+    "mode": 40
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 94808,
+      "rows": 7
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 94866,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 94900,
+      "rows": 7
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 94958,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 94992,
+      "rows": 7
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 95050,
+      "rows": 4
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 95084,
+      "rows": 7
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 95142,
+      "rows": 4
+     }
+    },
+    "mode": 45
+   }
+  ],
+  "modes": 50
+ },
+ "AAD1A07100": {
+  "array": 96940,
+  "groups": [
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 90000,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 90066,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 90100,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 90166,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 90224,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 90298,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 90364,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 90438,
+      "rows": 11
+     }
+    },
+    "mode": 0
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 90640,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 90714,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 90764,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 90838,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 90896,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 90962,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 91028,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 91110,
+      "rows": 11
+     }
+    },
+    "mode": 5
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 91312,
+      "rows": 5
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 91354,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 91412,
+      "rows": 7
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 91470,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 91528,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 91594,
+      "rows": 9
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 91668,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 91734,
+      "rows": 11
+     }
+    },
+    "mode": 10
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 91936,
+      "rows": 5
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 91978,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92036,
+      "rows": 7
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92094,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92152,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 92218,
+      "rows": 9
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 92292,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 92358,
+      "rows": 11
+     }
+    },
+    "mode": 15
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 92560,
+      "rows": 2
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92578,
+      "rows": 2
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92596,
+      "rows": 2
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92614,
+      "rows": 2
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92632,
+      "rows": 2
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 92650,
+      "rows": 2
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 92668,
+      "rows": 2
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 92686,
+      "rows": 2
+     }
+    },
+    "mode": 20
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93200,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93266,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93300,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 93366,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 93424,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93498,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93564,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93638,
+      "rows": 11
+     }
+    },
+    "mode": 25
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 94232,
+      "rows": 6
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 94282,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 94340,
+      "rows": 6
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 94390,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 94448,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 94514,
+      "rows": 10
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 94596,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 94678,
+      "rows": 10
+     }
+    },
+    "mode": 30
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 94872,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 94946,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 94996,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 95070,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 95128,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 95194,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 95260,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 95342,
+      "rows": 11
+     }
+    },
+    "mode": 35
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 95544,
+      "rows": 2
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 95562,
+      "rows": 2
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 95580,
+      "rows": 2
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 95598,
+      "rows": 2
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 95616,
+      "rows": 2
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 95634,
+      "rows": 2
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 95652,
+      "rows": 2
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 95670,
+      "rows": 2
+     }
+    },
+    "mode": 40
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 96216,
+      "rows": 7
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 96274,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 96300,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 96366,
+      "rows": 8
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 96432,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 96498,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 96564,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 96630,
+      "rows": 9
+     }
+    },
+    "mode": 45
+   }
+  ],
+  "modes": 50
+ },
+ "ABD1207000": {
+  "array": 98204,
+  "groups": [
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 91200,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 91266,
+      "rows": 5
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 91308,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 91374,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 91432,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 91506,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 91572,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 91646,
+      "rows": 11
+     }
+    },
+    "mode": 0
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 91848,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 91922,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 91972,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92046,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92104,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 92170,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 92236,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 92318,
+      "rows": 11
+     }
+    },
+    "mode": 5
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 92520,
+      "rows": 5
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92562,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92620,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92686,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92744,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 92810,
+      "rows": 9
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 92884,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 92950,
+      "rows": 11
+     }
+    },
+    "mode": 10
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93152,
+      "rows": 5
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93194,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93252,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 93318,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 93376,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93442,
+      "rows": 9
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93516,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93582,
+      "rows": 11
+     }
+    },
+    "mode": 15
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93784,
+      "rows": 2
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93802,
+      "rows": 2
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93820,
+      "rows": 2
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 93838,
+      "rows": 2
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 93856,
+      "rows": 2
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93874,
+      "rows": 2
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93892,
+      "rows": 2
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93910,
+      "rows": 2
+     }
+    },
+    "mode": 20
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 94424,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 94490,
+      "rows": 5
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 94532,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 94598,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 94656,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 94730,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 94796,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 94870,
+      "rows": 11
+     }
+    },
+    "mode": 25
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 95472,
+      "rows": 6
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 95522,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 95580,
+      "rows": 7
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 95638,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 95696,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 95762,
+      "rows": 10
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 95844,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 95926,
+      "rows": 10
+     }
+    },
+    "mode": 30
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 96120,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 96194,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 96244,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 96318,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 96376,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 96442,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 96508,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 96590,
+      "rows": 11
+     }
+    },
+    "mode": 35
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 96792,
+      "rows": 2
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 96810,
+      "rows": 2
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 96828,
+      "rows": 2
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 96846,
+      "rows": 2
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 96864,
+      "rows": 2
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 96882,
+      "rows": 2
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 96900,
+      "rows": 2
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 96918,
+      "rows": 2
+     }
+    },
+    "mode": 40
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 97464,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 97530,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 97564,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 97630,
+      "rows": 8
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 97696,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 97762,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 97828,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 97894,
+      "rows": 9
+     }
+    },
+    "mode": 45
+   }
+  ],
+  "modes": 50
+ },
+ "ABD1A03100": {
+  "array": 98140,
+  "groups": [
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 91200,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 91266,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 91300,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 91366,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 91424,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 91498,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 91564,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 91638,
+      "rows": 11
+     }
+    },
+    "mode": 0
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 91840,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 91914,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 91964,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92038,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92096,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 92162,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 92228,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 92310,
+      "rows": 11
+     }
+    },
+    "mode": 5
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 92512,
+      "rows": 5
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92554,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92612,
+      "rows": 7
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92670,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92728,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 92794,
+      "rows": 9
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 92868,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 92934,
+      "rows": 11
+     }
+    },
+    "mode": 10
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93136,
+      "rows": 5
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93178,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93236,
+      "rows": 7
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 93294,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 93352,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93418,
+      "rows": 9
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93492,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93558,
+      "rows": 11
+     }
+    },
+    "mode": 15
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93760,
+      "rows": 2
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93778,
+      "rows": 2
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93796,
+      "rows": 2
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 93814,
+      "rows": 2
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 93832,
+      "rows": 2
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93850,
+      "rows": 2
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93868,
+      "rows": 2
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93886,
+      "rows": 2
+     }
+    },
+    "mode": 20
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 94400,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 94466,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 94500,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 94566,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 94624,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 94698,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 94764,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 94838,
+      "rows": 11
+     }
+    },
+    "mode": 25
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 95432,
+      "rows": 6
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 95482,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 95540,
+      "rows": 6
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 95590,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 95648,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 95714,
+      "rows": 10
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 95796,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 95878,
+      "rows": 10
+     }
+    },
+    "mode": 30
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 96072,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 96146,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 96196,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 96270,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 96328,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 96394,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 96460,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 96542,
+      "rows": 11
+     }
+    },
+    "mode": 35
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 96744,
+      "rows": 2
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 96762,
+      "rows": 2
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 96780,
+      "rows": 2
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 96798,
+      "rows": 2
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 96816,
+      "rows": 2
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 96834,
+      "rows": 2
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 96852,
+      "rows": 2
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 96870,
+      "rows": 2
+     }
+    },
+    "mode": 40
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 97416,
+      "rows": 7
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 97474,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 97500,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 97566,
+      "rows": 8
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 97632,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 97698,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 97764,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 97830,
+      "rows": 9
+     }
+    },
+    "mode": 45
+   }
+  ],
+  "modes": 50
+ },
+ "ACD1207000": {
+  "array": 98544,
+  "groups": [
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 92220,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92286,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92320,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92386,
+      "rows": 5
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92428,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 92502,
+      "rows": 5
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 92544,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 92618,
+      "rows": 5
+     }
+    },
+    "mode": 0
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 92772,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92838,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92864,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92930,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92964,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93030,
+      "rows": 4
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93064,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93146,
+      "rows": 4
+     }
+    },
+    "mode": 5
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93292,
+      "rows": 5
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93334,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93392,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 93458,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 93492,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93558,
+      "rows": 4
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93592,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93658,
+      "rows": 11
+     }
+    },
+    "mode": 10
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93860,
+      "rows": 5
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93902,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93960,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 94026,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 94060,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 94126,
+      "rows": 4
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 94160,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 94226,
+      "rows": 11
+     }
+    },
+    "mode": 15
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 95148,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 95214,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 95248,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 95314,
+      "rows": 5
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 95356,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 95430,
+      "rows": 5
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 95472,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 95546,
+      "rows": 5
+     }
+    },
+    "mode": 25
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 96052,
+      "rows": 5
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 96094,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 96152,
+      "rows": 6
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 96202,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 96260,
+      "rows": 6
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 96310,
+      "rows": 10
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 96392,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 96458,
+      "rows": 10
+     }
+    },
+    "mode": 30
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 96652,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 96726,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 96776,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 96850,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 96908,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 96974,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 97040,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 97122,
+      "rows": 11
+     }
+    },
+    "mode": 35
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 98044,
+      "rows": 4
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 98078,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 98104,
+      "rows": 5
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 98146,
+      "rows": 3
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 98172,
+      "rows": 5
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 98214,
+      "rows": 3
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 98240,
+      "rows": 5
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 98282,
+      "rows": 3
+     }
+    },
+    "mode": 45
+   }
+  ],
+  "modes": 50
+ },
+ "ACD1A06000": {
+  "array": 98536,
+  "groups": [
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 92220,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92286,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92320,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92386,
+      "rows": 5
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92428,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 92502,
+      "rows": 5
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 92544,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 92618,
+      "rows": 5
+     }
+    },
+    "mode": 0
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 92772,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92838,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92864,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92930,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92964,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93030,
+      "rows": 4
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93064,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93146,
+      "rows": 4
+     }
+    },
+    "mode": 5
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93292,
+      "rows": 5
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93334,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93392,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 93458,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 93492,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93558,
+      "rows": 4
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93592,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93658,
+      "rows": 11
+     }
+    },
+    "mode": 10
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93860,
+      "rows": 5
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93902,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93960,
+      "rows": 7
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 94018,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 94052,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 94118,
+      "rows": 4
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 94152,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 94218,
+      "rows": 11
+     }
+    },
+    "mode": 15
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 95140,
+      "rows": 8
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 95206,
+      "rows": 4
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 95240,
+      "rows": 8
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 95306,
+      "rows": 5
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 95348,
+      "rows": 9
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 95422,
+      "rows": 5
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 95464,
+      "rows": 9
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 95538,
+      "rows": 5
+     }
+    },
+    "mode": 25
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 96044,
+      "rows": 5
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 96086,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 96144,
+      "rows": 6
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 96194,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 96252,
+      "rows": 6
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 96302,
+      "rows": 10
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 96384,
+      "rows": 8
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 96450,
+      "rows": 10
+     }
+    },
+    "mode": 30
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 96644,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 96718,
+      "rows": 6
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 96768,
+      "rows": 9
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 96842,
+      "rows": 7
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 96900,
+      "rows": 8
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 96966,
+      "rows": 8
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 97032,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 97114,
+      "rows": 11
+     }
+    },
+    "mode": 35
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 98036,
+      "rows": 4
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 98070,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 98096,
+      "rows": 5
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 98138,
+      "rows": 3
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 98164,
+      "rows": 5
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 98206,
+      "rows": 3
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 98232,
+      "rows": 5
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 98274,
+      "rows": 3
+     }
+    },
+    "mode": 45
+   }
+  ],
+  "modes": 50
+ },
+ "ADE0236000": {
+  "array": 98524,
+  "groups": [
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 92856,
+      "rows": 4
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 92890,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 92916,
+      "rows": 5
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 92958,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 92992,
+      "rows": 5
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93034,
+      "rows": 5
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93076,
+      "rows": 5
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93118,
+      "rows": 5
+     }
+    },
+    "mode": 0
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93272,
+      "rows": 6
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93322,
+      "rows": 5
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93364,
+      "rows": 6
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 93414,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 93448,
+      "rows": 6
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93498,
+      "rows": 4
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93532,
+      "rows": 6
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 93582,
+      "rows": 3
+     }
+    },
+    "mode": 5
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 93720,
+      "rows": 4
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 93754,
+      "rows": 5
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 93796,
+      "rows": 6
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 93846,
+      "rows": 5
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 93888,
+      "rows": 6
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 93938,
+      "rows": 6
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 93988,
+      "rows": 6
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 94038,
+      "rows": 7
+     }
+    },
+    "mode": 10
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 94208,
+      "rows": 4
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 94242,
+      "rows": 5
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 94284,
+      "rows": 6
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 94334,
+      "rows": 5
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 94376,
+      "rows": 6
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 94426,
+      "rows": 6
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 94476,
+      "rows": 6
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 94526,
+      "rows": 7
+     }
+    },
+    "mode": 15
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 95416,
+      "rows": 4
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 95450,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 95476,
+      "rows": 5
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 95518,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 95552,
+      "rows": 5
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 95594,
+      "rows": 5
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 95636,
+      "rows": 5
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 95678,
+      "rows": 5
+     }
+    },
+    "mode": 25
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 96080,
+      "rows": 9
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 96154,
+      "rows": 7
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 96212,
+      "rows": 10
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 96294,
+      "rows": 13
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 96400,
+      "rows": 10
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 96482,
+      "rows": 12
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 96580,
+      "rows": 10
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 96662,
+      "rows": 12
+     }
+    },
+    "mode": 30
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 96872,
+      "rows": 4
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 96906,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 96932,
+      "rows": 5
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 96974,
+      "rows": 4
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 97008,
+      "rows": 5
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 97050,
+      "rows": 5
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 97092,
+      "rows": 5
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 97134,
+      "rows": 5
+     }
+    },
+    "mode": 35
+   },
+   {
+    "curves": {
+     "Shift 1-2 Upshift Curve": {
+      "addr": 98008,
+      "rows": 4
+     },
+     "Shift 2-1 Downshift Curve": {
+      "addr": 98042,
+      "rows": 3
+     },
+     "Shift 2-3 Upshift Curve": {
+      "addr": 98068,
+      "rows": 4
+     },
+     "Shift 3-2 Downshift Curve": {
+      "addr": 98102,
+      "rows": 3
+     },
+     "Shift 3-4 Upshift Curve": {
+      "addr": 98128,
+      "rows": 4
+     },
+     "Shift 4-3 Downshift Curve": {
+      "addr": 98162,
+      "rows": 4
+     },
+     "Shift 4-5 Upshift Curve": {
+      "addr": 98196,
+      "rows": 5
+     },
+     "Shift 5-4 Downshift Curve": {
+      "addr": 98238,
+      "rows": 4
+     }
+    },
+    "mode": 45
+   }
+  ],
+  "modes": 50
+ }
+}

@@ -697,6 +697,25 @@ def build_record_tables_xml(name, category, addr, rows, quantities, desc,
     return "\n".join(out)
 
 
+# Every shift schedule in the ROM, not just the first.
+#
+# The curves hang off a pointer array indexed as gear * 2 + direction, ten entries
+# per mode. Walking past the first ten shows FIFTY modes - which is the "50 sets"
+# rimwall reported in the forum thread - organised as ten groups of five.
+#
+# Within each group the live upshifts step down 4, 3, 2, 1, 0 as the mode rises, the
+# highest one being replaced by a placeholder each time. That is manual gear
+# limiting: D, hold 4th, hold 3rd, hold 2nd, hold 1st. It is read off the data, not
+# assumed - no fuelling or temperature state would progressively disable upshifts
+# from the top down. Note this differs from rimwall's reading, where the five were
+# fuelling states; his index came from a different array.
+#
+# The ten GROUPS are the operating conditions, and they are NOT named. Sasha_A80's
+# candidate list in the thread - cold and warm engine, cold and warm ATF, catalyst
+# preheat, quick shift, hill assist - was offered as "there should be", and nobody
+# established which is which. They are numbered rather than guessed at.
+SHIFT_MODES = json.load(open(os.path.join(here, "shift_modes.json")))
+
 SHIFT_ORDER = [
     ("Shift 1-2 Upshift Curve", "1-2 Up"),
     ("Shift 2-3 Upshift Curve", "2-3 Up"),
@@ -731,7 +750,7 @@ SHIFT_MAP_DESC = (
 )
 
 
-def build_shift_map_xml(curves, u16_at):
+def build_shift_map_xml(curves, u16_at, suffix=None, total=1):
     """All eight shift curves as ONE sparse 3D table.
 
     X axis is the pedal positions this firmware actually uses: the union of every
@@ -774,8 +793,20 @@ def build_shift_map_xml(curves, u16_at):
             + '   <table type="Static Y Axis" name="Shift" sizey="%d">%s%s%s   </table>'
             % (len(present), nl, ys, nl))
 
+    name = "Shift Map" if suffix is None else "Shift Map %d of %d" % (suffix, total)
+    extra = "" if suffix is None else (
+        "\n\nThis is schedule %d of %d in this ROM. The transmission carries several "
+        "complete shift schedules and switches between them by operating condition - "
+        "the thread that this work builds on lists cold and warm engine, cold and warm "
+        "ATF, catalyst preheat, quick shift and hill assist as the likely candidates, "
+        "but WHICH condition selects WHICH schedule has not been established, so they "
+        "are numbered rather than named. Schedule 1 is the one this definition shipped "
+        "on its own before the others were found.\n\nEach schedule also has four "
+        "gear-limited variants for manual mode, which reuse these same curves with the "
+        "upper upshifts disabled, so they are not listed separately."
+        % (suffix, total))
     return (
-        '  <table type="3D" name="Shift Map" category="Transmission - Shift Schedule"'
+        '  <table type="3D" name="%s" category="Transmission - Shift Schedule"'
         ' storageaddress="0x%06X" storagetype="uint16" endian="big" sizex="%d"'
         ' sizey="%d" cellIndices="%s" userlevel="1">%s'
         '   <scaling units="%s" expression="%s" to_byte="%s" format="%s"'
@@ -783,12 +814,12 @@ def build_shift_map_xml(curves, u16_at):
         '%s%s'
         '   <description>%s</description>%s'
         '  </table>'
-        % (base, len(pedals), len(present),
+        % (escape(name), base, len(pedals), len(present),
            ",".join(str(i) for i in indices), nl,
            escape(Q_SPEED["units"]), Q_SPEED["expression"], Q_SPEED["to_byte"],
            Q_SPEED["format"], Q_SPEED["fine"], Q_SPEED["coarse"], nl,
            axes, nl,
-           escape(SHIFT_MAP_DESC), nl))
+           escape(SHIFT_MAP_DESC + extra), nl))
 
 
 # ---------------------------------------------------------------------------
@@ -1649,13 +1680,28 @@ def build_rom_block(profile, rom_bytes, is_base):
             # One table, not one per curve. Eight strips of numbers was the single
             # most-reported problem with this definition; the shift schedule is one
             # thing and belongs in one table.
-            shift_map = build_shift_map_xml(curves, u16)
-            if shift_map is None:
-                raise SystemExit(f"{profile['id']}: shift curves present but the "
-                                 f"map could not be built")
-            parts.append(shift_map)
-            parts.append("")
-            total += 1
+            modes = SHIFT_MODES.get(profile["id"])
+            groups = modes["groups"] if modes else []
+            if groups:
+                # One complete schedule per operating condition. Condition 1 is the
+                # one this definition used to ship on its own.
+                for n, g in enumerate(groups, 1):
+                    m = build_shift_map_xml(g["curves"], u16, suffix=n,
+                                            total=len(groups))
+                    if m is None:
+                        raise SystemExit(f"{profile['id']}: condition {n} map "
+                                         f"could not be built")
+                    parts.append(m)
+                    parts.append("")
+                    total += 1
+            else:
+                shift_map = build_shift_map_xml(curves, u16)
+                if shift_map is None:
+                    raise SystemExit(f"{profile['id']}: shift curves present but the "
+                                     f"map could not be built")
+                parts.append(shift_map)
+                parts.append("")
+                total += 1
 
         dsp = DOWNSHIFT_PRESSURE.get(profile["id"])
         if dsp:
