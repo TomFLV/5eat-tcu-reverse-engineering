@@ -120,7 +120,7 @@ come from this group.
 
 Two complementary methods, both needed.
 
-**Pattern scanning** (`tools/extract_tables.py`) finds format-1 candidates by
+**Pattern scanning** finds format-1 candidates by
 looking for a plausible count followed by a monotonic axis. This yields 307
 candidates across the ROM, most of which are coincidence. Cross-referencing against
 32-bit absolute pointers elsewhere in the ROM narrows it to 38 high-confidence hits.

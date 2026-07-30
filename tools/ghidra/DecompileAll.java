@@ -18,7 +18,7 @@ public class DecompileAll extends GhidraScript {
         decomp.openProgram(currentProgram);
 
         FunctionManager fm = currentProgram.getFunctionManager();
-        String outPath = "/home/rust/full_decompile.c";
+        String outPath = "/home/rust/5eat/decomp_rw/AAD1A06000.c";
         PrintWriter out = new PrintWriter(new FileWriter(outPath));
 
         FunctionIterator fit = fm.getFunctions(true);

@@ -1,0 +1,37 @@
+Licensing for this directory
+============================
+
+The rest of this repository is MIT licensed (see ../LICENSE). This directory is
+NOT, and cannot be.
+
+`patches/jdk21-build.patch` and `patches/romraider-5eat.patch` are diffs against
+RomRaider, which is licensed GPL-2.0. They quote RomRaider's own source in their
+context lines, and the code they add becomes part of RomRaider when applied. They
+are therefore a derivative work of a GPL-2.0 program, and they are distributed
+under the **GNU General Public License version 2 or later**, the same terms as
+RomRaider itself.
+
+The same applies to any binary built from them, including the standalone package
+published on the Releases page. Its `license.txt` is RomRaider's GPL-2.0 text.
+
+    RomRaider - https://github.com/RomRaider/RomRaider
+    Copyright the RomRaider contributors
+    Licensed under the GNU General Public License v2.0 or later
+
+This is not a formality. If you redistribute the built package, GPL-2.0 requires
+you to make the corresponding source available. That is satisfied by the patches in
+this directory together with the pinned upstream revision recorded in
+`build-standalone.sh`, which is why the revision is pinned rather than tracking
+master.
+
+What is covered by which licence:
+
+| Path | Licence |
+|---|---|
+| `patches/*.patch` | GPL-2.0-or-later (derivative of RomRaider) |
+| the built application | GPL-2.0-or-later |
+| `build-standalone.sh`, `README.md`, `log4j.properties` | MIT, as the rest of the repo |
+| the bundled Java runtime | GPL-2.0 with Classpath Exception (Eclipse Temurin) |
+| the ROM images shipped in the package | Subaru/FHI firmware, not mine, no rights claimed |
+
+Full GPL-2.0 text: https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt

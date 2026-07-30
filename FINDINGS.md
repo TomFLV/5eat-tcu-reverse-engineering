@@ -1783,3 +1783,26 @@ Scan any image with:
 
     python tools/scan_threshold_curves.py rom/<image>.bin --unmapped-only
 
+
+### 15f. Repo tidy - the exploratory scripts were removed
+
+The one-off probes cited in earlier sections are no longer in `tools/`:
+`scan_rom.py`, `find_tables.py`, `extract_tables.py`, `find_checksum.py`, twelve
+single-question Ghidra dump scripts, and `romraider-cli/DefCheck.java`.
+
+Each answered one question that is now written up here, and each was hardcoded to a
+single ROM. `DefCheck` in particular had to go: it reported "0 faulty" without ever
+calling `populateTables`, so its result meant nothing, and a tool that reports
+success without checking anything is worse than no tool. `Verify3D` replaced it and
+reads the actual bytes.
+
+What remains is the reproducible pipeline - generator, validator, checksum tool, the
+two scanners, the plotter, and the two Ghidra scripts the decompilation actually runs
+(`SeedAuto.java`, `DecompileAll.java`) plus the driver that produced `decompiled/`.
+That driver was missing from the repo before, which meant the decompilation was not
+reproducible from a clean checkout.
+
+Licensing was also wrong and is now fixed. The root LICENSE is MIT and said so of
+everything, but `romraider-5eat/patches/` are diffs against RomRaider - a GPL-2.0
+program - so the patches and any build made from them are GPL-2.0-or-later. That is
+recorded in `romraider-5eat/LICENSE`.

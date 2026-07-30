@@ -27,7 +27,7 @@ Builds clean on JDK 21 — warnings only, no errors.
 ## Why this was needed here
 
 Not for the definition — that turned out to be our bug, fixed with static axes
-(see [`../romraider-cli/`](../romraider-cli/)). But building from source is what
+(see [`tools/romraider-cli/`](../../tools/romraider-cli/)). But building from source is what
 made the failure visible: it exposed that `Table3D.calcCellRanges()` dereferences
 the axis cells, which is why an axis-less 3D table throws and RomRaider reports
 "There was an error loading table".

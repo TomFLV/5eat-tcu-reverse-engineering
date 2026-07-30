@@ -1,301 +1,225 @@
-# Subaru 5EAT TCU — Reverse Engineering Notes & RomRaider Definition
+# Subaru 5EAT TCU — Reverse Engineering & RomRaider Definition
 
-The Subaru 5EAT holds its shift points, line pressures and clutch timing in a
-transmission control unit nobody had published a tuning definition for. This is
-the work of opening one up: notes on how the calibration is laid out, and a
-RomRaider definition that lets you edit it.
+The Subaru 5EAT keeps its shift points, line pressures and clutch timing in a
+transmission controller nobody had published a tuning definition for. This is the
+work of opening one up.
 
-### ▶ [Download the ready-to-run Windows package](../../releases/latest)
+### ▶ [Download the Windows app](../../releases/latest)
 
-Extract the folder, double-click `RomRaider.vbs`, open a ROM. A Java runtime and
-the definition are bundled, so there is nothing to install and nothing to
-configure — it picks the right firmware itself.
+Extract the folder, run `RomRaider-TCU.exe`, `File -> Open` a ROM from `app\roms`.
+A Java runtime, the definitions and eleven ROM images are bundled — nothing to
+install, nothing to configure.
 
-If you already run RomRaider, just point it at
-[`definitions/5eat_tcu_romraider_defs.xml`](definitions/) instead.
+Already run RomRaider? Point it at [`definitions/5eat_tcu_romraider_defs.xml`](definitions/)
+instead. Needs 1.0.0+; 0.8.2 can't load 3D tables.
 
-**Everything is in real units.** Shift points in km/h against pedal percentage,
-line pressure in kPa, engine speed in RPM. Where a unit has not actually been
-established, the table says `raw` and means it — a plausible-looking unit that
-turns out to be wrong is worse than no unit at all.
-
-Eleven firmwares are mapped, all Mitsubishi/Renesas M32R, all with verified
-checksums, with full decompiler output for sixteen images.
-
-| Cal ID | ROM ID | Size | Vehicle / notes | Tables mapped |
-|---|---|---|---|---|
-| `MB431M` | `91D1206000` | 384K | JDM | **yes** |
-| `MB436G` | `91FE216300` | 512K | USDM, Early 2005 Outback XT | **yes** |
-| `MB436T` | `91D0207500` | 384K | JDM | **yes** |
-| `MB436P` | `91F0217100` | 384K | USDM Outback 03 | **yes** |
-| `MB4434` | `ABD1A03100` | 384K | JDM Legacy GT 2005 | **yes** |
-| `MB4373` | `91D1207900` | 384K | Hitachi 31711AG589 | **yes** |
-| `MB440X` | `AAD1A07100` | 384K | Hitachi 31711AJ782 | **yes** |
-| `MB5300` | `ABD1207000` | 384K | 06 JDM Legacy GT | **yes** |
-| `MB558D20` | `ACD1A06000` | 512K | JDM 2007 | **yes** |
-| `MB558D01` | `ACD1207000` | 512K | LGT06 JDM | **yes** |
-| `MB562EH` | `ADE0236000` | 512K | — | **yes** |
-
-One definition file carries all of them. RomRaider matches the cal ID at `0x8008`
-when you open a ROM and loads the right one, so there is nothing to pick.
+> **After any edit, fix the checksum before flashing.** RomRaider can't do it for
+> this ECU.
+> ```bash
+> python tools/checksum.py --fix edited.bin
+> ```
 
 ---
 
-## What's here
+## The shift map
 
-| Path | What it is |
-|---|---|
-| [`romraider-5eat/`](romraider-5eat/) | **A ready-to-run Windows build of RomRaider** with the definition and a Java runtime bundled. Download it from [Releases](../../releases). |
-| [`definitions/`](definitions/) | The RomRaider definition file — all eleven firmwares, auto-selected by cal ID. |
-| [`docs/ROMRAIDER-SETUP.md`](docs/ROMRAIDER-SETUP.md) | How to get this working in an existing RomRaider install instead. |
-| [`docs/ROM-DETAILS.md`](docs/ROM-DETAILS.md) | The reference firmware in detail — provenance, IDs, memory map, checksum — plus the collection table. |
-| [`docs/TECHNICAL-NOTES.md`](docs/TECHNICAL-NOTES.md) | How the tables, checksum, and unit scales were worked out. |
-| [`FINDINGS.md`](FINDINGS.md) | The full research log, in order, including the wrong turns and why they looked right. Long. |
-| [`tools/`](tools/) | Checksum fix, definition generator, validators, Ghidra scripts, and a [headless RomRaider verifier](tools/romraider-cli/). See [`tools/README.md`](tools/README.md). |
-| [`decompiled/`](decompiled/) | Full decompiler output for all sixteen ROMs. |
-| [`rom/`](rom/) | The ROM images themselves. |
+`Transmission - Shift Schedule → Shift Map` — all eight shift points in one table:
+vehicle speed in km/h, across accelerator pedal angle, one row per shift event.
 
----
+Raise a value to delay a shift, lower it to bring it on earlier. Upshift rows come
+first, then downshifts; the gap between a pair is the hysteresis that stops the
+transmission hunting, so move them together unless you mean not to.
 
-## Quick start
-
-**Easiest:** download the standalone Windows package from
-[Releases](../../releases), extract the whole folder, run `RomRaider.vbs`, then
-`File -> Open` a ROM. Nothing to install — a Java runtime and the definition are
-bundled, and the right firmware is selected automatically from the calibration ID.
-
-**Using your own RomRaider install** — 1.0.0 or later; 0.8.2 cannot load the 3D
-tables. Point it at `definitions/5eat_tcu_romraider_defs.xml`. See
-[`docs/ROMRAIDER-SETUP.md`](docs/ROMRAIDER-SETUP.md).
-
-Either way: **after any edit, fix the checksum before flashing** — RomRaider
-cannot do it for this ROM.
-
-```bash
-python tools/checksum.py --fix edited.bin
-```
-
----
-
-## What's confirmed
-
-Six real-world unit conversions are nailed down, each verified two independent
-ways — against an external reference (the factory service manual, rimwall's shift
-chart, or the community CAN decoding) *and* against the firmware's own arithmetic:
-
-- **Gear ratios** — `raw / 1024`. Decodes to 3.540 / 2.264 / 1.471 / 1.000 / 0.834,
-  matching the published ratios to within 0.0007.
-- **Engine speed** — `raw / 8`. Gives clean 640 RPM breakpoints. **The `uint16`
-  storage caps these tables at 8191 RPM**; the stock calibration already parks a
-  breakpoint at 8160 RPM, so there is headroom for a built engine, but a target
-  above 8191 RPM cannot be represented.
-- **Temperature** — `raw − 40` °C. Two NTC thermistor channels, standard −40…+215 °C
-  automotive encoding.
-- **Vehicle speed** — km/h directly, no scaling.
-- **Accelerator angle** — raw 0–255 mapping to 0–100%. Independently confirmed
-  twice: from the shift chart, and from CAN `0x412` byte 0 being APA at ×100/255.
-- **Line pressure** — **kPa directly, no scaling.** The service manual's line
-  pressure test (5AT-35) specifies 1370 kPa at full throttle in D and R, and has
-  the TCU reporting "P/L Solenoid Target Pressure" to the Subaru Select Monitor
-  *already in kPa*. That value appears verbatim in a calibration table in all
-  eleven firmwares, at an address that relocates between them.
-
-The pressure result is worth spelling out, because an earlier version of this
-project gave up on pressure units after four separate attempts. The mistake was
-looking for a conversion inside the ROM. There is none to find — the firmware
-already works in kPa, and the answer was in the service manual the whole time.
-The tables are `[engine speed × 8, kPa]`, so both columns carry a confirmed unit.
-What is still *not* known is which hydraulic circuit each of the two curves
-governs, so they are named for what they contain rather than for a guess.
-
-Also confirmed: the **checksum algorithm** (32-bit big-endian two's-complement
-additive, stored twice at `0x8000`/`0x8004` — over two different region
-conventions, which the tool detects rather than assumes) and the **shift
-schedule**, which is fully decoded.
-
-> **Correction:** earlier versions claimed a DTC table at `0x4090`. That address is
-> instruction stream, not data — port initialisation misread as records. The DTC
-> tables have been removed. See [ROM-DETAILS.md](docs/ROM-DETAILS.md).
-
-### Record-format curves
-
-A further 35 curves use an 8-byte record layout rather than a contiguous array —
-including the **temperature sensor linearisation tables**, the calibration that
-defines what the ATF sensors actually read. These were long excluded on the
-grounds that RomRaider has no stride support; the shift-schedule work showed that
-was wrong, since the record block is contiguous and maps onto a 3D table exactly.
-
-Each record array now ships as **a pair of single-quantity tables** rather than one
-four-column grid — `Shift 1-2 Upshift Curve - km/h` alongside
-`Shift 1-2 Upshift Curve - % pedal`, lining up row for row. The reason is that
-RomRaider scales a table as a whole, so a grid holding both a speed and a pedal
-angle cannot carry a unit at all and every cell had to be shown as a raw integer.
-
-Splitting them uses RomRaider's own `skipCells` stride: with `sizex="1"` the
-populate loop advances by `1 + skipCells` for every cell, so `skipCells="1"` walks
-every second `uint16` — exactly one quantity out of the interleaved array, with
-nothing skipped and nothing invented. All 640 3D tables across the eleven
-firmwares were then checked cell by cell against the raw ROM bytes: **12,844 cells,
-zero mismatches.**
-
-Curves whose input is traced carry its real unit (engine speed in RPM, reference
-speed in km/h). The rest ship as `raw` and say so. A plausible unit that turns out
-to be wrong is worse than an honest `raw`, because it reads as confirmed.
-
-### The shift schedule
-
-The eight shift-point curves are editable, in real units. Each is a polyline in
-**vehicle speed (km/h)** against **accelerator opening angle (%)** — the same form
-as the factory shift chart, which is what the encoding was verified against:
+Cells showing `-` aren't editable — that curve has no vertex at that pedal
+position, so there's no byte to change. Left blank rather than invented.
 
 ![shift curves](docs/shift-curves-reference.png)
 
-Slot A is the upshift from a given gear and slot B the downshift, which is why 1st
-gear has no downshift curve and 5th has no upshift — both are placeholders in the
-ROM, exactly where that reading predicts.
+*Chart by [rimwall](https://github.com/rimwall), not mine — it's what the units were
+verified against.*
+
+## Firmwares
+
+Eleven mapped, all Renesas M32R, all with verified checksums. Decompiler output for
+sixteen images in [`decompiled/`](decompiled/).
+
+| Cal ID | ROM ID | Size | Vehicle / notes |
+|---|---|---|---|
+| `MB431M` | `91D1206000` | 384K | JDM |
+| `MB436G` | `91FE216300` | 512K | USDM, Early 2005 Outback XT |
+| `MB436T` | `91D0207500` | 384K | JDM |
+| `MB436P` | `91F0217100` | 384K | USDM Outback 03 |
+| `MB4434` | `ABD1A03100` | 384K | JDM Legacy GT 2005 |
+| `MB4373` | `91D1207900` | 384K | Hitachi 31711AG589 |
+| `MB440X` | `AAD1A07100` | 384K | Hitachi 31711AJ782 |
+| `MB5300` | `ABD1207000` | 384K | 06 JDM Legacy GT |
+| `MB558D20` | `ACD1A06000` | 512K | JDM 2007 |
+| `MB558D01` | `ACD1207000` | 512K | LGT06 JDM |
+| `MB562EH` | `ADE0236000` | 512K | — |
+
+RomRaider matches the cal ID at `0x8008` and loads the right one automatically.
+
+## Confirmed units
+
+Each verified two independent ways — against an external reference *and* against the
+firmware's own arithmetic.
+
+| Quantity | Conversion | How |
+|---|---|---|
+| Gear ratios | `raw / 1024` | 3.540 / 2.264 / 1.471 / 1.000 / 0.834 — published ratios to within 0.0007 |
+| Engine speed | `raw / 8` | Clean 640 RPM breakpoints. **Caps at 8191 RPM** — `uint16` limit, not a display choice |
+| Temperature | `raw − 40` °C | Standard −40…+215 °C automotive encoding |
+| Vehicle speed | km/h direct | Factory shift chart |
+| Accelerator angle | `raw × 100/255` | Shift chart, and CAN `0x412` byte 0 |
+| **Line pressure** | **kPa direct** | Manual specifies 1370 kPa at full throttle; that value is in a table in all eleven images |
+
+Also confirmed: the **checksum** (32-bit BE two's-complement additive, stored twice
+at `0x8000`/`0x8004`, over two region conventions the tool detects rather than
+assumes) and the **shift schedule**, fully decoded.
+
+The pressure result is worth a note: four earlier attempts failed because they
+searched the ROM. There's no conversion in there to find — the firmware already
+works in kPa, and the answer was in the service manual all along.
 
 ## What's not
 
-IDK
+**Torque converter lockup — not found.** A paired curve block at `0x018060` looked
+right (pairs suggest apply/release, and it sits at the 5th-gear index) but it's
+consumed by the shift-decision code, so it isn't lockup. The manual has one
+qualitative paragraph and no numbers. Nothing has been added for it, because a
+"Lock-Up" category full of shift thresholds is worse than none.
 
-More usefully: line pressure in **kPa is not stored in these ROMs** — tested four
-ways across all eleven firmwares. The TCU almost certainly reports a raw duty
-value and the Select Monitor converts. Settling it needs hardware, not analysis.
-Details in [TECHNICAL-NOTES.md](docs/TECHNICAL-NOTES.md).
+**74 of 82 threshold curves are unmapped.** `scan_threshold_curves.py` finds 82
+arrays with the full shift-curve signature; the definition carries 8. The rest are
+per-mode and per-condition shift maps — this transmission has several, and the tool
+shows one. Biggest open lead. See [FINDINGS.md](FINDINGS.md) §15.
 
-Five firmwares are missing the record-format curves. **No DTC table has been
-located** — the address previously claimed for one turned out to be instruction
-stream. DTCs are transmitted on CAN `0x422` bytes 3–4 as a 2-bit index plus a
-14-bit code; finding the stored table means locating the code that builds that
-message.
+**No DTC table located.** The address previously claimed for one was instruction
+stream. DTCs go out on CAN `0x422` bytes 3–4 as a 2-bit index plus 14-bit code;
+finding the stored table means locating the code that builds that message.
 
-The definition needs **RomRaider 1.0.0 or later** — 0.8.2 cannot load 3D tables.
+Some tables still read `raw`. Those are the ones whose quantity hasn't been
+established. A wrong unit reads as confirmed; an honest `raw` doesn't.
 
----
+## Repo
+
+| Path | What |
+|---|---|
+| [`romraider-5eat/`](romraider-5eat/) | The Windows app: patches, build script. **GPL-2.0**, not MIT |
+| [`definitions/`](definitions/) | The RomRaider definition |
+| [`tools/`](tools/) | Generator, validators, checksum, scanners — see [README](tools/README.md) |
+| [`decompiled/`](decompiled/) | Ghidra output, sixteen images |
+| [`rom/`](rom/) | The ROM images |
+| [`docs/`](docs/) | [ROM details](docs/ROM-DETAILS.md) · [technical notes](docs/TECHNICAL-NOTES.md) · [manual setup](docs/ROMRAIDER-SETUP.md) |
+| [`FINDINGS.md`](FINDINGS.md) | Full research log, in order, wrong turns included. Long |
 
 ## Contributing
 
-Adding a firmware is documented in [`tools/README.md`](tools/README.md#adding-a-firmware).
-Dumps of TCUs not already here are the most useful thing anyone can contribute —
-five of the eleven still need their record-format curves mapped, and that needs a
-Ghidra pass per image rather than any shortcut.
+Adding a firmware: [`tools/README.md`](tools/README.md#adding-a-firmware). TCU dumps
+not already here are the most useful contribution — five of the eleven still need
+their record-format curves mapped, and that needs a Ghidra pass per image.
 
-If you contributed a ROM to the forum thread and want it removed or credited
-differently, open an issue.
+If you contributed a ROM and want it removed or credited differently, open an issue.
+
+---
 
 ## Credits
 
-**Almost none of the raw material here is mine.** This project is analysis layered
-on top of other people's work, and the pieces below belong to them.
+**Almost none of the raw material here is mine.** This is analysis layered on other
+people's work.
 
-### The ROM images
+**The ROM images** in [`rom/`](rom/) were dumped and shared by members of the
+RomRaider thread [5EAT TCM JECS ROM Image](https://www.romraider.com/forum/viewtopic.php?f=40&t=13725)
+over several years. Getting these off a car is slow, fiddly and occasionally risks
+the TCU. They're here so the work can continue, not because I have any claim to
+them. `91FE216300` is the one I dumped myself.
 
-Every firmware in [`rom/`](rom/) was dumped and shared by members of the RomRaider
-forum thread [**5EAT TCM JECS ROM Image**](https://www.romraider.com/forum/viewtopic.php?f=40&t=13725)
-— a years-long community effort. Getting these off a car is slow, fiddly, and
-occasionally risks the TCU. They are included here so the work can continue, not
-because I have any claim to them. If you contributed a dump and want it removed or
-credited differently, open an issue and I'll act on it.
-
-The `91FE216300` image (Early 2005 USDM Outback XT) is the one I dumped myself.
-
-### The shift-curve chart
-
-[`docs/shift-curves-reference.png`](docs/shift-curves-reference.png) was produced
-and posted to the thread by another member, on page 9, alongside this description:
+**The shift-curve chart** ([`docs/shift-curves-reference.png`](docs/shift-curves-reference.png))
+is **rimwall's work**, posted to the thread with this description:
 
 > *"The shift table pointers start at 0x180e8. The first lot of data is at
 > 0x0001683c. The data is structured as words (uint16) in pairs of x, y. x is the
 > Vehicle Speed in km/hr. y is the Accelerator Pedal Angle in % where 0xff = 100%.
 > The data is terminated by 0xffff."*
 
-**It is not my work**, and it is the single most valuable external input to this
-project: the shift-schedule units were verified against it. That post also states
-the encoding outright, which independently confirms what was derived here from the
-chart geometry — same units, same 0xff = 100% mapping, same terminator.
-
-Both claims in that post were checked against the `ACD1A06000` image and hold
-exactly: the pointer array is at `0x180E8`, its first entry points to `0x01683C`,
-and the data there parses as (speed, pedal) pairs ending in `0xFFFF`.
-
-**The chart is rimwall's work.**
+It's the single most valuable external input here — the shift units were verified
+against it, and both claims in that post check out exactly against `ACD1A06000`.
 
 ### The people in that thread
 
-The thread runs to 380 posts over several years. These are the contributors named
-in it — the work here rests on theirs:
+380 posts over several years. The work here rests on theirs.
 
 **[rimwall](https://github.com/rimwall)** — by a wide margin the largest
-contributor: the shift-curve chart above, the shift-table encoding, the
-security-access and protocol work that made these TCUs readable at all, the Denso
-side, and the FastECU OEM fork.
+contributor: the chart above, the shift-table encoding, the security-access and
+protocol work that made these TCUs readable at all, the Denso side, the FastECU OEM
+fork, and the corrected M32R Ghidra language this project's disassembly depends on.
 
 **MiikaS** ([miikasyvanen](https://github.com/miikasyvanen)) — FastECU itself,
 without which none of these ROMs could be dumped.
 
-**ajayel**, **riksk**, **jimihimisimi**, **AJ08H65EAT**, **kiki86**,
-**curt4576** — the testing effort: dumping TCUs, running experimental builds,
-posting logs, and bricking-risk on their own vehicles to prove the read/write
-paths.
+**ajayel**, **riksk**, **jimihimisimi**, **AJ08H65EAT**, **kiki86**, **curt4576**
+— the testing effort: dumping TCUs, running experimental builds, posting logs, and
+taking bricking risk on their own vehicles to prove the read/write paths.
 
-**Sasha_A80** — the original JDM ROM that opens the thread and the M32R chip
+**Sasha_A80** — the original JDM ROM that opens the thread, and the M32R chip
 identification. **V6er**, **trcxsa**, **Blake_Volpex**, **ciper**, **SergArb**,
-**roadie**, **Waselon**, **dschultz**, **b4andrey**, **Tugsay**,
-**Alucard7002**, **alesv**, **lvkeith**, **fenugrec** — analysis, ROM dumps,
-corrections and domain knowledge throughout.
+**roadie**, **Waselon**, **dschultz**, **b4andrey**, **Tugsay**, **Alucard7002**,
+**alesv**, **lvkeith**, **fenugrec** — analysis, dumps, corrections and domain
+knowledge throughout.
 
 **Comer352L** — FreeSSM, and the branch adding 5EAT TCU adjustment support.
 
-If you are on this list and want your name removed, changed, or your contribution
+If you're on this list and want your name removed, changed, or your contribution
 described differently, open an issue.
 
 ### Prior and parallel work
 
 - **[FastECU](https://github.com/miikasyvanen/FastECU)** (Miika Syvänen) and
   **[rimwall's OEM fork](https://github.com/rimwall/fastecu-oem)** — the tooling
-  that makes reading and writing these TCUs possible at all. Its
+  that makes reading and writing these TCUs possible. Its
   `checksum_tcu_subaru_hitachi_m32r_can` module independently corroborated the
   checksum algorithm.
-- **rimwall** — much of the protocol and security-access work in the thread, and
-  the Denso-side reverse engineering.
-- **[FreeSSM](https://github.com/Comer352L/FreeSSM)** (Comer352L) — diagnostic
-  tooling, and the branch adding TCU adjustment support.
+- **[FreeSSM](https://github.com/Comer352L/FreeSSM)** (Comer352L) — diagnostics,
+  and the branch adding TCU adjustment support.
 - **[ghidra-m32r](https://github.com/ripnet/ghidra-m32r)** (ripnet) — the Ghidra
-  processor module without which none of the disassembly here would exist.
-- Forum members whose findings are used directly: the CAN ID meanings
-  (`0x412` engine torque, `0x514` shift events), the MCU identification, and the
-  observation that gear changes are governed by pedal-angle/speed curves — which
-  is what pointed at the shift tables in the first place.
+  processor module, without which none of the disassembly exists.
+- **[RomRaider](https://github.com/RomRaider/RomRaider)** — the editor itself.
+- Forum findings used directly: the CAN ID meanings (`0x412` engine torque, `0x514`
+  shift events), the MCU identification, and the observation that gear changes are
+  governed by pedal-angle/speed curves — which is what pointed at the shift tables
+  in the first place.
 
-### Reference documentation
-
-Gear ratios, line-pressure targets and ATF operating temperatures come from the
-Subaru factory service manual (2004 Legacy). That document is Subaru's and is
-**not** redistributed here.
+Gear ratios, line-pressure targets and ATF temperatures come from the Subaru factory
+service manual (2004 Legacy). That document is Subaru's and is **not** redistributed
+here.
 
 ### What is actually mine
 
-The tooling in [`tools/`](tools/), the RomRaider definitions in
-[`definitions/`](definitions/), and the written analysis in [`docs/`](docs/) —
-the table mapping, the unit derivations, the checksum region detection, and the
-multi-firmware porting. That, and nothing else in this repository, is what the
-MIT licence covers.
+The tooling in [`tools/`](tools/), the definitions in [`definitions/`](definitions/),
+and the written analysis in [`docs/`](docs/) — table mapping, unit derivations,
+checksum region detection, multi-firmware porting. That, and nothing else here, is
+what the MIT licence covers.
 
 ---
 
 ## Legal
 
-The ROM image is Subaru/Fuji Heavy Industries firmware, included for
-interoperability and repair research. It is not my work and I claim no rights to
-it. The decompiler output in `decompiled/` is derived from it and carries the same
-status.
+The ROM images are Subaru/Fuji Heavy Industries firmware, included for
+interoperability and repair research. Not my work, no rights claimed. The
+decompiler output in [`decompiled/`](decompiled/) is derived from them and carries
+the same status.
 
-My own contributions — the tools, the RomRaider definition, and the documentation —
-are MIT licensed. See [LICENSE](LICENSE).
+My own contributions are MIT licensed — see [LICENSE](LICENSE).
 
-**Flashing a modified transmission controller can damage the transmission.** The
-tables here are the result of static analysis; almost none of it has been validated
-on a running vehicle. Anything marked experimental or expert-only genuinely is.
-Use at your own risk.
+**[`romraider-5eat/`](romraider-5eat/) is GPL-2.0, not MIT.** Those patches are
+diffs against RomRaider, so they're a derivative of a GPL-2.0 program, and so is the
+package built from them. If you redistribute it, GPL-2.0 requires you to provide
+corresponding source; the patches plus the upstream revision pinned in
+`build-standalone.sh` are what satisfy that. See
+[`romraider-5eat/LICENSE`](romraider-5eat/LICENSE).
+
+**Flashing a modified transmission controller can damage the transmission.** This is
+static analysis; almost none of it has been validated on a running vehicle. Anything
+marked experimental or expert-only genuinely is. Use at your own risk.
 
 — TomFLV
