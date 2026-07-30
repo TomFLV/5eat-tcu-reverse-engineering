@@ -694,9 +694,35 @@ def build_record_tables_xml(name, category, addr, rows, quantities, desc,
 
 
 def build_shift_curve_xml(name, addr, rows):
-    return build_record_tables_xml(
-        name, "Transmission - Shift Schedule", addr, rows,
-        [(0, Q_SPEED), (1, Q_PEDAL)], SHIFT_DESC)
+    """One shift curve as a real Table3D, so RomRaider's 3D graph editor accepts it.
+
+    Needs the patched RomRaider in romraider-5eat/ for two reasons.
+
+    First, skipCells had to move off Table3D onto Table so an AXIS can stride;
+    without that the speed axis and the pedal data cannot both be read out of the
+    same interleaved record array.
+
+    Second, the geometry. Table3D.populateTable only applies the stride after the
+    LAST cell of each row, so a plain sizex=N/sizey=1 table would read N-1 cells
+    contiguously and stride only once. swapxy flips the iteration so the row length
+    becomes the Y size - which is 1 - making every cell the last in its row, and the
+    stride then applies to all of them. skipCells=3 is one value per 8-byte record.
+
+    Type 3D matters beyond appearance: TableToolBar gates its 3D graph button on
+    Table3D, and that button opens Graph3dFrameManager with a GraphDataListener -
+    an interactive surface that writes edits back through the table. That is the
+    curve editor, and it already exists upstream.
+    """
+    return f"""  <table type="3D" name="{escape(name)}" category="Transmission - Shift Schedule" storageaddress="0x{addr + 2:06X}" storagetype="uint16" endian="big" sizex="{rows}" sizey="1" swapxy="true" skipCells="3" userlevel="1">
+   <scaling units="{escape(Q_PEDAL['units'])}" expression="{Q_PEDAL['expression']}" to_byte="{Q_PEDAL['to_byte']}" format="{Q_PEDAL['format']}" fineincrement="{Q_PEDAL['fine']}" coarseincrement="{Q_PEDAL['coarse']}" />
+   <table type="X Axis" name="Vehicle speed" storageaddress="0x{addr:06X}" storagetype="uint16" endian="big" sizex="{rows}" skipCells="3">
+    <scaling units="{escape(Q_SPEED['units'])}" expression="{Q_SPEED['expression']}" to_byte="{Q_SPEED['to_byte']}" format="{Q_SPEED['format']}" fineincrement="{Q_SPEED['fine']}" coarseincrement="{Q_SPEED['coarse']}" />
+   </table>
+   <table type="Static Y Axis" name="Pedal" sizey="1">
+    <data>Pedal %</data>
+   </table>
+   <description>{escape(SHIFT_DESC)}</description>
+  </table>"""
 
 
 # ---------------------------------------------------------------------------

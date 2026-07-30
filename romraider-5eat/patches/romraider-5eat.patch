@@ -1,4 +1,4 @@
-diff --git a/build.xml b/build.xml
+﻿diff --git a/build.xml b/build.xml
 index d2d419e..f45e0e9 100644
 --- a/build.xml
 +++ b/build.xml

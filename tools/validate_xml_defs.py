@@ -72,26 +72,65 @@ def main():
             addr = int(addr, 16)
 
             if ttype == "2D":
-                sizex = int(t.get("sizex"))
                 x_axis = t.find("./table[@type='X Axis']")
                 if x_axis is None:
                     errors.append(f"{name}: missing X Axis")
                     continue
                 x_addr = int(x_axis.get("storageaddress"), 16)
-                checked += 1
-                stored = u16(x_addr - 2)
-                if stored != sizex:
-                    errors.append(f"{name}: count at 0x{x_addr - 2:06X} is {stored}, sizex={sizex}")
-                checked += 1
-                if addr != x_addr + sizex * 2:
-                    errors.append(f"{name}: data 0x{addr:06X} != X axis + sizex*2 "
-                                  f"(0x{x_addr + sizex * 2:06X})")
+                skip = int(t.get("skipCells", "0"))
+
+                if skip:
+                    # A strided 2D table reads its axis and its data out of the
+                    # same record array, so there is no count field in front of
+                    # the axis and the data does not follow it. What can be checked
+                    # is that the record array ends where the row count says it
+                    # does: skipCells=3 is one value per 8-byte record, and the
+                    # axis sits at the first field of the first record.
+                    rows = int(t.get("sizey") or t.get("sizex"))
+                    stride = (skip + 1) * 2
+                    checked += 1
+                    term = u16(x_addr + rows * stride)
+                    if term != 0xFFFF:
+                        errors.append(
+                            f"{name}: strided 2D table, no 0xFFFF terminator after "
+                            f"{rows} records at 0x{x_addr + rows * stride:06X} "
+                            f"(found 0x{term:04X})")
+                    checked += 1
+                    if addr <= x_addr or addr - x_addr >= stride:
+                        errors.append(
+                            f"{name}: data 0x{addr:06X} is not a field of the same "
+                            f"record as the axis at 0x{x_addr:06X} (stride {stride})")
+                else:
+                    sizex = int(t.get("sizex"))
+                    checked += 1
+                    stored = u16(x_addr - 2)
+                    if stored != sizex:
+                        errors.append(f"{name}: count at 0x{x_addr - 2:06X} is {stored}, sizex={sizex}")
+                    checked += 1
+                    if addr != x_addr + sizex * 2:
+                        errors.append(f"{name}: data 0x{addr:06X} != X axis + sizex*2 "
+                                      f"(0x{x_addr + sizex * 2:06X})")
 
             elif ttype == "3D":
                 sx, sy = int(t.get("sizex")), int(t.get("sizey"))
                 skip = int(t.get("skipCells", "0"))
                 checked += 1
-                if sx == 1 and skip == 1:
+                if skip and not (sx == 1 and skip == 1):
+                    # Strided 3D: cells = sx*sy values taken at (skip+1) uint16
+                    # intervals. Used for the shift curves, which are sizex=rows,
+                    # sizey=1, swapxy so that every cell is last-in-row and the
+                    # stride therefore applies to all of them. The table may start
+                    # at field 0 or field 1 of the first record, so accept either.
+                    records = sx * sy
+                    stride = (skip + 1) * 2
+                    checked += 1
+                    if not any(u16(b + records * stride) == 0xFFFF
+                               for b in (addr, addr - 2)):
+                        errors.append(
+                            f"{name}: strided 3D table, no 0xFFFF terminator after "
+                            f"{records} records at 0x{addr + records * stride:06X} "
+                            f"or 0x{addr - 2 + records * stride:06X}")
+                elif sx == 1 and skip == 1:
                     # One quantity pulled out of a record array with a stride of
                     # two uint16. Two record geometries use that same stride and
                     # cannot be told apart from sizex/skipCells alone:
