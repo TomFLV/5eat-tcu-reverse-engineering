@@ -634,6 +634,10 @@ Q_RPM = {"label": "RPM", "units": "RPM",
          "expression": "x/8", "to_byte": "x*8",
          "format": "0", "fine": "10", "coarse": "100",
          "note": RPM_CEILING_NOTE}
+Q_TEMP_C = {"label": "\u00b0C", "units": "\u00b0C",
+            "expression": "x-40", "to_byte": "x+40",
+            "format": "0", "fine": "1", "coarse": "5"}
+
 Q_RAW_BP = {"label": "Breakpoint", "units": "raw",
             "expression": "x", "to_byte": "x",
             "format": "0", "fine": "1", "coarse": "8"}
@@ -1002,6 +1006,78 @@ HYSTERESIS_BY_ROM = json.load(open(os.path.join(here, "hysteresis_by_rom.json"))
 # raw/8 scaling already confirmed for the SpeedTrim and SlipThreshold axes.
 # Reference Speed Curves: input is vehicle speed in km/h, as for the shift
 # schedule - same signal, same units.
+# Fixed-point multipliers, confirmed rather than pattern-matched.
+#
+# The forum thread (post 184, rimwall) describes the line pressure chain: engine
+# torque arrives on CAN 0x412, is multiplied by a factor looked up on torque
+# converter slip, smoothed, multiplied again by a factor looked up on ATF
+# temperature, and the result looks up a line pressure target.
+#
+# Both factor tables are here, and both were checked before being scaled:
+#
+# SLIP FACTOR - reproduces rimwall's stated numbers exactly. Breakpoints and values
+# are both /1024. Breakpoint 512 is a speed ratio of 0.5 and gives 1425/1024 =
+# 1.392, against his "for high slip (~0.5) the factor is ~1.4". Breakpoint 922 =
+# 0.9 gives exactly 1.000, against his "for low slip, the factor is ~1.0". Two
+# independent numbers from an outside source landing on the same scale is not a
+# coincidence.
+#
+# ATF TEMP FACTOR - confirmed from the code rather than the shape. FUN_00036e.. does
+#
+#     uVar4 = FUN_00045070(&DAT_00008428, 1, DAT_008047fb);  // lookup
+#     iVar2 = (uVar7 & 0xffff) * (uVar4 & 0xffff);
+#     ... (uVar5 * iVar2) >> 0x10
+#
+# and uVar7 defaults to 0x100. 256 is unity, two /256 factors multiplied then
+# shifted right 16 is arithmetically exact, so the fixed point is /256. The decoded
+# curve runs 1.699 down to 1.000 over breakpoints of about -40 to -5 C: more line
+# pressure while the fluid is cold, unity once it is warm.
+Q_FACTOR_1024 = {"label": "factor", "units": "x (multiplier)",
+                 "expression": "x/1024", "to_byte": "x*1024",
+                 "format": "0.000", "fine": "0.005", "coarse": "0.05"}
+Q_FACTOR_256 = {"label": "factor", "units": "x (multiplier)",
+                "expression": "x/256", "to_byte": "x*256",
+                "format": "0.000", "fine": "0.004", "coarse": "0.04"}
+Q_RATIO_1024 = {"label": "slip ratio", "units": "turbine/engine ratio",
+                "expression": "x/1024", "to_byte": "x*1024",
+                "format": "0.000", "fine": "0.005", "coarse": "0.05"}
+
+# Per-curve unit overrides, by the name in hysteresis_curves.json. Only curves whose
+# scale has actually been established appear here; everything else stays raw.
+RECORD_UNIT_OVERRIDES = {
+    "Signal 82AC Curve 1 of 2": (Q_RATIO_1024, Q_FACTOR_1024),
+    "ATF Temp Curve (8428)": (Q_TEMP_C, Q_FACTOR_256),
+    "ATF Temp Curve A (Mode 1)": (Q_TEMP_C, Q_FACTOR_256),
+    "ATF Temp Curve A (Mode 2)": (Q_TEMP_C, Q_FACTOR_256),
+}
+
+# Curves worth renaming now that what they do is established.
+RECORD_RENAMES = {
+    "Signal 82AC Curve 1 of 2": "Torque Converter Slip Pressure Factor",
+}
+
+RECORD_EXTRA_DESC = {
+    "Signal 82AC Curve 1 of 2": (
+        "\n\nTORQUE CONVERTER SLIP FACTOR. Part of the line pressure chain: engine "
+        "torque from CAN 0x412 is multiplied by this factor, smoothed, multiplied "
+        "again by the ATF temperature factor, and the result looks up the line "
+        "pressure target.\n\nThe breakpoint is the turbine-to-engine speed ratio, so "
+        "1.000 is locked and lower numbers are more slip. Raising a value raises line "
+        "pressure at that amount of slip, which firms up the clutches and speeds up "
+        "shifts, at the cost of pump load and harsher engagement.\n\nThe scale is "
+        "confirmed against the description posted by rimwall on the RomRaider forum: "
+        "a ratio of 0.5 gives 1.392 here against his stated ~1.4, and low slip gives "
+        "exactly 1.000 against his stated ~1.0."),
+    "ATF Temp Curve (8428)": (
+        "\n\nATF TEMPERATURE PRESSURE FACTOR. The second multiplier in the line "
+        "pressure chain. Runs about 1.70 when the fluid is very cold down to exactly "
+        "1.000 once warm, so the transmission raises line pressure while cold to "
+        "compensate for fluid viscosity.\n\nThe /256 fixed point is confirmed from the "
+        "code, not inferred from the shape: the lookup result is multiplied by a "
+        "factor that defaults to 0x100 - which is 256, unity - and the product is "
+        "shifted right by 16, which is exact only if both are /256."),
+}
+
 RECORD_BREAKPOINT_UNITS = {
     "Transmission - Engine Speed Curves": Q_RPM,
     "Transmission - Reference Speed": Q_SPEED,
@@ -1015,10 +1091,16 @@ HYST_DESC_SUFFIX = (
 
 def build_hyst_curve_xml(c, delta=0):
     addr = c["addr"] + delta
-    bp = RECORD_BREAKPOINT_UNITS.get(c["category"], Q_RAW_BP)
+    override = RECORD_UNIT_OVERRIDES.get(c["name"])
+    if override:
+        bp, val = override
+    else:
+        bp = RECORD_BREAKPOINT_UNITS.get(c["category"], Q_RAW_BP)
+        val = Q_RAW_VAL
+    name = RECORD_RENAMES.get(c["name"], c["name"])
+    desc = c["desc"] + HYST_DESC_SUFFIX + RECORD_EXTRA_DESC.get(c["name"], "")
     return build_record_tables_xml(
-        c["name"], c["category"], addr, c["rows"],
-        [(0, bp), (1, Q_RAW_VAL)], c["desc"] + HYST_DESC_SUFFIX)
+        name, c["category"], addr, c["rows"], [(0, bp), (1, val)], desc)
 
 
 # ---------------------------------------------------------------------------

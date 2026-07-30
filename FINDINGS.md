@@ -2044,3 +2044,93 @@ manual for; the extract in this project does not contain that section.
 - Security access and the on-board kernel (post 61): CAN IDs 0x1f21 / 0x1f29, the
   0x27 seed-key exchange, and the encryption words. Relevant to FastECU, not to this
   definition.
+
+---
+
+## 18. THE LINE PRESSURE CHAIN - TWO MORE CONFIRMED SCALES (2026-07-30)
+
+Post 184 of thread 13725 describes the whole line pressure calculation:
+
+> CET is sent from the ECU via bytes 3 & 4 of CAN ID 0x412. The TCU calculates slip
+> via the ratio between Turbine Speed and Engine Speed. A factor is looked up from a
+> table based on the slip. For high slip (~0.5) the factor is ~1.4. For low slip, the
+> factor is ~1.0. The CET is multiplied by this factor. Factored CET is then smoothed
+> and further factored by a lookup based on ATF Temp. The twice factored and smoothed
+> CET is then used to lookup a Line Pressure target.
+
+That names two multiplier tables, and a multiplier is a strong fixed-point signature:
+its baseline is exactly 1.0, so the raw data contains the divisor. Both were already
+in the definition as `raw`.
+
+### 18a. The slip factor - checks against numbers from outside this project
+
+`Signal 82AC Curve 1 of 2`, now `Torque Converter Slip Pressure Factor`.
+
+    breakpoints  0, 512, 614, 717, 819, 922      /1024 -> 0.0, 0.5, 0.6, 0.7, 0.8, 0.9
+    values       1988, 1425, 1295, 1169, 1051, 1024, 1024
+                                                 /1024 -> 1.941, 1.392, 1.265, 1.142,
+                                                          1.026, 1.000, 1.000
+
+Against rimwall's description:
+
+    ratio 0.5 (high slip)  ->  1.392    he said "~1.4"
+    ratio 0.9 (low slip)   ->  1.000    he said "~1.0"
+
+Two independent numbers from an outside source landing on the same divisor is not a
+coincidence, and the value column bottoming at exactly 1024 is the unity baseline a
+multiplier must have. Breakpoint and value are both /1024.
+
+### 18b. The ATF temperature factor - confirmed from the code, not the shape
+
+`ATF Temp Curve (8428)`. `FUN_00045070(&DAT_00008428, 1, DAT_008047fb)` is the
+lookup, and the result is used like this:
+
+    iVar2 = (uVar7 & 0xffff) * (uVar4 & 0xffff);
+    uVar4 = (uVar5 & 0xffff) * iVar2;
+    DAT_008042fa = (undefined2)(uVar4 >> 0x10);
+
+`uVar7` defaults to `0x100`. 256 is unity in /256 fixed point, and multiplying two
+/256 values then shifting right 16 is arithmetically exact. So the divisor is /256,
+established from the arithmetic rather than guessed from the range.
+
+    breakpoints  0, 15, 25, 35     -40 -> about -40, -25, -15, -5 C
+    values       435, 435, 282, 256   /256 -> 1.699, 1.699, 1.102, 1.000
+
+More line pressure while the fluid is cold, unity once warm. Physically right, and
+it bottoms at exactly 1.000.
+
+`ATF Temp Curve A (Mode 1)` and `(Mode 2)` are the same fixed point at the hot end -
+breakpoints about 95, 115, 135 C with factors 0.637..0.859 and 0.488..0.762, so they
+de-rate something as the fluid heats. Same /256 family, but their consumer has NOT
+been traced, so they carry the scale without a claim about what they govern.
+
+`DAT_00008076`, the constant `uVar7` picks up when it is not unity, is 5120 = 20.000
+in /256. A scalar worth exposing later.
+
+### 18c. What this does and does not settle
+
+It gives three more tables real units and renames one for what it actually does. It
+does not mean the line pressure chain is mapped: the CET smoothing, the final
+target lookup and the per-clutch plate-count factors rimwall mentions in post 227 are
+all still unlocated.
+
+Everything else that scanned as a plausible fixed-point multiplier was left raw. The
+scan in `tools/classify_raw_tables.py` proposes candidates and deliberately adopts
+nothing - a plausible scale that is wrong reads as confirmed, which is the mistake
+this project already made once with pressure units.
+
+### 18d. Pinout - not available here
+
+Asked and answered honestly: there is no TCU harness pinout in what this project has.
+
+- The service manual extract on disk is 147 KB of text from a 1.5 MB PDF and covers
+  the 5AT section only. It has removal and installation procedures but no wiring
+  diagrams or terminal tables.
+- The thread does contain a pinout (post 368) but it is the wrong one twice over:
+  it maps MCU pins to PCB programming pads (MD1, FWE, PD8, PB15, TxD1, RxD1) on a
+  DENSO SH-based TCU, for boot-mode recovery of a bricked unit. Different controller
+  family from the Hitachi M32R images here, and a board-level mapping rather than a
+  vehicle harness connector.
+
+A real harness pinout would come from the wiring diagram section of a full FSM, which
+is not in the repository and is Subaru's document.

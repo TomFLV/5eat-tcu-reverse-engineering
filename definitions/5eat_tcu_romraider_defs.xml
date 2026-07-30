@@ -900,10 +900,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Signal 82AC Curve 1 of 2 - Breakpoint" category="Transmission - Signal Response Curves" storageaddress="0x008332" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Torque Converter Slip Pressure Factor - slip ratio" category="Transmission - Signal Response Curves" storageaddress="0x008332" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
+   <scaling units="turbine/engine ratio" expression="x/1024" to_byte="x*1024" format="0.000" fineincrement="0.005" coarseincrement="0.05" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>slip ratio</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="14">
     <data>1a</data>
@@ -924,13 +924,19 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by internal signal 82AC. Physical meaning of the input is not confirmed.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+TORQUE CONVERTER SLIP FACTOR. Part of the line pressure chain: engine torque from CAN 0x412 is multiplied by this factor, smoothed, multiplied again by the ATF temperature factor, and the result looks up the line pressure target.
+
+The breakpoint is the turbine-to-engine speed ratio, so 1.000 is locked and lower numbers are more slip. Raising a value raises line pressure at that amount of slip, which firms up the clutches and speeds up shifts, at the cost of pump load and harsher engagement.
+
+The scale is confirmed against the description posted by rimwall on the RomRaider forum: a ratio of 0.5 gives 1.392 here against his stated ~1.4, and low slip gives exactly 1.000 against his stated ~1.0.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Signal 82AC Curve 1 of 2 - Value" category="Transmission - Signal Response Curves" storageaddress="0x008334" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Torque Converter Slip Pressure Factor - factor" category="Transmission - Signal Response Curves" storageaddress="0x008334" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/1024" to_byte="x*1024" format="0.000" fineincrement="0.005" coarseincrement="0.05" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="14">
     <data>1a</data>
@@ -951,6 +957,12 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by internal signal 82AC. Physical meaning of the input is not confirmed.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+TORQUE CONVERTER SLIP FACTOR. Part of the line pressure chain: engine torque from CAN 0x412 is multiplied by this factor, smoothed, multiplied again by the ATF temperature factor, and the result looks up the line pressure target.
+
+The breakpoint is the turbine-to-engine speed ratio, so 1.000 is locked and lower numbers are more slip. Raising a value raises line pressure at that amount of slip, which firms up the clutches and speeds up shifts, at the cost of pump load and harsher engagement.
+
+The scale is confirmed against the description posted by rimwall on the RomRaider forum: a ratio of 0.5 gives 1.392 here against his stated ~1.4, and low slip gives exactly 1.000 against his stated ~1.0.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -1093,10 +1105,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve (8428) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x008428" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve (8428) - °C" category="Transmission - Temperature Curves" storageaddress="0x008428" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="8">
     <data>1a</data>
@@ -1111,13 +1123,17 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by ATF temperature from sensor 1.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE PRESSURE FACTOR. The second multiplier in the line pressure chain. Runs about 1.70 when the fluid is very cold down to exactly 1.000 once warm, so the transmission raises line pressure while cold to compensate for fluid viscosity.
+
+The /256 fixed point is confirmed from the code, not inferred from the shape: the lookup result is multiplied by a factor that defaults to 0x100 - which is 256, unity - and the product is shifted right by 16, which is exact only if both are /256.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve (8428) - Value" category="Transmission - Temperature Curves" storageaddress="0x00842A" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve (8428) - factor" category="Transmission - Temperature Curves" storageaddress="0x00842A" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="8">
     <data>1a</data>
@@ -1132,6 +1148,10 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by ATF temperature from sensor 1.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE PRESSURE FACTOR. The second multiplier in the line pressure chain. Runs about 1.70 when the fluid is very cold down to exactly 1.000 once warm, so the transmission raises line pressure while cold to compensate for fluid viscosity.
+
+The /256 fixed point is confirmed from the code, not inferred from the shape: the lookup result is multiplied by a factor that defaults to 0x100 - which is 256, unity - and the product is shifted right by 16, which is exact only if both are /256.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -2923,10 +2943,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve A (Mode 1) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x011854" storagetype="uint16" endian="big" sizex="1" sizey="6" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 1) - °C" category="Transmission - Temperature Curves" storageaddress="0x011854" storagetype="uint16" endian="big" sizex="1" sizey="6" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="6">
     <data>1a</data>
@@ -2942,10 +2962,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve A (Mode 1) - Value" category="Transmission - Temperature Curves" storageaddress="0x011856" storagetype="uint16" endian="big" sizex="1" sizey="6" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 1) - factor" category="Transmission - Temperature Curves" storageaddress="0x011856" storagetype="uint16" endian="big" sizex="1" sizey="6" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="6">
     <data>1a</data>
@@ -2962,10 +2982,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve A (Mode 2) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x01186E" storagetype="uint16" endian="big" sizex="1" sizey="6" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 2) - °C" category="Transmission - Temperature Curves" storageaddress="0x01186E" storagetype="uint16" endian="big" sizex="1" sizey="6" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="6">
     <data>1a</data>
@@ -2981,10 +3001,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve A (Mode 2) - Value" category="Transmission - Temperature Curves" storageaddress="0x011870" storagetype="uint16" endian="big" sizex="1" sizey="6" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 2) - factor" category="Transmission - Temperature Curves" storageaddress="0x011870" storagetype="uint16" endian="big" sizex="1" sizey="6" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="6">
     <data>1a</data>
@@ -4801,10 +4821,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Signal 82AC Curve 1 of 2 - Breakpoint" category="Transmission - Signal Response Curves" storageaddress="0x008334" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Torque Converter Slip Pressure Factor - slip ratio" category="Transmission - Signal Response Curves" storageaddress="0x008334" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
+   <scaling units="turbine/engine ratio" expression="x/1024" to_byte="x*1024" format="0.000" fineincrement="0.005" coarseincrement="0.05" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>slip ratio</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="14">
     <data>1a</data>
@@ -4825,13 +4845,19 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by internal signal 82AC. Physical meaning of the input is not confirmed.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+TORQUE CONVERTER SLIP FACTOR. Part of the line pressure chain: engine torque from CAN 0x412 is multiplied by this factor, smoothed, multiplied again by the ATF temperature factor, and the result looks up the line pressure target.
+
+The breakpoint is the turbine-to-engine speed ratio, so 1.000 is locked and lower numbers are more slip. Raising a value raises line pressure at that amount of slip, which firms up the clutches and speeds up shifts, at the cost of pump load and harsher engagement.
+
+The scale is confirmed against the description posted by rimwall on the RomRaider forum: a ratio of 0.5 gives 1.392 here against his stated ~1.4, and low slip gives exactly 1.000 against his stated ~1.0.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Signal 82AC Curve 1 of 2 - Value" category="Transmission - Signal Response Curves" storageaddress="0x008336" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Torque Converter Slip Pressure Factor - factor" category="Transmission - Signal Response Curves" storageaddress="0x008336" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/1024" to_byte="x*1024" format="0.000" fineincrement="0.005" coarseincrement="0.05" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="14">
     <data>1a</data>
@@ -4852,6 +4878,12 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by internal signal 82AC. Physical meaning of the input is not confirmed.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+TORQUE CONVERTER SLIP FACTOR. Part of the line pressure chain: engine torque from CAN 0x412 is multiplied by this factor, smoothed, multiplied again by the ATF temperature factor, and the result looks up the line pressure target.
+
+The breakpoint is the turbine-to-engine speed ratio, so 1.000 is locked and lower numbers are more slip. Raising a value raises line pressure at that amount of slip, which firms up the clutches and speeds up shifts, at the cost of pump load and harsher engagement.
+
+The scale is confirmed against the description posted by rimwall on the RomRaider forum: a ratio of 0.5 gives 1.392 here against his stated ~1.4, and low slip gives exactly 1.000 against his stated ~1.0.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -4994,10 +5026,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve (8428) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x00842A" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve (8428) - °C" category="Transmission - Temperature Curves" storageaddress="0x00842A" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="8">
     <data>1a</data>
@@ -5012,13 +5044,17 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by ATF temperature from sensor 1.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE PRESSURE FACTOR. The second multiplier in the line pressure chain. Runs about 1.70 when the fluid is very cold down to exactly 1.000 once warm, so the transmission raises line pressure while cold to compensate for fluid viscosity.
+
+The /256 fixed point is confirmed from the code, not inferred from the shape: the lookup result is multiplied by a factor that defaults to 0x100 - which is 256, unity - and the product is shifted right by 16, which is exact only if both are /256.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve (8428) - Value" category="Transmission - Temperature Curves" storageaddress="0x00842C" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve (8428) - factor" category="Transmission - Temperature Curves" storageaddress="0x00842C" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="8">
     <data>1a</data>
@@ -5033,6 +5069,10 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by ATF temperature from sensor 1.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE PRESSURE FACTOR. The second multiplier in the line pressure chain. Runs about 1.70 when the fluid is very cold down to exactly 1.000 once warm, so the transmission raises line pressure while cold to compensate for fluid viscosity.
+
+The /256 fixed point is confirmed from the code, not inferred from the shape: the lookup result is multiplied by a factor that defaults to 0x100 - which is 256, unity - and the product is shifted right by 16, which is exact only if both are /256.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -6724,10 +6764,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve A (Mode 1) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x01D2FA" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 1) - °C" category="Transmission - Temperature Curves" storageaddress="0x01D2FA" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="20">
     <data>1a</data>
@@ -6757,10 +6797,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve A (Mode 1) - Value" category="Transmission - Temperature Curves" storageaddress="0x01D2FC" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 1) - factor" category="Transmission - Temperature Curves" storageaddress="0x01D2FC" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="20">
     <data>1a</data>
@@ -6791,10 +6831,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve A (Mode 2) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x01D850" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 2) - °C" category="Transmission - Temperature Curves" storageaddress="0x01D850" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="32">
     <data>1a</data>
@@ -6836,10 +6876,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve A (Mode 2) - Value" category="Transmission - Temperature Curves" storageaddress="0x01D852" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 2) - factor" category="Transmission - Temperature Curves" storageaddress="0x01D852" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="32">
     <data>1a</data>
@@ -8696,10 +8736,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Signal 82AC Curve 1 of 2 - Breakpoint" category="Transmission - Signal Response Curves" storageaddress="0x008334" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Torque Converter Slip Pressure Factor - slip ratio" category="Transmission - Signal Response Curves" storageaddress="0x008334" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
+   <scaling units="turbine/engine ratio" expression="x/1024" to_byte="x*1024" format="0.000" fineincrement="0.005" coarseincrement="0.05" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>slip ratio</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="14">
     <data>1a</data>
@@ -8720,13 +8760,19 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by internal signal 82AC. Physical meaning of the input is not confirmed.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+TORQUE CONVERTER SLIP FACTOR. Part of the line pressure chain: engine torque from CAN 0x412 is multiplied by this factor, smoothed, multiplied again by the ATF temperature factor, and the result looks up the line pressure target.
+
+The breakpoint is the turbine-to-engine speed ratio, so 1.000 is locked and lower numbers are more slip. Raising a value raises line pressure at that amount of slip, which firms up the clutches and speeds up shifts, at the cost of pump load and harsher engagement.
+
+The scale is confirmed against the description posted by rimwall on the RomRaider forum: a ratio of 0.5 gives 1.392 here against his stated ~1.4, and low slip gives exactly 1.000 against his stated ~1.0.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Signal 82AC Curve 1 of 2 - Value" category="Transmission - Signal Response Curves" storageaddress="0x008336" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Torque Converter Slip Pressure Factor - factor" category="Transmission - Signal Response Curves" storageaddress="0x008336" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/1024" to_byte="x*1024" format="0.000" fineincrement="0.005" coarseincrement="0.05" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="14">
     <data>1a</data>
@@ -8747,6 +8793,12 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by internal signal 82AC. Physical meaning of the input is not confirmed.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+TORQUE CONVERTER SLIP FACTOR. Part of the line pressure chain: engine torque from CAN 0x412 is multiplied by this factor, smoothed, multiplied again by the ATF temperature factor, and the result looks up the line pressure target.
+
+The breakpoint is the turbine-to-engine speed ratio, so 1.000 is locked and lower numbers are more slip. Raising a value raises line pressure at that amount of slip, which firms up the clutches and speeds up shifts, at the cost of pump load and harsher engagement.
+
+The scale is confirmed against the description posted by rimwall on the RomRaider forum: a ratio of 0.5 gives 1.392 here against his stated ~1.4, and low slip gives exactly 1.000 against his stated ~1.0.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -8889,10 +8941,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve (8428) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x00842A" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve (8428) - °C" category="Transmission - Temperature Curves" storageaddress="0x00842A" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="8">
     <data>1a</data>
@@ -8907,13 +8959,17 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by ATF temperature from sensor 1.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE PRESSURE FACTOR. The second multiplier in the line pressure chain. Runs about 1.70 when the fluid is very cold down to exactly 1.000 once warm, so the transmission raises line pressure while cold to compensate for fluid viscosity.
+
+The /256 fixed point is confirmed from the code, not inferred from the shape: the lookup result is multiplied by a factor that defaults to 0x100 - which is 256, unity - and the product is shifted right by 16, which is exact only if both are /256.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve (8428) - Value" category="Transmission - Temperature Curves" storageaddress="0x00842C" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve (8428) - factor" category="Transmission - Temperature Curves" storageaddress="0x00842C" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="8">
     <data>1a</data>
@@ -8928,6 +8984,10 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by ATF temperature from sensor 1.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE PRESSURE FACTOR. The second multiplier in the line pressure chain. Runs about 1.70 when the fluid is very cold down to exactly 1.000 once warm, so the transmission raises line pressure while cold to compensate for fluid viscosity.
+
+The /256 fixed point is confirmed from the code, not inferred from the shape: the lookup result is multiplied by a factor that defaults to 0x100 - which is 256, unity - and the product is shifted right by 16, which is exact only if both are /256.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -10619,10 +10679,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve A (Mode 1) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x01DD0A" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 1) - °C" category="Transmission - Temperature Curves" storageaddress="0x01DD0A" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="20">
     <data>1a</data>
@@ -10652,10 +10712,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve A (Mode 1) - Value" category="Transmission - Temperature Curves" storageaddress="0x01DD0C" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 1) - factor" category="Transmission - Temperature Curves" storageaddress="0x01DD0C" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="20">
     <data>1a</data>
@@ -10686,10 +10746,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve A (Mode 2) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x01E260" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 2) - °C" category="Transmission - Temperature Curves" storageaddress="0x01E260" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="32">
     <data>1a</data>
@@ -10731,10 +10791,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve A (Mode 2) - Value" category="Transmission - Temperature Curves" storageaddress="0x01E262" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 2) - factor" category="Transmission - Temperature Curves" storageaddress="0x01E262" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="32">
     <data>1a</data>
@@ -12597,10 +12657,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Signal 82AC Curve 1 of 2 - Breakpoint" category="Transmission - Signal Response Curves" storageaddress="0x008334" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Torque Converter Slip Pressure Factor - slip ratio" category="Transmission - Signal Response Curves" storageaddress="0x008334" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
+   <scaling units="turbine/engine ratio" expression="x/1024" to_byte="x*1024" format="0.000" fineincrement="0.005" coarseincrement="0.05" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>slip ratio</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="14">
     <data>1a</data>
@@ -12621,13 +12681,19 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by internal signal 82AC. Physical meaning of the input is not confirmed.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+TORQUE CONVERTER SLIP FACTOR. Part of the line pressure chain: engine torque from CAN 0x412 is multiplied by this factor, smoothed, multiplied again by the ATF temperature factor, and the result looks up the line pressure target.
+
+The breakpoint is the turbine-to-engine speed ratio, so 1.000 is locked and lower numbers are more slip. Raising a value raises line pressure at that amount of slip, which firms up the clutches and speeds up shifts, at the cost of pump load and harsher engagement.
+
+The scale is confirmed against the description posted by rimwall on the RomRaider forum: a ratio of 0.5 gives 1.392 here against his stated ~1.4, and low slip gives exactly 1.000 against his stated ~1.0.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Signal 82AC Curve 1 of 2 - Value" category="Transmission - Signal Response Curves" storageaddress="0x008336" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Torque Converter Slip Pressure Factor - factor" category="Transmission - Signal Response Curves" storageaddress="0x008336" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/1024" to_byte="x*1024" format="0.000" fineincrement="0.005" coarseincrement="0.05" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="14">
     <data>1a</data>
@@ -12648,6 +12714,12 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by internal signal 82AC. Physical meaning of the input is not confirmed.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+TORQUE CONVERTER SLIP FACTOR. Part of the line pressure chain: engine torque from CAN 0x412 is multiplied by this factor, smoothed, multiplied again by the ATF temperature factor, and the result looks up the line pressure target.
+
+The breakpoint is the turbine-to-engine speed ratio, so 1.000 is locked and lower numbers are more slip. Raising a value raises line pressure at that amount of slip, which firms up the clutches and speeds up shifts, at the cost of pump load and harsher engagement.
+
+The scale is confirmed against the description posted by rimwall on the RomRaider forum: a ratio of 0.5 gives 1.392 here against his stated ~1.4, and low slip gives exactly 1.000 against his stated ~1.0.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -12790,10 +12862,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve (8428) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x00842A" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve (8428) - °C" category="Transmission - Temperature Curves" storageaddress="0x00842A" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="8">
     <data>1a</data>
@@ -12808,13 +12880,17 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by ATF temperature from sensor 1.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE PRESSURE FACTOR. The second multiplier in the line pressure chain. Runs about 1.70 when the fluid is very cold down to exactly 1.000 once warm, so the transmission raises line pressure while cold to compensate for fluid viscosity.
+
+The /256 fixed point is confirmed from the code, not inferred from the shape: the lookup result is multiplied by a factor that defaults to 0x100 - which is 256, unity - and the product is shifted right by 16, which is exact only if both are /256.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve (8428) - Value" category="Transmission - Temperature Curves" storageaddress="0x00842C" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve (8428) - factor" category="Transmission - Temperature Curves" storageaddress="0x00842C" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="8">
     <data>1a</data>
@@ -12829,6 +12905,10 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by ATF temperature from sensor 1.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE PRESSURE FACTOR. The second multiplier in the line pressure chain. Runs about 1.70 when the fluid is very cold down to exactly 1.000 once warm, so the transmission raises line pressure while cold to compensate for fluid viscosity.
+
+The /256 fixed point is confirmed from the code, not inferred from the shape: the lookup result is multiplied by a factor that defaults to 0x100 - which is 256, unity - and the product is shifted right by 16, which is exact only if both are /256.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -14520,10 +14600,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve A (Mode 1) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x01D39E" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 1) - °C" category="Transmission - Temperature Curves" storageaddress="0x01D39E" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="20">
     <data>1a</data>
@@ -14553,10 +14633,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve A (Mode 1) - Value" category="Transmission - Temperature Curves" storageaddress="0x01D3A0" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 1) - factor" category="Transmission - Temperature Curves" storageaddress="0x01D3A0" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="20">
     <data>1a</data>
@@ -14587,10 +14667,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve A (Mode 2) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x01D8F4" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 2) - °C" category="Transmission - Temperature Curves" storageaddress="0x01D8F4" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="32">
     <data>1a</data>
@@ -14632,10 +14712,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve A (Mode 2) - Value" category="Transmission - Temperature Curves" storageaddress="0x01D8F6" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 2) - factor" category="Transmission - Temperature Curves" storageaddress="0x01D8F6" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="32">
     <data>1a</data>
@@ -17772,10 +17852,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Signal 82AC Curve 1 of 2 - Breakpoint" category="Transmission - Signal Response Curves" storageaddress="0x008334" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Torque Converter Slip Pressure Factor - slip ratio" category="Transmission - Signal Response Curves" storageaddress="0x008334" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
+   <scaling units="turbine/engine ratio" expression="x/1024" to_byte="x*1024" format="0.000" fineincrement="0.005" coarseincrement="0.05" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>slip ratio</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="14">
     <data>1a</data>
@@ -17796,13 +17876,19 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by internal signal 82AC. Physical meaning of the input is not confirmed.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+TORQUE CONVERTER SLIP FACTOR. Part of the line pressure chain: engine torque from CAN 0x412 is multiplied by this factor, smoothed, multiplied again by the ATF temperature factor, and the result looks up the line pressure target.
+
+The breakpoint is the turbine-to-engine speed ratio, so 1.000 is locked and lower numbers are more slip. Raising a value raises line pressure at that amount of slip, which firms up the clutches and speeds up shifts, at the cost of pump load and harsher engagement.
+
+The scale is confirmed against the description posted by rimwall on the RomRaider forum: a ratio of 0.5 gives 1.392 here against his stated ~1.4, and low slip gives exactly 1.000 against his stated ~1.0.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Signal 82AC Curve 1 of 2 - Value" category="Transmission - Signal Response Curves" storageaddress="0x008336" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Torque Converter Slip Pressure Factor - factor" category="Transmission - Signal Response Curves" storageaddress="0x008336" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/1024" to_byte="x*1024" format="0.000" fineincrement="0.005" coarseincrement="0.05" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="14">
     <data>1a</data>
@@ -17823,6 +17909,12 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by internal signal 82AC. Physical meaning of the input is not confirmed.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+TORQUE CONVERTER SLIP FACTOR. Part of the line pressure chain: engine torque from CAN 0x412 is multiplied by this factor, smoothed, multiplied again by the ATF temperature factor, and the result looks up the line pressure target.
+
+The breakpoint is the turbine-to-engine speed ratio, so 1.000 is locked and lower numbers are more slip. Raising a value raises line pressure at that amount of slip, which firms up the clutches and speeds up shifts, at the cost of pump load and harsher engagement.
+
+The scale is confirmed against the description posted by rimwall on the RomRaider forum: a ratio of 0.5 gives 1.392 here against his stated ~1.4, and low slip gives exactly 1.000 against his stated ~1.0.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -17965,10 +18057,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve (8428) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x00842A" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve (8428) - °C" category="Transmission - Temperature Curves" storageaddress="0x00842A" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="8">
     <data>1a</data>
@@ -17983,13 +18075,17 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by ATF temperature from sensor 1.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE PRESSURE FACTOR. The second multiplier in the line pressure chain. Runs about 1.70 when the fluid is very cold down to exactly 1.000 once warm, so the transmission raises line pressure while cold to compensate for fluid viscosity.
+
+The /256 fixed point is confirmed from the code, not inferred from the shape: the lookup result is multiplied by a factor that defaults to 0x100 - which is 256, unity - and the product is shifted right by 16, which is exact only if both are /256.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve (8428) - Value" category="Transmission - Temperature Curves" storageaddress="0x00842C" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve (8428) - factor" category="Transmission - Temperature Curves" storageaddress="0x00842C" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="8">
     <data>1a</data>
@@ -18004,6 +18100,10 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by ATF temperature from sensor 1.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE PRESSURE FACTOR. The second multiplier in the line pressure chain. Runs about 1.70 when the fluid is very cold down to exactly 1.000 once warm, so the transmission raises line pressure while cold to compensate for fluid viscosity.
+
+The /256 fixed point is confirmed from the code, not inferred from the shape: the lookup result is multiplied by a factor that defaults to 0x100 - which is 256, unity - and the product is shifted right by 16, which is exact only if both are /256.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -19695,10 +19795,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve A (Mode 1) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x01D97E" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 1) - °C" category="Transmission - Temperature Curves" storageaddress="0x01D97E" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="20">
     <data>1a</data>
@@ -19728,10 +19828,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve A (Mode 1) - Value" category="Transmission - Temperature Curves" storageaddress="0x01D980" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 1) - factor" category="Transmission - Temperature Curves" storageaddress="0x01D980" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="20">
     <data>1a</data>
@@ -19762,10 +19862,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve A (Mode 2) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x01DED4" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 2) - °C" category="Transmission - Temperature Curves" storageaddress="0x01DED4" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="32">
     <data>1a</data>
@@ -19807,10 +19907,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve A (Mode 2) - Value" category="Transmission - Temperature Curves" storageaddress="0x01DED6" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 2) - factor" category="Transmission - Temperature Curves" storageaddress="0x01DED6" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="32">
     <data>1a</data>
@@ -21670,10 +21770,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="Signal 82AC Curve 1 of 2 - Breakpoint" category="Transmission - Signal Response Curves" storageaddress="0x008334" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Torque Converter Slip Pressure Factor - slip ratio" category="Transmission - Signal Response Curves" storageaddress="0x008334" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
+   <scaling units="turbine/engine ratio" expression="x/1024" to_byte="x*1024" format="0.000" fineincrement="0.005" coarseincrement="0.05" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>slip ratio</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="14">
     <data>1a</data>
@@ -21694,13 +21794,19 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by internal signal 82AC. Physical meaning of the input is not confirmed.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+TORQUE CONVERTER SLIP FACTOR. Part of the line pressure chain: engine torque from CAN 0x412 is multiplied by this factor, smoothed, multiplied again by the ATF temperature factor, and the result looks up the line pressure target.
+
+The breakpoint is the turbine-to-engine speed ratio, so 1.000 is locked and lower numbers are more slip. Raising a value raises line pressure at that amount of slip, which firms up the clutches and speeds up shifts, at the cost of pump load and harsher engagement.
+
+The scale is confirmed against the description posted by rimwall on the RomRaider forum: a ratio of 0.5 gives 1.392 here against his stated ~1.4, and low slip gives exactly 1.000 against his stated ~1.0.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="Signal 82AC Curve 1 of 2 - Value" category="Transmission - Signal Response Curves" storageaddress="0x008336" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="Torque Converter Slip Pressure Factor - factor" category="Transmission - Signal Response Curves" storageaddress="0x008336" storagetype="uint16" endian="big" sizex="1" sizey="14" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/1024" to_byte="x*1024" format="0.000" fineincrement="0.005" coarseincrement="0.05" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="14">
     <data>1a</data>
@@ -21721,6 +21827,12 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by internal signal 82AC. Physical meaning of the input is not confirmed.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+TORQUE CONVERTER SLIP FACTOR. Part of the line pressure chain: engine torque from CAN 0x412 is multiplied by this factor, smoothed, multiplied again by the ATF temperature factor, and the result looks up the line pressure target.
+
+The breakpoint is the turbine-to-engine speed ratio, so 1.000 is locked and lower numbers are more slip. Raising a value raises line pressure at that amount of slip, which firms up the clutches and speeds up shifts, at the cost of pump load and harsher engagement.
+
+The scale is confirmed against the description posted by rimwall on the RomRaider forum: a ratio of 0.5 gives 1.392 here against his stated ~1.4, and low slip gives exactly 1.000 against his stated ~1.0.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -21863,10 +21975,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve (8428) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x00842A" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve (8428) - °C" category="Transmission - Temperature Curves" storageaddress="0x00842A" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="8">
     <data>1a</data>
@@ -21881,13 +21993,17 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by ATF temperature from sensor 1.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE PRESSURE FACTOR. The second multiplier in the line pressure chain. Runs about 1.70 when the fluid is very cold down to exactly 1.000 once warm, so the transmission raises line pressure while cold to compensate for fluid viscosity.
+
+The /256 fixed point is confirmed from the code, not inferred from the shape: the lookup result is multiplied by a factor that defaults to 0x100 - which is 256, unity - and the product is shifted right by 16, which is exact only if both are /256.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve (8428) - Value" category="Transmission - Temperature Curves" storageaddress="0x00842C" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve (8428) - factor" category="Transmission - Temperature Curves" storageaddress="0x00842C" storagetype="uint16" endian="big" sizex="1" sizey="8" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="8">
     <data>1a</data>
@@ -21902,6 +22018,10 @@ This table holds ONE of the two quantities in the record array, so it can be sho
    <description>Indexed by ATF temperature from sensor 1.
 
 Format: an array of 8-byte records, each one segment of a piecewise-linear curve. The array is terminated by a leading 0xFFFF.
+
+ATF TEMPERATURE PRESSURE FACTOR. The second multiplier in the line pressure chain. Runs about 1.70 when the fluid is very cold down to exactly 1.000 once warm, so the transmission raises line pressure while cold to compensate for fluid viscosity.
+
+The /256 fixed point is confirmed from the code, not inferred from the shape: the lookup result is multiplied by a factor that defaults to 0x100 - which is 256, unity - and the product is shifted right by 16, which is exact only if both are /256.
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
@@ -23593,10 +23713,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve A (Mode 1) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x01DC3A" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 1) - °C" category="Transmission - Temperature Curves" storageaddress="0x01DC3A" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="20">
     <data>1a</data>
@@ -23626,10 +23746,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve A (Mode 1) - Value" category="Transmission - Temperature Curves" storageaddress="0x01DC3C" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 1) - factor" category="Transmission - Temperature Curves" storageaddress="0x01DC3C" storagetype="uint16" endian="big" sizex="1" sizey="20" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="20">
     <data>1a</data>
@@ -23660,10 +23780,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
 
-  <table type="3D" name="ATF Temp Curve A (Mode 2) - Breakpoint" category="Transmission - Temperature Curves" storageaddress="0x01E190" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 2) - °C" category="Transmission - Temperature Curves" storageaddress="0x01E190" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
+   <scaling units="°C" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Breakpoint</data>
+    <data>°C</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="32">
     <data>1a</data>
@@ -23705,10 +23825,10 @@ Format: an array of 8-byte records, each one segment of a piecewise-linear curve
 
 This table holds ONE of the two quantities in the record array, so it can be shown in real units. Rows are the polyline vertices in order: 1a is the start of segment 1, 1b its end, 2a the start of segment 2, and so on. A segment's end normally equals the next segment's start; where it does not, the curve steps vertically at that point, which is deliberate. The companion table in the same category holds the other quantity, row for row.</description>
   </table>
-  <table type="3D" name="ATF Temp Curve A (Mode 2) - Value" category="Transmission - Temperature Curves" storageaddress="0x01E192" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
-   <scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="8" />
+  <table type="3D" name="ATF Temp Curve A (Mode 2) - factor" category="Transmission - Temperature Curves" storageaddress="0x01E192" storagetype="uint16" endian="big" sizex="1" sizey="32" skipCells="1" userlevel="1">
+   <scaling units="x (multiplier)" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.004" coarseincrement="0.04" />
    <table type="Static X Axis" name="Field" sizex="1">
-    <data>Value</data>
+    <data>factor</data>
    </table>
    <table type="Static Y Axis" name="Vertex" sizey="32">
     <data>1a</data>
