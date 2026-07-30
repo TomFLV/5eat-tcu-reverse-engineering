@@ -61,6 +61,167 @@ index 45cde25..f091c58 100644
          // init i18n resources
          if (rb == null) return;
          // init debug logging
+diff --git a/src/main/java/com/romraider/editor/ecu/ECUEditor.java b/src/main/java/com/romraider/editor/ecu/ECUEditor.java
+index e145a21..f4c0e61 100644
+--- a/src/main/java/com/romraider/editor/ecu/ECUEditor.java
++++ b/src/main/java/com/romraider/editor/ecu/ECUEditor.java
+@@ -53,8 +53,10 @@ import java.io.File;
+ import java.io.FileInputStream;
+ import java.io.FileReader;
+ import java.io.FileWriter;
++import java.io.FilenameFilter;
+ import java.io.IOException;
+ import java.text.MessageFormat;
++import java.util.ArrayList;
+ import java.util.List;
+ import java.util.ResourceBundle;
+ import java.util.Vector;
+@@ -75,6 +77,8 @@ import javax.swing.tree.TreePath;
+ 
+ import com.romraider.ECUExec;
+ import com.romraider.Settings;
++import org.apache.log4j.Logger;
++
+ import com.romraider.logger.ecu.EcuLogger;
+ import com.romraider.maps.Rom;
+ import com.romraider.maps.Table;
+@@ -111,6 +115,7 @@ import com.romraider.util.ThreadUtil;
+ import com.romraider.xml.ConversionLayer.ConversionLayer;
+ 
+ public class ECUEditor extends AbstractFrame {
++    private static final Logger LOGGER = Logger.getLogger(ECUEditor.class);
+     private static final long serialVersionUID = -7826850987392016292L;
+     protected static final ResourceBundle rb = new ResourceUtil().getBundle(
+             ECUEditor.class.getName());
+@@ -241,7 +246,61 @@ public class ECUEditor extends AbstractFrame {
+         });
+     }
+     
++    /**
++     * Definition files shipped with the application, if any.
++     *
++     * Looks for a "definitions" directory beside the jar, and one level up as
++     * well: a jpackage app-image puts the jar in app/ with the launcher above it,
++     * so the definitions directory sits next to the executable rather than next
++     * to the jar. Returns empty when running from a source build, which leaves
++     * the original behaviour untouched.
++     */
++    private static List<File> findBundledDefinitions() {
++        final List<File> found = new ArrayList<File>();
++        try {
++            final File jar = new File(ECUEditor.class.getProtectionDomain()
++                    .getCodeSource().getLocation().toURI());
++            final File base = jar.isFile() ? jar.getParentFile() : jar;
++            final File[] candidates = {
++                new File(base, "definitions"),
++                new File(base.getParentFile(), "definitions"),
++            };
++            for (File dir : candidates) {
++                if (!dir.isDirectory()) continue;
++                final File[] xml = dir.listFiles(new FilenameFilter() {
++                    @Override
++                    public boolean accept(File d, String name) {
++                        return name.toLowerCase().endsWith(".xml");
++                    }
++                });
++                if (xml != null && xml.length > 0) {
++                    for (File f : xml) found.add(f);
++                    break;
++                }
++            }
++        } catch (Exception e) {
++            LOGGER.debug("No bundled ECU definitions alongside the application", e);
++        }
++        return found;
++    }
++
+     public void checkDefinitions() {
++        if (settings.getEcuDefinitionFiles().isEmpty()) {
++            // Before asking the user to go and find a definition, look for one
++            // shipped alongside the application. A packaged build carries its own
++            // definitions directory, and making the user browse to a file that is
++            // already installed is the kind of setup step that makes a tool feel
++            // broken. It also avoids baking an absolute path into settings.xml,
++            // which is machine-specific and does not survive being copied.
++            for (File f : findBundledDefinitions()) {
++                settings.addEcuDefinitionFile(f);
++                LOGGER.info("Using bundled ECU definition " + f.getAbsolutePath());
++            }
++            if (!settings.getEcuDefinitionFiles().isEmpty()) {
++                SettingsManager.save(settings);
++                return;
++            }
++        }
+         if (settings.getEcuDefinitionFiles().size() <= 0) {
+             // no ECU definitions configured - let user choose to get latest or configure later
+             Object[] options = {rb.getString("YES"), rb.getString("NO")};
+diff --git a/src/main/java/com/romraider/maps/Table.java b/src/main/java/com/romraider/maps/Table.java
+index db7f9de..a651ca8 100644
+--- a/src/main/java/com/romraider/maps/Table.java
++++ b/src/main/java/com/romraider/maps/Table.java
+@@ -34,6 +34,27 @@ import com.romraider.util.NumberUtil;
+ import com.romraider.util.SettingsManager;
+ 
+ public abstract class Table implements Serializable, Comparable<Table> {
++    /**
++     * Stride, in elements, added after each cell when reading from the ROM.
++     *
++     * This lived on Table3D only, which meant an AXIS could never stride - and
++     * that is what stopped a record array being shown as a single table with two
++     * real axes. A record holds two different quantities interleaved, so reading
++     * one of them as an axis and the other as the data requires both to skip over
++     * the other. Table3D still overrides populateTable and applies the same field
++     * per row; here it applies per cell, which for a single-row table is the same
++     * rule.
++     */
++    protected int skipCells = 0;
++
++    public int getSkipCells() {
++        return skipCells;
++    }
++
++    public void setSkipCells(int skipCells) {
++        this.skipCells = skipCells;
++    }
++
+     private static final long serialVersionUID = 6559256489995552645L;
+     protected static final Logger LOGGER = Logger.getLogger(Table.class);
+     protected static final String ST_DELIMITER = "\t\n\r\f";
+@@ -159,7 +180,7 @@ public abstract class Table implements Serializable, Comparable<Table> {
+         }
+ 
+         for (int i = 0; i < data.length; i++) {
+-            data[i] = new DataCell(this, i, rom);
++            data[i] = new DataCell(this, i * (1 + skipCells), rom);
+         }
+ 
+         // reset locked status
+diff --git a/src/main/java/com/romraider/maps/Table3D.java b/src/main/java/com/romraider/maps/Table3D.java
+index ece4055..4042421 100644
+--- a/src/main/java/com/romraider/maps/Table3D.java
++++ b/src/main/java/com/romraider/maps/Table3D.java
+@@ -39,7 +39,6 @@ public class Table3D extends Table {
+     private boolean flipY = false;
+     
+     // Skip cells after row/column ends before next row/column starts
+-    private int skipCells = 0;
+ 
+     @Override
+     public TableType getType() {
+@@ -108,13 +107,7 @@ public class Table3D extends Table {
+         return data[0].length;
+     }
+     
+-    public int getSkipCells() {
+-        return this.skipCells;
+-    }
+ 
+-    public void setSkipCells(int skipCells) {
+-    	this.skipCells = skipCells;
+-    }
+ 
+    
+     @Override
 diff --git a/src/main/java/com/romraider/swing/LookAndFeelManager.java b/src/main/java/com/romraider/swing/LookAndFeelManager.java
 index 0f91ca7..6250e6b 100644
 --- a/src/main/java/com/romraider/swing/LookAndFeelManager.java
@@ -275,3 +436,51 @@ index fff592a..3fa8259 100644
 +    }
 +
  }
+diff --git a/src/main/java/com/romraider/util/SettingsManager.java b/src/main/java/com/romraider/util/SettingsManager.java
+index 20798e0..562abfd 100644
+--- a/src/main/java/com/romraider/util/SettingsManager.java
++++ b/src/main/java/com/romraider/util/SettingsManager.java
+@@ -99,9 +99,14 @@ public class SettingsManager {
+                 throw new FileNotFoundException("file length is 0");
+             }
+         } catch (FileNotFoundException e) {
+-            showMessageDialog(null,
+-                    rb.getString("FNF"),
+-                    rb.getString("ERROR"), INFORMATION_MESSAGE);
++            // A missing settings file is a FIRST RUN, not an error. Reporting it
++            // through a modal dialog titled "Error" means the very first thing a
++            // new user sees is a warning that blocks the main window from
++            // appearing - which looks exactly like the application failing to
++            // start. Log it and carry on with defaults, which is what the code
++            // below already does anyway.
++            LOGGER.info("No settings file yet (" + e.getMessage()
++                    + "); starting with defaults.");
+             loadedSettings = new Settings();
+         } catch (Exception e) {
+             throw new RuntimeException(e);
+diff --git a/src/main/java/com/romraider/xml/TableScaleUnmarshaller.java b/src/main/java/com/romraider/xml/TableScaleUnmarshaller.java
+index 08138b6..045d5de 100644
+--- a/src/main/java/com/romraider/xml/TableScaleUnmarshaller.java
++++ b/src/main/java/com/romraider/xml/TableScaleUnmarshaller.java
+@@ -195,6 +195,11 @@ public class TableScaleUnmarshaller {
+         table.setStringMask(
+                 unmarshallAttribute(tableNode, "mask", ""));
+ 
++        // Read on EVERY table type, not just 3D. An axis needs it as much as the
++        // data does when both come from the same interleaved record array.
++        table.setSkipCells(unmarshallAttribute(tableNode, "skipCells",
++                table.getSkipCells()));
++
+         if (table.getType() == Table.TableType.TABLE_3D) {
+             ((Table3D) table).setSwapXY(unmarshallAttribute(tableNode,
+                     "swapxy", ((Table3D) table).getSwapXY()));
+@@ -206,8 +211,7 @@ public class TableScaleUnmarshaller {
+                     ((Table3D) table).getSizeX()));
+             ((Table3D) table).setSizeY(unmarshallAttribute(tableNode, "sizey",
+                     ((Table3D) table).getSizeY()));
+-            ((Table3D) table).setSkipCells(unmarshallAttribute(tableNode, "skipCells",
+-                    ((Table3D) table).getSkipCells()));
++
+         }
+ 
+         Node n;
