@@ -846,30 +846,63 @@ DTC_DESC = (
 )
 
 
-def build_dtc_table_xml(entry):
-    """The DTC codes as a flat 1D list - it is a list, not a map.
+DTC_SWITCH_DESC = (
+    "%s - enable or disable this diagnostic trouble code.\n\n"
+    "DISABLED writes zero to this code's slot, which makes it identical to the 43 "
+    "slots the factory already leaves empty. The fault bit still sets internally, "
+    "but no code number is attached to it, so nothing is reported.\n\n"
+    "Know what that does and does not do. It suppresses the CODE, not the FAULT - "
+    "whatever limp-home, pressure or shift behaviour the TCU applies when that bit "
+    "sets will still happen. You have only stopped it telling you why. Useful after "
+    "a hardware change that leaves a sensor permanently faulted; a poor idea as a "
+    "way of silencing a fault you have not diagnosed.\n\n"
+    "This behaviour is inferred from the table layout, not tested on a vehicle. "
+    "Zero is what the firmware's own unused slots contain, which is the best "
+    "evidence available, but nobody has confirmed how a scan tool reports it.\n\n"
+    "Stored at 0x%06X as 0x%04X. The code is the P-number in hex, so this reads as "
+    "%s."
+)
 
-    A 3D grid was the wrong shape. The firmware does index it as status byte times
-    eight plus bit, but nobody reads a code list as a matrix. It also ran into a
-    RomRaider bug where a LOCKED 3D table renders with null cells and throws out of
-    Table3DView.populateTableVisual, so 1D is both the honest shape and the one that
-    works.
 
-    Left editable on purpose. Blanking an entry is how you stop the TCU reporting
-    that code, which is a real thing someone might want after a hardware change.
+def build_dtc_switch_xml(addr, code):
+    """One switch per code, named for the code, as RomRaider ECU definitions do.
+
+    Three shapes were tried before this one. A 12 x 8 grid mirrored the firmware's
+    indexing but was mostly empty, since 43 of the 96 slots hold nothing. A flat 1D
+    list of all 96 rendered as a single row four thousand pixels wide - honest
+    shape, unusable table. A packed grid of just the real codes was readable but
+    still made you hunt for a code by eye.
+
+    A switch per code is how every other RomRaider definition presents DTCs: the
+    tree lists them by name, so you find P0705 by reading down the list, and the
+    control is a plain Enabled/Disabled rather than a number to remember.
     """
-    nl = "\n"
-    n = DTC_GROUPS * DTC_BITS
+    name = "P%04X" % code
     return (
-        '  <table type="1D" name="Trouble Codes" '
-        'category="Transmission - Diagnostics" '
-        'storageaddress="0x%06X" storagetype="uint16" endian="big" '
-        'sizey="%d" userlevel="1">%s'
-        '   <scaling units="P-code, value is hex" expression="x" to_byte="x" '
-        'format="0" fineincrement="1" coarseincrement="16" />%s'
-        '   <description>%s</description>%s'
+        '  <table type="Switch" name="%s" '
+        'category="Transmission - Diagnostic Codes" '
+        'storageaddress="0x%06X" sizey="2" userlevel="1">\n'
+        '   <description>%s</description>\n'
+        '   <state name="Enabled" data="%02X %02X" />\n'
+        '   <state name="Disabled" data="00 00" />\n'
         '  </table>'
-        % (entry["addr"], n, nl, nl, escape(DTC_DESC), nl))
+        % (name, addr, escape(DTC_SWITCH_DESC % (name, addr, code, name)),
+           (code >> 8) & 0xFF, code & 0xFF))
+
+
+def build_dtc_tables_xml(entry):
+    """Every code in this firmware, as its own switch, ordered by code number."""
+    base = entry["addr"]
+    n = DTC_GROUPS * DTC_BITS
+    found = []
+    for i in range(n):
+        code = u16(base + i * 2)
+        if code in (0x0000, 0x3FFF, 0xFFFF):
+            continue
+        found.append((code, base + i * 2))
+    # Sort by code so the tree reads like a code list rather than scan order.
+    found.sort()
+    return [build_dtc_switch_xml(a, c) for c, a in found]
 
 
 # ---------------------------------------------------------------------------
@@ -1134,7 +1167,14 @@ def build_romid(profile):
    <memmodel>M32R</memmodel>
    <flashmethod>None</flashmethod>
    <filesize>{profile['filesize']}</filesize>
-  </romid>"""
+  </romid>
+  <!-- RomRaider fixes the checksum itself on save. The 5EAT algorithm is a
+       32-bit big-endian two's-complement additive sum stored twice at 0x8000
+       and 0x8004, over a region that is NOT the same in every image - see
+       ChecksumSUBARUTCU, which detects it per ROM. Requires the patched build
+       in romraider-5eat/; stock RomRaider has no manager of this type and will
+       warn that it cannot find one. -->
+  <checksum type="subarutcu" />"""
 
 # Kept out of the romid banner fields on purpose (they're shown in RomRaider's
 # compact top banner alongside the category tree, and long strings there get
@@ -1384,9 +1424,10 @@ def build_rom_block(profile, rom_bytes, is_base):
                 raise SystemExit(
                     "%s: DTC table at 0x%06X does not start with a valid P-code "
                     "(found 0x%04X)" % (profile["id"], dtc["addr"], first))
-            parts.append(build_dtc_table_xml(dtc))
-            parts.append("")
-            total += 1
+            for tbl in build_dtc_tables_xml(dtc):
+                parts.append(tbl)
+                parts.append("")
+                total += 1
 
         pcurves = PRESSURE_CURVES_BY_ROM.get(profile["id"], [])
         if pcurves:

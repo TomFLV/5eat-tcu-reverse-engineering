@@ -196,32 +196,28 @@ def main():
                 if addr >= len(data):
                     errors.append(f"{name}: address 0x{addr:06X} beyond end of ROM")
 
-                if t.get("category") == "Transmission - Diagnostics":
-                    # The DTC list is a plain contiguous array with no terminator, so
-                    # there is nothing structural to check. Check the CONTENT, which
-                    # is stronger anyway: codes are the P-number in hex, so every
-                    # non-empty entry must decode to a real powertrain code. Garbage
-                    # at a wrong address fails immediately - which is exactly what the
-                    # old 0x4090 DTC claim would not have survived.
-                    n = int(t.get("sizey") or t.get("sizex") or 0)
+                if t.get("category") == "Transmission - Diagnostic Codes":
+                    # Each DTC is its own switch, so the strongest check is that the
+                    # bytes it calls "Enabled" are the bytes actually in the ROM at
+                    # its address, and that they decode to the P-code in its name.
+                    # A switch pointing at the wrong slot would look perfectly fine
+                    # and would silently blank a DIFFERENT code when set to Disabled.
                     checked += 1
-                    bad, filled = [], 0
-                    for i in range(n):
-                        v = u16(addr + i * 2)
-                        if v is None or v in (0x0000, 0x3FFF, 0xFFFF):
-                            continue
-                        filled += 1
-                        ok = ((0x0700 <= v <= 0x0999 or 0x1600 <= v <= 0x1899)
-                              and (v & 0xF) <= 9 and ((v >> 4) & 0xF) <= 9)
-                        if not ok:
-                            bad.append(v)
-                    if bad:
+                    stored = u16(addr)
+                    declared = None
+                    for state in t.findall("state"):
+                        if state.get("name") == "Enabled":
+                            declared = int(state.get("data", "0").replace(" ", ""), 16)
+                    if declared is None:
+                        errors.append(f"{name}: switch has no Enabled state")
+                    elif declared != stored:
                         errors.append(
-                            f"{name}: {len(bad)} entr(ies) do not decode to a P-code, "
-                            f"first 0x{bad[0]:04X}")
-                    elif filled < 30:
+                            f"{name}: Enabled state is 0x{declared:04X} but the ROM "
+                            f"holds 0x{stored:04X} at 0x{addr:06X}")
+                    elif f"P{stored:04X}" != name:
                         errors.append(
-                            f"{name}: only {filled} codes present, expected ~53")
+                            f"{name}: named for a different code than it stores "
+                            f"(0x{stored:04X} would be P{stored:04X})")
 
         status = "OK" if not errors else f"{len(errors)} ERROR(S)"
         print(f"  {ecuid:12s} {rom_name[:38]:40s} {checked:4d} checks  {status}")

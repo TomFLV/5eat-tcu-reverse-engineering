@@ -40,6 +40,447 @@ index d2d419e..f45e0e9 100644
                  encoding="UTF-8" >
                  <!--
                  <compilerarg value="-Xlint" />
+diff --git a/build.xml.orig b/build.xml.orig
+new file mode 100644
+index 0000000..d2d419e
+--- /dev/null
++++ b/build.xml.orig
+@@ -0,0 +1,431 @@
++<?xml version="1.0"?>
++
++<!-- Master build file for RomRaider
++
++ RomRaider Open-Source Tuning, Logging and Reflashing
++ Copyright (C) 2006-2022 RomRaider.com
++
++ This program is free software; you can redistribute it and/or modify
++ it under the terms of the GNU General Public License as published by
++ the Free Software Foundation; either version 2 of the License, or
++ (at your option) any later version.
++
++ This program is distributed in the hope that it will be useful,
++ but WITHOUT ANY WARRANTY; without even the implied warranty of
++ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ GNU General Public License for more details.
++
++ You should have received a copy of the GNU General Public License along
++ with this program; if not, write to the Free Software Foundation, Inc.,
++ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++
++-->
++
++<project name="romraider" default="help" basedir=".">
++
++    <!-- get the environment -->
++    <property environment="env" />
++
++    <!-- =================================================================== -->
++    <!-- Help                                                                -->
++    <!--   All externally callable targets should be listed here, along      -->
++    <!--   with common property overrides                                    -->
++    <!-- =================================================================== -->
++    <target name="help" depends="-init">
++        <echo message="help        [Print this message                     ]" />
++        <echo message="clean       [Clean generated files                  ]" />
++        <echo message="prepare     [Create directories for output files    ]" />
++        <echo message="            [  and generate files from templates    ]" />
++        <echo message="build       [Compile the Java source files          ]" />
++        <echo message="rebuild     [Call the clean and build targets       ]" />
++        <echo message="javadoc     [Generate the API documentation of the  ]" />
++        <echo message="            [  Java source code                     ]" />
++        <echo message="installer   [Create the installation packages       ]" />
++        <echo message="standalone  [Create the ZIP packages                ]" />
++        <echo message="all         [Complete rebuild and packaging         ]" />
++        <echo message="unittest    [Run all unit tests                     ]" />
++    </target>
++
++    <!-- =================================================================== -->
++    <!-- Initialization target - only callable internally                    -->
++    <!-- =================================================================== -->
++    <target name="-init" unless="initialized" description="Initialize the build environment">
++        <property name="initialized" value="true" />
++        <!-- set the various timestamp properties we may need -->
++        <tstamp>
++            <format property="time.rfc822" pattern="EEE, dd MMM yyyy HH:mm:ss Z" locale="en"/>
++            <format property="time.year" pattern="yyyy" locale="en"/>
++            <format property="mnth.day" pattern="MMMdd" locale="en"/>
++        </tstamp>
++
++        <scriptdef language="javascript" name="toUpper">
++            project.setProperty("mnth.day",
++                    project.getProperty("mnth.day").toUpperCase());
++        </scriptdef>
++        <toUpper/>
++
++        <!-- set os specific properties -->
++        <property name="os.windows" value="windows" />
++        <property name="ext.windows" value="bat" />
++        <property name="os.linux" value="linux" />
++        <property name="ext.linux" value="sh" />
++
++        <condition property="os" value="${os.windows}" else="${os.linux}">
++            <os family="windows" />
++        </condition>
++
++        <condition property="is.windows">
++            <equals arg1="${os}" arg2="${os.windows}" />
++        </condition>
++
++        <!-- java compiler properties -->
++        <property name="javac.source" value="1.6" />
++        <property name="javac.target" value="1.6" />
++        <condition property="bootclasspath.dir" value="${env.JRE_DIR}/lib"
++                           else="C:\Program Files (x86)\Java\jdk1.6.0_45\jre\lib">
++                    <isset property="env.JRE_DIR" />
++        </condition>
++        <property name="debug" value="off" />
++        <property name="deprecation" value="on" />
++        <property name="javac.verbose" value="off" />
++
++        <!-- version properties are set in this file, both for the product itself and
++                for some of the external dependencies (jar files and such) -->
++        <property file="version.properties" />
++
++        <!-- basic project properties -->
++        <property name="src.dir" value="${basedir}/src" />
++        <property name="src.java.dir" value="${src.dir}/main/java" />
++        <property name="src.res.dir" value="${src.dir}/main/resources" />
++        <property name="graphics.dir" value="${src.res.dir}/graphics" />
++        <property name="docs.dir" value="${basedir}/docs" />
++        <property name="build.dir" value="${basedir}/build" />
++        <property name="template.dir" value="${basedir}/templates" />
++        <property name="3rdparty.dir" value="${basedir}/3rdparty" />
++
++        <!-- all generated files should go to somewhere in the build directory -->
++        <property name="classes.dir" value="${build.dir}/classes" />
++        <property name="javadoc.dir" value="${build.dir}/javadoc" />
++        <property name="dist.dir" value="${build.dir}/dist" />
++        <property name="testclasses.dir" value="${build.dir}/test" />
++
++        <!-- package naming properties -->
++        <property name="jar.package" value="${name.package}.jar" />
++        <property name="jar.installer-prefix"
++                  value="${name.package}${version.major}.${version.minor}.${version.patch}-${version.buildnumber}" />
++
++        <!-- support tools -->
++        <!-- creates EXE wrappers around java apps -->
++        <property name="launch4j.dir" location="${3rdparty.dir}/launch4j" />
++        <!-- installer packager -->
++        <property name="izpack.dir" value="${3rdparty.dir}/IzPack" />
++        <condition property="have.3rdparty">
++            <and>
++                <available file="${izpack.dir}/izpack-standalone-compiler.jar" />
++                <available file="${launch4j.dir}/launch4j.jar" />
++            </and>
++        </condition>
++        <property name="izpack.compile" value="${izpack.dir}/izpack-standalone-compiler.jar" />
++
++        <!-- define custom tasks -->
++        <taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" onerror="report"
++                 classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
++
++        <path id="windows.classpath">
++            <fileset dir="lib/common" includes="*.jar" />
++            <fileset dir="lib/windows" includes="*.jar" />
++        </path>
++
++        <path id="linux.classpath">
++            <fileset dir="lib/common" includes="*.jar" />
++            <fileset dir="lib/linux" includes="*.jar" />
++        </path>
++
++        <path id="test.classpath">
++            <fileset dir="${testclasses.dir}" includes="**/*.jar" />
++        </path>
++
++        <path id="junit_compile.classpath">
++            <path refid="linux.classpath" />
++            <pathelement location="lib/testing/junit.jar" />
++            <pathelement location="lib/testing/hamcrest.jar" />
++        </path>
++
++        <path id="junit_runtime.classpath">
++            <path refid="junit_compile.classpath" />
++            <pathelement location="${build.dir}/linux/lib/RomRaider.jar" />
++            <path refid="test.classpath" />
++        </path>
++
++        <!-- this set of filters should contain all the substitutions needed -->
++        <filterset id="version.filterset">
++            <filter token="time.year" value="${time.year}" />
++            <filter token="warning.generated-file" value="${warning.generated-file}" />
++            <filter token="name.package" value="${name.package}" />
++            <filter token="description.package" value="${description.package}" />
++            <filter token="name.organization" value="${name.organization}" />
++            <filter token="name.maintainer" value="${name.maintainer}" />
++            <filter token="email.maintainer" value="${email.maintainer}" />
++            <filter token="supporturl" value="${supporturl}" />
++            <filter token="romrevisionurl" value="${romrevisionurl}" />
++            <filter token="ecudefsurl" value="${ecudefsurl}" />
++            <filter token="loggerdefsurl" value="${loggerdefsurl}" />
++            <filter token="carsdefsurl" value="${carsdefsurl}" />
++            <filter token="release_notes" value="${release_notes}" />
++            <filter token="version.major" value="${version.major}" />
++            <filter token="version.minor" value="${version.minor}" />
++            <filter token="version.patch" value="${version.patch}" />
++            <filter token="version.buildnumber" value="${version.buildnumber}" />
++            <filter token="version.extra" value="${version.extra}" />
++            <filter token="version.extra1" value="${version.extra1}" />
++            <filter token="min.logger.def.version" value="${min.logger.def.version}" />
++            <filter token="build.arch" value="${build.arch}" />
++            <filter token="jvm.args.win" value="${jvm.args.win}" />
++            <filter token="jvm.args.linux" value="${jvm.args.linux}" />
++        </filterset>
++    </target>
++
++    <!-- =================================================================== -->
++    <!-- cleans all generated files                                          -->
++    <!-- =================================================================== -->
++    <target name="clean" depends="-init" description="Clean all generated files">
++        <delete dir="${build.dir}" failonerror="false" />
++    </target>
++
++    <!-- =================================================================== -->
++    <!-- pre-build preparation                                               -->
++    <!-- =================================================================== -->
++    <target name="prepare" depends="-init" description="Pre-build preparation">
++        <!-- generate the Version class -->
++        <copy overwrite="true" tofile="${src.java.dir}/com/romraider/Version.java"
++              file="src/main/java/com/romraider/Version.java.template">
++            <filterset refid="version.filterset" />
++        </copy>
++    </target>
++
++    <!-- =================================================================== -->
++    <!-- complete rebuild                                                    -->
++    <!-- =================================================================== -->
++    <target name="rebuild" depends="clean, build" description="Rebuild"/>
++
++    <!-- =================================================================== -->
++    <!-- Compiles the source directory                                       -->
++    <!-- =================================================================== -->
++    <target name="compile-windows" depends="prepare" description="Compile the source directory for Windows">
++        <macro_compile os="${os.windows}" srcdir="${src.java.dir}" destdir="${classes.dir}" classpathref="windows.classpath"/>
++    </target>
++    <target name="compile-linux" depends="prepare" description="Compile the source directory for Linux">
++        <macro_compile os="${os.linux}" srcdir="${src.java.dir}" destdir="${classes.dir}"  classpathref="linux.classpath"/>
++    </target>
++
++    <!-- =================================================================== -->
++    <!-- Build jar files                                                     -->
++    <!-- =================================================================== -->
++    <target name="build-linux" depends="compile-linux" description="Build the Jar file for Linux">
++        <macro_jar os="${os.linux}" basedir="${classes.dir}"/>
++    </target>
++    <target name="build-windows" depends="compile-windows" description="Build the Jar file for Windows">
++        <macro_jar os="${os.windows}" basedir="${classes.dir}"/>
++    </target>
++    <target name="build" depends="build-windows, build-linux" description="Build the Jar files for Linux and Windows"/>
++
++    <!-- =================================================================== -->
++    <!-- Compile and run all unit tests                                      -->
++    <!-- =================================================================== -->
++    <target name="compile-for-unittests" depends="prepare" description="Compile and run Linux unit tests">
++        <mkdir dir="${testclasses.dir}" />
++        <macro_compile os="${os.linux}" srcdir="${src.dir}" destdir="${testclasses.dir}" classpathref="junit_compile.classpath" />
++        <macro_jar os="${os.linux}" basedir="${testclasses.dir}"/>
++    </target>
++    <target name="unittest" depends="compile-for-unittests" description="Perform unit tests">
++        <!-- We execute same coverage on both Windows and Linux-->
++        <junit printsummary="withOutAndErr" showoutput="true" haltonfailure="true">
++            <classpath refid="junit_runtime.classpath" />
++            <batchtest skipNonTests="true">
++                <fileset dir="${testclasses.dir}">
++                    <include name="**/*Test*" />
++                </fileset>
++            </batchtest>
++            <formatter type="brief" usefile="false"/>
++        </junit>
++        <fail message="test failed" if="junit.failure" />
++    </target>
++
++    <!-- ================================================================== -->
++    <!-- generate javadoc                                                   -->
++    <!-- ================================================================== -->
++    <target name="javadoc" depends="-init" description="Generate javadocs">
++        <delete quiet="true" dir="${javadoc.dir}" />
++        <mkdir dir="${javadoc.dir}" />
++        <javadoc windowtitle="${name.package}" header="${javadoc.header}" sourcepath="${src.java.dir}" author="yes"
++                 version="yes" destdir="${javadoc.dir}"
++                 breakiterator="yes" maxmemory="96m">
++            <packageset dir="src">
++                <include name="**" />
++            </packageset>
++            <bottom>${javadoc.footer}</bottom>
++            <classpath refid="${os.windows}.classpath" />
++        </javadoc>
++    </target>
++
++    <!-- =================================================================== -->
++    <!-- create installation                                                 -->
++    <!-- =================================================================== -->
++    <target name="installer" depends="-init" if="have.3rdparty"
++        description="Create installation distribution packages">
++        <delete dir="${dist.dir}" failonerror="false" />
++        <mkdir dir="${dist.dir}/windows" />
++        <mkdir dir="${dist.dir}/linux" />
++        <!-- generate installer scripts from templates -->
++        <copy overwrite="true" tofile="${dist.dir}/install-windows.xml"
++              file="${template.dir}/install-windows.xml.template">
++            <filterset refid="version.filterset" />
++        </copy>
++        <copy overwrite="true" tofile="${dist.dir}/install-linux.xml" file="${template.dir}/install-linux.xml.template">
++            <filterset refid="version.filterset" />
++        </copy>
++        <copy overwrite="true" tofile="${dist.dir}/shortcutSpec-windows.xml"
++              file="${template.dir}/shortcutSpec-windows.xml.template">
++            <filterset refid="version.filterset" />
++        </copy>
++        <copy overwrite="true" tofile="${dist.dir}/shortcutSpec-linux.xml"
++              file="${template.dir}/shortcutSpec-linux.xml.template">
++            <filterset refid="version.filterset" />
++        </copy>
++        <!-- generate the launch4j scripts from templates -->
++        <copy overwrite="true" tofile="${dist.dir}/l4j-installer.xml" file="${template.dir}/l4j-installer.xml.template">
++            <filterset refid="version.filterset" />
++        </copy>
++        <copy overwrite="true" tofile="${dist.dir}/l4j-package.xml" file="${template.dir}/l4j-package.xml.template">
++            <filterset refid="version.filterset" />
++        </copy>
++
++        <macro_generate_executables/>
++    </target>
++
++    <!-- =================================================================== -->
++    <!-- create standalone ZIP                                               -->
++    <!-- =================================================================== -->
++    <target name="standalone" depends="rebuild"
++        description="Create standalone ZIP packages">
++        <macro_standalone os="${os.windows}" />
++        <macro_standalone os="${os.linux}" />
++    </target>
++
++    <!-- =================================================================== -->
++    <!-- all                                                                 -->
++    <!-- =================================================================== -->
++    <target name="all" depends="rebuild, installer, standalone"
++        description="Compile and create distribution packages" />
++
++    <!-- =================================================================== -->
++    <!-- Macros                                                              -->
++    <!-- =================================================================== -->
++    <macrodef name="macro_generate_executables">
++        <sequential>
++            <!-- create the exe launcher of the package for Windows -->
++            <antcall target="-launch4j">
++                <param name="type" value="package" />
++            </antcall>
++
++            <!-- generate the installers -->
++            <macro_izpack_compile os="${os}" target.os="${os.windows}" />
++            <macro_izpack_compile os="${os}" target.os="${os.linux}" />
++
++            <!-- create the exe launcher of the installer for Windows -->
++            <antcall target="-launch4j">
++                <param name="type" value="installer" />
++            </antcall>
++        </sequential>
++    </macrodef>
++
++    <target name="-launch4j" if="is.windows"
++        description="Create the exe launcher of the installer or package for Windows">
++        <launch4j configFile="${dist.dir}/l4j-${type}.xml" />
++    </target>
++
++    <macrodef name="macro_izpack_compile">
++        <attribute name="os" />
++        <attribute name="target.os" />
++        <sequential>
++            <java jar="${izpack.compile}" fork="true">
++                <arg line="${dist.dir}/install-@{target.os}.xml -b . -o ${dist.dir}/@{target.os}/${jar.installer-prefix}-@{target.os}.jar -k standard" />
++            </java>
++        </sequential>
++    </macrodef>
++
++    <macrodef name="macro_jar">
++        <attribute name="os" />
++        <attribute name="basedir" />
++        <sequential>
++            <mkdir dir="${build.dir}/@{os}/lib" />
++            <manifestclasspath property="@{os}.jar.classpath" jarfile="${jar.package}">
++                <classpath>
++                    <fileset dir="lib/common" includes="*.jar" />
++                    <fileset dir="lib/@{os}" includes="*.jar" />
++                </classpath>
++            </manifestclasspath>
++            <manifest file="${build.dir}/@{os}/MANIFEST.MF">
++                <attribute name="Built-By" value="${name.maintainer}" />
++                <attribute name="Main-Class" value="${class.start}" />
++                <attribute name="Class-Path" value="${@{os}.jar.classpath}" />
++            </manifest>
++            <jar basedir="@{basedir}" destfile="${build.dir}/@{os}/lib/${jar.package}"
++                 manifest="${build.dir}/@{os}/MANIFEST.MF">
++                 <fileset dir="${src.res.dir}">
++                    <include name="**/*.*" />
++                </fileset>
++            </jar>
++        </sequential>
++    </macrodef>
++
++    <macrodef name="macro_compile">
++        <attribute name="os" />
++        <attribute name="srcdir" />
++        <attribute name="destdir" />
++        <attribute name="classpathref" />
++        <sequential>
++            <mkdir dir="${classes.dir}" />
++            <path id="bootpath.ref">
++              <fileset dir="${bootclasspath.dir}" includes="*.jar"/>
++            </path>
++            <javac
++                failonerror="true"
++                srcdir="@{srcdir}"
++                destdir="@{destdir}"
++                source="${javac.source}"
++                target="${javac.target}"
++                includeantruntime="false"
++                debug="${debug}"
++                verbose="${javac.verbose}"
++                deprecation="${deprecation}"
++                compiler="javac${javac.target}"
++                bootclasspath="${toString:bootpath.ref}"
++                encoding="UTF-8" >
++                <!--
++                <compilerarg value="-Xlint" />
++                -->
++                <classpath refid="@{classpathref}" />
++            </javac>
++        </sequential>
++    </macrodef>
++
++    <macrodef name="macro_standalone">
++        <attribute name="os" />
++        <sequential>
++            <zip destfile="${dist.dir}/@{os}/${name.package}${version.major}.${version.minor}.${version.patch}${version.extra}${version.extra1}-@{os}.zip">
++                <zipfileset file="build/@{os}/lib/${jar.package}" prefix="${name.package}" />
++                <zipfileset file="scripts/run.${ext.@{os}}" prefix="${name.package}" filemode="755" />
++                <zipfileset file="license.txt" prefix="${name.package}" />
++                <zipfileset file="release_notes.txt" prefix="${name.package}" />
++                <zipfileset file="lib/log4j.properties" prefix="${name.package}/lib"/>
++                <zipfileset dir="plugins" prefix="${name.package}/plugins" />
++                <zipfileset dir="lib/common" prefix="${name.package}/lib/common" />
++                <zipfileset dir="lib/@{os}" prefix="${name.package}/lib/@{os}" />
++                <zipfileset dir="src" prefix="${name.package}/src" excludes="**/*.template" />
++                <zipfileset dir="customize" prefix="${name.package}/customize"/>
++                <zipfileset dir="i18n" prefix="${name.package}/i18n"/>
++            </zip>
++        </sequential>
++    </macrodef>
++</project>
+diff --git a/lib/common/flatlaf.jar b/lib/common/flatlaf.jar
+new file mode 100644
+index 0000000..93e8d45
+Binary files /dev/null and b/lib/common/flatlaf.jar differ
 diff --git a/src/main/java/com/romraider/ECUExec.java b/src/main/java/com/romraider/ECUExec.java
 index 45cde25..f091c58 100644
 --- a/src/main/java/com/romraider/ECUExec.java
@@ -445,6 +886,189 @@ index 5e415e5..61f92ab 100644
              }
          }
  
+diff --git a/src/main/java/com/romraider/maps/checksum/ChecksumSUBARUTCU.java b/src/main/java/com/romraider/maps/checksum/ChecksumSUBARUTCU.java
+new file mode 100755
+index 0000000..08721a2
+--- /dev/null
++++ b/src/main/java/com/romraider/maps/checksum/ChecksumSUBARUTCU.java
+@@ -0,0 +1,177 @@
++/*
++ * RomRaider Open-Source Tuning, Logging and Reflashing
++ * Copyright (C) 2006-2012 RomRaider.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License along
++ * with this program; if not, write to the Free Software Foundation, Inc.,
++ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++ */
++
++package com.romraider.maps.checksum;
++
++import java.util.Map;
++
++/**
++ * Checksum for the Subaru 5EAT transmission control unit (Renesas M32R).
++ *
++ * A 32-bit big-endian two's-complement additive checksum, stored redundantly in
++ * two 4-byte slots at 0x008000 and 0x008004. Both hold the same value C, chosen
++ * so that summing every 32-bit big-endian word in the checksummed region - with
++ * both slots counted once as C - comes to zero modulo 2^32.
++ *
++ * THE REGION IS NOT FIXED. Two conventions occur across this TCU family:
++ *
++ *   0x60000     every 384 KB image, and 512 KB images carrying a 384 KB payload
++ *               with the trailing 128 KB left as blank 0xFF flash
++ *   whole file  512 KB images that genuinely populate all 512 KB
++ *
++ * Assuming either one produces a confidently wrong checksum on half the family,
++ * so the region is DETECTED per image: whichever candidate reproduces the value
++ * the ROM already stores is the convention that ROM uses. When the stored value
++ * matches neither - which is the normal state for a ROM that has just been
++ * edited - fall back on whether the tail past 0x60000 is unprogrammed, since a
++ * blank tail means the payload is 384 KB.
++ *
++ * Verified against twelve real images by tools/checksum.py in the project
++ * repository, which implements the same algorithm and is what this replaces.
++ */
++public final class ChecksumSUBARUTCU implements ChecksumManager {
++
++    private static final int SLOT_1 = 0x008000;
++    private static final int SLOT_2 = 0x008004;
++    private static final int REGION_384K = 0x60000;
++
++    @Override
++    public void configure(Map<String, String> vars) {
++        // Nothing to configure: the slots are fixed and the region is detected
++        // from the image itself, which is more reliable than trusting an
++        // attribute in the definition to match the image actually loaded.
++    }
++
++    @Override
++    public int getNumberOfChecksums() {
++        return 1;   // one value, stored twice
++    }
++
++    /**
++     * Enough bytes to hold both slots. RomRaider can ask a manager to validate
++     * before a binary has been attached, so a plugin must not assume otherwise.
++     */
++    private static boolean usable(byte[] data) {
++        return data != null && data.length >= SLOT_2 + 4;
++    }
++
++    @Override
++    public int validate(byte[] data) {
++        if (!usable(data)) {
++            return 0;
++        }
++        final long a = readU32(data, SLOT_1);
++        final long b = readU32(data, SLOT_2);
++        if (a != b) {
++            return 0;   // the two copies disagree, so neither can be trusted
++        }
++        return detectRegion(data) >= 0 ? 1 : 0;
++    }
++
++    @Override
++    public int update(byte[] data) {
++        if (!usable(data)) {
++            return 0;
++        }
++        final int end = chooseRegion(data);
++        final long want = computeFor(data, end);
++
++        if (readU32(data, SLOT_1) == want && readU32(data, SLOT_2) == want) {
++            return 0;   // already correct, nothing written
++        }
++
++        writeU32(data, SLOT_1, want);
++        writeU32(data, SLOT_2, want);
++        return 1;
++    }
++
++    /**
++     * The value both slots must hold for the region ending at {@code end} to sum
++     * to zero. The two slots are excluded from the running total and added back
++     * once, which is what makes the stored value self-consistent.
++     */
++    private static long computeFor(byte[] data, int end) {
++        long total = 0;
++        for (int i = 0; i + 4 <= end; i += 4) {
++            if (i == SLOT_1 || i == SLOT_2) {
++                continue;
++            }
++            total += readU32(data, i);
++        }
++        return (-total) & 0xFFFFFFFFL;
++    }
++
++    /** Region end whose checksum reproduces what the ROM stores, or -1. */
++    private static int detectRegion(byte[] data) {
++        final long stored = readU32(data, SLOT_1);
++        for (int end : candidates(data)) {
++            if (computeFor(data, end) == stored) {
++                return end;
++            }
++        }
++        return -1;
++    }
++
++    /**
++     * Region to write over. Prefer whatever the image already uses; once it has
++     * been edited the stored value matches nothing, so fall back on the shape of
++     * the image - an unprogrammed tail past 0x60000 means a 384 KB payload.
++     */
++    private static int chooseRegion(byte[] data) {
++        final int detected = detectRegion(data);
++        if (detected >= 0) {
++            return detected;
++        }
++        if (data.length > REGION_384K && isBlank(data, REGION_384K, data.length)) {
++            return REGION_384K;
++        }
++        return data.length & ~3;
++    }
++
++    private static int[] candidates(byte[] data) {
++        final int whole = data.length & ~3;
++        if (whole > REGION_384K) {
++            return new int[] { REGION_384K, whole };
++        }
++        return new int[] { whole };
++    }
++
++    private static boolean isBlank(byte[] data, int from, int to) {
++        for (int i = from; i < to; i++) {
++            if (data[i] != (byte) 0xFF) {
++                return false;
++            }
++        }
++        return true;
++    }
++
++    private static long readU32(byte[] d, int at) {
++        return ((long) (d[at] & 0xFF) << 24)
++             | ((long) (d[at + 1] & 0xFF) << 16)
++             | ((long) (d[at + 2] & 0xFF) << 8)
++             | ((long) (d[at + 3] & 0xFF));
++    }
++
++    private static void writeU32(byte[] d, int at, long v) {
++        d[at] = (byte) ((v >>> 24) & 0xFF);
++        d[at + 1] = (byte) ((v >>> 16) & 0xFF);
++        d[at + 2] = (byte) ((v >>> 8) & 0xFF);
++        d[at + 3] = (byte) (v & 0xFF);
++    }
++}
 diff --git a/src/main/java/com/romraider/swing/LookAndFeelManager.java b/src/main/java/com/romraider/swing/LookAndFeelManager.java
 index 0f91ca7..6250e6b 100644
 --- a/src/main/java/com/romraider/swing/LookAndFeelManager.java

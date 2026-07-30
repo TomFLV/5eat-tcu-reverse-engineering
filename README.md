@@ -13,8 +13,10 @@ install, nothing to configure.
 Already run RomRaider? Point it at [`definitions/5eat_tcu_romraider_defs.xml`](definitions/)
 instead. Needs 1.0.0+; 0.8.2 can't load 3D tables.
 
-> **After any edit, fix the checksum before flashing.** RomRaider can't do it for
-> this ECU.
+> **The checksum is handled for you.** The bundled build corrects it on save — the
+> algorithm is implemented as a RomRaider checksum plugin, so there is no extra step.
+> If you use stock RomRaider instead, it has no manager for this ECU and you must fix
+> it yourself before flashing:
 > ```bash
 > python tools/checksum.py --fix edited.bin
 > ```

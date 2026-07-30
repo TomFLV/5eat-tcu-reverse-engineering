@@ -75,16 +75,23 @@ calibration already parks a breakpoint at 8160 RPM — but a target above 8191 R
 cannot be expressed and will clip.
 
 
-Checksum — read this before flashing
-------------------------------------
+Checksum
+--------
 
-RomRaider **cannot** fix this ROM's checksum. Its checksum support is hardcoded
-per ECU family in Java and does not cover this M32R TCU. There is deliberately no
-"Checksum Fix" table, because shipping one would imply it works.
+**Handled for you.** This build implements the 5EAT checksum as a RomRaider plugin,
+so saving a ROM corrects it automatically. There is no extra step, and no "Checksum
+Fix" table to remember to tick.
 
-After saving a modified ROM, correct the checksum with the bundled tool:
+The algorithm is a 32-bit big-endian two's-complement additive sum, stored twice at
+`0x8000` and `0x8004`. The region it covers is **not** the same in every image —
+some use `0x60000`, some the whole file — so it is detected per ROM rather than
+assumed, because assuming either one produces a confidently wrong answer on half the
+family. Verified byte-for-byte against the project's Python implementation on all
+eleven images.
 
-    python app\checksum.py --fix your_edited.bin
+`app\checksum.py` is still bundled if you want to check an image outside the editor:
+
+    python app\checksum.py your_rom.bin
 
 An image with a bad checksum may be rejected outright, or may run unpredictably.
 

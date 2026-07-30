@@ -3,7 +3,7 @@
 Run from the repo root. Stock Python 3, no dependencies.
 
 ```bash
-python tools/checksum.py --fix edited.bin      # after EVERY edit, before flashing
+python tools/checksum.py --fix edited.bin      # only if NOT using the bundled build
 python tools/generate_romraider_def.py         # rebuild the definition
 python tools/validate_xml_defs.py              # gate: must pass before shipping
 python tools/plot_shift_map.py rom/91D1206000_5EAT.bin
@@ -12,7 +12,7 @@ python tools/scan_threshold_curves.py --unmapped-only
 
 | Tool | Does |
 |---|---|
-| `checksum.py` | Verify/fix the checksum. RomRaider can't do this one. |
+| `checksum.py` | Verify/fix the checksum. The bundled build now does this on save; this is for stock RomRaider or scripting. |
 | `generate_romraider_def.py` | Builds the definition. **Edit this, not the XML.** |
 | `validate_xml_defs.py` | Checks every address against its own firmware. |
 | `plot_shift_map.py` | Shift schedule as a PNG chart. |

@@ -145,7 +145,7 @@ Stock value: `0x2668221C`. Verified numerically — the sum excluding both slots
 Independently confirmed against FastECU's implementation for this chip family,
 which computes the same thing byte-wise.
 
-Use `tools/checksum.py` to verify or fix. **RomRaider cannot fix this checksum** —
+Use `tools/checksum.py` to verify or fix from the command line. The patched build in `romraider-5eat/` also implements this as a RomRaider checksum plugin and corrects it on save; **stock RomRaider cannot** —
 see [ROMRAIDER-SETUP.md](ROMRAIDER-SETUP.md).
 
 ### A checksum that does *not* apply
