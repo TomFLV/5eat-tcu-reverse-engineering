@@ -116,6 +116,21 @@ family. To get an image off a TCU or back onto one, use
 [FastECU](https://github.com/miikasyvanen/FastECU).
 
 
+Batch use
+---------
+
+    RomRaider-TCU.exe --cli <command> <definition.xml> <rom.bin> [...]
+
+Runs headless and prints one JSON object; the exit status is 0 only when the answer
+is yes. Commands are `info`, `tables`, `dump`, `checksum`, `set` and `selftest`.
+
+    RomRaider-TCU.exe --cli checksum defs.xml rom.bin --fix fixed.bin
+    RomRaider-TCU.exe --cli selftest defs.xml roms\*.bin
+
+This drives the same parser and the same save path as the window does, so it is a
+check of the application and not of a reimplementation of it.
+
+
 Theme
 -----
 

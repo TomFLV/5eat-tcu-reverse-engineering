@@ -1,11 +1,21 @@
 diff --git a/src/main/java/com/romraider/ECUExec.java b/src/main/java/com/romraider/ECUExec.java
-index 45cde25..f091c58 100644
+index 45cde25..63d9172 100644
 --- a/src/main/java/com/romraider/ECUExec.java
 +++ b/src/main/java/com/romraider/ECUExec.java
-@@ -61,6 +61,16 @@ public class ECUExec {
+@@ -61,6 +61,26 @@ public class ECUExec {
      }
  
      public static void main(String args[]) {
++        // Batch mode, before anything touches a window or the look and feel. The
++        // CLI is headless on purpose: it is how the definitions get checked from a
++        // script, and starting a toolkit first would make that impossible on a
++        // machine with no display.
++        if (args.length > 0 && "--cli".equals(args[0])) {
++            final String[] rest = new String[args.length - 1];
++            System.arraycopy(args, 1, rest, 0, rest.length);
++            System.exit(com.romraider.cli.TcuCli.run(rest));
++        }
++
 +        // Crisp text. Java on Windows otherwise falls back to grayscale
 +        // antialiasing, which looks soft even at 100% display scaling -- which is
 +        // the actual cause of the "fuzzy" appearance, not HiDPI scaling.
@@ -19,6 +29,499 @@ index 45cde25..f091c58 100644
          // init i18n resources
          if (rb == null) return;
          // init debug logging
+diff --git a/src/main/java/com/romraider/Settings.java b/src/main/java/com/romraider/Settings.java
+index fd9b42d..e8e9f78 100644
+--- a/src/main/java/com/romraider/Settings.java
++++ b/src/main/java/com/romraider/Settings.java
+@@ -283,7 +283,15 @@ public class Settings implements Serializable {
+ 	private Boolean searchElm327 = false;
+ 
+     public Settings() {
+-        //center window by default
++        // Centre the window by default - but only when there IS a screen. Asking
++        // the toolkit for its size throws HeadlessException on a machine with no
++        // display, and because Settings is constructed while loading settings.xml,
++        // that made every headless path fail before it reached any real work,
++        // including reading a ROM from a script. There is no window to place in
++        // that case, so the default location simply stands.
++        if (java.awt.GraphicsEnvironment.isHeadless()) {
++            return;
++        }
+         Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+         windowLocation.move(((int) (screenSize.getWidth() - windowSize.getWidth()) / 2),
+                 ((int) (screenSize.getHeight() - windowSize.getHeight()) / 2));
+diff --git a/src/main/java/com/romraider/cli/TcuCli.java b/src/main/java/com/romraider/cli/TcuCli.java
+new file mode 100644
+index 0000000..8148b2c
+--- /dev/null
++++ b/src/main/java/com/romraider/cli/TcuCli.java
+@@ -0,0 +1,466 @@
++/*
++ * RomRaider Open-Source Tuning, Logging and Reflashing
++ * Copyright (C) 2006-2012 RomRaider.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License along
++ * with this program; if not, write to the Free Software Foundation, Inc.,
++ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++ */
++
++package com.romraider.cli;
++
++import com.romraider.maps.DataCell;
++import com.romraider.maps.Rom;
++import com.romraider.maps.Table;
++import com.romraider.maps.Table3D;
++import com.romraider.swing.JProgressPane;
++import com.romraider.util.SettingsManager;
++import com.romraider.xml.DOMRomUnmarshaller;
++import org.w3c.dom.Node;
++
++import javax.xml.parsers.DocumentBuilderFactory;
++import java.io.File;
++import java.io.PrintStream;
++import java.nio.file.Files;
++import java.nio.file.Paths;
++import java.util.ArrayList;
++import java.util.List;
++
++/**
++ * A batch interface to the parts of RomRaider that do not need a window.
++ *
++ * WHY THIS EXISTS. Checking that a definition is right meant writing a throwaway
++ * Java harness each time, compiling it against the jar, and running it with a display
++ * attached because the save path touched Swing. That is slow, and worse, every
++ * harness was slightly different, so the thing being tested kept changing.
++ *
++ * This runs headless, prints one JSON object per invocation, and returns a non-zero
++ * exit status when the answer is "no". That makes it usable from a script, from CI,
++ * or by anything else that has to check a ROM without a human watching.
++ *
++ * IT DRIVES THE REAL CODE. Tables are read through DOMRomUnmarshaller and written
++ * through DataCell.setRealValue, and saving goes through Rom.saveFile, which is what
++ * the Save button calls and what applies the checksums. A test that reimplemented
++ * any of that would prove nothing about the application.
++ *
++ *   RomRaider-TCU.exe --cli info      &lt;def.xml&gt; &lt;rom.bin&gt;
++ *   RomRaider-TCU.exe --cli tables    &lt;def.xml&gt; &lt;rom.bin&gt; [substring]
++ *   RomRaider-TCU.exe --cli dump      &lt;def.xml&gt; &lt;rom.bin&gt; &lt;table name&gt;
++ *   RomRaider-TCU.exe --cli checksum  &lt;def.xml&gt; &lt;rom.bin&gt; [--fix &lt;out.bin&gt;]
++ *   RomRaider-TCU.exe --cli set       &lt;def.xml&gt; &lt;rom.bin&gt; &lt;table&gt; &lt;index&gt; &lt;value&gt; &lt;out.bin&gt;
++ *   RomRaider-TCU.exe --cli selftest  &lt;def.xml&gt; &lt;rom.bin&gt;...
++ */
++public final class TcuCli {
++
++    private static final PrintStream OUT = System.out;
++
++    private TcuCli() { }
++
++    // ----------------------------------------------------------------- output
++
++    private static String esc(String s) {
++        if (s == null) {
++            return "null";
++        }
++        final StringBuilder b = new StringBuilder("\"");
++        for (char c : s.toCharArray()) {
++            switch (c) {
++                case '"':  b.append("\\\""); break;
++                case '\\': b.append("\\\\"); break;
++                case '\n': b.append("\\n");  break;
++                case '\r': b.append("\\r");  break;
++                case '\t': b.append("\\t");  break;
++                default:
++                    if (c < 0x20) {
++                        b.append(String.format("\\u%04x", (int) c));
++                    } else {
++                        b.append(c);
++                    }
++            }
++        }
++        return b.append('"').toString();
++    }
++
++    /** Root cause plus where it came from - a bare type name is not actionable. */
++    private static String describe(Throwable t) {
++        Throwable c = t;
++        while (c.getCause() != null) {
++            c = c.getCause();
++        }
++        final StringBuilder b = new StringBuilder(c.getClass().getSimpleName());
++        if (c.getMessage() != null) {
++            b.append(": ").append(c.getMessage());
++        }
++        final StackTraceElement[] st = c.getStackTrace();
++        for (int i = 0; i < Math.min(4, st.length); i++) {
++            b.append(i == 0 ? " at " : " <- ").append(st[i]);
++        }
++        return b.toString();
++    }
++
++    private static int fail(String message) {
++        OUT.println("{\"ok\":false,\"error\":" + esc(message) + "}");
++        return 1;
++    }
++
++    // ------------------------------------------------------------------ model
++
++    /** Load a ROM against a definition, or return null having printed why not. */
++    private static Rom load(String defPath, String romPath) throws Exception {
++        final File def = new File(defPath);
++        if (!def.isFile()) {
++            fail("definition not found: " + defPath);
++            return null;
++        }
++        final File romFile = new File(romPath);
++        if (!romFile.isFile()) {
++            fail("rom not found: " + romPath);
++            return null;
++        }
++        final byte[] bin = Files.readAllBytes(romFile.toPath());
++
++        final DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
++        f.setNamespaceAware(false);
++        final Node root = f.newDocumentBuilder().parse(def).getDocumentElement();
++
++        final DOMRomUnmarshaller u = new DOMRomUnmarshaller();
++        final Node match = u.checkDefinitionMatch(root, bin);
++        if (match == null) {
++            fail("no definition in " + def.getName() + " matches " + romFile.getName());
++            return null;
++        }
++        final Rom rom = u.unmarshallXMLDefinition(def, root, match, bin, new JProgressPane());
++        rom.populateTables(bin, new JProgressPane());
++        return rom;
++    }
++
++    /**
++     * Every cell of a table, whatever its shape.
++     *
++     * Table3D keeps its cells in a two-dimensional array and leaves the flat one
++     * inherited from Table empty, so reading getData() alone reports a 3D table as
++     * having no cells at all - which is what made the first run of this report every
++     * Denso image as having nothing writable.
++     */
++    private static DataCell[] cellsOf(Table t) {
++        if (t instanceof Table3D) {
++            final DataCell[][] grid = ((Table3D) t).get3dData();
++            if (grid == null || grid.length == 0) {
++                return new DataCell[0];
++            }
++            final List<DataCell> flat = new ArrayList<DataCell>();
++            for (DataCell[] col : grid) {
++                if (col != null) {
++                    for (DataCell c : col) {
++                        flat.add(c);
++                    }
++                }
++            }
++            return flat.toArray(new DataCell[0]);
++        }
++        final DataCell[] d = t.getData();
++        return d == null ? new DataCell[0] : d;
++    }
++
++    private static Table find(Rom rom, String name) {
++        Table exact = null, partial = null;
++        for (Table t : rom.getTables()) {
++            if (t.getName().equals(name)) {
++                exact = t;
++                break;
++            }
++            if (partial == null && t.getName().toLowerCase().contains(name.toLowerCase())) {
++                partial = t;
++            }
++        }
++        return exact != null ? exact : partial;
++    }
++
++    // --------------------------------------------------------------- commands
++
++    private static int info(String[] a) throws Exception {
++        final Rom rom = load(a[0], a[1]);
++        if (rom == null) {
++            return 1;
++        }
++        int cs = rom.validateChecksum();
++        OUT.println("{\"ok\":true,\"xmlid\":" + esc(rom.getRomID().getXmlid())
++                + ",\"tables\":" + rom.getTables().size()
++                + ",\"checksumsValid\":" + cs
++                + ",\"checksumsTotal\":" + rom.getTotalAmountOfChecksums()
++                + ",\"checksumOk\":" + (cs == rom.getTotalAmountOfChecksums()) + "}");
++        return cs == rom.getTotalAmountOfChecksums() ? 0 : 1;
++    }
++
++    private static int tables(String[] a) throws Exception {
++        final Rom rom = load(a[0], a[1]);
++        if (rom == null) {
++            return 1;
++        }
++        final String filter = a.length > 2 ? a[2].toLowerCase() : null;
++        final StringBuilder b = new StringBuilder("{\"ok\":true,\"tables\":[");
++        boolean first = true;
++        for (Table t : rom.getTables()) {
++            if (filter != null && !t.getName().toLowerCase().contains(filter)) {
++                continue;
++            }
++            if (!first) {
++                b.append(',');
++            }
++            first = false;
++            b.append("{\"name\":").append(esc(t.getName()))
++             .append(",\"type\":").append(esc(String.valueOf(t.getType())))
++             .append(",\"category\":").append(esc(t.getCategory()))
++             .append(",\"address\":").append(t.getStorageAddress()).append('}');
++        }
++        OUT.println(b.append("]}").toString());
++        return 0;
++    }
++
++    private static int dump(String[] a) throws Exception {
++        final Rom rom = load(a[0], a[1]);
++        if (rom == null) {
++            return 1;
++        }
++        final Table t = find(rom, a[2]);
++        if (t == null) {
++            return fail("no table matching: " + a[2]);
++        }
++        final DataCell[] cells = cellsOf(t);
++        final StringBuilder b = new StringBuilder("{\"ok\":true,\"name\":");
++        b.append(esc(t.getName())).append(",\"type\":")
++         .append(esc(String.valueOf(t.getType())))
++         .append(",\"cells\":").append(cells == null ? 0 : cells.length)
++         .append(",\"values\":[");
++        if (cells != null) {
++            for (int i = 0; i < cells.length; i++) {
++                if (i > 0) {
++                    b.append(',');
++                }
++                final DataCell c = cells[i];
++                if (c == null || c.getStaticText() != null) {
++                    b.append("null");
++                } else {
++                    b.append(c.getRealValue());
++                }
++            }
++        }
++        OUT.println(b.append("]}").toString());
++        return 0;
++    }
++
++    private static int checksum(String[] a) throws Exception {
++        final Rom rom = load(a[0], a[1]);
++        if (rom == null) {
++            return 1;
++        }
++        final int total = rom.getTotalAmountOfChecksums();
++        final int before = rom.validateChecksum();
++
++        String out = null;
++        for (int i = 2; i < a.length - 1; i++) {
++            if ("--fix".equals(a[i])) {
++                out = a[i + 1];
++            }
++        }
++        int fixed = -1, after = before;
++        if (out != null) {
++            fixed = rom.updateChecksum();
++            after = rom.validateChecksum();
++            Files.write(Paths.get(out), rom.getBinary());
++        }
++        OUT.println("{\"ok\":" + (after == total) + ",\"total\":" + total
++                + ",\"validBefore\":" + before + ",\"validAfter\":" + after
++                + ",\"fixed\":" + fixed
++                + (out == null ? "" : ",\"wrote\":" + esc(out)) + "}");
++        return after == total ? 0 : 1;
++    }
++
++    private static int set(String[] a) throws Exception {
++        if (a.length < 6) {
++            return fail("set needs <def> <rom> <table> <index> <value> <out>");
++        }
++        final Rom rom = load(a[0], a[1]);
++        if (rom == null) {
++            return 1;
++        }
++        final Table t = find(rom, a[2]);
++        if (t == null) {
++            return fail("no table matching: " + a[2]);
++        }
++        final int idx = Integer.parseInt(a[3]);
++        final DataCell[] cells = cellsOf(t);
++        if (cells == null || idx < 0 || idx >= cells.length) {
++            return fail("index " + idx + " out of range for "
++                    + (cells == null ? 0 : cells.length) + " cells");
++        }
++        final DataCell cell = cells[idx];
++        if (cell == null || cell.getStaticText() != null) {
++            return fail("cell " + idx + " is a placeholder and has no storage");
++        }
++        final double was = cell.getRealValue();
++        cell.setRealValue(a[4]);
++        final byte[] saved = rom.saveFile();
++        Files.write(Paths.get(a[5]), saved);
++
++        OUT.println("{\"ok\":true,\"table\":" + esc(t.getName())
++                + ",\"index\":" + idx + ",\"was\":" + was
++                + ",\"now\":" + cell.getRealValue()
++                + ",\"checksumsValid\":" + rom.validateChecksum()
++                + ",\"checksumsTotal\":" + rom.getTotalAmountOfChecksums()
++                + ",\"wrote\":" + esc(a[5]) + "}");
++        return 0;
++    }
++
++    /**
++     * The check worth running over a whole family: for every ROM, load it, confirm
++     * the checksums are right as shipped, open every table, edit the first writable
++     * cell, save, and confirm the checksums are right again.
++     */
++    private static int selftest(String[] a) throws Exception {
++        final String def = a[0];
++        final List<String> bad = new ArrayList<String>();
++        final StringBuilder b = new StringBuilder("{\"results\":[");
++
++        for (int i = 1; i < a.length; i++) {
++            final String name = new File(a[i]).getName();
++            if (i > 1) {
++                b.append(',');
++            }
++            try {
++                final Rom rom = new RomLoad(def, a[i]).rom;
++                if (rom == null) {
++                    bad.add(name + ": no match");
++                    b.append("{\"rom\":").append(esc(name)).append(",\"ok\":false,\"error\":\"no match\"}");
++                    continue;
++                }
++                final int total = rom.getTotalAmountOfChecksums();
++                final int loaded = rom.validateChecksum();
++
++                int opened = 0;
++                for (Table t : rom.getTables()) {
++                    if (cellsOf(t).length > 0) {
++                        opened++;
++                    }
++                }
++
++                DataCell target = null;
++                for (Table t : rom.getTables()) {
++                    final DataCell[] cells = cellsOf(t);
++                    if (cells == null) {
++                        continue;
++                    }
++                    for (DataCell c : cells) {
++                        if (c != null && c.getStaticText() == null) {
++                            target = c;
++                            break;
++                        }
++                    }
++                    if (target != null) {
++                        break;
++                    }
++                }
++                int after = loaded;
++                if (target != null) {
++                    target.setRealValue(String.valueOf(target.getRealValue() + 1));
++                    rom.saveFile();
++                    after = rom.validateChecksum();
++                }
++                final boolean ok = loaded == total && after == total && target != null;
++                if (!ok) {
++                    bad.add(name);
++                }
++                b.append("{\"rom\":").append(esc(name)).append(",\"ok\":").append(ok)
++                 .append(",\"tables\":").append(opened)
++                 .append(",\"checksumsTotal\":").append(total)
++                 .append(",\"validAsLoaded\":").append(loaded)
++                 .append(",\"validAfterEdit\":").append(after).append('}');
++            } catch (Throwable t) {
++                bad.add(name + ": " + describe(t));
++                b.append("{\"rom\":").append(esc(name))
++                 .append(",\"ok\":false,\"error\":").append(esc(describe(t))).append('}');
++            }
++        }
++        b.append("],\"ok\":").append(bad.isEmpty()).append(",\"failed\":").append(bad.size()).append('}');
++        OUT.println(b.toString());
++        return bad.isEmpty() ? 0 : 1;
++    }
++
++    /** Loading without printing an error, for selftest's per-ROM reporting. */
++    private static final class RomLoad {
++        final Rom rom;
++        RomLoad(String def, String romPath) throws Exception {
++            final byte[] bin = Files.readAllBytes(Paths.get(romPath));
++            final DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
++            f.setNamespaceAware(false);
++            final Node root = f.newDocumentBuilder().parse(new File(def)).getDocumentElement();
++            final DOMRomUnmarshaller u = new DOMRomUnmarshaller();
++            final Node match = u.checkDefinitionMatch(root, bin);
++            if (match == null) {
++                rom = null;
++                return;
++            }
++            final Rom r = u.unmarshallXMLDefinition(new File(def), root, match, bin,
++                    new JProgressPane());
++            r.populateTables(bin, new JProgressPane());
++            rom = r;
++        }
++    }
++
++    // ------------------------------------------------------------------- main
++
++    private static final String USAGE =
++            "usage: --cli <command> <definition.xml> <rom.bin> [...]\n"
++          + "  info      <def> <rom>                        identity, table count, checksum state\n"
++          + "  tables    <def> <rom> [substring]            list tables as JSON\n"
++          + "  dump      <def> <rom> <table>                cell values as JSON\n"
++          + "  checksum  <def> <rom> [--fix <out.bin>]      report, and optionally correct\n"
++          + "  set       <def> <rom> <table> <i> <v> <out>  edit one cell and save\n"
++          + "  selftest  <def> <rom>...                     load, edit, save, re-check each ROM\n"
++          + "\nPrints one JSON object. Exit status is 0 only when the answer is yes.";
++
++    public static int run(String[] argv) {
++        // Nothing here needs a display, and saying so avoids pulling in a toolkit.
++        System.setProperty("java.awt.headless", "true");
++        SettingsManager.setTesting(true);
++
++        if (argv.length == 0 || "-h".equals(argv[0]) || "--help".equals(argv[0])) {
++            OUT.println(USAGE);
++            return argv.length == 0 ? 2 : 0;
++        }
++        final String cmd = argv[0];
++        final String[] rest = new String[argv.length - 1];
++        System.arraycopy(argv, 1, rest, 0, rest.length);
++
++        try {
++            if (rest.length < 2 && !"selftest".equals(cmd)) {
++                return fail("command '" + cmd + "' needs a definition and a ROM");
++            }
++            if ("info".equals(cmd))     return info(rest);
++            if ("tables".equals(cmd))   return tables(rest);
++            if ("dump".equals(cmd))     return dump(rest);
++            if ("checksum".equals(cmd)) return checksum(rest);
++            if ("set".equals(cmd))      return set(rest);
++            if ("selftest".equals(cmd)) return selftest(rest);
++            return fail("unknown command: " + cmd);
++        } catch (Throwable t) {
++            // Say WHERE it failed, not just what. An error that reports only its
++            // type sends the reader hunting through the whole load path.
++            return fail(describe(t));
++        }
++    }
++
++    public static void main(String[] args) {
++        System.exit(run(args));
++    }
++}
 diff --git a/src/main/java/com/romraider/editor/ecu/ECUEditor.java b/src/main/java/com/romraider/editor/ecu/ECUEditor.java
 index e145a21..7d316c1 100644
 --- a/src/main/java/com/romraider/editor/ecu/ECUEditor.java
@@ -220,6 +723,49 @@ index 4010c4e..f34f09c 100644
                 
          FORMATTER.applyPattern(tableView.getTable().getCurrentScale().getFormat());
          String displayString = "";
+diff --git a/src/main/java/com/romraider/maps/Rom.java b/src/main/java/com/romraider/maps/Rom.java
+index 63195f4..0c23d57 100644
+--- a/src/main/java/com/romraider/maps/Rom.java
++++ b/src/main/java/com/romraider/maps/Rom.java
+@@ -55,6 +55,7 @@ import org.w3c.dom.Document;
+ 
+ import com.romraider.Settings;
+ import com.romraider.dataflowSimulation.DataflowSimulation;
++import com.romraider.editor.ecu.ECUEditor;
+ import com.romraider.editor.ecu.ECUEditorManager;
+ import com.romraider.logger.ecu.ui.handler.table.TableUpdateHandler;
+ import com.romraider.maps.checksum.ChecksumManager;
+@@ -577,7 +578,10 @@ public class Rom extends DefaultMutableTreeNode implements Serializable  {
+             }
+         }
+ 
+-        if(!valid) {
++        // A warning nobody can see is not worth throwing for: showMessageDialog
++        // builds a shared frame, which fails outright with no display. The count is
++        // returned either way, so a headless caller still learns the checksum is bad.
++        if (!valid && !java.awt.GraphicsEnvironment.isHeadless()) {
+             showMessageDialog(null,
+                     rb.getString("INVLAIDCHKSUM"),
+                     rb.getString("CHKSUMFAIL"),
+@@ -594,8 +598,16 @@ public class Rom extends DefaultMutableTreeNode implements Serializable  {
+             updatedCs += cm.update(binData);
+         }
+ 
+-        ECUEditorManager.getECUEditor().getStatusPanel().setStatus(
+-                String.format(rb.getString("CHECKSUMFIXED"), updatedCs, getTotalAmountOfChecksums()));
++        // Reporting is best-effort: correcting the checksum must not depend on a
++        // window existing. Note getECUEditor() CREATES an editor when there is none,
++        // so asking for it that way builds a JFrame purely to report progress - and
++        // throws outright when there is no display. The non-creating accessor is
++        // what makes the save path usable headless, from the command line or a script.
++        final ECUEditor editor = ECUEditorManager.getECUEditorWithoutCreation();
++        if (editor != null && editor.getStatusPanel() != null) {
++            editor.getStatusPanel().setStatus(String.format(
++                    rb.getString("CHECKSUMFIXED"), updatedCs, getTotalAmountOfChecksums()));
++        }
+ 
+         return updatedCs;
+     }
 diff --git a/src/main/java/com/romraider/maps/Table.java b/src/main/java/com/romraider/maps/Table.java
 index db7f9de..a651ca8 100644
 --- a/src/main/java/com/romraider/maps/Table.java
@@ -691,6 +1237,163 @@ index 0000000..ed1b08b
 +    private static void writeU16(byte[] d, int at, int v) {
 +        d[at] = (byte) ((v >>> 8) & 0xFF);
 +        d[at + 1] = (byte) (v & 0xFF);
++    }
++}
+diff --git a/src/main/java/com/romraider/maps/checksum/ChecksumSUBARUTCUDENSO.java b/src/main/java/com/romraider/maps/checksum/ChecksumSUBARUTCUDENSO.java
+new file mode 100644
+index 0000000..31e8c39
+--- /dev/null
++++ b/src/main/java/com/romraider/maps/checksum/ChecksumSUBARUTCUDENSO.java
+@@ -0,0 +1,151 @@
++/*
++ * RomRaider Open-Source Tuning, Logging and Reflashing
++ * Copyright (C) 2006-2012 RomRaider.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License along
++ * with this program; if not, write to the Free Software Foundation, Inc.,
++ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++ */
++
++package com.romraider.maps.checksum;
++
++import java.util.Map;
++
++/**
++ * Checksum for the Denso SH705x Subaru 5EAT transmission control unit.
++ *
++ * A DIFFERENT FAMILY from the Hitachi M32R 5EAT, which {@link ChecksumSUBARUTCU}
++ * handles. The two share nothing: different processor, different table format, and
++ * the scheme below rather than an additive checksum with a balance word.
++ *
++ * Denso protect these images the same way they protect their engine ECUs. A table
++ * near the end of the image lists the regions covered, as consecutive triples:
++ *
++ *     0xFFB80   uint32  first address of the block
++ *     0xFFB84   uint32  last address of the block, inclusive
++ *     0xFFB88   uint32  balance
++ *
++ * repeating for as many blocks as the image protects. Summing every 32-bit
++ * big-endian word across a block and adding that block's balance must come to the
++ * constant 0x5AA5A55A.
++ *
++ * The balance lies outside the region it corrects - the table sits past the end of
++ * the last block - so unlike the M32R balance there is no circularity here and a
++ * block can be repaired in one pass, in any order.
++ *
++ * Verified against ten Denso 5EAT images, every one of which reports its blocks
++ * correct as shipped.
++ */
++public final class ChecksumSUBARUTCUDENSO implements ChecksumManager {
++
++    private static final int TABLE = 0xFFB80;
++    private static final int TRIPLE = 12;
++    private static final int MAX_BLOCKS = 8;
++    private static final long TARGET = 0x5AA5A55AL;
++
++    @Override
++    public void configure(Map<String, String> vars) {
++        // Nothing to configure: the table says which regions are covered, which is
++        // more reliable than an attribute in the definition matching the image.
++    }
++
++    @Override
++    public int getNumberOfChecksums() {
++        return 1;   // one per block, but the count is not known without the image
++    }
++
++    /** Blocks declared by the table: {start, end, balanceAddress} each. */
++    private static int[][] blocks(byte[] d) {
++        final int[][] found = new int[MAX_BLOCKS][];
++        int n = 0;
++        for (int i = 0; i < MAX_BLOCKS; i++) {
++            final int at = TABLE + i * TRIPLE;
++            if (at + TRIPLE > d.length) {
++                break;
++            }
++            final long start = readU32(d, at);
++            final long end = readU32(d, at + 4);
++            // A plausible block is ordered, inside the image, and not degenerate.
++            if (start >= end || end >= d.length || (end - start) < 4) {
++                break;
++            }
++            found[n++] = new int[] { (int) start, (int) end, at + 8 };
++        }
++        final int[][] out = new int[n][];
++        System.arraycopy(found, 0, out, 0, n);
++        return out;
++    }
++
++    /** Sum of every whole big-endian word from start to end inclusive. */
++    private static long sum(byte[] d, int start, int end) {
++        long total = 0;
++        for (int i = start; i + 4 <= end + 1; i += 4) {
++            total += readU32(d, i);
++        }
++        return total & 0xFFFFFFFFL;
++    }
++
++    private static boolean usable(byte[] d) {
++        return d != null && d.length > TABLE + TRIPLE;
++    }
++
++    @Override
++    public int validate(byte[] d) {
++        if (!usable(d)) {
++            return 0;
++        }
++        final int[][] bs = blocks(d);
++        if (bs.length == 0) {
++            return 0;
++        }
++        for (int[] b : bs) {
++            final long got = (sum(d, b[0], b[1]) + readU32(d, b[2])) & 0xFFFFFFFFL;
++            if (got != TARGET) {
++                return 0;
++            }
++        }
++        return 1;
++    }
++
++    @Override
++    public int update(byte[] d) {
++        if (!usable(d)) {
++            return 0;
++        }
++        int fixed = 0;
++        for (int[] b : blocks(d)) {
++            // The balance sits outside the block it corrects, so this converges
++            // immediately and blocks do not interact.
++            final long want = (TARGET - sum(d, b[0], b[1])) & 0xFFFFFFFFL;
++            if (readU32(d, b[2]) != want) {
++                writeU32(d, b[2], want);
++                fixed++;
++            }
++        }
++        return fixed;
++    }
++
++    private static long readU32(byte[] d, int at) {
++        return ((long) (d[at] & 0xFF) << 24)
++             | ((long) (d[at + 1] & 0xFF) << 16)
++             | ((long) (d[at + 2] & 0xFF) << 8)
++             | ((long) (d[at + 3] & 0xFF));
++    }
++
++    private static void writeU32(byte[] d, int at, long v) {
++        d[at] = (byte) ((v >>> 24) & 0xFF);
++        d[at + 1] = (byte) ((v >>> 16) & 0xFF);
++        d[at + 2] = (byte) ((v >>> 8) & 0xFF);
++        d[at + 3] = (byte) (v & 0xFF);
 +    }
 +}
 diff --git a/src/main/java/com/romraider/swing/DefinitionManager.java b/src/main/java/com/romraider/swing/DefinitionManager.java

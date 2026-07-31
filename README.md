@@ -76,6 +76,39 @@ came from [jimihimi/TCURoms](https://github.com/jimihimi/TCURoms).
 
 RomRaider matches the cal ID at `0x8008` and loads the right one automatically.
 
+## The other 5EAT controller: Denso SH705x
+
+The 5EAT was built with two different transmission controllers. Everything above is
+the **Hitachi M32R**. Later JDM and EDM cars, and the 2014 Tribeca, use a **Denso
+SH705x** instead — a different processor, table format and checksum, sharing nothing
+but the gearbox they drive.
+
+Nine of those are now supported, in their own definition
+([`definitions/5eat_tcu_denso_romraider_defs.xml`](definitions/)):
+
+| Cal ID | Vehicle |
+|---|---|
+| `PDDE2WA0` | Forester SH9 STI 3.283, JDM 2010 |
+| `WQDE2WB1` | Impreza STI 3.583, JDM 2011 |
+| `25D1AWS1` | Legacy STI 3.171, JDM |
+| `25D12WB1` | Legacy 3.583, JDM 2008 |
+| `26DE2OB0` | Legacy 3.272, EJDM 2008 |
+| `YSD12WB0` | Exiga TG5 3.083 |
+| `02EB2WB0` | Tribeca 3.583, EDM 2009 |
+| `08FB2WA0` | Tribeca, USDM 2014 |
+| `EZAE2WB1` | Legacy GT, EDM 2010 |
+
+**Twelve shift schedules** per image, in real units — accelerator pedal angle against
+vehicle speed in km/h. The address matches what rimwall reported for these TCUs, and
+the units are read from the data rather than assumed.
+
+Everything else is listed honestly as **unidentified**: a few hundred tables whose
+structure is certain but whose physical quantity is not established. They are shown
+raw, at `userlevel="4"`, so they are out of the way unless you go looking.
+
+Denso protect these images with a block table at `0xFFB80` rather than the M32R's
+two checksums; that is implemented as a separate plugin and is corrected on save.
+
 ## Confirmed units
 
 Each verified two independent ways — against an external reference *and* against the
@@ -139,6 +172,24 @@ car how a scan tool reports it, and it suppresses the *code*, not the fault.
 
 Some tables still read `raw`. Those are the ones whose quantity hasn't been
 established. A wrong unit reads as confirmed; an honest `raw` doesn't.
+
+## Batch use
+
+The application takes a `--cli` switch and runs headless, printing one JSON object
+and exiting non-zero when the answer is no. It drives the real code — the same
+parser, the same write path, the same `Rom.saveFile` the Save button calls — so it
+checks the application rather than a copy of it.
+
+```bash
+RomRaider-TCU.exe --cli info     definitions/5eat_tcu_romraider_defs.xml rom/ACD1A06000.bin
+RomRaider-TCU.exe --cli dump     <def> <rom> "Shift Map"
+RomRaider-TCU.exe --cli checksum <def> <rom> --fix fixed.bin
+RomRaider-TCU.exe --cli set      <def> <rom> "Shift Map" 12 65 out.bin
+RomRaider-TCU.exe --cli selftest <def> rom/*.bin
+```
+
+`selftest` loads each ROM, confirms its checksums as shipped, edits a cell, saves,
+and confirms them again — all sixteen M32R firmwares in about five seconds.
 
 ## Repo
 
