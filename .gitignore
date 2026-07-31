@@ -18,3 +18,6 @@ table_catalog.txt
 # Edited ROMs — don't commit work-in-progress tunes
 *_edited.bin
 *_modified.bin
+
+# Build output
+build/

@@ -2587,42 +2587,57 @@ saved without it is an image the TCU's start-up integrity check should reject -
 rimwall notes in post 61 that "there are various ROM integrity checks on start-up
 so that will need to be satisfied by any modified ROM".
 
-It is NOT universal. Tested across all eleven images:
+IT IS UNIVERSAL, AND THE FIRST ANSWER HERE WAS WRONG. The initial pass tested only
+rimwall's exact form - does some region sum to 0x5AA5A55A - found it true on three
+images, found no region reaching that constant on the other eight, and concluded the
+other eight had no second checksum. That conclusion was reached from a statistical
+scan while sixteen decompiled firmwares sat in `decompiled/` unread.
 
-  carries the balance     ADE0236000, ACD1207000, ACD1A06000
-  does not                the other eight
+Reading them settles it. Every image contains the same loop:
 
-On the eight, no region ANYWHERE in the file sums to 0x5AA5A55A - a full scan over
-every (start, end) pair found none on a boundary, and two images have no candidate
-region at all. Those images hold a small value at 0x008020 (0x000000E8, 0x00009CDD,
-0x0000B0A3 and so on) that is not a balance and that a balance write would destroy.
+    for (p = 0x8000; p < end; p++)
+        if (p < 0x8000 || p > 0x801f)      // skip 0x8000..0x801F
+            sum += *p;
 
-So the balance is detected per image and maintained only where it exists. The exact
-test is that the region already sums to the constant; that stops being conclusive
-once the ROM has been edited, so it is backed by a structural test - a real balance
-is a full-width word, the non-users hold well under 0x10000 there.
+The region is therefore 0x008020 to the end of the same extent the additive checksum
+covers. What differs is the test applied to the result:
 
-Write order matters and only works one way round. The balance sits INSIDE the region
-the additive checksum covers, but the additive slots at 0x008000/0x008004 sit below
-0x008020 and so fall OUTSIDE the balance region. Balance first, additive second,
-converges in one pass; the reverse does not converge at all.
+    32-bit variant   if (sum == 0x5aa5a55a)          ADE0236000, ACD1207000, ACD1A06000
+    16-bit variant   if ((sum & 0xffff) == 0x5aa5)   the other eight
+
+In the 16-bit variant the balance is the HALFWORD at 0x008022 and 0x008020 stays
+zero, which is why those images look like they hold a small unrelated value there.
+The evidence was already visible and was misread: the earlier scan printed sums of
+0x0E535AA5, 0x6A7B5AA5, 0xDC2D5AA5 and so on for exactly those images - every one
+ending in 5AA5 - and that was recorded as a boundary offset rather than as a 16-bit
+checksum meeting its target.
+
+The cost of the wrong answer would have been high. Leaving 0x008020 alone on the
+16-bit images, which is what "no balance here" implies, means eight of the eleven
+ROMs fail their own integrity check after any edit. The variant is decided
+structurally, from the halfword at 0x008020 being zero or not, which stays true
+after the ROM has been edited.
+
+One more image-specific detail falls out of it: 91FE216300 is a 512 KB image with a
+384 KB payload, and its balance region ends at 0x60000 like its additive checksum,
+not at the end of the file. Summing to EOF gives 0x90C1DAA5 and looks like a
+failure; summing to 0x60000 gives 0x90C25AA5 and passes.
+
+Implemented in `tools/checksum.py` and in `ChecksumSUBARUTCU.java`. Verified two
+ways. First, statically: every image reports both checksums valid as loaded, a byte
+flip breaks one, and repair restores both. Second, and this is the test that
+matters for flashing, end to end through the packaged application - each ROM loaded,
+a table cell edited through the real editor write path, saved through
+`Rom.saveFile()`, and the resulting file handed to an independent checker that
+recomputes both checksums from the firmware's own rule. All eleven pass, reporting
+2 of 2 valid both as loaded and after saving.
 
 Two places FastECU's module would misfire on images in this repository, worth
 recording because the code was otherwise a straight confirmation:
 
-  - it applies the balance unconditionally, so on the eight images that do not use
-    it, it writes a balance over whatever that field really is
-  - it hard-codes the whole file as the additive region. 91FE216300 is a 512 KB
-    image carrying a 384 KB payload with blank flash after it, and its additive
-    checksum is computed over 0x60000, not 0x80000. Detecting the region per image
-    handles it; assuming whole-file does not.
-
-Implemented in `tools/checksum.py` and in `ChecksumSUBARUTCU.java`. Both were run
-over all eleven images: each validates as loaded, a byte flip breaks it, `--fix` /
-`update()` restores every checksum the image carries, and 0x008020 is left untouched
-on images that do not use it. The two implementations were then cross-checked by
-editing a byte and comparing the repaired files byte for byte - identical on all
-eleven.
+  - it implements only the 32-bit variant, and applies it unconditionally, so on
+    the eight 16-bit images it writes a 32-bit balance over a field that is not one
+  - it hard-codes the whole file as the region. 91FE216300 needs 0x60000.
 
 ### 24c. rimwall's posts - the archive was attributing them to nobody
 

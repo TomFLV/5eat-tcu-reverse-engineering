@@ -1,20 +1,24 @@
 #!/usr/bin/env bash
-# Build the standalone Windows package from source.
+# Build the 5EAT RomRaider application from source.
 #
-# Produces RomRaider-TCU/ containing a bundled Java runtime, so the end user
-# installs nothing. This is the script that made the release ZIP; run it if you
-# would rather build from source than trust a binary, or to rebuild against a
-# newer upstream.
+# Checks out the pinned upstream RomRaider, applies this project's patches, builds
+# the jar, and stages everything the application ships with - definitions, ROM
+# images, the checksum tool, the translation bundles merged into the jar.
 #
-# Requires: git, a JDK 21+ (for javac and jlink), ant, curl, unzip.
+# The result is the jpackage INPUT directory. Turning it into the released
+# RomRaider-TCU.exe with a bundled runtime is a jpackage step that only produces a
+# Windows image when run on Windows; the exact command is printed at the end.
 #
-#   ./build-standalone.sh [output-dir]
+# Requires: git, a JDK 21+, ant, curl, unzip, zip.
+#
+#   ./build-standalone.sh [staging-dir]
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd "$HERE/.." && pwd)"
-OUT="${1:-$REPO/build/RomRaider-TCU}"
+OUT="${1:-$REPO/build/app-input}"
 WORK="${TMPDIR:-/tmp}/rr5eat-build"
+APP_VERSION="${APP_VERSION:-1.4.3}"
 
 # Pinned so the patch applies cleanly. Upstream moves and the patch touches
 # build.xml, ECUExec.java, LookAndFeelManager.java and RomCellRenderer.java -
@@ -22,10 +26,9 @@ WORK="${TMPDIR:-/tmp}/rr5eat-build"
 UPSTREAM_URL="https://github.com/RomRaider/RomRaider.git"
 UPSTREAM_REV="dafe0c36c1a68efadbeedb2825f3855463fdbc35"
 
-# Temurin 21 JRE for Windows x64. The bundled runtime is what makes the package
-# standalone; it is Eclipse's build, redistributed unmodified under GPLv2 with
-# Classpath Exception.
-JRE_URL="https://api.adoptium.net/v3/binary/latest/21/ga/windows/x64/jre/hotspot/normal/eclipse"
+# The bundled runtime is what makes the package standalone. jpackage builds it from
+# the JDK running the packaging step, so there is no separate JRE download; use a
+# Temurin 21 JDK on the Windows side to get the runtime this project has shipped.
 
 say() { printf '\n=== %s\n' "$*"; }
 
@@ -43,7 +46,8 @@ say "fetching FlatLaf"
 # Upstream does not ship FlatLaf, and the look-and-feel patch needs it. Pinned so a
 # rebuild is reproducible rather than tracking whatever is current.
 FLATLAF_VER=3.4.1
-curl -fSL "https://repo1.maven.org/maven2/com/formdev/flatlaf//flatlaf-.jar"      -o "/src/lib/common/flatlaf.jar"
+curl -fSL "https://repo1.maven.org/maven2/com/formdev/flatlaf/${FLATLAF_VER}/flatlaf-${FLATLAF_VER}.jar" \
+     -o "$WORK/src/lib/common/flatlaf.jar"
 
 say "applying 5EAT patches"
 # jdk21-build.patch makes it compile at all on a modern JDK; upstream targets
@@ -53,12 +57,21 @@ git -C "$WORK/src" apply --verbose "$HERE/patches/jdk21-build.patch"
 git -C "$WORK/src" apply --verbose "$HERE/patches/romraider-5eat.patch"
 
 say "building"
-( cd "$WORK/src" && ant clean jar )
+# There is no "jar" target: upstream builds per-platform, and the Windows jar is
+# what this package ships. It lands in build/windows/lib, not in dist.
+( cd "$WORK/src" && ant clean build-windows )
+
+JAR="$WORK/src/build/windows/lib/RomRaider.jar"
+[ -f "$JAR" ] || { echo "ant did not produce $JAR" >&2; exit 1; }
 
 say "assembling $OUT"
 rm -rf "$OUT"; mkdir -p "$OUT"
-cp "$WORK/src/dist/RomRaider.jar" "$OUT/"
-cp -r "$WORK/src/lib/common" "$OUT/lib"
+cp "$JAR" "$OUT/"
+# Keep the lib/common/ nesting. `cp -r src/lib/common "$OUT/lib"` onto a directory
+# that does not exist yet flattens it to lib/*.jar, which still runs but does not
+# match the layout every released package has used.
+mkdir -p "$OUT/lib"
+cp -r "$WORK/src/lib/common" "$OUT/lib/common"
 # Merge the translation bundles INTO the jar rather than shipping them beside it.
 # They live at the repo root, not under src/main/resources, and ResourceBundle looks
 # for them on the CLASSPATH - a loose directory that is not on the classpath gives
@@ -80,27 +93,46 @@ cp "$WORK/src/LICENSE" "$OUT/license.txt" 2>/dev/null \
 cp "$HERE/log4j.properties" "$OUT/"
 mkdir -p "$OUT/definitions"
 cp "$REPO/definitions/5eat_tcu_romraider_defs.xml" "$OUT/definitions/"
-cp "/README.md" "/README.txt"
+cp "$REPO/README.md" "$OUT/README.txt"
 
 # The ROM images and the checksum tool ship with the application so it is usable
 # the moment it is extracted. The images are other people's dumps - roms/README.txt
 # records that, and the project README carries the full provenance.
-mkdir -p "/roms"
-cp ""/rom/*.bin "/roms/"
-cp "/tools/checksum.py" "/"
+mkdir -p "$OUT/roms"
+cp "$REPO"/rom/*.bin "$OUT/roms/"
+cp "$REPO/tools/checksum.py" "$OUT/"
 
-say "fetching Temurin 21 JRE"
-curl -fSL "$JRE_URL" -o "$WORK/jre.zip"
-unzip -q "$WORK/jre.zip" -d "$WORK/jre"
-mv "$WORK"/jre/*/ "$OUT/jre"
-
-say "done"
+say "staged application input at $OUT"
 du -sh "$OUT"
+
 cat <<EOF
 
-Built: $OUT
-Run RomRaider-TCU.exe. Nothing needs installing.
+Staged: $OUT
 
-To make the release archive:
-  cd "$(dirname "$OUT")" && zip -qr RomRaider-TCU-windows-x64.zip RomRaider-TCU
+That directory is the jpackage INPUT, not the finished application. The released
+package is a jpackage app-image - RomRaider-TCU.exe next to a bundled runtime -
+and jpackage produces a Windows image only when run on Windows, so that step
+cannot happen here. From Windows, with a JDK 21+ on PATH:
+
+  jpackage --type app-image --name RomRaider-TCU \\
+      --input "$OUT" --main-jar RomRaider.jar \\
+      --main-class com.romraider.ECUExec \\
+      --icon romraider-5eat/romraider-ico.ico \\
+      --app-version $APP_VERSION --dest build \\
+      --java-options -Xmx1024M \\
+      --java-options -Dawt.useSystemAAFontSettings=lcd \\
+      --java-options -Dswing.aatext=true \\
+      --java-options -Dromraider.theme=dark \\
+      --java-options -Dsun.java2d.uiScale.enabled=true \\
+      --java-options -Dflatlaf.useWindowDecorations=true \\
+      --java-options -Dflatlaf.menuBarEmbedded=true \\
+      --java-options -Dlog4j.configuration=file:'\$APPDIR'/log4j.properties
+
+Then archive it:
+  cd build && zip -qr RomRaider-TCU-windows-x64.zip RomRaider-TCU
+
+Verify the archive rather than the build tree - extract RomRaider.jar back OUT of
+the finished zip and check it has the translation bundles. Shipping a jar that was
+correct in the build tree and wrong in the zip is a mistake this project has
+already made once.
 EOF

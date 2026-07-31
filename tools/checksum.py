@@ -21,23 +21,30 @@ so the region is DETECTED per image: whichever candidate reproduces the value
 the ROM already stores is the convention that ROM uses. Verified against 12
 real images.
 
-SOME IMAGES CARRY A SECOND, INDEPENDENT CHECKSUM -- a 'balance' word at
-0x008020, chosen so that every 32-bit big-endian word from 0x008020 to the end
-of the image sums to the constant 0x5AA5A55A. This is the same scheme FastECU
-applies in its Hitachi M32R TCU module, and the same constant Denso TCU images
-use for their block integrity table.
+EVERY IMAGE IN THIS FAMILY CARRIES A SECOND, INDEPENDENT CHECKSUM -- a 'balance'
+at 0x008020. The firmware's own routine, which is what settles the details,
+decompiles to:
 
-It is NOT universal, and applying it unconditionally does damage. Of the eleven
-images in this repository only three carry it -- ADE0236000, ACD1207000 and
-ACD1A06000. On the other eight, no region anywhere in the file sums to that
-constant (two have no candidate region at all), and 0x008020 instead holds a
-small unrelated value that a balance write would destroy.
+    for (p = 0x8000; p < end; p++)
+        if (p < 0x8000 || p > 0x801f)       // skip 0x8000..0x801F
+            sum += *p;
 
-So the balance is maintained only for images that demonstrably use it. The test
-is exact on an unmodified image -- the region already sums to the constant --
-and is backed by a structural one for images edited since loading: a real
-balance is a full-width word, whereas the images that do not use the checksum
-hold well under 0x10000 there.
+so it sums 32-bit big-endian words from 0x008020 to the end of the same region
+the additive checksum covers, and a balance inside that range absorbs the
+difference. TWO VARIANTS EXIST, and the firmware picks one:
+
+  32-bit   the full sum must equal 0x5AA5A55A. The balance is the whole 32-bit
+           word at 0x008020. Three of the eleven images here use this.
+  16-bit   only the low half of the sum is tested, against 0x5AA5. The balance
+           is the HALFWORD at 0x008022, and 0x008020 stays zero. The other
+           eight use this.
+
+The 16-bit variant is easy to miss, and missing it is expensive: from outside,
+an image whose region does not sum to 0x5AA5A55A looks like an image with no
+balance at all, and leaving it alone leaves eight of eleven ROMs failing their
+own integrity check after any edit. The variant is decided structurally -- the
+16-bit images hold zero in the halfword at 0x008020, the 32-bit images hold the
+top half of a balance there -- which stays true after the ROM has been edited.
 
 Order matters when writing. The balance sits inside the region the additive
 checksum covers, but the additive slots at 0x008000 and 0x008004 sit below
@@ -52,35 +59,46 @@ CHECKSUM_OFFSET_2 = 0x008004
 # Candidate region ends, tried in order.
 CHECKSUM_REGIONS = (0x60000, None)      # None == whole file
 
-# Second checksum: the balance word, and the constant its region must sum to.
+# Second checksum: the balance, and the constants the two variants test against.
 BALANCE_OFFSET = 0x008020
-BALANCE_TARGET = 0x5AA5A55A
+BALANCE_TARGET_32 = 0x5AA5A55A
+BALANCE_TARGET_16 = 0x5AA5
 
 
-def _sum_from(data: bytes, start: int) -> int:
-    """Sum of every whole big-endian word from `start` to the end of the image."""
-    n = (len(data) - start) // 4
-    return sum(struct.unpack(f">{n}I", data[start:start + n * 4])) & 0xFFFFFFFF
+def _sum_balance_region(data: bytes, end: int) -> int:
+    """The firmware's loop: 32-bit words from 0x008020 to the end of the region."""
+    n = (end - BALANCE_OFFSET) // 4
+    return sum(struct.unpack(
+        f">{n}I", data[BALANCE_OFFSET:BALANCE_OFFSET + n * 4])) & 0xFFFFFFFF
 
 
-def balance_holds(data: bytes) -> bool:
-    """Does the balance region already sum to the constant?"""
-    return _sum_from(data, BALANCE_OFFSET) == BALANCE_TARGET
+def is_balance_16(data: bytes) -> bool:
+    """True when this image uses the 16-bit variant."""
+    return struct.unpack(">H", data[BALANCE_OFFSET:BALANCE_OFFSET + 2])[0] == 0
 
 
-def uses_balance(data: bytes) -> bool:
-    """Whether this image carries the balance checksum at all."""
-    if len(data) <= BALANCE_OFFSET + 4:
-        return False
+def balance_holds(data: bytes, end: int = None) -> bool:
+    """Does the balance region already meet this image's constant?"""
+    if end is None:
+        end = choose_region(data)
+    total = _sum_balance_region(data, end)
+    if is_balance_16(data):
+        return total & 0xFFFF == BALANCE_TARGET_16
+    return total == BALANCE_TARGET_32
+
+
+def compute_balance(data: bytes, end: int = None) -> int:
+    """The balance value this image needs: a full word, or a halfword."""
+    if end is None:
+        end = choose_region(data)
+    total = _sum_balance_region(data, end)
+    if is_balance_16(data):
+        stored = struct.unpack(">H", data[BALANCE_OFFSET + 2:BALANCE_OFFSET + 4])[0]
+        without = (total - stored) & 0xFFFF
+        return (BALANCE_TARGET_16 - without) & 0xFFFF
     stored = struct.unpack(">I", data[BALANCE_OFFSET:BALANCE_OFFSET + 4])[0]
-    return balance_holds(data) or stored > 0xFFFF
-
-
-def compute_balance(data: bytes) -> int:
-    """The value 0x008020 must hold for its region to reach the constant."""
-    stored = struct.unpack(">I", data[BALANCE_OFFSET:BALANCE_OFFSET + 4])[0]
-    without = (_sum_from(data, BALANCE_OFFSET) - stored) & 0xFFFFFFFF
-    return (BALANCE_TARGET - without) & 0xFFFFFFFF
+    without = (total - stored) & 0xFFFFFFFF
+    return (BALANCE_TARGET_32 - without) & 0xFFFFFFFF
 
 
 def _sum_region(data: bytes, end: int) -> int:
@@ -151,22 +169,24 @@ def verify_checksum(data: bytes) -> bool:
         return False
     if detect_region(data) is None:
         return False
-    if uses_balance(data) and not balance_holds(data):
-        return False
-    return True
+    return balance_holds(data)
 
 
 def fix_checksum(data: bytes) -> bytes:
-    """Return a copy of data with every checksum this image carries corrected."""
+    """Return a copy of data with both of this image's checksums corrected."""
     data = bytearray(data)
+    end = choose_region(bytes(data))
 
     # Balance first: it lives inside the region the additive checksum covers, so
     # writing it afterwards would invalidate the value just computed.
-    if uses_balance(bytes(data)):
-        b = compute_balance(bytes(data))
-        data[BALANCE_OFFSET:BALANCE_OFFSET + 4] = struct.pack(">I", b)
+    if not balance_holds(bytes(data), end):
+        b = compute_balance(bytes(data), end)
+        if is_balance_16(bytes(data)):
+            data[BALANCE_OFFSET + 2:BALANCE_OFFSET + 4] = struct.pack(">H", b)
+        else:
+            data[BALANCE_OFFSET:BALANCE_OFFSET + 4] = struct.pack(">I", b)
 
-    c = compute_checksum(bytes(data))
+    c = compute_checksum(bytes(data), end)
     packed = struct.pack(">I", c)
     data[CHECKSUM_OFFSET_1:CHECKSUM_OFFSET_1 + 4] = packed
     data[CHECKSUM_OFFSET_2:CHECKSUM_OFFSET_2 + 4] = packed
@@ -210,14 +230,18 @@ def main():
         print(f"expected 0x{expected:08X}")
         print(f"region   0x000000-0x{region:06X}"
               + ("  (detected)" if detected else "  (inferred - checksum already invalid)"))
-        if uses_balance(data):
-            bal = struct.unpack(">I", data[BALANCE_OFFSET:BALANCE_OFFSET + 4])[0]
-            print(f"balance  0x{bal:08X} at 0x{BALANCE_OFFSET:06X}, expected "
-                  f"0x{compute_balance(data):08X}"
-                  + ("  OK" if balance_holds(data) else "  BAD"))
+        if is_balance_16(data):
+            bal = struct.unpack(">H", data[BALANCE_OFFSET + 2:BALANCE_OFFSET + 4])[0]
+            print(f"balance  0x{bal:04X} at 0x{BALANCE_OFFSET + 2:06X} (16-bit "
+                  f"variant, target 0x{BALANCE_TARGET_16:04X}), expected "
+                  f"0x{compute_balance(data, region):04X}"
+                  + ("  OK" if balance_holds(data, region) else "  BAD"))
         else:
-            print(f"balance  not used by this image "
-                  f"(0x{BALANCE_OFFSET:06X} is not a checksum balance here)")
+            bal = struct.unpack(">I", data[BALANCE_OFFSET:BALANCE_OFFSET + 4])[0]
+            print(f"balance  0x{bal:08X} at 0x{BALANCE_OFFSET:06X} (32-bit "
+                  f"variant, target 0x{BALANCE_TARGET_32:08X}), expected "
+                  f"0x{compute_balance(data, region):08X}"
+                  + ("  OK" if balance_holds(data, region) else "  BAD"))
         if verify_checksum(data):
             print("OK — checksum is correct.")
             return 0

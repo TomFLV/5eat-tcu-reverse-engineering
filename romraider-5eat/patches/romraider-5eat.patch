@@ -410,10 +410,10 @@ index 5e415e5..61f92ab 100644
  
 diff --git a/src/main/java/com/romraider/maps/checksum/ChecksumSUBARUTCU.java b/src/main/java/com/romraider/maps/checksum/ChecksumSUBARUTCU.java
 new file mode 100644
-index 0000000..f78e027
+index 0000000..ed1b08b
 --- /dev/null
 +++ b/src/main/java/com/romraider/maps/checksum/ChecksumSUBARUTCU.java
-@@ -0,0 +1,260 @@
+@@ -0,0 +1,279 @@
 +/*
 + * RomRaider Open-Source Tuning, Logging and Reflashing
 + * Copyright (C) 2006-2012 RomRaider.com
@@ -438,45 +438,59 @@ index 0000000..f78e027
 +import java.util.Map;
 +
 +/**
-+ * Checksum for the Subaru 5EAT transmission control unit (Renesas M32R).
++ * Checksums for the Subaru 5EAT transmission control unit (Renesas M32R).
 + *
-+ * A 32-bit big-endian two's-complement additive checksum, stored redundantly in
-+ * two 4-byte slots at 0x008000 and 0x008004. Both hold the same value C, chosen
-+ * so that summing every 32-bit big-endian word in the checksummed region - with
-+ * both slots counted once as C - comes to zero modulo 2^32.
++ * EVERY IMAGE IN THIS FAMILY CARRIES TWO, and both must be correct or the TCU
++ * rejects the ROM. They are independent of each other and are stored apart.
 + *
-+ * THE REGION IS NOT FIXED. Two conventions occur across this TCU family:
++ * 1. THE ADDITIVE CHECKSUM, held twice at 0x008000 and 0x008004.
 + *
-+ *   0x60000     every 384 KB image, and 512 KB images carrying a 384 KB payload
-+ *               with the trailing 128 KB left as blank 0xFF flash
-+ *   whole file  512 KB images that genuinely populate all 512 KB
++ *    A 32-bit big-endian two's-complement additive checksum. Both slots hold the
++ *    same value C, chosen so that summing every 32-bit big-endian word in the
++ *    checksummed region - with both slots counted once as C - comes to zero
++ *    modulo 2^32.
 + *
-+ * Assuming either one produces a confidently wrong checksum on half the family,
-+ * so the region is DETECTED per image: whichever candidate reproduces the value
-+ * the ROM already stores is the convention that ROM uses. When the stored value
-+ * matches neither - which is the normal state for a ROM that has just been
-+ * edited - fall back on whether the tail past 0x60000 is unprogrammed, since a
-+ * blank tail means the payload is 384 KB.
++ *    THE REGION IS NOT FIXED. Two conventions occur across this family:
 + *
-+ * SOME IMAGES CARRY A SECOND, INDEPENDENT CHECKSUM. Every 32-bit big-endian word
-+ * from 0x008020 to the end of the image sums to the constant 0x5AA5A55A, with a
-+ * balance word at 0x008020 - inside the summed region - absorbing the difference.
++ *      0x60000     every 384 KB image, and 512 KB images carrying a 384 KB
++ *                  payload with the trailing 128 KB left as blank 0xFF flash
++ *      whole file  512 KB images that genuinely populate all 512 KB
 + *
-+ * This one is NOT universal, and treating it as though it were does damage. Of the
-+ * eleven images in the project repository only three carry it; on the other eight
-+ * no region anywhere in the file sums to that constant, and 0x008020 instead holds
-+ * a small unrelated value. Writing a balance there unconditionally would overwrite
-+ * that field with a number the TCU never asked for. So the balance is maintained
-+ * only for images that demonstrably use it, decided once from the image as loaded
-+ * and remembered, because after an edit the sum no longer proves anything.
++ *    Assuming either one produces a confidently wrong checksum on half the
++ *    family, so the region is DETECTED per image.
 + *
-+ * The two checksums do not interact in both directions: the balance sits inside
-+ * the region the additive checksum covers, but the additive slots at 0x008000 and
-+ * 0x008004 sit below 0x008020 and so fall outside the balance region. Fixing the
-+ * balance first and the additive checksum second therefore converges in one pass.
++ * 2. THE BALANCE CHECKSUM, held at 0x008020.
 + *
-+ * Verified against twelve real images by tools/checksum.py in the project
-+ * repository, which implements the same algorithm and is what this replaces.
++ *    The firmware's own routine, which is what settles the details, reads:
++ *
++ *        for (p = 0x8000; p < end; p++)
++ *            if (p < 0x8000 || p > 0x801f)    // skip 0x8000..0x801F
++ *                sum += *p;
++ *
++ *    so it sums 32-bit words from 0x008020 to the end of the same region the
++ *    additive checksum covers, and a balance word inside that range absorbs the
++ *    difference. TWO VARIANTS EXIST, and the firmware picks one:
++ *
++ *      32-bit  the full sum must equal 0x5AA5A55A. The balance is the whole
++ *              32-bit word at 0x008020.
++ *      16-bit  only the low half of the sum is tested, against 0x5AA5. The
++ *              balance is the HALFWORD at 0x008022, and 0x008020 stays zero.
++ *
++ *    Of the eleven images in the project repository three use the 32-bit variant
++ *    and eight the 16-bit one. Treating the 16-bit images as having no balance at
++ *    all - which is what the absence of a full 0x5AA5A55A sum looks like from the
++ *    outside - leaves eight of eleven ROMs failing their own integrity check after
++ *    any edit. The variant is decided structurally: the 16-bit images hold zero in
++ *    the halfword at 0x008020, the 32-bit images hold the top half of a balance
++ *    there, and that stays true after the ROM has been edited.
++ *
++ * Order matters and only works one way round. The balance sits INSIDE the region
++ * the additive checksum covers, but the additive slots at 0x008000 and 0x008004
++ * sit below 0x008020 and so fall OUTSIDE the balance region. Fixing the balance
++ * first and the additive checksum second converges in a single pass.
++ *
++ * Verified against every image in the project repository by tools/checksum.py,
++ * which implements the same algorithm and produces byte-identical results.
 + */
 +public final class ChecksumSUBARUTCU implements ChecksumManager {
 +
@@ -484,71 +498,34 @@ index 0000000..f78e027
 +    private static final int SLOT_2 = 0x008004;
 +    private static final int REGION_384K = 0x60000;
 +
-+    /** Balance word for the second checksum, and the constant its region sums to. */
++    /** Balance word, and the constants the two variants test against. */
 +    private static final int BALANCE = 0x008020;
-+    private static final long BALANCE_TARGET = 0x5AA5A55AL;
-+
-+    /**
-+     * Whether this image carries the balance checksum. Latched from the image the
-+     * first time it is examined - normally at load, before the user has changed
-+     * anything - because the exact test stops being conclusive after an edit.
-+     */
-+    private Boolean usesBalance;
++    private static final long BALANCE_TARGET_32 = 0x5AA5A55AL;
++    private static final int BALANCE_TARGET_16 = 0x5AA5;
 +
 +    @Override
 +    public void configure(Map<String, String> vars) {
-+        // Nothing to configure: the slots are fixed and the region is detected
-+        // from the image itself, which is more reliable than trusting an
-+        // attribute in the definition to match the image actually loaded.
++        // Nothing to configure: the slots are fixed, and the region and the
++        // balance variant are read from the image itself, which is more reliable
++        // than trusting an attribute in the definition to match the image loaded.
 +    }
 +
 +    @Override
 +    public int getNumberOfChecksums() {
-+        return Boolean.TRUE.equals(usesBalance) ? 2 : 1;
++        return 2;   // additive, and balance - every image in this family has both
 +    }
 +
 +    /**
-+     * Decide once whether this image family uses the balance checksum.
-+     *
-+     * The exact test is that the region already sums to the constant. That only
-+     * holds for an unmodified image, so it is backed by a structural one: a real
-+     * balance word is a full-width value, whereas the images that do not use the
-+     * checksum hold something well under 0x10000 in that slot. The two together
-+     * classify a ROM correctly whether or not it has been edited since loading.
-+     */
-+    private void latch(byte[] data) {
-+        if (usesBalance != null || !usable(data)) {
-+            return;
-+        }
-+        usesBalance = balanceHolds(data) || readU32(data, BALANCE) > 0xFFFFL;
-+    }
-+
-+    /** Does the balance region already sum to the constant? */
-+    private static boolean balanceHolds(byte[] data) {
-+        return sumFrom(data, BALANCE) == BALANCE_TARGET;
-+    }
-+
-+    /** Sum of every whole big-endian word from {@code from} to the end of the image. */
-+    private static long sumFrom(byte[] data, int from) {
-+        long total = 0;
-+        for (int i = from; i + 4 <= data.length; i += 4) {
-+            total += readU32(data, i);
-+        }
-+        return total & 0xFFFFFFFFL;
-+    }
-+
-+    /** The value 0x008020 must hold for its region to reach the constant. */
-+    private static long balanceFor(byte[] data) {
-+        final long without = (sumFrom(data, BALANCE) - readU32(data, BALANCE)) & 0xFFFFFFFFL;
-+        return (BALANCE_TARGET - without) & 0xFFFFFFFFL;
-+    }
-+
-+    /**
-+     * Enough bytes to hold both slots. RomRaider can ask a manager to validate
-+     * before a binary has been attached, so a plugin must not assume otherwise.
++     * Enough bytes to hold both structures. RomRaider can ask a manager to
++     * validate before a binary has been attached, so a plugin must not assume.
 +     */
 +    private static boolean usable(byte[] data) {
-+        return data != null && data.length >= SLOT_2 + 4;
++        return data != null && data.length > BALANCE + 4;
++    }
++
++    /** True when this image uses the 16-bit balance variant. */
++    private static boolean isBalance16(byte[] data) {
++        return readU16(data, BALANCE) == 0;
 +    }
 +
 +    @Override
@@ -556,17 +533,14 @@ index 0000000..f78e027
 +        if (!usable(data)) {
 +            return 0;
 +        }
-+        latch(data);
-+
 +        int correct = 0;
-+        final long a = readU32(data, SLOT_1);
-+        final long b = readU32(data, SLOT_2);
++
 +        // Disagreeing copies mean neither can be trusted, so the additive
-+        // checksum does not count as correct even if one of them happens to match.
-+        if (a == b && detectRegion(data) >= 0) {
++        // checksum does not count as correct even if one of them matches.
++        if (readU32(data, SLOT_1) == readU32(data, SLOT_2) && detectRegion(data) >= 0) {
 +            correct++;
 +        }
-+        if (Boolean.TRUE.equals(usesBalance) && balanceHolds(data)) {
++        if (balanceHolds(data, chooseRegion(data))) {
 +            correct++;
 +        }
 +        return correct;
@@ -577,20 +551,20 @@ index 0000000..f78e027
 +        if (!usable(data)) {
 +            return 0;
 +        }
-+        latch(data);
 +        int fixed = 0;
++        final int end = chooseRegion(data);
 +
 +        // Balance first. It lives inside the region the additive checksum covers,
 +        // so writing it afterwards would invalidate the value just computed.
-+        if (Boolean.TRUE.equals(usesBalance)) {
-+            final long balance = balanceFor(data);
-+            if (readU32(data, BALANCE) != balance) {
-+                writeU32(data, BALANCE, balance);
-+                fixed++;
++        if (!balanceHolds(data, end)) {
++            if (isBalance16(data)) {
++                writeU16(data, BALANCE + 2, (int) balanceFor16(data, end));
++            } else {
++                writeU32(data, BALANCE, balanceFor32(data, end));
 +            }
++            fixed++;
 +        }
 +
-+        final int end = chooseRegion(data);
 +        final long want = computeFor(data, end);
 +        if (readU32(data, SLOT_1) != want || readU32(data, SLOT_2) != want) {
 +            writeU32(data, SLOT_1, want);
@@ -600,10 +574,46 @@ index 0000000..f78e027
 +        return fixed;
 +    }
 +
++    /** Does the balance region already meet the constant for this image's variant? */
++    private static boolean balanceHolds(byte[] data, int end) {
++        final long sum = sumBalanceRegion(data, end);
++        return isBalance16(data)
++                ? (sum & 0xFFFFL) == BALANCE_TARGET_16
++                : sum == BALANCE_TARGET_32;
++    }
++
++    /** The firmware's loop: 32-bit words from 0x008020 to the end of the region. */
++    private static long sumBalanceRegion(byte[] data, int end) {
++        long total = 0;
++        for (int i = BALANCE; i + 4 <= end; i += 4) {
++            total += readU32(data, i);
++        }
++        return total & 0xFFFFFFFFL;
++    }
++
++    /** Whole-word balance that brings the region to 0x5AA5A55A. */
++    private static long balanceFor32(byte[] data, int end) {
++        final long without = (sumBalanceRegion(data, end) - readU32(data, BALANCE))
++                & 0xFFFFFFFFL;
++        return (BALANCE_TARGET_32 - without) & 0xFFFFFFFFL;
++    }
++
 +    /**
-+     * The value both slots must hold for the region ending at {@code end} to sum
-+     * to zero. The two slots are excluded from the running total and added back
-+     * once, which is what makes the stored value self-consistent.
++     * Halfword balance that brings the low 16 bits of the region to 0x5AA5.
++     * The high half of the word at 0x008020 is zero on these images and does not
++     * affect the low half of the sum, so only 0x008022 is touched.
++     */
++    private static long balanceFor16(byte[] data, int end) {
++        final long without = (sumBalanceRegion(data, end) - readU16(data, BALANCE + 2))
++                & 0xFFFFL;
++        return (BALANCE_TARGET_16 - without) & 0xFFFFL;
++    }
++
++    /**
++     * The value both additive slots must hold for the region ending at
++     * {@code end} to sum to zero. The two slots are excluded from the running
++     * total and added back once, which is what makes the stored value
++     * self-consistent.
 +     */
 +    private static long computeFor(byte[] data, int end) {
 +        long total = 0;
@@ -616,7 +626,7 @@ index 0000000..f78e027
 +        return (-total) & 0xFFFFFFFFL;
 +    }
 +
-+    /** Region end whose checksum reproduces what the ROM stores, or -1. */
++    /** Region end whose additive checksum reproduces what the ROM stores, or -1. */
 +    private static int detectRegion(byte[] data) {
 +        final long stored = readU32(data, SLOT_1);
 +        for (int end : candidates(data)) {
@@ -628,7 +638,7 @@ index 0000000..f78e027
 +    }
 +
 +    /**
-+     * Region to write over. Prefer whatever the image already uses; once it has
++     * Region to work over. Prefer whatever the image already uses; once it has
 +     * been edited the stored value matches nothing, so fall back on the shape of
 +     * the image - an unprogrammed tail past 0x60000 means a 384 KB payload.
 +     */
@@ -667,11 +677,20 @@ index 0000000..f78e027
 +             | ((long) (d[at + 3] & 0xFF));
 +    }
 +
++    private static int readU16(byte[] d, int at) {
++        return ((d[at] & 0xFF) << 8) | (d[at + 1] & 0xFF);
++    }
++
 +    private static void writeU32(byte[] d, int at, long v) {
 +        d[at] = (byte) ((v >>> 24) & 0xFF);
 +        d[at + 1] = (byte) ((v >>> 16) & 0xFF);
 +        d[at + 2] = (byte) ((v >>> 8) & 0xFF);
 +        d[at + 3] = (byte) (v & 0xFF);
++    }
++
++    private static void writeU16(byte[] d, int at, int v) {
++        d[at] = (byte) ((v >>> 8) & 0xFF);
++        d[at + 1] = (byte) (v & 0xFF);
 +    }
 +}
 diff --git a/src/main/java/com/romraider/swing/DefinitionManager.java b/src/main/java/com/romraider/swing/DefinitionManager.java

@@ -123,8 +123,19 @@ Building it yourself
     ./build-standalone.sh
 
 Checks out upstream RomRaider at the pinned revision, applies the patches in
-`patches/`, builds, and assembles the folder including the runtime. Requires git,
-a JDK 21+, ant, curl and unzip.
+`patches/`, builds the jar, merges the translation bundles into it and stages
+everything the application ships with — definitions, ROM images, the checksum
+tool. Requires git, a JDK 21+, ant, curl and unzip.
+
+What that leaves you is the jpackage *input* directory, not the finished
+application. The released package is a jpackage app-image — `RomRaider-TCU.exe`
+beside a bundled runtime — and jpackage only produces a Windows image when run on
+Windows, so the script prints the exact `jpackage` command to run there rather
+than pretending to do it.
+
+Verify the finished archive, not the build tree: extract `RomRaider.jar` back out
+of the zip and check the translation bundles are in it. A jar that was correct in
+the build tree and wrong in the zip shipped once as 1.4.1 and would not start.
 
 
 What is modified versus upstream
