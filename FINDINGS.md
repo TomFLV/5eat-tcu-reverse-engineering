@@ -2727,3 +2727,95 @@ SysID A21022. Per post 343 the Hitachi images this project targets do not expose
 same adjustments at the same offsets, so these are not directly transferable - but
 they name the eight corrections and give their bounds and defaults, which is the
 clearest statement anywhere of what the TCU considers adjustable.
+
+---
+
+## 25. THE DENSO FAMILY, AND PROGRESS ON THE SOLENOID QUESTION
+
+### 25a. B1D3F08000 / Z5D3F080 is not this family
+
+Both filenames in jimihimi's collection are the same image. It opens `ff 00 03 00`,
+which is close enough to the M32R branch pattern to look promising, and both
+checksums fail.
+
+It is not a 5EAT TCU. Every image in this family carries ASCII identification at
+0x8008 - part number, version, case id, as in `MB558D20 / VF34B / Q6E`. This one has
+a table of in-ROM pointers there instead, and no identifying strings anywhere in the
+header region. Whatever it is, nothing here applies to it, and the failing checksums
+are a symptom of that rather than of a bad dump. Excluded.
+
+### 25b. Denso SH705x supported
+
+Nine Denso images now have their own definition, generator and checksum plugin. The
+detail that made it quick is that Denso reuse their engine ECU table format, which
+RomRaider already parses - the M32R side needed patches for sparse tables and
+striding axes before it could show anything at all.
+
+Header, established from the shift tables and confirmed against every image:
+
+    +0x00 uint16 rows         +0x0C uint32 -> data, uint16
+    +0x02 uint16 cols         +0x10 uint32 flags
+    +0x04 uint32 -> X axis    +0x14 float  scale
+    +0x08 uint32 -> Y axis    +0x18 float  offset      (28-byte stride)
+
+Axes are IEEE-754 floats lying immediately before the data, X then Y. Requiring
+exactly that spacing is what makes the scan usable: without it a 1 MB image yields
+thousands of candidates, and with it, a few hundred real ones.
+
+Twelve consecutive 15x5 tables are the shift schedules, at 0xE9080 in most images
+and 0xE90F8 in the 2013-build Tribecas. Both the address and the data agree with
+what rimwall reported: an accelerator pedal axis of 0,5,10..100 percent, and values
+rising to a little over 200 km/h. Rows reading 255 throughout are unused.
+
+The remaining tables are shipped as unidentified at userlevel 4. Their structure is
+certain and their meaning is not, and there are enough of them that guessing would
+do real damage to how much of this definition can be trusted.
+
+### 25c. Which solenoid is lock-up - narrowed, not yet answered
+
+Section 22 established seven PWM channels and their duty slots. Reading how each is
+written narrows the question considerably.
+
+The seven duty slots are loaded from a contiguous array, which is the command block:
+
+    0x80501A -> 0x804EB4        0x805020 -> 0x804EB8
+    0x80501C -> 0x804EB2        0x805022 -> 0x804EBA
+    0x80501E -> 0x804EB6        0x805024 -> 0x804EBC
+                                0x805026 -> 0x804EBE
+
+Four of them - 0x804EB8, EBA, EBC and EBE - are written by four blocks of code that
+are IDENTICAL bar their operands:
+
+    DAT_00804ebX = (short)(((int)DAT_00804eYY * (short)DAT_00804fZZ) / 0x100)
+    ...
+    uVar3 = DAT_008046fW + DAT_00804ecV + (int)DAT_00804ebX
+
+Four channels driven the same way, each scaled by its own factor, are the four
+clutch and brake pressure solenoids that move during a gear change.
+
+0x804EB4 is not like them. It accumulates, saturates at 0x7FFFFFFF and -0x80000000,
+and repeatedly calls the same helper on its own current value - a closed-loop
+integrator, which is what a regulator looks like rather than a commanded pressure.
+Line pressure is the obvious candidate for that, though it is not proven here.
+
+That leaves 0x804EB2 and 0x804EB6 as the two remaining channels, and one of them is
+lock-up while the other is the AWD transfer clutch. Both are handled by the same
+simple code - clamp between 0x804EC2 and 0x804EC4, then program a timer:
+
+    0x804EB2 -> TIO5CT / TIO5RL0 / TIO5RL1
+    0x804EB6 -> TIO7CT / TIO7RL0 / TIO7RL1
+
+Both also test against 0x4EA, which section 22 identified as full scale, and drive
+the port to a static level at either end rather than continuing to modulate.
+
+So the answer is now one of two channels rather than one of seven, and the remaining
+step is to tell TIO5 from TIO7. Two routes: the fault path for the lock-up DTC
+(P0743, group 1 bit 4) should reach exactly one of them, or a log of both duty
+addresses while lock-up engages will show which moves. The service manual's
+reference figure - L/U target pressure at or above 500 kPa at 60 km/h with 10
+percent throttle or less - is what a log would be checked against.
+
+Recording the negative too: reference counts alone say nothing useful here. 0x804EB4
+has fourteen references and 0x804EB2 has none in the ACD1A06000 decompile, which
+initially looked meaningful and is not - EB2 and EB6 are written through a different
+routine that only appears in the base ROM's decompile.
