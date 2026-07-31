@@ -409,11 +409,11 @@ index 5e415e5..61f92ab 100644
          }
  
 diff --git a/src/main/java/com/romraider/maps/checksum/ChecksumSUBARUTCU.java b/src/main/java/com/romraider/maps/checksum/ChecksumSUBARUTCU.java
-new file mode 100755
-index 0000000..08721a2
+new file mode 100644
+index 0000000..f78e027
 --- /dev/null
 +++ b/src/main/java/com/romraider/maps/checksum/ChecksumSUBARUTCU.java
-@@ -0,0 +1,177 @@
+@@ -0,0 +1,260 @@
 +/*
 + * RomRaider Open-Source Tuning, Logging and Reflashing
 + * Copyright (C) 2006-2012 RomRaider.com
@@ -458,6 +458,23 @@ index 0000000..08721a2
 + * edited - fall back on whether the tail past 0x60000 is unprogrammed, since a
 + * blank tail means the payload is 384 KB.
 + *
++ * SOME IMAGES CARRY A SECOND, INDEPENDENT CHECKSUM. Every 32-bit big-endian word
++ * from 0x008020 to the end of the image sums to the constant 0x5AA5A55A, with a
++ * balance word at 0x008020 - inside the summed region - absorbing the difference.
++ *
++ * This one is NOT universal, and treating it as though it were does damage. Of the
++ * eleven images in the project repository only three carry it; on the other eight
++ * no region anywhere in the file sums to that constant, and 0x008020 instead holds
++ * a small unrelated value. Writing a balance there unconditionally would overwrite
++ * that field with a number the TCU never asked for. So the balance is maintained
++ * only for images that demonstrably use it, decided once from the image as loaded
++ * and remembered, because after an edit the sum no longer proves anything.
++ *
++ * The two checksums do not interact in both directions: the balance sits inside
++ * the region the additive checksum covers, but the additive slots at 0x008000 and
++ * 0x008004 sit below 0x008020 and so fall outside the balance region. Fixing the
++ * balance first and the additive checksum second therefore converges in one pass.
++ *
 + * Verified against twelve real images by tools/checksum.py in the project
 + * repository, which implements the same algorithm and is what this replaces.
 + */
@@ -466,6 +483,17 @@ index 0000000..08721a2
 +    private static final int SLOT_1 = 0x008000;
 +    private static final int SLOT_2 = 0x008004;
 +    private static final int REGION_384K = 0x60000;
++
++    /** Balance word for the second checksum, and the constant its region sums to. */
++    private static final int BALANCE = 0x008020;
++    private static final long BALANCE_TARGET = 0x5AA5A55AL;
++
++    /**
++     * Whether this image carries the balance checksum. Latched from the image the
++     * first time it is examined - normally at load, before the user has changed
++     * anything - because the exact test stops being conclusive after an edit.
++     */
++    private Boolean usesBalance;
 +
 +    @Override
 +    public void configure(Map<String, String> vars) {
@@ -476,7 +504,43 @@ index 0000000..08721a2
 +
 +    @Override
 +    public int getNumberOfChecksums() {
-+        return 1;   // one value, stored twice
++        return Boolean.TRUE.equals(usesBalance) ? 2 : 1;
++    }
++
++    /**
++     * Decide once whether this image family uses the balance checksum.
++     *
++     * The exact test is that the region already sums to the constant. That only
++     * holds for an unmodified image, so it is backed by a structural one: a real
++     * balance word is a full-width value, whereas the images that do not use the
++     * checksum hold something well under 0x10000 in that slot. The two together
++     * classify a ROM correctly whether or not it has been edited since loading.
++     */
++    private void latch(byte[] data) {
++        if (usesBalance != null || !usable(data)) {
++            return;
++        }
++        usesBalance = balanceHolds(data) || readU32(data, BALANCE) > 0xFFFFL;
++    }
++
++    /** Does the balance region already sum to the constant? */
++    private static boolean balanceHolds(byte[] data) {
++        return sumFrom(data, BALANCE) == BALANCE_TARGET;
++    }
++
++    /** Sum of every whole big-endian word from {@code from} to the end of the image. */
++    private static long sumFrom(byte[] data, int from) {
++        long total = 0;
++        for (int i = from; i + 4 <= data.length; i += 4) {
++            total += readU32(data, i);
++        }
++        return total & 0xFFFFFFFFL;
++    }
++
++    /** The value 0x008020 must hold for its region to reach the constant. */
++    private static long balanceFor(byte[] data) {
++        final long without = (sumFrom(data, BALANCE) - readU32(data, BALANCE)) & 0xFFFFFFFFL;
++        return (BALANCE_TARGET - without) & 0xFFFFFFFFL;
 +    }
 +
 +    /**
@@ -492,12 +556,20 @@ index 0000000..08721a2
 +        if (!usable(data)) {
 +            return 0;
 +        }
++        latch(data);
++
++        int correct = 0;
 +        final long a = readU32(data, SLOT_1);
 +        final long b = readU32(data, SLOT_2);
-+        if (a != b) {
-+            return 0;   // the two copies disagree, so neither can be trusted
++        // Disagreeing copies mean neither can be trusted, so the additive
++        // checksum does not count as correct even if one of them happens to match.
++        if (a == b && detectRegion(data) >= 0) {
++            correct++;
 +        }
-+        return detectRegion(data) >= 0 ? 1 : 0;
++        if (Boolean.TRUE.equals(usesBalance) && balanceHolds(data)) {
++            correct++;
++        }
++        return correct;
 +    }
 +
 +    @Override
@@ -505,16 +577,27 @@ index 0000000..08721a2
 +        if (!usable(data)) {
 +            return 0;
 +        }
-+        final int end = chooseRegion(data);
-+        final long want = computeFor(data, end);
++        latch(data);
++        int fixed = 0;
 +
-+        if (readU32(data, SLOT_1) == want && readU32(data, SLOT_2) == want) {
-+            return 0;   // already correct, nothing written
++        // Balance first. It lives inside the region the additive checksum covers,
++        // so writing it afterwards would invalidate the value just computed.
++        if (Boolean.TRUE.equals(usesBalance)) {
++            final long balance = balanceFor(data);
++            if (readU32(data, BALANCE) != balance) {
++                writeU32(data, BALANCE, balance);
++                fixed++;
++            }
 +        }
 +
-+        writeU32(data, SLOT_1, want);
-+        writeU32(data, SLOT_2, want);
-+        return 1;
++        final int end = chooseRegion(data);
++        final long want = computeFor(data, end);
++        if (readU32(data, SLOT_1) != want || readU32(data, SLOT_2) != want) {
++            writeU32(data, SLOT_1, want);
++            writeU32(data, SLOT_2, want);
++            fixed++;
++        }
++        return fixed;
 +    }
 +
 +    /**

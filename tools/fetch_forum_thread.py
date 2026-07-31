@@ -78,8 +78,15 @@ def parse_posts(page):
         pid = chunks[i]
         seg = chunks[i + 1]
 
-        author = re.search(
-            r'memberlist\.php\?mode=viewprofile[^"]*"[^>]*>(?:<[^>]+>)*([^<]+)', seg)
+        # The author sits in <b class="postauthor"> immediately after the post
+        # anchor. Matching the first viewprofile link instead - as this parser
+        # originally did - finds the profile BUTTON in the previous post's footer,
+        # whose visible text is &nbsp;, which is how an earlier archive of topic
+        # 13725 ended up attributing most of the thread to nobody.
+        author = re.search(r'<b class="postauthor">([^<]*)</b>', seg)
+        if not author:
+            author = re.search(
+                r'memberlist\.php\?mode=viewprofile[^"]*"[^>]*>(?:<[^>]+>)*([^<]+)', seg)
         date = re.search(r'<b>Posted:</b>\s*([^<&]+)', seg)
         body = re.search(r'<div class="postbody">(.*?)</div>', seg, re.S)
 

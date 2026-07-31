@@ -2544,3 +2544,171 @@ FastECU and this project are complementary rather than competing. FastECU reads 
 writes the TCU and logs it, which RomRaider cannot do for this ECU family at all.
 This project produces the table definition and the editor. The definition is the part
 that would be lost by switching tools, and it appears FastECU can consume it.
+
+---
+
+## 24. THE FASTECU DEVELOPMENT BRANCH, A SECOND CHECKSUM, AND rimwall's 123 POSTS
+
+Three sources opened up at once: the development branch of rimwall's FastECU fork,
+a corrected archive of forum thread 13725, and a set of stock Denso TCU images.
+
+### 24a. The development branch is where the TCU work lives
+
+An earlier pass cloned `github.com/rimwall/fastecu-oem` shallow, on the default
+branch, and concluded the repository held no TCU parameter material. That was
+wrong in an avoidable way: `master` has no TCU files at all. The repository has
+five further branches, and `development` carries the entire TCU stack:
+
+    modules/checksum_tcu_subaru_hitachi_m32r_can.cpp   <- our processor family
+    modules/checksum_tcu_subaru_denso_sh7055.cpp
+    modules/checksum_tcu_mitsu_mh8104_can.cpp
+    modules/flash_tcu_subaru_hitachi_m32r_can.cpp
+    modules/flash_tcu_subaru_hitachi_m32r_kline.cpp
+    modules/flash_tcu_subaru_denso_sh705x_can.cpp
+    modules/flash_tcu_cvt_subaru_hitachi_m32r_can.cpp
+    kernels/ssmk_tcu_can_sh7055_35.bin, ssmk_tcu_can_sh7058.bin
+
+rimwall says as much in post 72 - "First pass of the code is done on the repo
+(development branch)" - and again in post 269, "Item 4 (protocols.cfg) should come
+from the development branch (not master)". Clone with all branches, not `--depth 1`.
+
+### 24b. A SECOND CHECKSUM, WHICH THIS PROJECT WAS NOT MAINTAINING
+
+`checksum_tcu_subaru_hitachi_m32r_can.cpp` implements TWO checksums, not one:
+
+  checksum 2  the additive one this project already had: every 32-bit big-endian
+              word except 0x008000..0x008007, two's-complemented, stored in both
+              0x008000 and 0x008004
+  checksum 1  a BALANCE word at 0x008020, chosen so that every 32-bit big-endian
+              word from 0x008020 to the end of the image sums to 0x5AA5A55A
+
+The second was missing here entirely. That matters: an image that uses it and is
+saved without it is an image the TCU's start-up integrity check should reject -
+rimwall notes in post 61 that "there are various ROM integrity checks on start-up
+so that will need to be satisfied by any modified ROM".
+
+It is NOT universal. Tested across all eleven images:
+
+  carries the balance     ADE0236000, ACD1207000, ACD1A06000
+  does not                the other eight
+
+On the eight, no region ANYWHERE in the file sums to 0x5AA5A55A - a full scan over
+every (start, end) pair found none on a boundary, and two images have no candidate
+region at all. Those images hold a small value at 0x008020 (0x000000E8, 0x00009CDD,
+0x0000B0A3 and so on) that is not a balance and that a balance write would destroy.
+
+So the balance is detected per image and maintained only where it exists. The exact
+test is that the region already sums to the constant; that stops being conclusive
+once the ROM has been edited, so it is backed by a structural test - a real balance
+is a full-width word, the non-users hold well under 0x10000 there.
+
+Write order matters and only works one way round. The balance sits INSIDE the region
+the additive checksum covers, but the additive slots at 0x008000/0x008004 sit below
+0x008020 and so fall OUTSIDE the balance region. Balance first, additive second,
+converges in one pass; the reverse does not converge at all.
+
+Two places FastECU's module would misfire on images in this repository, worth
+recording because the code was otherwise a straight confirmation:
+
+  - it applies the balance unconditionally, so on the eight images that do not use
+    it, it writes a balance over whatever that field really is
+  - it hard-codes the whole file as the additive region. 91FE216300 is a 512 KB
+    image carrying a 384 KB payload with blank flash after it, and its additive
+    checksum is computed over 0x60000, not 0x80000. Detecting the region per image
+    handles it; assuming whole-file does not.
+
+Implemented in `tools/checksum.py` and in `ChecksumSUBARUTCU.java`. Both were run
+over all eleven images: each validates as loaded, a byte flip breaks it, `--fix` /
+`update()` restores every checksum the image carries, and 0x008020 is left untouched
+on images that do not use it. The two implementations were then cross-checked by
+editing a byte and comparing the repaired files byte for byte - identical on all
+eleven.
+
+### 24c. rimwall's posts - the archive was attributing them to nobody
+
+The archive of thread 13725 recorded almost every author as `&nbsp;`. The parser was
+matching the first `memberlist.php?mode=viewprofile` link in each post segment, which
+on this phpBB2 board is the profile BUTTON in the previous post's footer, whose
+visible text is a non-breaking space. The author is in `<b class="postauthor">`
+directly after the post anchor. Fixed and re-archived: rimwall wrote 123 of the 385
+posts, a third of the thread, and until now essentially none of them were searchable
+by author.
+
+### 24d. What his posts add
+
+CONFIRMS what this project derived independently:
+
+  - post 134: shift table pointers for ACD1A06000 at 0x180E8, first data at 0x1683C.
+    Section 12 reached both from the ROM without reference to the post.
+  - post 131: the Hitachi table format - no table header, only a pointer to the data;
+    some tables count-prefixed and others 0xFFFF-terminated; 2D data interleaved as
+    x1,y1,x2,y2; 3D data split into columns. This is exactly the geometry set the
+    definition generator and validator were built around.
+  - post 170: the Denso block integrity table at 0xFFB80 as [start][end][balance]
+    summing to 0x5AA5A55A. Verified here against eight Denso images.
+  - post 184: the line pressure chain - CET from CAN 0x412 bytes 3-4, factored by a
+    slip lookup, smoothed, factored again by ATF temperature, then used to look up a
+    line pressure target. This is the chain section 19 documents.
+
+EXTENDS or corrects what was recorded here:
+
+  - post 262 gives the slip factor range as 1.8 at maximum slip down to 1.0 at no
+    slip. The table in this repository runs 2.000 down to 1.000, with 1.390 at a
+    ratio of 0.5 - consistent with his "~1.4 at 0.5 slip" from post 184, and close
+    to but not identical with the 1.8 figure, which he was quoting from a Denso
+    Outback ROM rather than a Hitachi one.
+  - post 57 reads the 5-way axis of the 50 shift schedules as fuelling state
+    (CL/OL/sensor error). Section 14 here reads it as a gear limit, from the data.
+    Note that post 57 is dated four days after he first found the curves and is
+    phrased as a deduction; nothing later in the thread returns to it.
+  - post 262 describes the upshift pressure model in full: the TCU maintains a
+    linear relationship TCP = M x FET + O between target clutch pressure and
+    factored engine torque, trials slightly larger and smaller M and O each cycle,
+    keeps the best match, and stores the last eight pairs in RAM and EEPROM. The ROM
+    holds DEFAULT M and O values used when new or after Clear Memory 2. Those
+    defaults are ROM constants and are not yet exposed as tables here.
+  - posts 241 and 345 describe shift duration as a step count: each brake and clutch
+    moves through one of ~34 states, and each state has a target pressure and a
+    NUMBER OF STEPS to reach it. Fewer steps means a faster change. These step tables
+    are not yet located in the Hitachi images.
+  - post 343: the SSM pressure adjustments live at different SSM offsets on Hitachi
+    ROMs than on Denso ones, and he had not tracked the Hitachi ones down.
+
+### 24e. Denso stock images
+
+Seven stock Denso SH7058S TCU images were added to the working set - Legacy 3.272
+and 3.583, a Legacy STI, an Exiga, an Impreza STI, a Forester STI and a Tribeca.
+All seven verify against the Denso convention above: one block, 0x002000-0x0FFAF7,
+sum plus balance equal to 0x5AA5A55A exactly.
+
+They are a different family from the M32R images this project targets, so they do
+not extend the definition. They do matter for two reasons: they confirm the Denso
+checksum on seven more images, and they include STI and non-STI calibrations of the
+same platform, which is the natural way to isolate the calibration region if the
+Denso family is ever taken on.
+
+The patched Tribeca ROM from post 266 is NOT a patch of any of them. It is a later
+Denso build - its header block reads `Corp.DENSO2013` where all seven stock images
+read `Corp.DENSO2000` - so diffing it against them does not isolate rimwall's 0xA8
+command-handler patch.
+
+### 24f. FreeSSM's 5EAT branch
+
+The `e5at-permanent-adjustments` branch of the FreeSSM repository, which post 277
+credits to Comer352L, adds the 5EAT adjustment definitions. For SysID A21022:
+
+    0x1BE  Line Pressure Correction                169..211, default 189
+    0x16E  1st to 2nd (Direct Clutch)               52..100, default 75
+    0x1BC  2nd to 3rd (Forward Brake)              165..205, default 184
+    0x16D  2nd to 3rd (High Low Reverse Clutch)     56..97,  default 75
+    0x16C  3rd to 4th (Input Clutch)                56..109, default 81
+    0x16F  4th to 5th (Front Brake)                168..221, default 195
+    0x1BD  4WD Pressure Correction                 138..188, default 170
+    0x1BF  Temperature Basis for Pressure Corrections, 20..90 degrees C
+
+These are expressed in 'steps'; post 349 explains that a step is the logged byte in
+the kPa tables, cross-referenced against temperature. They apply to Denso TCUs with
+SysID A21022. Per post 343 the Hitachi images this project targets do not expose the
+same adjustments at the same offsets, so these are not directly transferable - but
+they name the eight corrections and give their bounds and defaults, which is the
+clearest statement anywhere of what the TCU considers adjustable.
