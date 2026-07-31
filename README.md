@@ -1,16 +1,24 @@
 # Subaru 5EAT TCU — Reverse Engineering & RomRaider Definition
 
-The Subaru 5EAT keeps its shift points, line pressures and clutch timing in a
-transmission controller nobody had published a tuning definition for. This is the
-work of opening one up.
+The 5EAT keeps its shift points, line pressures and clutch timing in a transmission
+controller that, as far as I could find, nobody had published a tuning definition
+for. So I started picking at one. This is where that got to.
+
+Almost none of the raw material is mine. The ROM images were dumped and shared by
+other people, the protocol work that made getting them off a car possible is
+someone else's, and a lot of what is written down here started as a hint in a forum
+thread that has been running since 2017. The [credits](#credits) are not a
+formality — they are most of the story.
+
+Plenty is still unknown, and it is marked as unknown rather than guessed at.
 
 ### ▶ [Download the Windows app](../../releases/latest)
 
 Extract the folder, run `RomRaider-TCU.exe`, `File -> Open` a ROM from `app\roms`.
-A Java runtime, the definitions and sixteen ROM images are bundled — nothing to
-install, nothing to configure.
+A Java runtime, both definitions and twenty-five ROM images are bundled — nothing
+to install, nothing to configure.
 
-Already run RomRaider? Point it at [`definitions/5eat_tcu_romraider_defs.xml`](definitions/)
+Already run RomRaider? Point it at the definitions in [`definitions/`](definitions/)
 instead. Needs 1.0.0+; 0.8.2 can't load 3D tables.
 
 > **Both checksums are handled for you.** These ROMs carry two — an additive one at
@@ -29,15 +37,16 @@ instead. Needs 1.0.0+; 0.8.2 can't load 3D tables.
 
 | Category | What it is |
 |---|---|
-| **Shift Schedule** | **Ten** complete shift maps — speed in km/h against % pedal, one row per shift event. Plus a **drag-and-drop curve editor** on the toolbar. |
-| **Line Pressure** | Nine target maps, **engine torque (Nm) → line pressure (kPa)**, plus the slip and ATF-temperature multipliers that feed them |
-| **Downshift Pressure** | Per-downshift target pressure in kPa, and the ramp step and hold that set how harshly each one applies |
-| **Diagnostic Codes** | All 53 trouble codes, individually, each Enabled/Disabled |
-| **Sensor Calibration** | ATF temperature sensor linearisation, ADC counts → °C |
+| Shift Schedule | Ten complete shift maps — speed in km/h against % pedal, one row per shift event. There is a drag-and-drop curve editor on the toolbar if you would rather draw them. |
+| Line Pressure | Nine target maps, engine torque (Nm) → line pressure (kPa), plus the slip and ATF-temperature multipliers that feed them |
+| Downshift Pressure | Per-downshift target pressure in kPa, and the ramp step and hold that set how harshly each one applies |
+| Diagnostic Codes | All 53 trouble codes, individually, each Enabled/Disabled |
+| Sensor Calibration | ATF temperature sensor linearisation, ADC counts → °C |
 
 Ten shift maps, because the transmission carries ten complete schedules and switches
-between them by operating condition. The definition used to ship one. Each also has
-four gear-limited variants for manual mode, which reuse the same curves.
+between them by operating condition. The definition shipped one for a long time
+before that was understood. Each also has four gear-limited variants for manual
+mode, which reuse the same curves.
 
 ![shift curves](docs/shift-curves-reference.png)
 
@@ -145,13 +154,16 @@ The pressure result is worth a note: four earlier attempts failed because they
 searched the ROM. There's no conversion in there to find — the firmware already
 works in kPa, and the answer was in the service manual all along.
 
-## What's not
+## What isn't done
 
-**Torque converter lockup — not found, but no longer being looked for in the wrong
-place.** The factory describes engagement as *"Smooth control — in lock-up clutch
-engagement, gradually changes pressure to provide smooth engagement"*, so it's a
-**pressure ramp over time**, not a speed/pedal threshold curve. That's why scanning
-for shift-curve-shaped arrays never found it. See [FINDINGS.md](FINDINGS.md) §17e.
+This is the honest part of the list, and it is longer than I would like.
+
+**Torque converter lockup.** Still not found, though at least it is no longer being
+looked for in the wrong place. The factory manual describes engagement as *"Smooth
+control — in lock-up clutch engagement, gradually changes pressure to provide smooth
+engagement"*, which makes it a pressure ramp over time rather than a speed/pedal
+threshold curve. That is why scanning for shift-curve-shaped arrays never turned it
+up. See [FINDINGS.md](FINDINGS.md) §17e.
 
 **Which operating condition selects which shift schedule is still unknown.** The
 transmission carries 50 sets of shift curves — 10 operating conditions × 5 gear
