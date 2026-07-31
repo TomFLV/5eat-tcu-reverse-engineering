@@ -52,10 +52,10 @@ index fd9b42d..e8e9f78 100644
                  ((int) (screenSize.getHeight() - windowSize.getHeight()) / 2));
 diff --git a/src/main/java/com/romraider/cli/TcuCli.java b/src/main/java/com/romraider/cli/TcuCli.java
 new file mode 100644
-index 0000000..8148b2c
+index 0000000..62ef049
 --- /dev/null
 +++ b/src/main/java/com/romraider/cli/TcuCli.java
-@@ -0,0 +1,466 @@
+@@ -0,0 +1,477 @@
 +/*
 + * RomRaider Open-Source Tuning, Logging and Reflashing
 + * Copyright (C) 2006-2012 RomRaider.com
@@ -490,6 +490,17 @@ index 0000000..8148b2c
 +    public static int run(String[] argv) {
 +        // Nothing here needs a display, and saying so avoids pulling in a toolkit.
 +        System.setProperty("java.awt.headless", "true");
++
++        // Keep stdout to nothing but the JSON. log4j's default console appender
++        // writes to stdout, so a single INFO line about loading settings.xml lands
++        // in the middle of the output and breaks anything parsing it. Diagnostics
++        // belong on stderr.
++        org.apache.log4j.LogManager.resetConfiguration();
++        final org.apache.log4j.ConsoleAppender err = new org.apache.log4j.ConsoleAppender(
++                new org.apache.log4j.SimpleLayout(), org.apache.log4j.ConsoleAppender.SYSTEM_ERR);
++        org.apache.log4j.BasicConfigurator.configure(err);
++        org.apache.log4j.Logger.getRootLogger().setLevel(org.apache.log4j.Level.WARN);
++
 +        SettingsManager.setTesting(true);
 +
 +        if (argv.length == 0 || "-h".equals(argv[0]) || "--help".equals(argv[0])) {

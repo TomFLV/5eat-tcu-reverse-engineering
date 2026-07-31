@@ -92,7 +92,11 @@ cp "$WORK/src/LICENSE" "$OUT/license.txt" 2>/dev/null \
 
 cp "$HERE/log4j.properties" "$OUT/"
 mkdir -p "$OUT/definitions"
+# BOTH families. The 5EAT was built with a Hitachi M32R and a Denso SH705x, and
+# they need separate definitions; shipping only the first leaves every Denso car
+# unsupported with no indication why.
 cp "$REPO/definitions/5eat_tcu_romraider_defs.xml" "$OUT/definitions/"
+cp "$REPO/definitions/5eat_tcu_denso_romraider_defs.xml" "$OUT/definitions/"
 cp "$REPO/README.md" "$OUT/README.txt"
 
 # The ROM images and the checksum tool ship with the application so it is usable
@@ -100,6 +104,7 @@ cp "$REPO/README.md" "$OUT/README.txt"
 # records that, and the project README carries the full provenance.
 mkdir -p "$OUT/roms"
 cp "$REPO"/rom/*.bin "$OUT/roms/"
+[ -d "$REPO/rom-denso" ] && cp "$REPO"/rom-denso/*.bin "$OUT/roms/"
 cp "$REPO/tools/checksum.py" "$OUT/"
 
 say "staged application input at $OUT"
@@ -119,6 +124,7 @@ cannot happen here. From Windows, with a JDK 21+ on PATH:
       --main-class com.romraider.ECUExec \\
       --icon romraider-5eat/romraider-ico.ico \\
       --app-version $APP_VERSION --dest build \\
+      --add-launcher tcu-cli=romraider-5eat/tcu-cli.properties \\
       --java-options -Xmx1024M \\
       --java-options -Dawt.useSystemAAFontSettings=lcd \\
       --java-options -Dswing.aatext=true \\
