@@ -16,7 +16,8 @@ python tools/checksum.py --fix edited.bin      # only if NOT using the bundled b
 | `generate_romraider_def.py` | Builds the definition. **Edit this, not the XML.** |
 | `validate_xml_defs.py` | Checks every address against its own firmware. Knows all six table geometries in use. |
 | `romraider-cli/` | Verify and render through RomRaider's real classes ([README](romraider-cli/README.md)). |
-| `checksum.py` / `test_checksum.py` | Verify/fix the checksum. The bundled build does this on save; this is for stock RomRaider or scripting. |
+| `checksum.py` / `test_checksum.py` | Verify/fix both checksums. The bundled build does this on save; this is for stock RomRaider or scripting. |
+| `find_rom_offsets.py` | Derives a new firmware's table offsets. Run `--self-test` first: it must reproduce the offsets already recorded before its answers are worth anything. |
 
 ## Finders
 
@@ -41,6 +42,72 @@ signature**, never by assuming an address holds across images.
 | `fetch_forum_thread.py` | Archives a RomRaider forum topic to `docs/` |
 | `ghidra/` | Decompilation pipeline. Needs rimwall's M32R module, not upstream's. |
 
+## The Denso family
+
+The 5EAT was built with two controllers. Everything above is the Hitachi M32R; these
+handle the **Denso SH705x** used by later JDM and EDM cars and the 2014 Tribeca. It
+is a separate family end to end — separate ROMs in `rom-denso/`, separate definition,
+separate checksum plugin — so it has its own generator rather than more entries in
+the M32R one.
+
+| Tool | Does |
+|---|---|
+| `generate_denso_def.py` | Builds `definitions/5eat_tcu_denso_romraider_defs.xml`. **Edit this, not the XML.** |
+| `survey_denso_tcu.py` | Identifies a Denso image, checks its block integrity table, and decodes its shift tables |
+
+Denso use the same table format as their engine ECUs, which RomRaider already
+understands, so no editor changes were needed to read them:
+
+    +0x00 uint16 rows        +0x0C uint32 -> data, uint16
+    +0x02 uint16 cols        +0x10 uint32 flags
+    +0x04 uint32 -> X axis   +0x14 float  scale
+    +0x08 uint32 -> Y axis   +0x18 float  offset      (28-byte stride)
+
+Axes are IEEE-754 floats lying immediately before the data, X then Y. Requiring
+exactly that spacing is what distinguishes a real header from a coincidental byte
+run — without it the scan returns thousands of matches.
+
+## Batch interface
+
+The application itself is the fastest way to check a definition, because it is the
+thing being checked. `tcu-cli.exe` in the release, or `--cli` on the main launcher,
+runs headless and prints one JSON object.
+
+```bash
+tcu-cli info     <def.xml> <rom.bin>                    # identity, tables, checksums
+tcu-cli tables   <def.xml> <rom.bin> [substring]        # list tables
+tcu-cli dump     <def.xml> <rom.bin> <table>            # cell values
+tcu-cli checksum <def.xml> <rom.bin> [--fix out.bin]    # report, optionally correct
+tcu-cli set      <def.xml> <rom.bin> <table> <i> <v> <out.bin>
+tcu-cli selftest <def.xml> <rom.bin>...                 # the whole family at once
+```
+
+**The contract, for scripting or for an LLM driving it:**
+
+* **stdout is only ever JSON.** Logging goes to stderr, so `... 2>/dev/null | jq`
+  is safe. One object per invocation, never a stream.
+* **Exit status is the answer.** `0` means yes, non-zero means no. `info` and
+  `checksum` fail when a checksum is wrong; `selftest` fails if any ROM fails.
+* **Failures are structured too**: `{"ok":false,"error":"..."}`, and the error
+  carries the root cause plus the first few stack frames, so a failure says where
+  it happened rather than just what type it was.
+* **Keys are stable.** `ok`, `error`, `xmlid`, `tables`, `checksumsValid`,
+  `checksumsTotal`, `checksumOk`, `values`, `results`.
+* **It is headless.** No display, no window, no dialog that can block waiting for
+  someone to click it.
+
+`selftest` is the one that matters: it loads each ROM, confirms the checksums as
+shipped, edits a cell through the real write path, saves through `Rom.saveFile`, and
+confirms them again. Sixteen M32R firmwares take about five seconds.
+
+```bash
+tcu-cli selftest definitions/5eat_tcu_romraider_defs.xml rom/*.bin
+# {"results":[...],"ok":true,"failed":0}
+```
+
+Pointing a definition at the wrong family is expected to fail: each declines ROMs it
+does not match, which is the safety mechanism and not a bug.
+
 ## Three things that bite
 
 **Verification has levels, and they catch different bugs.** Addresses can be perfect
@@ -58,7 +125,13 @@ caught it.
 
 ## Adding a firmware
 
-1. `.bin` into `rom/`, confirm `checksum.py` says OK.
+1. `.bin` into `rom/`, confirm `checksum.py` reports both checksums OK.
 2. `ghidra/decompile_all_roms.sh` — imports at base `0x0`, seeds vectors, decompiles.
 3. Run the finders; each locates its family by signature and will say if it can't.
-4. Add a profile to `ROM_PROFILES`, regenerate, validate.
+4. `find_rom_offsets.py --self-test`, then run it on the new image for its offsets.
+5. Add a profile to `ROM_PROFILES`, regenerate, validate.
+6. `tcu-cli selftest` over the whole `rom/` directory — the new firmware must load,
+   edit, save and re-verify like the rest.
+
+For a Denso image the first four steps do not apply: drop it in `rom-denso/` and run
+`generate_denso_def.py`, which finds its tables itself.
