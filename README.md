@@ -1,16 +1,17 @@
-# Subaru 5EAT TCU — Reverse Engineering & RomRaider Definition
+# Subaru 5EAT TCU — RomRaider definitions and tooling
 
-The 5EAT keeps its shift points, line pressures and clutch timing in a transmission
-controller that, as far as I could find, nobody had published a tuning definition
-for. So I started picking at one. This is where that got to.
+RomRaider tuning definitions for the Subaru 5EAT transmission control unit, plus the
+tooling and notes behind them.
 
-Almost none of the raw material is mine. The ROM images were dumped and shared by
-other people, the protocol work that made getting them off a car possible is
-someone else's, and a lot of what is written down here started as a hint in a forum
-thread that has been running since 2017. The [credits](#credits) are not a
-formality — they are most of the story.
+Two controller families are covered: **Hitachi M32R** (16 firmwares) and **Denso
+SH705x** (9). Shift schedules, line pressure and downshift pressure are in real
+units; trouble codes are individually switchable; both families' checksums are
+corrected on save.
 
-Plenty is still unknown, and it is marked as unknown rather than guessed at.
+ROM images, the protocol work that gets them off a car, and a good deal of what is
+documented here came from other people — see [credits](#credits). Tables whose
+quantity has not been established are labelled `raw` or `unidentified` rather than
+guessed at.
 
 ### ▶ [Download the Windows app](../../releases/latest)
 
@@ -156,10 +157,8 @@ works in kPa, and the answer was in the service manual all along.
 
 ## What isn't done
 
-This is the honest part of the list, and it is longer than I would like.
-
-**Torque converter lockup.** Still not found, though at least it is no longer being
-looked for in the wrong place. The factory manual describes engagement as *"Smooth
+**Torque converter lockup.** Not found. It is at least no longer being looked for in
+the wrong place: the factory manual describes engagement as *"Smooth
 control — in lock-up clutch engagement, gradually changes pressure to provide smooth
 engagement"*, which makes it a pressure ramp over time rather than a speed/pedal
 threshold curve. That is why scanning for shift-curve-shaped arrays never turned it
