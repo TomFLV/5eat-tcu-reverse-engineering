@@ -13,13 +13,15 @@ install, nothing to configure.
 Already run RomRaider? Point it at [`definitions/5eat_tcu_romraider_defs.xml`](definitions/)
 instead. Needs 1.0.0+; 0.8.2 can't load 3D tables.
 
-> **The checksum is handled for you.** The bundled build corrects it on save — the
-> algorithm is implemented as a RomRaider checksum plugin, so there is no extra step.
-> If you use stock RomRaider instead, it has no manager for this ECU and you must fix
-> it yourself before flashing:
+> **Both checksums are handled for you.** These ROMs carry two — an additive one at
+> `0x8000`/`0x8004` and a balance at `0x8020` — and the TCU checks both on start-up.
+> The bundled build corrects both on save. If you use stock RomRaider instead, it has
+> no manager for this ECU and you must fix them yourself before flashing:
 > ```bash
 > python tools/checksum.py --fix edited.bin
 > ```
+> Versions up to 1.4.2 maintained only the first. If you edited a ROM with one of
+> those, re-save it with 1.4.3 or run the command above before flashing.
 
 ---
 
@@ -84,9 +86,19 @@ firmware's own arithmetic.
 | **Slip pressure factor** | `/1024` both axes | Reproduces rimwall's stated numbers: 0.5 slip → 1.392 ("~1.4"), 0.9 → exactly 1.000 ("~1.0") |
 | **ATF temp factor** | `/256` | From the arithmetic, not the shape — unity is `0x100` and the product is `>>16`, exact only at `/256` |
 
-Also confirmed: the **checksum** (32-bit BE two's-complement additive, stored twice
-at `0x8000`/`0x8004`, over two region conventions the tool detects rather than
-assumes) and the **shift schedule**, fully decoded.
+Also confirmed: **both checksums** and the **shift schedule**, fully decoded.
+
+Every image carries two checksums, and the TCU checks both:
+
+| | Where | Rule |
+|---|---|---|
+| **Additive** | `0x8000` and `0x8004`, held twice | 32-bit BE two's-complement sum over the payload, whose extent is `0x60000` or the whole file — detected per image, not assumed |
+| **Balance** | `0x8020` | Sum from there to the end of the payload. Three firmwares must reach `0x5AA5A55A`; the other eight test only the low half against `0x5AA5` and keep the balance in the halfword at `0x8022` |
+
+The two-variant balance was read out of the firmware's own routine rather than
+inferred — searching for the 32-bit form alone finds it in three images and makes the
+other eight look like they have no second checksum, which is wrong and would leave
+them failing their own integrity check after any edit.
 
 The pressure result is worth a note: four earlier attempts failed because they
 searched the ROM. There's no conversion in there to find — the firmware already
@@ -193,8 +205,8 @@ described differently, open an issue.
 - **[FastECU](https://github.com/miikasyvanen/FastECU)** (Miika Syvänen) and
   **[rimwall's OEM fork](https://github.com/rimwall/fastecu-oem)** — the tooling
   that makes reading and writing these TCUs possible. Its
-  `checksum_tcu_subaru_hitachi_m32r_can` module independently corroborated the
-  checksum algorithm.
+  `checksum_tcu_subaru_hitachi_m32r_can` module, on the **`development`** branch,
+  is where the second checksum came from — `master` carries no TCU code at all.
 - **[FreeSSM](https://github.com/Comer352L/FreeSSM)** (Comer352L) — diagnostics,
   and the branch adding TCU adjustment support.
 - **[ghidra-m32r](https://github.com/ripnet/ghidra-m32r)** (ripnet) — the Ghidra
