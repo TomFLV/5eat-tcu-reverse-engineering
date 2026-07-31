@@ -4,7 +4,7 @@ How the tables, the checksum, and the unit conversions in this project were work
 out. This covers method as much as results, so the same approach can be applied to
 firmwares not yet included.
 
-Addresses given below are for **`91D1206000`**, the reference firmware. Eleven are
+Addresses given below are for **`91D1206000`**, the reference firmware. Sixteen are
 mapped in total; structure and formats are shared across the family but **specific
 addresses are not** — they shift non-uniformly and are derived per firmware.
 
@@ -270,7 +270,7 @@ switch (on/off) feedback, not analogue.
 
 So pressure is commanded open-loop via a duty solenoid.
 
-**kPa is not stored in these ROMs.** Four tests across all eleven firmwares:
+**kPa is not stored in these ROMs.** Four tests across all sixteen firmwares:
 the manual's values appear as code immediates **zero** times; no calibration run
 spans the pressure bands; no record curve has a pressure-shaped value range; and
 `490` and `1370` both appear in the calibration region of only **1 of 11**

@@ -21,7 +21,7 @@ exit and will overwrite your change.
 
 ## 2. Open the ROM
 
-**File → Open** and select any ROM from `rom/` — the definition covers eleven
+**File → Open** and select any ROM from `rom/` — the definition covers sixteen
 firmwares and picks the right one automatically from the calibration ID.
 
 You should get a category tree on the left with entries including *Info*,
@@ -41,8 +41,8 @@ have ended up with a *directory* named like the `.bin` containing the real file.
 RomRaider will open it without complaint and show nothing.
 
 **Check the ROM matches.** The definition identifies a ROM by matching its
-calibration ID at offset `0x8008`, and carries eleven of them. If yours is not one
-of the eleven, RomRaider will correctly refuse to apply anything — that's the
+calibration ID at offset `0x8008`, and carries sixteen of them. If yours is not one
+of the sixteen, RomRaider will correctly refuse to apply anything — that's the
 safety mechanism working, not a bug. Confirm which you have with:
 
 ```bash
@@ -169,5 +169,5 @@ through RomRaider's own parser and reports what it built:
 91D1206000_5EAT.bin   11 rom blocks  match=SUBARU_5EAT_91D1206000  tables= 81  faulty=0
 ```
 
-`NO MATCH` means that ROM would open with no tables at all. All eleven firmwares
+`NO MATCH` means that ROM would open with no tables at all. All sixteen firmwares
 currently match their own block with zero faulty tables.

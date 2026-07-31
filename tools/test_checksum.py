@@ -28,7 +28,13 @@ DEFAULT_ROM = os.path.join(_ROOT, "rom", "91D1206000_5EAT.bin")
 
 REGION_END = 0x60000
 SLOT1, SLOT2 = 0x8000, 0x8004
+BALANCE = 0x8020    # the second checksum
 EDIT_AT = 0x010424  # a real calibration table data byte, inside the region
+
+# Imported only to ask which balance variant an image uses. The checksum values
+# themselves are still verified independently, by the invariant below.
+sys.path.insert(0, _HERE)
+import checksum as _checksum
 
 failures = []
 
@@ -108,8 +114,13 @@ def test_rom(src, scratch):
 
     fixed = open(work, "rb").read()
     changed = {i for i in range(len(orig)) if orig[i] != fixed[i]}
-    allowed = set(range(SLOT1, SLOT1 + 8)) | {EDIT_AT}
-    check(f"--fix touched only the slots and the edit ({len(changed)} bytes)",
+    # The balance is the second checksum, and only its own field may move: the
+    # whole word on a 32-bit image, and only the low halfword on a 16-bit one,
+    # where disturbing 0x8020 itself would change which variant it looks like.
+    balance = set(range(BALANCE + 2, BALANCE + 4)) \
+        if _checksum.is_balance_16(orig) else set(range(BALANCE, BALANCE + 4))
+    allowed = set(range(SLOT1, SLOT1 + 8)) | balance | {EDIT_AT}
+    check(f"--fix touched only the checksums and the edit ({len(changed)} bytes)",
           changed <= allowed)
     check("file size unchanged", len(fixed) == len(orig))
 

@@ -2,8 +2,8 @@ RomRaider TCU — standalone Windows build
 ========================================
 
 A build of RomRaider that edits Subaru 5EAT transmission ROMs out of the box.
-Definitions for eleven firmwares, eleven ROM images, and a Java runtime are all
-bundled, so nothing needs installing and nothing needs configuring.
+Definitions for sixteen firmwares, all sixteen ROM images, and a Java runtime are
+all bundled, so nothing needs installing and nothing needs configuring.
 
 Download the ZIP from the [Releases page](../../releases), extract the whole
 folder, and run **RomRaider-TCU.exe**.
@@ -18,7 +18,7 @@ Getting started
 
 The right definition is selected automatically from the calibration ID at
 `0x8008`. There is nothing to choose and no path to set up. If a ROM is not one
-of the eleven, it will decline to load tables — that is the safety mechanism
+of the sixteen, it will decline to load tables — that is the safety mechanism
 working, not a bug.
 
 
@@ -78,16 +78,27 @@ cannot be expressed and will clip.
 Checksum
 --------
 
-**Handled for you.** This build implements the 5EAT checksum as a RomRaider plugin,
-so saving a ROM corrects it automatically. There is no extra step, and no "Checksum
-Fix" table to remember to tick.
+**Handled for you.** These ROMs carry **two** checksums and the TCU checks both on
+start-up. This build implements both as a RomRaider plugin, so saving a ROM corrects
+them automatically. There is no extra step, and no "Checksum Fix" table to tick.
 
-The algorithm is a 32-bit big-endian two's-complement additive sum, stored twice at
+The first is a 32-bit big-endian two's-complement additive sum, stored twice at
 `0x8000` and `0x8004`. The region it covers is **not** the same in every image —
 some use `0x60000`, some the whole file — so it is detected per ROM rather than
 assumed, because assuming either one produces a confidently wrong answer on half the
-family. Verified byte-for-byte against the project's Python implementation on all
-eleven images.
+family.
+
+The second is a balance at `0x8020`, covering everything from there to the end of the
+payload. Three firmwares require the full 32-bit sum to reach `0x5AA5A55A`; the rest
+test only its low half against `0x5AA5` and keep their balance in the halfword at
+`0x8022`. Both forms are detected per image.
+
+**Releases up to 1.4.2 maintained only the first**, so a ROM edited and saved with one
+of those fails its own integrity check. Re-save with 1.4.3 or later.
+
+Verified byte-for-byte against the project's Python implementation on all sixteen
+images, and end to end: each ROM is edited through the real editor write path, saved,
+and checked by an independent implementation of the firmware's own rule.
 
 `app\checksum.py` is still bundled if you want to check an image outside the editor:
 

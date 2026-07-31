@@ -1437,7 +1437,8 @@ ROM_PROFILES = [
         "offsets": {"SpeedTrimA": 592, "PressureB": 592, "PressureC": 592,
                     "ShiftStageD": 544, "PressureThresholdE": 592,
                     "SlipThreshold": 548, "RefSpeedBaseline": 548,
-                    "CAN511Threshold": 548, "SignalResponseCurves": 548},
+                    "CAN511Threshold": 548, "SignalResponseCurves": 548,
+                    "ShiftCorrection": 548},
     },
     {
         "id": "ACD1A06000", "rom_file": "ACD1A06000_JDM_5EAT_2007_M32176F4V.bin",
@@ -1445,6 +1446,46 @@ ROM_PROFILES = [
         "internalidstring": "MB558D20", "caseid": "Q6E", "year": "2007",
         "market": "JDM", "submodel": "ACD1A06000 (JDM 2007)", "filesize": "512kb",
         "offsets": {"SpeedTrimA": 142, "PressureB": 144, "PressureC": 144, "ShiftStageD": 96, "PressureThresholdE": 144, "SlipThreshold": 100, "RefSpeedBaseline": 100, "CAN511Threshold": 100, "SignalResponseCurves": 100, "ShiftCorrection": 100},
+    },
+    # The five below came from github.com/jimihimi/TCURoms. Their offsets were
+    # derived by tools/find_rom_offsets.py rather than read out of decompiled call
+    # sites one at a time; that tool reproduces the hand-derived offsets for every
+    # firmware already listed here, which is what makes its answers usable.
+    {
+        "id": "91A0217300", "rom_file": "91A0217300_MB4365.bin",
+        "xmlid": "SUBARU_5EAT_91A0217300", "base": "SUBARU_5EAT_91D1206000",
+        "internalidstring": "MB4365", "caseid": "Q0A", "year": "Unknown",
+        "market": "EDM", "submodel": "91A0217300 (EDM)", "filesize": "384kb",
+        "offsets": {"SpeedTrimA": 44, "SlipThreshold": 48, "RefSpeedBaseline": 48, "PressureB": 44, "PressureC": 44, "ShiftStageD": 44, "PressureThresholdE": 44, "CAN511Threshold": 48, "ShiftCorrection": 48, "SignalResponseCurves": 48},
+    },
+    {
+        "id": "91A0217400", "rom_file": "91A0217400_MB4372_A61022.bin",
+        "xmlid": "SUBARU_5EAT_91A0217400", "base": "SUBARU_5EAT_91D1206000",
+        "internalidstring": "MB4372", "caseid": "Q3M", "year": "Unknown",
+        "market": "EDM", "submodel": "91A0217400 (EDM)", "filesize": "512kb",
+        "offsets": {"SpeedTrimA": 44, "SlipThreshold": 48, "RefSpeedBaseline": 48, "PressureB": 44, "PressureC": 44, "ShiftStageD": 44, "PressureThresholdE": 44, "CAN511Threshold": 48, "ShiftCorrection": 48, "SignalResponseCurves": 48},
+    },
+    {
+        "id": "91A1207300", "rom_file": "91A1207300_MB4364.bin",
+        "xmlid": "SUBARU_5EAT_91A1207300", "base": "SUBARU_5EAT_91D1206000",
+        "internalidstring": "MB4364", "caseid": "QZ9", "year": "Unknown",
+        "market": "EDM", "submodel": "91A1207300 (EDM)", "filesize": "384kb",
+        "offsets": {"SpeedTrimA": 44, "SlipThreshold": 48, "RefSpeedBaseline": 48, "PressureB": 44, "PressureC": 44, "ShiftStageD": 44, "PressureThresholdE": 44, "CAN511Threshold": 48, "ShiftCorrection": 48, "SignalResponseCurves": 48},
+    },
+    {
+        "id": "91FE207100", "rom_file": "91FE207100_MB436L_AG802_5EAT_LGT05USDM.bin",
+        "xmlid": "SUBARU_5EAT_91FE207100", "base": "SUBARU_5EAT_91D1206000",
+        "internalidstring": "MB436L", "caseid": "Q2Z", "year": "2005",
+        "market": "USDM", "submodel": "91FE207100 (USDM Legacy GT 2005)",
+        "filesize": "384kb",
+        "offsets": {"SpeedTrimA": 144, "SlipThreshold": 148, "RefSpeedBaseline": 148, "PressureB": 144, "PressureC": 144, "ShiftStageD": 144, "PressureThresholdE": 144, "CAN511Threshold": 148, "ShiftCorrection": 148, "SignalResponseCurves": 148},
+    },
+    {
+        "id": "AAD1A06000", "rom_file": "AAD1A06000.bin",
+        "xmlid": "SUBARU_5EAT_AAD1A06000", "base": "SUBARU_5EAT_91D1206000",
+        "internalidstring": "MB4402", "caseid": "Q0H", "year": "Unknown",
+        "market": "JDM", "submodel": "AAD1A06000 (JDM)", "filesize": "512kb",
+        "offsets": {"SpeedTrimA": 162, "SlipThreshold": 168, "RefSpeedBaseline": 168, "PressureB": 164, "PressureC": 164, "ShiftStageD": 164, "PressureThresholdE": 164, "CAN511Threshold": 168, "ShiftCorrection": 168, "SignalResponseCurves": 168},
     },
 ]
 

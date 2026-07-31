@@ -7,7 +7,7 @@ work of opening one up.
 ### ▶ [Download the Windows app](../../releases/latest)
 
 Extract the folder, run `RomRaider-TCU.exe`, `File -> Open` a ROM from `app\roms`.
-A Java runtime, the definitions and eleven ROM images are bundled — nothing to
+A Java runtime, the definitions and sixteen ROM images are bundled — nothing to
 install, nothing to configure.
 
 Already run RomRaider? Point it at [`definitions/5eat_tcu_romraider_defs.xml`](definitions/)
@@ -49,22 +49,30 @@ that pedal position, so there's no byte to change. Left blank rather than invent
 
 ## Firmwares
 
-Eleven mapped, all Renesas M32R, all with verified checksums. Decompiler output for
-sixteen images in [`decompiled/`](decompiled/).
+Sixteen mapped, all Renesas M32R, every one with both checksums verified.
+Decompiler output in [`decompiled/`](decompiled/).
+
+Five of these — the EDM calibrations, the 2005 USDM Legacy GT and `AAD1A06000` —
+came from [jimihimi/TCURoms](https://github.com/jimihimi/TCURoms).
 
 | Cal ID | ROM ID | Size | Vehicle / notes |
 |---|---|---|---|
 | `MB431M` | `91D1206000` | 384K | JDM |
-| `MB436G` | `91FE216300` | 512K | USDM, Early 2005 Outback XT |
+| `MB436G` | `91FE216300` | 512K | USDM, early 2005 Outback XT |
 | `MB436T` | `91D0207500` | 384K | JDM |
 | `MB436P` | `91F0217100` | 384K | USDM Outback 03 |
 | `MB4434` | `ABD1A03100` | 384K | JDM Legacy GT 2005 |
 | `MB4373` | `91D1207900` | 384K | Hitachi 31711AG589 |
 | `MB440X` | `AAD1A07100` | 384K | Hitachi 31711AJ782 |
 | `MB5300` | `ABD1207000` | 384K | 06 JDM Legacy GT |
-| `MB558D20` | `ACD1A06000` | 512K | JDM 2007 |
 | `MB558D01` | `ACD1207000` | 512K | LGT06 JDM |
 | `MB562EH` | `ADE0236000` | 512K | — |
+| `MB558D20` | `ACD1A06000` | 512K | JDM 2007 |
+| `MB4365` | `91A0217300` | 384K | EDM |
+| `MB4372` | `91A0217400` | 512K | EDM |
+| `MB4364` | `91A1207300` | 384K | EDM |
+| `MB436L` | `91FE207100` | 384K | USDM Legacy GT 2005 |
+| `MB4402` | `AAD1A06000` | 512K | JDM |
 
 RomRaider matches the cal ID at `0x8008` and loads the right one automatically.
 
@@ -80,7 +88,7 @@ firmware's own arithmetic.
 | Temperature | `raw − 40` °C | Standard −40…+215 °C automotive encoding |
 | Vehicle speed | km/h direct | Factory shift chart |
 | Accelerator angle | `raw × 100/255` | Shift chart, and CAN `0x412` byte 0 |
-| **Line pressure** | **kPa direct** | Manual specifies 1370 kPa at full throttle; that value is in a table in all eleven images |
+| **Line pressure** | **kPa direct** | Manual specifies 1370 kPa at full throttle; that value is in a table in all sixteen images |
 | **Trouble codes** | P-number in **hex** | `0x705` = P0705. 53 codes, found via the thread's CAN `0x422` decoding |
 | **Line pressure targets** | torque `/10` = Nm, pressure `/10` = kPa | Two *different* maps hit the manual's two figures: 490 kPa closed throttle, 1372 at 400 Nm |
 | **Slip pressure factor** | `/1024` both axes | Reproduces rimwall's stated numbers: 0.5 slip → 1.392 ("~1.4"), 0.9 → exactly 1.000 ("~1.0") |
@@ -93,11 +101,11 @@ Every image carries two checksums, and the TCU checks both:
 | | Where | Rule |
 |---|---|---|
 | **Additive** | `0x8000` and `0x8004`, held twice | 32-bit BE two's-complement sum over the payload, whose extent is `0x60000` or the whole file — detected per image, not assumed |
-| **Balance** | `0x8020` | Sum from there to the end of the payload. Three firmwares must reach `0x5AA5A55A`; the other eight test only the low half against `0x5AA5` and keep the balance in the halfword at `0x8022` |
+| **Balance** | `0x8020` | Sum from there to the end of the payload. Three firmwares must reach `0x5AA5A55A`; the other thirteen test only the low half against `0x5AA5` and keep the balance in the halfword at `0x8022` |
 
 The two-variant balance was read out of the firmware's own routine rather than
-inferred — searching for the 32-bit form alone finds it in three images and makes the
-other eight look like they have no second checksum, which is wrong and would leave
+inferred — searching for the 32-bit form alone finds it in three images and makes
+the rest look like they have no second checksum, which is wrong and would leave
 them failing their own integrity check after any edit.
 
 The pressure result is worth a note: four earlier attempts failed because they
@@ -112,13 +120,17 @@ engagement, gradually changes pressure to provide smooth engagement"*, so it's a
 **pressure ramp over time**, not a speed/pedal threshold curve. That's why scanning
 for shift-curve-shaped arrays never found it. See [FINDINGS.md](FINDINGS.md) §17e.
 
-**74 of 82 threshold curves are unmapped, and we now know what they are.** The
-definition ships **one cell of a 5 × 10 grid**: rimwall established the transmission
-carries 50 sets of shift curves, 5 fuelling states (closed loop / open loop / sensor
-error) × 10 operating conditions. Sasha_A80 listed the likely conditions — cold and
-warm engine, cold and warm ATF, catalyst preheat, quick shift, hill assist, driver
-style adaptation. *Which* condition is which is still unknown, so nothing is named on
-that basis. Biggest open lead. See [FINDINGS.md](FINDINGS.md) §15 and §17a.
+**Which operating condition selects which shift schedule is still unknown.** The
+transmission carries 50 sets of shift curves — 10 operating conditions × 5 gear
+limits — and all ten schedules now ship. What is missing is the mapping from driving
+state to schedule. Sasha_A80 listed the likely conditions: cold and warm engine, cold
+and warm ATF, catalyst preheat, quick shift, hill assist, driver style adaptation.
+None is named on that basis, because guessing which is which would read as confirmed.
+
+rimwall read the 5-way axis as a fuelling state (closed loop / open loop / sensor
+error) in an early post. This project reads it as a gear limit, from the data; his
+reading appears to come from a different array. Biggest open lead. See
+[FINDINGS.md](FINDINGS.md) §14, §15 and §17a.
 
 **Zero-to-disable on DTCs is inferred, not tested.** The trouble-code table is
 mapped (see below), and blanking an entry should stop that code being reported —
@@ -144,7 +156,7 @@ established. A wrong unit reads as confirmed; an honest `raw` doesn't.
 ## Contributing
 
 Adding a firmware: [`tools/README.md`](tools/README.md#adding-a-firmware). TCU dumps
-not already here are the most useful contribution — five of the eleven still need
+not already here are the most useful contribution — five of the sixteen still need
 their record-format curves mapped, and that needs a Ghidra pass per image.
 
 If you contributed a ROM and want it removed or credited differently, open an issue.

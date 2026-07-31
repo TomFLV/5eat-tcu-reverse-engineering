@@ -1,6 +1,6 @@
 # The ROMs
 
-Eleven M32R 5EAT firmwares are held in [`rom/`](../rom/), all with verified
+Sixteen M32R 5EAT firmwares are held in [`rom/`](../rom/), all with verified
 checksums and all mapped. The collection table is at the bottom.
 
 The sections below describe **`91D1206000`** in detail — it is the reference
@@ -208,7 +208,7 @@ has not been done.
 
 ## The rest of the collection
 
-Eleven M32R 5EAT firmwares are held in [`rom/`](../rom/). All eleven have valid
+Sixteen M32R 5EAT firmwares are held in [`rom/`](../rom/). All sixteen have valid
 checksums. Only the first two have had their tables mapped so far.
 
 | Cal ID | ROM ID | Size | Notes | Tables mapped |
@@ -230,7 +230,7 @@ one actually stored in the binary.
 
 ### Two checksum region conventions
 
-Solving for the checksummed range across all eleven shows the family uses two:
+Solving for the checksummed range across all sixteen shows the family uses two:
 
 - **`0x60000`** — every 384 KB image, and 512 KB images carrying a 384 KB payload
   with the tail left as blank `0xFF` (`91FE216300`).
@@ -290,7 +290,7 @@ decompiler output:
 | ABD1A03100 | `0x17F5C` | ACD1A06000 | `0x180E8` |
 | ADE0236000 | `0x180DC` | | |
 
-All eleven yield 8/8 real curves. The `ACD1A06000` entry independently reproduces
+All sixteen yield 8/8 real curves. The `ACD1A06000` entry independently reproduces
 the `0x180E8` address rimwall stated in the forum thread.
 
 ### One archive excluded
