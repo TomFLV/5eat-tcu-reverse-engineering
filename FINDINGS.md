@@ -2819,3 +2819,64 @@ Recording the negative too: reference counts alone say nothing useful here. 0x80
 has fourteen references and 0x804EB2 has none in the ACD1A06000 decompile, which
 initially looked meaningful and is not - EB2 and EB6 are written through a different
 routine that only appears in the base ROM's decompile.
+
+---
+
+## 26. THE FACTORY SHIFT DIAGRAM, AND WHERE THE "NUMBER OF STEPS" LEVER ALREADY IS
+
+The service manual's "Shift change system diagram" (figure PCIA0013E) draws a gear
+change as four traces: output shaft torque, gear ratio, and line pressure for the
+ENGAGING clutch and the RELEASING clutch separately. It is not redistributed here;
+what follows is what it establishes.
+
+Three things in it are load-bearing.
+
+**A shift moves two elements, not one.** There is a pressure trace for the clutch
+coming in and another for the clutch going out, crossing over mid-shift. That is
+what the four identical driver blocks in section 25c are for - during any one shift
+some elements are filling while others are emptying, which is why four channels are
+written by the same code with different operands rather than by four different
+routines.
+
+**Upshift and downshift are controlled on different inputs.** The manual is explicit:
+on a shift-up, "change of line pressure is controlled depending on input torque"; on
+a shift-down, "depending on input torque AND VEHICLE SPEED". The downshift path
+having an extra input is a structural asymmetry, and matches this project finding
+separate downshift pressure maps and ramp structures rather than a single shared set.
+
+**There is closed-loop control during the change.** Annotated on the engaging
+clutch's pressure trace: "Full phase real-time feedback control monitors movement of
+gear ratio at gear change, and controls oil pressure at real-time to achieve the best
+gear ratio." The controlled variable is GEAR RATIO, which is the quantity section 4
+confirmed at raw/1024, and it explains rimwall's account (post 262) of the TCU
+trialling values either side of its current ones and keeping whichever tracked the
+clutch better. It is also consistent with 0x804EB4 being an accumulator that
+saturates and feeds back on itself rather than a commanded value.
+
+### 26a. The step count is already exposed, for downshifts
+
+rimwall's description of the state machine (posts 241 and 345) is that each brake and
+clutch moves through one of ~34 states; each state computes a target pressure and a
+NUMBER OF STEPS to reach it, and "the simplest approach to getting faster changes
+would be to reduce the number of steps".
+
+That lever is already in the definition, under a name that does not announce itself.
+`extract_downshift_pressure.py` locates a ten-entry structure - one per downshift
+combination, four bytes each - immediately before the map pointer array, and ships it
+as `Downshift Ramp Step` and `Downshift Ramp Hold`. In the base ROM it reads:
+
+    (50, 25)  (32767, 0)  (35, 0)  (32767, 0)  (35, 0)
+    (32767, 0)  (32767, 0)  (35, 0)  (32767, 0)  (32767, 0)
+
+0x7FFF is the not-time-limited sentinel; the real values are small counts of 25, 35
+and 50. Those are the step counts rimwall is describing, for the ten downshifts.
+
+So the tuning lever exists and is shipped. What is NOT covered:
+
+  - the same structure for UPSHIFTS, which has not been located
+  - the wider state machine - ten downshift combinations is not ~34 states, so this
+    is one slice of the mechanism rather than all of it
+  - which of the pair is the step count and which the hold. They are labelled
+    `Ramp Step` in kPa and `Ramp Hold` in ticks, which was inferred from the code
+    rather than confirmed against a car, and rimwall's account would make the first
+    a count rather than a pressure. Worth re-deriving before anyone leans on it.
