@@ -2451,3 +2451,96 @@ further disassembly.
 Leads eliminated so far: the paired curve block at `0x018060` (shift decision), the
 timed pressure ramp at `0x12034` (downshift control), and the claim that the SFR
 route was unavailable (my error).
+
+---
+
+## 23. LOCK-UP: NAMED, LOCATED IN THE DTC TABLE, NOT YET PINNED TO A SOLENOID SLOT
+
+The 2006 Tribeca USDM service manual (jdmfsm.info) turned out to contain the
+transmission diagnostics section this project never had. It answers most of what was
+open about lock-up.
+
+### 23a. The seven solenoids, named
+
+The Select Monitor data list (5AT(diag)-15) enumerates every solenoid, and each has a
+target pressure reported in kPa:
+
+    H&LR/C   High & low reverse clutch
+    D/C      Direct clutch
+    F/B      Front brake
+    I/C      Input clutch
+    P/L      Line pressure
+    L/U      LOCK-UP
+    AWD      Transfer
+
+Seven. The firmware drives exactly seven PWM channels (section 22), so the sets
+correspond. The manual also confirms each is reported as a TARGET PRESSURE in kPa,
+which is the same quantity the line-pressure work in section 19 established.
+
+### 23b. Lock-up's DTC, and where it sits in our table
+
+    P0743  TORQUE CONVERTER CLUTCH CIRCUIT ELECTRICAL
+           "The output signal circuit of lock up solenoid is open or shorted."
+           "No lock-up occurs. (After engine is warmed-up)"
+
+P0743 is in the DTC table this project mapped in section 16, at index 12 - status
+byte 1, bit 4. The other solenoid codes place similarly:
+
+    1.0  P0753  shift A, front brake
+    1.1  P0758  shift B, input clutch
+    1.3  P0748  line pressure
+    1.4  P0743  LOCK-UP
+    5.1  P0768  solenoid D
+    5.2  P0763  shift C, H&LR clutch
+    7.2  P0773  shift E
+
+### 23c. Useful specifics from the manual
+
+- The lock-up circuit is on TCM connector B54, pin 23.
+- The functional test reads "L/U Solenoid Target Pressure" and expects 500 kPa or
+  more at 60 km/h with 10% or less throttle. That is a real reference value to
+  compare a log against.
+- Lock-up engagement is the "smooth control" pressure ramp quoted in section 17e.
+
+### 23d. What is still NOT established, and a correction to an earlier assumption
+
+Which of the seven command slots at `0x804A62`..`0x804A6E` is L/U.
+
+Two attempts failed and both are worth recording. Assuming the SSM list order maps
+onto the RAM order would put L/U at `0x804A6C`, but that is a guess: the line
+pressure target at `0x804A82` flows to `0x804A84` and `0x804A92`, not into the
+`0x804A6x` block, so there is no anchor confirming the ordering.
+
+And the command variables are NOT in kPa. The per-driver constant `0x1C2B0` is 1258,
+which is the same `0x4EA` full-scale value the TIO2 driver uses to switch the port to
+a static high - so `0x804A62`..`0x804A6E` are DUTY, full scale 1258. The kPa figure
+the Select Monitor reports is computed somewhere else. Any attempt to match those
+slots against the manual's kPa figures directly would have produced a confident wrong
+answer.
+
+The remaining routes are unchanged in kind but much better targeted now: log the seven
+duty addresses while lock-up engages and watch which moves, or trace the fault-latch
+bit for group 1 bit 4 back to the driver that raises it.
+
+### 23e. rimwall's FastECU fork - what is and is not in it
+
+Cloned `github.com/rimwall/fastecu-oem` (113 MB) and searched it.
+
+The patched Tribeca ROM is NOT in the repo. It was a forum attachment on post 266 of
+thread 13725, which needs a board login. What the repo does have:
+
+- `sub_tcu_hitachi_can` as a protocol family in `config/protocols.cfg`, so the tooling
+  for our TCU is there
+- flashing modules including `flash_ecu_subaru_hitachi_m32r_can` and
+  `flash_ecu_subaru_uinisia_jecs_m32r`
+- kernels for SH7055 and SH7058, CAN and serial
+- `file_defs_romraider.cpp` - it reads RomRaider definition XML, so the definition
+  this project produces should load in FastECU as well
+
+`config/logger.cfg` is only a saved gauge selection, not parameter definitions, so it
+does not provide RAM addresses.
+
+FastECU and this project are complementary rather than competing. FastECU reads and
+writes the TCU and logs it, which RomRaider cannot do for this ECU family at all.
+This project produces the table definition and the editor. The definition is the part
+that would be lost by switching tools, and it appears FastECU can consume it.
