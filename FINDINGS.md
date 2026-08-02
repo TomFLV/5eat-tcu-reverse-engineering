@@ -3139,3 +3139,117 @@ That is a concrete lead: identify those two RAM locations and the selection rule
 falls out, for a family where the tables are already located and indexed. It is a
 better starting point than the 86-family classification problem, because it needs two
 answers rather than eighty-six.
+
+---
+
+## 31. FULL DISASSEMBLY OF A DENSO IMAGE, AND WHY THE TABLES STILL RESIST NAMING
+
+Section 30 blamed the failed table-to-reader trace on partial coverage. That was a
+reasonable guess and it was wrong. Fixing the coverage did not fix the trace.
+
+### 31a. Coverage is now complete, and 100% is the wrong target
+
+Auto-analysis reaches 28.3% of the image. Sweeping every 2-byte-aligned address
+outside the known calibration blocks raises that to 50.8% instructions plus 9.6%
+known table data.
+
+The remaining 38% is not missing code. Classifying the image by content:
+
+    code-like        46.6%   477 KB
+    other data       33.3%   341 KB    constants, float arrays, non-header tables
+    blank flash      12.6%   129 KB    unprogrammed 0xFF
+    known tables      6.5%    66 KB
+    ASCII             0.8%     7 KB
+
+50.8% disassembled against 46.6% code-like means essentially all the code is now
+instructions. Pushing past that would mean decoding blank flash and constant pools,
+which manufactures exactly the false cross-references that wasted time earlier: an
+unrestricted sweep produced 77 referrers to the shift-schedule array, every one of
+them the sweep reading its own mis-decoded pointers. tools/denso_data_ranges.py
+computes the blocks to leave alone, from the table headers themselves.
+
+### 31b. The arrays are still unreferenced, and now that means something
+
+With the code fully disassembled the calibration pointer arrays STILL have zero
+references from outside themselves. That is no longer a gap in the analysis; it is a
+fact about the firmware. The addresses are computed, not loaded.
+
+### 31c. GBR is not the answer, but it is worth knowing
+
+SH-2 has a global base register, and this firmware leans on it: about 2650 mov.b and
+1150 mov.w accesses are GBR-relative, set from 248 ldc sites. Ghidra cannot resolve
+@(disp,GBR) without knowing GBR, so none of those produce cross-references - which
+looked like the explanation.
+
+It is not. Resolving what those sites load gives values like 0xFFFF31A8, 0xFFFF37AC
+and 0xFFFF3FF8: all on-chip RAM, consistent with the initial stack pointer at
+0xFFFFBFA0. GBR is used for fast access to RAM STATE VARIABLES, not for reaching
+calibration tables in ROM.
+
+Recording the method as well as the answer, because the first attempt got it wrong in
+a way that looked convincing: walking back from "ldc rN,gbr" to the instruction that
+set rN and taking its first scalar operand returns 4, 8, 0x0C and so on. Those are
+the displacements of mov.l @(disp,PC),rN, not the constants it loads. The value has
+to be read through the instructions reference, from the literal pool.
+
+---
+
+## 31. FULL DISASSEMBLY OF A DENSO IMAGE, AND WHY THE TABLES STILL RESIST NAMING
+
+Section 30 blamed the failed table-to-reader trace on partial coverage. That was a
+reasonable guess and it was wrong. Fixing the coverage did not fix the trace.
+
+### 31a. Coverage is now complete, and 100% is the wrong target
+
+Auto-analysis reaches 28.3% of the image. Sweeping every 2-byte-aligned address
+outside the known calibration blocks raises that to 50.8% instructions plus 9.6%
+known table data.
+
+The remaining 38% is not missing code. Classifying the image by content:
+
+    code-like        46.6%   477 KB
+    other data       33.3%   341 KB    constants, float arrays, non-header tables
+    blank flash      12.6%   129 KB    unprogrammed 0xFF
+    known tables      6.5%    66 KB
+    ASCII             0.8%     7 KB
+
+50.8% disassembled against 46.6% code-like means essentially all the code is now
+instructions. Pushing past that would mean decoding blank flash and constant pools,
+which manufactures exactly the false cross-references that wasted time earlier: an
+unrestricted sweep produced 77 referrers to the shift-schedule array, every one of
+them the sweep reading its own mis-decoded pointers. `tools/denso_data_ranges.py`
+computes the blocks to leave alone, from the table headers themselves.
+
+### 31b. The arrays are still unreferenced, and now that means something
+
+With the code fully disassembled the calibration pointer arrays STILL have zero
+references from outside themselves. That is no longer a gap in the analysis; it is a
+fact about the firmware. The addresses are computed, not loaded.
+
+### 31c. GBR is not the answer, but it is worth knowing
+
+SH-2 has a global base register, and this firmware leans on it: about 2650 `mov.b`
+and 1150 `mov.w` accesses are GBR-relative, set from 248 `ldc` sites. Ghidra cannot
+resolve `@(disp,GBR)` without knowing GBR, so none of those produce cross-references -
+which looked like the explanation.
+
+It is not. Resolving what those sites load gives values like 0xFFFF31A8, 0xFFFF37AC
+and 0xFFFF3FF8: all on-chip RAM, consistent with the initial stack pointer at
+0xFFFFBFA0. GBR is used for fast access to RAM STATE VARIABLES, not for reaching
+calibration tables in ROM.
+
+Recording the method as well as the answer, because the first attempt got it wrong in
+a way that looked convincing. Walking back from `ldc rN,gbr` to the instruction that
+set rN and taking its first scalar operand returns 4, 8, 0x0C and so on. Those are the
+displacements of `mov.l @(disp,PC),rN`, not the constants it loads. The value has to
+be read through the instruction's reference, from the literal pool.
+
+### 31d. Where this leaves the Denso side
+
+What holds: the pointer index, 140 to 186 real tables per image, the twelve shift
+schedules, the checksum, and now a fully disassembled image.
+
+What does not: naming the remaining tables by static analysis. The route from code to
+table is computed at runtime, and neither cross-references nor GBR resolution recovers
+it. Emulating the relevant routines would, and that is a different and much larger
+undertaking than anything attempted here.
