@@ -2880,3 +2880,76 @@ So the tuning lever exists and is shipped. What is NOT covered:
     `Ramp Step` in kPa and `Ramp Hold` in ticks, which was inferred from the code
     rather than confirmed against a car, and rimwall's account would make the first
     a count rather than a pressure. Worth re-deriving before anyone leans on it.
+
+---
+
+## 27. VERIFYING THE DISASSEMBLER AGAINST THE MANUFACTURER'S MANUAL
+
+Everything in this project is downstream of the disassembly, and the disassembler is
+a third-party Ghidra processor module with local corrections. It had never been
+checked against the instruction set it claims to implement.
+
+Sources, neither redistributed here:
+
+  - **M32R Family Software Manual** (Renesas MEJ19B0001, Rev 1.2) - the instruction
+    set, with an [Encoding] bit diagram per instruction.
+  - **32176 Group User's Manual** (Renesas REJ09B0067, Rev 1.01) - the hardware
+    manual for the exact part in these TCUs, `M32176F4V`. Peripherals and registers,
+    not the ISA.
+
+`tools/verify_m32r_sleigh.py` compares the two mechanically. Both describe an
+instruction as a sequence of 4-bit fields, so the literal nibbles must agree and
+neither side may fix a nibble the other leaves as a field.
+
+### 27a. Result: the module is correct, after two fixes
+
+**54 instructions agree.** Four more are flagged by the checker and were confirmed
+correct by hand - they use token forms the checker does not model (`op1_B`/`op3_B`
+for ADDX, a whole-word `imm16=0x10D6` for RTE), or the manual row was mis-parsed
+(UNLOCK is `0010 src1 0101 src2`, exactly what sleigh has).
+
+Two real defects were found and fixed.
+
+**MVTC was under-constrained.** The manual gives `0001 dest 1010 src`; the module had
+`op1=1 & CRdest; Rsrc` with no `op3` constraint. Every sibling in that family pins it
+- SRL 0, SRA 2, SLL 4, MUL 6, MV 8, MVFC 9 - so the omission was clearly an
+oversight. The effect is that any halfword with `op1=1` and an `op3` belonging to no
+documented instruction decodes as MVTC instead of failing. Across the sixteen images
+that is 5,377 byte patterns against 773 legitimate MVTC halfwords.
+
+**The accumulator moves were unimplemented**, left as bare stubs `#:MVFACHI` and so
+on, although the `ACC` register was already declared. MVFACHI, MVFACLO, MVFACMI,
+MVTACHI and MVTACLO are now implemented from the manual's semantics. The bit
+numbering is a trap: M32R numbers bits MSB-first, so MVTACHI's documented
+`accumulator[0:31] = Rsrc` writes the HIGH 32 bits, and MVFACMI's "bits 16 to 47" is
+the middle word - which lands byte-aligned, so `ACC(4)`, `ACC(2)` and `ACC(0)` give
+the high, middle and low words respectively.
+
+RAC and RACH are still unimplemented. They need saturation semantics stated
+carefully, and between them they account for two halfword matches in sixteen images
+against roughly two hundred for the moves.
+
+### 27b. The fixes changed nothing in our output, and that is the useful part
+
+ACD1A06000 was re-decompiled with the corrected module. The result is **byte
+identical** to what is already in `decompiled/` - same 1217 functions, same MD5.
+
+That is the answer worth recording. The decompile is seeded at real entry points and
+follows real control flow, so the regions where a loose MVTC could bite are data that
+Ghidra never walks, and the accumulator encodings that appear in the images are byte
+coincidences in data rather than instructions in reachable code.
+
+So the disassembly this project's conclusions rest on is confirmed correct, by
+comparison against Renesas' own encoding tables rather than by assumption. The module
+is now also correct in two places where it was not, which matters for anyone
+disassembling a different M32R image even though it did not matter here.
+
+### 27c. The Denso side
+
+The SH7058S core is **SH-2E**, not SH-2A - SH-2 plus a single-precision FPU, a
+different lineage from the later SH-2A. Ghidra ships `SuperH:BE:32:SH-2` which is the
+right base; SH-2A would be wrong.
+
+No Denso image has been disassembled yet. The definition in
+`5eat_tcu_denso_romraider_defs.xml` was built by reading the table headers directly,
+which needs no disassembly - but naming the several hundred unidentified tables will.
