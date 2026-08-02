@@ -3090,3 +3090,52 @@ like 255/255, 0/0 and 207/0, which is not evidence of odd calibration - it is th
 constant having relocated, the same way every other family does. Per-firmware
 addresses are needed before this can be exposed as a table, and the relocation has
 not been derived yet.
+
+---
+
+## 30. NAMING THE DENSO TABLES: WHAT WORKED, AND WHERE IT STOPPED
+
+Section 29 left the Denso tables indexed but unnamed. Disassembling the image was
+supposed to close that. It closed part of it.
+
+### 30a. The index is solid
+
+The pointer runs are real and reproducible - 140 to 186 indexed tables per image
+against 250 to 346 header candidates, in two generations. That filter now decides
+what the definition ships, and it is the most useful thing to come out of this.
+
+### 30b. Tracing a run back to its reader mostly fails
+
+The plan was to name a group by naming the function that reads its index. It does not
+work, for a reason worth recording rather than rediscovering:
+
+  - only 2 of 32 runs have a direct code reference
+  - the run START addresses appear NOWHERE in the image as 32-bit words
+  - searching backwards for a real array base that something points at found 1 of 32
+
+So the arrays are not reached by loading a literal address. SH-2 code reaches them by
+some computed route - a base register plus an index, or a table of tables - and
+recovering that needs the arithmetic read per site rather than a reference lookup.
+Anyone repeating this should skip the xref approach and start from the two functions
+below.
+
+### 30c. What the two readable functions show
+
+`FUN_00084dc8` and `FUN_00084f7c` are the exceptions, and they are dispatchers:
+
+    if (state_byte < threshold && flag == 1)  arrays = A
+    else if (state_byte < threshold)          arrays = B
+    else if (flag == 1)                       arrays = C
+    ...
+    value  = lookup2d(arrays, axis1, axis2)
+    result = blend(other1, other2, value)
+
+Which is the same shape as the unanswered question on the M32R side - several
+complete table sets, selected by operating condition, then interpolated. The
+condition inputs here are a byte at PTR_DAT_00084f34 compared against DAT_00084f38,
+and a flag at DAT_00084f3c tested against 1.
+
+That is a concrete lead: identify those two RAM locations and the selection rule
+falls out, for a family where the tables are already located and indexed. It is a
+better starting point than the 86-family classification problem, because it needs two
+answers rather than eighty-six.
