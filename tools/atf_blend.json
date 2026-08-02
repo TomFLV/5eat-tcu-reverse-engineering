@@ -1,0 +1,162 @@
+{
+ "91A0217300": {
+  "atf_addr": 8407047,
+  "channels": 7,
+  "hi_addr": 117894,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 117893,
+  "lo_c": 15,
+  "lo_value": 55
+ },
+ "91A0217400": {
+  "atf_addr": 8407055,
+  "channels": 7,
+  "hi_addr": 118526,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 118525,
+  "lo_c": 15,
+  "lo_value": 55
+ },
+ "91A1207300": {
+  "atf_addr": 8407047,
+  "channels": 7,
+  "hi_addr": 117346,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 117345,
+  "lo_c": 15,
+  "lo_value": 55
+ },
+ "91D0207500": {
+  "atf_addr": 8407055,
+  "channels": 7,
+  "hi_addr": 118254,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 118253,
+  "lo_c": 15,
+  "lo_value": 55
+ },
+ "91D1206000": {
+  "atf_addr": 8407035,
+  "channels": 7,
+  "hi_addr": 115646,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 115645,
+  "lo_c": 15,
+  "lo_value": 55
+ },
+ "91D1207900": {
+  "atf_addr": 8407055,
+  "channels": 7,
+  "hi_addr": 117346,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 117345,
+  "lo_c": 15,
+  "lo_value": 55
+ },
+ "91F0217100": {
+  "atf_addr": 8407055,
+  "channels": 7,
+  "hi_addr": 115842,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 115841,
+  "lo_c": 15,
+  "lo_value": 55
+ },
+ "91FE207100": {
+  "atf_addr": 8407055,
+  "channels": 7,
+  "hi_addr": 115702,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 115701,
+  "lo_c": 15,
+  "lo_value": 55
+ },
+ "91FE216300": {
+  "atf_addr": 8407047,
+  "channels": 7,
+  "hi_addr": 115678,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 115677,
+  "lo_c": 15,
+  "lo_value": 55
+ },
+ "AAD1A06000": {
+  "atf_addr": 8407051,
+  "channels": 7,
+  "hi_addr": 118022,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 118021,
+  "lo_c": 15,
+  "lo_value": 55
+ },
+ "AAD1A07100": {
+  "atf_addr": 8407059,
+  "channels": 7,
+  "hi_addr": 118046,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 118045,
+  "lo_c": 15,
+  "lo_value": 55
+ },
+ "ABD1207000": {
+  "atf_addr": 8407059,
+  "channels": 7,
+  "hi_addr": 119382,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 119381,
+  "lo_c": 15,
+  "lo_value": 55
+ },
+ "ABD1A03100": {
+  "atf_addr": 8407059,
+  "channels": 7,
+  "hi_addr": 119246,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 119245,
+  "lo_c": 15,
+  "lo_value": 55
+ },
+ "ACD1207000": {
+  "atf_addr": 8406988,
+  "channels": 7,
+  "hi_addr": 119810,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 119809,
+  "lo_c": 15,
+  "lo_value": 55
+ },
+ "ACD1A06000": {
+  "atf_addr": 8406988,
+  "channels": 7,
+  "hi_addr": 119826,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 119825,
+  "lo_c": 15,
+  "lo_value": 55
+ },
+ "ADE0236000": {
+  "atf_addr": 8406988,
+  "channels": 7,
+  "hi_addr": 119222,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 119221,
+  "lo_c": 15,
+  "lo_value": 55
+ }
+}

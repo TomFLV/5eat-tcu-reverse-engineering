@@ -1717,6 +1717,49 @@ def verify_profile(profile, rom_bytes):
     return checked, errors
 
 
+# ATF temperature blend window, one pair of bytes per firmware. All seven solenoid
+# channels interpolate their target pressure across this window, so it is a single
+# global tunable rather than anything per-gear. Addresses are per firmware and come
+# from tools/extract_atf_blend.py; see FINDINGS section 29c.
+ATF_BLEND = {}
+_atf_blend_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "atf_blend.json")
+if os.path.exists(_atf_blend_path):
+    with open(_atf_blend_path, encoding="utf-8") as _fh:
+        ATF_BLEND = json.load(_fh)
+
+
+ATF_BLEND_DESC = (
+    "ATF TEMPERATURE BLEND WINDOW. Below the first temperature the transmission uses "
+    "its cold calibration for solenoid target pressure; above the second it uses the "
+    "warm one; between them it interpolates linearly between the two.\n\n"
+    "This is not per-gear or per-solenoid - all seven solenoid channels read the same "
+    "pair, so widening or narrowing the window changes when every clutch and brake "
+    "hands over from cold to warm behaviour.\n\n"
+    "Stock is 15 C to 135 C in every firmware examined. Raising the lower figure keeps "
+    "cold-ATF pressures in use for longer; lowering the upper figure reaches full warm "
+    "behaviour sooner.\n\n"
+    "Confirmed by following all seven solenoid drivers in the decompiled firmware, "
+    "which interpolate on exactly these two bytes against the ATF reading."
+)
+
+
+def build_atf_blend_xml(profile):
+    """The two blend breakpoints as a 2-cell table, or None if not known."""
+    entry = ATF_BLEND.get(profile["id"])
+    if not entry:
+        return None
+    lo = entry["lo_addr"]
+    if entry["hi_addr"] != lo + 1:
+        return None          # only emit when the pair really is adjacent
+    return f"""  <table type="2D" name="ATF Blend Window" category="Transmission - Sensor Calibration" storagetype="uint8" endian="big" storageaddress="0x{lo:06X}" sizex="2" userlevel="1">
+   <scaling units="C (ATF temperature)" expression="x-40" to_byte="x+40" format="0" fineincrement="1" coarseincrement="5" />
+   <table type="X Axis" name="ATF Blend Window (breakpoint)" storageaddress="0x{lo:06X}" storagetype="uint8" endian="big">
+    <scaling units="1 = cold limit, 2 = warm limit" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="1" />
+   </table>
+   <description>{escape(ATF_BLEND_DESC)}</description>
+  </table>"""
+
+
 def build_rom_block(profile, rom_bytes, is_base):
     """Full table definitions for the base ROM; address overrides for derived."""
     global data
@@ -1735,6 +1778,13 @@ def build_rom_block(profile, rom_bytes, is_base):
         parts.append(build_info_table_xml(profile))
         parts.append("")
         total += 1
+
+        blend = build_atf_blend_xml(profile)
+        if blend:
+            parts.append("  <!-- ============ ATF Blend Window ============ -->")
+            parts.append(blend)
+            parts.append("")
+            total += 1
 
         for family in FAMILIES:
             if not is_base and family["id"] in OPTIONAL_FAMILIES and family["id"] not in off:

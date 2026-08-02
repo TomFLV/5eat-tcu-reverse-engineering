@@ -100,6 +100,20 @@ def main():
                         errors.append(
                             f"{name}: data 0x{addr:06X} is not a field of the same "
                             f"record as the axis at 0x{x_addr:06X} (stride {stride})")
+                elif name == "ATF Blend Window":
+                    # Not a count-prefixed array: two standalone bytes that all seven
+                    # solenoid drivers read as a temperature window. Its geometry
+                    # check is therefore meaningless; check the CONTENT instead,
+                    # which is what would actually be wrong if the address slipped.
+                    lo, hi = data[addr], data[addr + 1]
+                    checked += 1
+                    if not lo < hi:
+                        errors.append(f"{name}: window not ascending "
+                                      f"({lo - 40} C, {hi - 40} C)")
+                    checked += 1
+                    if not (-40 <= lo - 40 <= 60 and 60 <= hi - 40 <= 180):
+                        errors.append(f"{name}: implausible window "
+                                      f"{lo - 40} C .. {hi - 40} C")
                 else:
                     sizex = int(t.get("sizex"))
                     checked += 1
