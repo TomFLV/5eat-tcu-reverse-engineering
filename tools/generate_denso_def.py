@@ -34,6 +34,7 @@ is not - the same reason tables in the M32R definition still say `raw`.
 """
 
 import glob
+import json
 import os
 import struct
 from collections import Counter
@@ -68,6 +69,25 @@ def u32(d, a):
 
 def f32(d, a):
     return struct.unpack(">f", d[a:a + 4])[0]
+
+
+INDEXED = {}
+_idx = os.path.join(HERE, "denso_indexed_tables.json")
+if os.path.exists(_idx):
+    with open(_idx, encoding="utf-8") as _fh:
+        INDEXED = json.load(_fh)
+
+
+def indexed_headers(calid):
+    """Header addresses the firmware actually indexes, per find_denso_pointer_tables.
+
+    A header that parses is not necessarily a table. Tables are reached through arrays
+    of pointers to their headers, so anything named by such an array is real and
+    anything else is a candidate that survived a structural filter by chance. Where
+    the index is available, the definition ships only what it names.
+    """
+    e = INDEXED.get(calid)
+    return {t["header"] for t in e["tables"]} if e else None
 
 
 def scan_tables(d):
@@ -171,6 +191,10 @@ def table_xml(t, name, category, desc, value_units, value_fmt, level):
 def build_rom(path, d):
     calid = d[CALID_AT:CALID_AT + CALID_LEN].decode("ascii", "replace")
     tables = scan_tables(d)
+    # The shift block is found on the FULL scan. It is identified by a run of
+    # consecutive headers at a known address, which is independent evidence and
+    # stronger than the pointer index; filtering first breaks the run and silently
+    # drops schedules that are certainly real.
     shifts = shift_block(tables)
     shift_hdrs = {t["hdr"] for t in shifts}
 
@@ -209,7 +233,11 @@ def build_rom(path, d):
     parts.append("")
 
     parts.append("  <!-- ============ Unidentified ============ -->")
-    others = [t for t in tables if t["hdr"] not in shift_hdrs]
+    # Everything else IS filtered by the index: an unidentified table is only worth
+    # shipping if the firmware demonstrably reaches it.
+    keep = indexed_headers(calid)
+    others = [t for t in tables if t["hdr"] not in shift_hdrs
+              and (keep is None or t["hdr"] in keep)]
     for t in others:
         parts.append(table_xml(
             t, "Table %06X (%dx%d)" % (t["hdr"], t["rows"], t["cols"]),
