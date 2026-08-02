@@ -74,11 +74,14 @@ FAMILIES = [
     },
     {
         "id": "SlipThreshold",
+        "value_expr": "x/256",
+        "value_to_byte": "x*256",
+        "value_format": "0.00",
         "category": "Transmission - Slip Detection",
         "name_template": "Gear {i} Slip Detection Threshold",
         "headers": [0x0114A8, 0x0114D2, 0x0114FC, 0x011526, 0x011550],
         "axis_label": "Engine speed",
-        "value_label": "raw",
+        "value_label": "units of 1/256 (quantity not established)",
         "axis_units": "RPM",
         "axis_expr": "x/8",
         "axis_to_byte": "x*8",
@@ -91,11 +94,14 @@ FAMILIES = [
     },
     {
         "id": "RefSpeedBaseline",
+        "value_expr": "x/256",
+        "value_to_byte": "x*256",
+        "value_format": "0.00",
         "category": "Transmission - Reference Speed",
         "name_template": "Gear {i} Reference Speed Baseline",
         "headers": [0x0115D0, 0x0115FA, 0x011624, 0x01164E, 0x011678],
         "axis_label": "Engine speed",
-        "value_label": "raw",
+        "value_label": "units of 1/256 (quantity not established)",
         "axis_units": "RPM",
         "axis_expr": "x/8",
         "axis_to_byte": "x*8",
@@ -222,6 +228,12 @@ FAMILIES = [
             },
             0x0118DA: {
                 "name": "Signal FE Response Curve",
+                # Proven fixed point: every stored value in every firmware is a
+                # multiple of 8 (tools/detect_fixed_point.py). Quantity unknown.
+                "value_expr": "x/8",
+                "value_to_byte": "x*8",
+                "value_format": "0.0",
+                "value_label": "units of 1/8 (quantity not established)",
                 "axis_label": "Internal signal breakpoint (raw, source not fully traced)",
                 "description": (
                     "X-input is an internal RAM value (traced back through several "
@@ -1243,7 +1255,24 @@ Q_RATIO_1024 = {"label": "slip ratio", "units": "turbine/engine ratio",
 
 # Per-curve unit overrides, by the name in hysteresis_curves.json. Only curves whose
 # scale has actually been established appear here; everything else stays raw.
+# Proven fixed point, quantity unknown. tools/detect_fixed_point.py shows every
+# stored value in every firmware is an exact multiple of the divisor, so the low bits
+# are fractional; what the number measures is still not established.
+Q_FP_256 = {"label": "1/256", "units": "units of 1/256 (quantity not established)",
+            "expression": "x/256", "to_byte": "x*256",
+            "format": "0.00", "fine": "0.05", "coarse": "1"}
+Q_FP_8 = {"label": "1/8", "units": "units of 1/8 (quantity not established)",
+          "expression": "x/8", "to_byte": "x*8",
+          "format": "0.0", "fine": "0.5", "coarse": "4"}
+
 RECORD_UNIT_OVERRIDES = {
+    # Proven fixed point by tools/detect_fixed_point.py; quantity still unknown.
+    "Reference Speed Curve 1 of 3": (None, Q_FP_256),
+    "Signal 82CC Curve 1 of 2": (None, Q_FP_256),
+    "Signal FE Response Curve": (None, Q_FP_8),
+    # /8 over a 517..4096 range on an engine-speed axis is the confirmed RPM
+    # encoding for this family, so this one does get a real unit.
+    "Engine Speed Curve 6 of 6": (None, Q_RPM),
     "Signal 82AC Curve 1 of 2": (Q_RATIO_1024, Q_FACTOR_1024),
     # The linearisation tables turn a raw ADC reading into a temperature, so the
     # value column IS a temperature and uses the -40 encoding already confirmed for
@@ -1309,11 +1338,14 @@ HYST_DESC_SUFFIX = (
 def build_hyst_curve_xml(c, delta=0):
     addr = c["addr"] + delta
     override = RECORD_UNIT_OVERRIDES.get(c["name"])
+    bp = RECORD_BREAKPOINT_UNITS.get(c["category"], Q_RAW_BP)
+    val = Q_RAW_VAL
     if override:
-        bp, val = override
-    else:
-        bp = RECORD_BREAKPOINT_UNITS.get(c["category"], Q_RAW_BP)
-        val = Q_RAW_VAL
+        # None means "leave this column at its default" - several overrides only
+        # establish the value column and have nothing to say about the breakpoint.
+        o_bp, o_val = override
+        bp = o_bp or bp
+        val = o_val or val
     name = RECORD_RENAMES.get(c["name"], c["name"])
     desc = c["desc"] + HYST_DESC_SUFFIX + RECORD_EXTRA_DESC.get(c["name"], "")
     return build_record_tables_xml(
@@ -1611,8 +1643,19 @@ def build_table_xml(family, index, header_addr, base_addr=None):
     axis_format = eff.get("axis_format", "0")
 
     value_storagetype = eff.get("value_storagetype", "uint16")
+
+    # Some families store a FIXED-POINT value: every stored number, in every
+    # firmware, is an exact multiple of a power of two, so the low bits are
+    # fractional and the calibrator entered whole units. tools/detect_fixed_point.py
+    # proves that from the ROM alone. Showing raw there is actively unhelpful - a
+    # cell reading 19456 where 76 was typed cannot be edited sensibly - so the scale
+    # is applied even where the physical QUANTITY is still unknown, and the label
+    # says exactly that rather than inventing a unit.
+    value_expr = escape(eff.get("value_expr", "x"))
+    value_to_byte = escape(eff.get("value_to_byte", "x"))
+    value_format = eff.get("value_format", "0")
     return f"""  <table type="2D" name="{name}" category="{category}" storagetype="{value_storagetype}" endian="big" storageaddress="0x{data_addr:06X}" sizex="{n}" userlevel="1">
-   <scaling units="{value_label}" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="16" />
+   <scaling units="{value_label}" expression="{value_expr}" to_byte="{value_to_byte}" format="{value_format}" fineincrement="1" coarseincrement="16" />
    <table type="X Axis" name="{axis_name}" storageaddress="0x{axis_addr:06X}" storagetype="uint16" endian="big">
     <scaling units="{axis_units}" expression="{axis_expr}" to_byte="{axis_to_byte}" format="{axis_format}" fineincrement="16" coarseincrement="256" />
    </table>

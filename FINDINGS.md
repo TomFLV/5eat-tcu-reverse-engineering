@@ -2953,3 +2953,69 @@ right base; SH-2A would be wrong.
 No Denso image has been disassembled yet. The definition in
 `5eat_tcu_denso_romraider_defs.xml` was built by reading the table headers directly,
 which needs no disassembly - but naming the several hundred unidentified tables will.
+
+---
+
+## 28. FIXED-POINT STORAGE, PROVEN FROM THE BITS
+
+Half the definition still shipped as `raw` - 85 tables against 80 with real units.
+The usual route to a unit is the arithmetic in the decompiled code, but the
+calibration tables are reached through computed pointers, so their addresses never
+appear as symbols and there is no call site to read. That is why these were left.
+
+A different question turns out to be answerable without the code at all: not what
+the quantity IS, but how it is STORED.
+
+### 28a. The test
+
+If every stored value of a table, in every firmware, is an exact multiple of 2^k,
+then k low bits are never used. That does not happen by accident in a hand-entered
+calibration - it means the value was entered in whole units and stored with k
+fractional bits.
+
+`tools/detect_fixed_point.py` applies that, strictly: the table must vary (a constant
+table proves nothing), and at least one value must have bit k set, or a larger k
+would fit and the divisor reported is not the real one. Trouble-code switches are
+excluded - they store a P-number, pass the test by accident, and mean nothing scaled.
+
+### 28b. Result
+
+Fourteen tables are provably fixed point:
+
+    Gear 1..5 Reference Speed Baseline      /256      880 of 880 values, 16 firmwares
+    Gear 1..5 Slip Detection Threshold      /256
+    Reference Speed Curve 1 of 3            /256
+    Signal 82CC Curve 1 of 2                /256
+    Signal FE Response Curve                /8
+    Engine Speed Curve 6 of 6               /8
+
+All now ship scaled. `Gear 5 Reference Speed Baseline` reads
+1, 11, 25, 39, 53, 66, 80, 93, 120, 156 where it previously read
+256, 2816, 6400, 9984 and so on - the numbers the calibrator actually typed.
+
+Thirteen are labelled "units of 1/256 (quantity not established)" or the /8
+equivalent. That is deliberate and is the whole point: the storage format is proven
+from the ROM, the physical quantity is not, and a table that shows the right number
+with an honest label is useful where one showing 19456 is not.
+
+`Engine Speed Curve 6 of 6` is the exception and does get a real unit. Its divisor is
+8 and its range is 517..4096 over an engine-speed axis, which is exactly the RPM
+encoding confirmed in section 4, so it is labelled RPM.
+
+### 28c. A hypothesis that failed, recorded because it looked right
+
+The Reference Speed Baseline family is per-gear, indexed by engine RPM, and once
+scaled gives a plausible speed ladder - gear 1 reaching 79, gear 5 reaching 206. Road
+speed in km/h was the obvious reading.
+
+It is wrong. If the value were road speed then value/RPM would be fixed by the gear
+ratio, and the five slopes would sit in the same proportion as 1/ratio: 1.00, 1.56,
+2.41, 3.54, 4.25. Measured, they go the other way - 1.00, 0.84, 0.81, 0.57, 0.26.
+The quantity falls as the gear rises, so it is not a road speed against engine speed.
+
+The check took a few minutes and the answer would have looked entirely convincing
+without it. Every value in the family is a whole number after scaling, the ladder is
+monotonic, and the magnitudes are right for km/h. None of that is evidence.
+
+So: format established, quantity still open. The name "Reference Speed Baseline" is
+inherited from earlier work and should not be read as confirmed either.
