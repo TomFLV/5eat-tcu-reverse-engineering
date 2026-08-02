@@ -3019,3 +3019,74 @@ monotonic, and the magnitudes are right for km/h. None of that is evidence.
 
 So: format established, quantity still open. The name "Reference Speed Baseline" is
 inherited from earlier work and should not be read as confirmed either.
+
+---
+
+## 29. THE SOLENOID DRIVE CHAIN, END TO END
+
+Section 25c narrowed lock-up to two channels. Following both all the way up maps the
+chain completely, and explains why the two cannot be told apart from the driver code.
+
+### 29a. The chain
+
+For the two candidates, with the TIO7 twin in brackets:
+
+    command      0x804A64  [0x804A66]   blended target, ATF temperature dependent
+      |
+    demand       0x804F74  [0x804F78]   = feedback - command
+      |
+    pre-scale    0x80500E  [0x805010]
+      |          scaled twice by 0x805038 and 0x805037, /0x80 each
+    output       0x80501C  [0x80501E]
+      |
+    duty         0x804EB2  [0x804EB6]   clamped between 0x804EC2 and 0x804EC4
+      |
+    timer        TIO5CT/RL0/RL1  [TIO7CT/RL0/RL1]
+      |
+    pin          TO5 = port P115 = package pin 102  [TO7 = P117 = pin 104]
+
+The pin mapping comes from the 32176 Group User's Manual, which is the hardware
+manual for the exact part in these TCUs.
+
+### 29b. Why the code cannot settle it
+
+The two functions - `FUN_0002cb70` for TIO5 and `FUN_0002d07c` for TIO7 - are exact
+mirrors. Every symbol in one has a twin in the other at +2 bytes: 0x804A64/0x804A66,
+0x804C22/0x804C24, 0x804F74/0x804F78, 0x80500E/0x805010, 0x80501C/0x80501E. They
+share 965 of their symbols and differ only in which slot they address.
+
+That is the same relationship the four shift-element channels have with each other.
+These are instances of one parameterised driver, so no amount of reading the driver
+will say which physical solenoid is on the other end of the wire. The distinction
+lives further upstream, in whatever writes the per-channel targets 0x80429A and
+0x80429C, or in the board wiring from MCU pin to connector - and pin 102 or pin 104
+to connector B54 pin 23 is not something either manual states.
+
+One asymmetry is worth noting for later: in its fallback branch TIO7 uses an extra
+calibration constant, 0x1C2AE, that TIO5 has no equivalent for, selected when the
+state byte 0x8048D2 equals 2. TIO5's fallback instead sets a mode variable to 1 or 2
+and passes it to its terminating call. So they are not quite identical, and that
+constant is the thread to pull next.
+
+### 29c. What the ATF blend breakpoints actually do
+
+An open item from earlier - the meaning of 0x1C3BD and 0x1C3BE - falls out of this.
+Both drivers compute their command by interpolating between two target values:
+
+    if (0x1C3BD < atf && atf < 0x1C3BE)
+        target = (cold * (0x1C3BE - atf) + warm * (atf - 0x1C3BD))
+                 / (0x1C3BE - 0x1C3BD)
+
+with `atf` read from 0x8047FB. So the pair is the ATF TEMPERATURE WINDOW over which
+solenoid target pressure crosses from a cold calibration to a warm one. Below the
+first breakpoint the cold value applies, above the second the warm one.
+
+In the base ROM they read 55 and 175, which on the confirmed -40 encoding is
+**15 C to 135 C** - a sensible window for exactly that job.
+
+A caution against reading the table above too quickly: those two addresses are BASE
+ROM addresses. Sampling them in the other fifteen firmwares gives incoherent pairs
+like 255/255, 0/0 and 207/0, which is not evidence of odd calibration - it is the
+constant having relocated, the same way every other family does. Per-firmware
+addresses are needed before this can be exposed as a table, and the relocation has
+not been derived yet.
