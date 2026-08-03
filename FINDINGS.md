@@ -3339,3 +3339,72 @@ So the mapping from whatever `DAT_0080486E` is to a selector position is
 CALIBRATION DATA, at 0x10108 in the base ROM, and this project does not currently
 ship it. That is a tunable that decides which schedule group applies, and it is a
 better target than the remaining unidentified curves.
+
+---
+
+## 34. THE FIRST REAL VEHICLE DATA
+
+Everything before this section is static analysis. A RomRaider log from a running
+5EAT, 568 samples over 110 seconds, is the first time any of it has been checked
+against a car.
+
+Logged: accelerator angle, engine speed, SI-Drive mode, two turbine speeds, ATF
+temperature, gear position, front and rear wheel speed, turbine revolution speed, and
+the pressure of all seven solenoids by name - AWD, D/C, F/B, Fwd/B target, H&LR/C,
+I/C, L/U and P/L. A full drive: 0 to 173 km/h, 599 to 6944 rpm, all five gears, ATF
+87 to 92 C.
+
+### 34a. Lock-up engages in FOURTH as well as fifth
+
+The working assumption in this project was that lock-up is fifth-gear only. It is not.
+
+    gear   samples   L/U engaged   max L/U   speed range
+      1      225           0          0      0-73 km/h
+      2       10           0          0     77-103 km/h
+      3       91           0          0      0-146 km/h
+      4      110          25        130 kPa 98-173 km/h
+      5      132         121        260 kPa 21-104 km/h
+
+Never below fourth, which is the part that was right. But fourth gets partial
+engagement at roughly half the pressure fifth reaches, on 23% of its samples against
+92% in fifth. Engine-to-turbine slip across all engaged samples runs -79 to +383 rpm,
+so the converter really is locking rather than the channel merely being commanded.
+
+The assumption never reached the definition or the documentation, so nothing shipped
+needs correcting. It would have, eventually.
+
+### 34b. The seven solenoids are confirmed, by name and by range
+
+Section 22 identified seven PWM channels from the firmware and section 23a matched
+them to the Select Monitor's names. The log confirms both, and gives working ranges:
+
+    P/L    350 - 2520 kPa      line pressure
+    H&LR/C  20 - 1760 kPa
+    I/C      0 - 1400 kPa
+    D/C      0 - 1390 kPa
+    Fwd/B    0 - 1390 kPa      target
+    F/B      0 -  900 kPa
+    AWD      0 -  410 kPa      transfer clutch
+    L/U      0 -  260 kPa      lock-up
+
+### 34c. What the log does NOT settle, and one thing it complicates
+
+It does not identify which firmware channel is lock-up. The log reports Select Monitor
+parameters by name, not RAM addresses, so it cannot distinguish 0x804EB2 on TIO5 from
+0x804EB6 on TIO7. Resolving that needs the duty addresses themselves logged, which
+this capture does not include.
+
+It also complicates one earlier reading, and the honest thing is to record that rather
+than let it pass. The P/L parameter reaches 2520 kPa, well above the 1370 kPa this
+project confirmed as the full-throttle line pressure from the service manual and found
+in a table in all sixteen images. Both cannot be the same quantity. The likeliest
+reading is that the Select Monitor's "P/L Solenoid Valve Pressure" is the solenoid's
+own commanded pressure while the tables hold a line pressure TARGET, but that is a
+hypothesis and is not established here. The kPa finding itself stands - it was
+verified against the manual and against the firmware's own arithmetic - but the
+relationship between the logged parameter and the table is not what was assumed.
+
+Two shorter notes. SI-Drive mode reads 1 for the whole capture, so it tells us nothing
+about whether it selects a shift schedule. ATF sat at 87 to 92 C throughout, inside the
+15 to 135 C blend window from section 29c, so the solenoid targets were mid-blend the
+entire time.

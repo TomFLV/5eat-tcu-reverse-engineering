@@ -116,8 +116,12 @@ quantity is unknown. Their unit labels say so.
 
 **Torque converter lockup is not identified.** Narrowed to two of the seven solenoid
 channels, `0x804EB2` (TIO5) and `0x804EB6` (TIO7). Their drivers are exact mirrors,
-so the code cannot separate them; a log of both duty addresses during engagement
-would. See [FINDINGS.md](FINDINGS.md) §29.
+so the code cannot separate them, and a vehicle log names the parameter without
+giving its address. Separating them needs the duty addresses themselves logged. See
+[FINDINGS.md](FINDINGS.md) §29 and §34.
+
+A log does establish the behaviour: lock-up engages in **fourth and fifth only**,
+reaching about half the pressure in fourth that it does in fifth.
 
 **Which driving condition selects which schedule is unknown.** The selection mechanism
 is understood — index `= condition × 2 + group × 10` — and the group selector now
@@ -161,6 +165,7 @@ again — sixteen firmwares in about five seconds.
 | [`decompiled/`](decompiled/) | Ghidra output, sixteen M32R images |
 | [`decompiled-denso/`](decompiled-denso/) | Ghidra output, nine Denso images, with per-image coverage |
 | [`rom/`](rom/), [`rom-denso/`](rom-denso/) | ROM images |
+| [`logs/`](logs/) | RomRaider logs from a running 5EAT, the only real-vehicle data here |
 | [`docs/`](docs/) | [ROM details](docs/ROM-DETAILS.md) · [technical notes](docs/TECHNICAL-NOTES.md) · [manual setup](docs/ROMRAIDER-SETUP.md) |
 | [`FINDINGS.md`](FINDINGS.md) | Full research log, in order, including wrong turns |
 
