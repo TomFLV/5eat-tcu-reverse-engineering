@@ -302,5 +302,57 @@ Recorded so they aren't mistaken for oversights:
   instead of an approximated set.
 - **Pressure and most temperature constants left unlabelled.** No confirmed
   conversion, so `raw` is the honest answer.
-- **The `0x5AA5A55A` checksum from FastECU not implemented.** It doesn't hold for
-  this ROM, and its balance address falls inside this ROM's calibration ID block.
+- ~~The `0x5AA5A55A` checksum from FastECU not implemented.~~ **This was wrong and
+  has been corrected.** It does hold, on every image, and it is now implemented.
+  The earlier reading failed because it assumed a single 32-bit form: three
+  firmwares test the full sum against `0x5AA5A55A`, and the other thirteen test only
+  the low half against `0x5AA5`, keeping their balance in the halfword at `0x8022`.
+  Both forms are detected per image. Releases up to 1.4.2 shipped without this, so
+  a ROM saved by one of those fails the check the TCU runs at start-up.
+
+
+---
+
+## Settled since these notes were first written
+
+**Both checksums.** See the correction above. `tools/checksum.py` and the editor's
+plugin implement both forms and agree byte for byte on all sixteen images.
+
+**How a shift schedule is chosen.** The index is `condition * 2 + group * 10`, read
+from two pointer arrays at `0x17714` and `0x17718`. The group comes from a selector
+byte holding `0x80`-`0x85` or `0x8C`, which is looked up in a table rather than read
+from a sensor - that table now ships as `Shift Schedule Group Selector`. This also
+confirms from the firmware what was previously inferred from the data alone: the
+five-axis of the shift-mode structure is a GEAR LIMIT. Which driving condition each
+value of the condition byte represents is still unknown. FINDINGS section 33.
+
+**The ATF blend window.** All seven solenoid drivers interpolate their target
+pressure across a temperature window bounded by a pair of bytes, 15 C to 135 C in
+every firmware. Located per firmware by `tools/extract_atf_blend.py`. FINDINGS 29c.
+
+**The downshift ramp pair.** `Downshift Ramp Step` and `Downshift Ramp Hold` were
+labelled from the code but unconfirmed. The control loop settles it: a counter
+increments each cycle and is compared against the hold, while the step is added to a
+pressure. The labels were correct. FINDINGS section 32.
+
+**Fixed-point storage.** Fourteen tables are stored with fractional low bits - every
+value in every firmware is an exact multiple of a power of two - so they now display
+the numbers the calibrator entered rather than raw storage. What they measure is
+still not established, and their unit labels say so. FINDINGS section 28.
+
+## Still open, and why
+
+**Torque converter lock-up.** Narrowed to two of the seven solenoid channels,
+`0x804EB2` on TIO5 (package pin 102) and `0x804EB6` on TIO7 (pin 104). Their drivers
+are exact mirrors sharing 965 symbols, so no amount of reading them separates the
+two. The one asymmetry is a fallback constant at `0x1C2AE` that TIO7 uses and TIO5
+does not. A log of both duty addresses during engagement would settle it in one
+drive. FINDINGS 25c and 29.
+
+**Naming the Denso tables.** Closed as not worth repeating by static analysis. A
+Denso image is fully disassembled - about 51% instructions against 47% code-like
+content, the rest blank flash and constant pools - and with that coverage the
+calibration pointer arrays still have no references from outside themselves. The
+addresses are computed at runtime. GBR is not the route either: its 248 load sites
+all take on-chip RAM addresses, so it serves state variables rather than ROM tables.
+Only emulation would recover it. FINDINGS section 31.

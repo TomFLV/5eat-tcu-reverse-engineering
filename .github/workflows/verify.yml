@@ -1,0 +1,77 @@
+# Verify the definitions against the ROM images on every push.
+#
+# The central claim of this project is that each table address is right for the
+# firmware it belongs to, and that both checksum families are computed correctly.
+# Neither is obvious from reading the XML, and a wrong address produces a definition
+# that loads perfectly and edits the wrong bytes. This runs the checks that catch it.
+#
+# The definitions are generated, so the workflow regenerates them and fails if the
+# result differs from what is committed. That stops the XML and the generator drifting
+# apart, which has happened before.
+
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  definitions:
+    name: definitions match the ROMs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Regenerate the definitions
+        run: |
+          python tools/generate_romraider_def.py
+          python tools/generate_denso_def.py
+
+      - name: Generated output matches what is committed
+        run: |
+          if ! git diff --quiet -- definitions/; then
+            echo "The committed definitions do not match what the generator produces."
+            echo "Run the generators and commit the result."
+            git diff --stat -- definitions/
+            exit 1
+          fi
+          echo "definitions are in sync with the generator"
+
+      - name: Every table address is correct for its firmware
+        run: python tools/validate_xml_defs.py
+
+      - name: Both checksums verify on every M32R image
+        run: |
+          fail=0
+          for rom in rom/*.bin; do
+            python tools/checksum.py "$rom" || fail=1
+          done
+          exit $fail
+
+      - name: Fixed-point detection finds nothing left unscaled
+        run: python tools/detect_fixed_point.py
+
+  tools:
+    name: tools self-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # find_rom_offsets.py derives table offsets for a new firmware. It has been
+      # wrong twice, and only this self-test caught it: it must reproduce the
+      # offsets already recorded before its answers are worth anything.
+      - name: Offset derivation reproduces the known offsets
+        run: python tools/find_rom_offsets.py --self-test
+
+      - name: Checksum implementation agrees with itself across all images
+        run: python tools/test_checksum.py
