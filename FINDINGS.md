@@ -3600,3 +3600,49 @@ threshold; they do not by themselves decide when the shift happens.
 
 That is the most useful thing the log has said about the tables, and it could not have
 been found without a car.
+
+---
+
+## 38. WHICH ELEMENT IS APPLIED IN WHICH GEAR
+
+The log records the pressure of every solenoid alongside the gear, which gives the
+clutch and brake application directly - useful because it says which pressure table
+affects which gear, and that is not obvious from the tables themselves.
+
+Median pressure in kPa, by gear:
+
+    solenoid      gear 1   gear 2   gear 3   gear 4   gear 5
+    H and LR/C        60      610     1420     1420     1420
+    D/C                0     1390        0     1390        0
+    F/B              890      890      890        0      890
+    I/C                0        0        0     1400     1400
+    Fwd/B target    1390      330        0        0        0
+    L/U                0        0        0        0       40
+    AWD              140      240        0       40       30
+    P/L              600     2400      350      440      410
+
+Reading off the elements above 100 kPa:
+
+    gear 1    Fwd/B + F/B
+    gear 3    H&LR/C + F/B
+    gear 4    H&LR/C + D/C + I/C
+    gear 5    H&LR/C + F/B + I/C
+
+Two or three elements per gear, changing between gears, which is what a five-speed
+planetary box must do.
+
+**Gear 2 is not usable and its column should be ignored.** It has 10 samples against
+91 to 225 for the others, and all of them fall inside a hard acceleration run, so its
+medians describe a shift in progress rather than a gear being held. Its P/L median of
+2400 kPa is the same artefact - that is a shift pressure spike, not second-gear line
+pressure. Any figure in that column needs a log with a sustained second-gear cruise
+before it means anything.
+
+The other four columns each rest on at least 91 samples, nearly all with the pedal
+steady, so they describe held gears.
+
+Two observations worth carrying forward. H&LR/C reads 1420 kPa in third, fourth and
+fifth and only 60 in first, so it is the element that distinguishes the low gear from
+the rest. And L/U appears only in fifth here at a median of 40 kPa, consistent with
+section 34 finding it engaged in fourth as well but far less often - a median across
+all fourth-gear samples washes it out.

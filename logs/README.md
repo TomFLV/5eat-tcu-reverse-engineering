@@ -90,4 +90,24 @@ twelve tables is 74 km/h. The car sat 25–45 km/h above every threshold it has,
 right gear, for four seconds before shifting — so something inhibits the upshift
 beyond the speed comparison.
 
-See [FINDINGS.md](../FINDINGS.md) sections 35 to 37.
+## Which element is applied in which gear
+
+Read straight off the solenoid pressures. Useful because it tells you which pressure
+affects which gear, which the tables themselves do not say.
+
+| gear | elements applied |
+|---|---|
+| 1 | Fwd/B + F/B |
+| 3 | H&LR/C + F/B |
+| 4 | H&LR/C + D/C + I/C |
+| 5 | H&LR/C + F/B + I/C |
+
+**Gear 2 is missing on purpose.** It has 10 samples against 91–225 for the others, all
+inside a hard acceleration run, so its figures describe a shift in progress rather than
+a gear being held — including a 2400 kPa line-pressure median that is a shift spike,
+not second-gear pressure. It needs a log with a sustained second-gear cruise.
+
+H&LR/C reads 1420 kPa in third, fourth and fifth and only 60 in first, so it is the
+element that separates the low gear from the rest.
+
+See [FINDINGS.md](../FINDINGS.md) sections 35 to 38.
