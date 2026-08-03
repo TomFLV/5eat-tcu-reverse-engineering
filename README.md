@@ -159,6 +159,7 @@ again — sixteen firmwares in about five seconds.
 | [`definitions/`](definitions/) | RomRaider definitions for both families |
 | [`tools/`](tools/) | Generators, validators, extractors ([README](tools/README.md)) |
 | [`decompiled/`](decompiled/) | Ghidra output, sixteen M32R images |
+| [`decompiled-denso/`](decompiled-denso/) | Ghidra output, nine Denso images, with per-image coverage |
 | [`rom/`](rom/), [`rom-denso/`](rom-denso/) | ROM images |
 | [`docs/`](docs/) | [ROM details](docs/ROM-DETAILS.md) · [technical notes](docs/TECHNICAL-NOTES.md) · [manual setup](docs/ROMRAIDER-SETUP.md) |
 | [`FINDINGS.md`](FINDINGS.md) | Full research log, in order, including wrong turns |
