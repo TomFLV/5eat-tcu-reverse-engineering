@@ -3408,3 +3408,72 @@ Two shorter notes. SI-Drive mode reads 1 for the whole capture, so it tells us n
 about whether it selects a shift schedule. ATF sat at 87 to 92 C throughout, inside the
 15 to 135 C blend window from section 29c, so the solenoid targets were mid-blend the
 entire time.
+
+---
+
+## 35. WHAT THE LOG CAN AND CANNOT VALIDATE
+
+Section 34 took the easy results from the vehicle log. This section is the attempt to
+use it to validate the shift maps, which did not work, and the reasons are worth more
+than the attempt was.
+
+### 35a. Gear Position in the log LAGS the real shift
+
+The ratio of turbine speed to road speed is a direct measure of which gear is engaged.
+Across the first upshift it reads:
+
+    time    logged gear   km/h   turbine/km-h
+    42.6s        1         60        106
+    42.8s        1         63        105
+    43.0s        1         67         92
+    43.2s        1         69         78
+    43.4s        1         73         68
+    43.6s        2         77         68
+
+Measured steady-state ratios are 101 for first and 64 for second. So the transmission
+was already at second-gear ratio by 43.4s while the logged `Gear Position` still said
+first, and the change physically began around 43.0s. The logged gear trails the real
+event by roughly 0.4 to 0.6 seconds.
+
+Anyone reading a shift speed straight out of one of these logs will read it late - by
+about 10 km/h under hard acceleration. That is not a sampling artefact; the interval
+is 194ms and only buys 1 to 5 km/h.
+
+### 35b. So the shift maps are NOT validated by this log
+
+Taking the logged gear at face value gives 1-2 at 77 km/h, 2-3 at 106 and 3-4 at 148,
+against 43, 87 and 144 from the base ROM's tables at full pedal. The 3-4 figure looks
+like a 3% match and it is not evidence: the same table set is 79% out on 1-2, and the
+lag above explains part but not all of the gap.
+
+The larger problem is that the logged car's firmware is unknown. It need not be one of
+the sixteen here, and shift speeds depend on final drive and tyre size as much as on
+the table. Comparing a log from one car against another car's calibration cannot
+validate anything, and reporting the 3-4 number as agreement would have been a
+coincidence dressed as a result.
+
+To actually validate the shift maps: log a car whose ROM has been read, so the
+calibration is known, and derive the shift instant from the turbine/road-speed ratio
+rather than the reported gear.
+
+### 35c. What the log does establish
+
+**Measured gear ratios.** Turbine speed against road speed, steady state:
+
+    gear 1   101 turbine-rpm per km/h
+    gear 2    64
+    gear 3    43
+    gear 4    30
+    gear 5    26
+
+Normalised against fifth those are 3.94, 2.48, 1.69, 1.16, 1.00, against published
+ratios of 4.25, 2.72, 1.76, 1.20, 1.00. Fourth and fifth agree within 3%; the lower
+gears read low because their samples are nearly all taken during hard acceleration
+where the converter and the shift itself are still settling, and there are only 10 to
+21 of them.
+
+**Lock-up thresholds.** Fourth engages from 98 km/h at 2611 rpm, fifth from 44 km/h at
+1126 rpm. Fifth reaches 260 kPa, fourth only 130.
+
+**AWD behaviour.** Front-to-rear wheel speed difference stays between -2 and +4 km/h,
+mean 0.15, so the transfer clutch is holding the axles close to locked throughout.
