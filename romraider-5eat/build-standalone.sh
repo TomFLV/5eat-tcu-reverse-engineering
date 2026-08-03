@@ -18,7 +18,7 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd "$HERE/.." && pwd)"
 OUT="${1:-$REPO/build/app-input}"
 WORK="${TMPDIR:-/tmp}/rr5eat-build"
-APP_VERSION="${APP_VERSION:-1.4.3}"
+APP_VERSION="${APP_VERSION:-1.1.1}"
 
 # Pinned so the patch applies cleanly. Upstream moves and the patch touches
 # build.xml, ECUExec.java, LookAndFeelManager.java and RomCellRenderer.java -
@@ -55,6 +55,24 @@ say "applying 5EAT patches"
 # (FlatLaf, theme-aware cell rendering, text antialiasing).
 git -C "$WORK/src" apply --verbose "$HERE/patches/jdk21-build.patch"
 git -C "$WORK/src" apply --verbose "$HERE/patches/romraider-5eat.patch"
+
+say "stamping the version into the application"
+# Upstream's version.properties says 1.1.0, and that is what the title bar and the
+# About dialog report regardless of what --app-version jpackage is given - that only
+# reaches the launcher config. Without this the shipped app calls itself RomRaider
+# 1.1.0 and nobody can tell which TCU build they are running.
+python3 - "$WORK/src/version.properties" "$APP_VERSION" <<'PYSTAMP'
+import io, sys
+path, ver = sys.argv[1], sys.argv[2]
+parts = (ver.split(".") + ["0", "0"])[:3]
+keys = dict(zip(("version.major", "version.minor", "version.patch"), parts))
+out = []
+for line in io.open(path, encoding="utf-8"):
+    k = line.split("=")[0].strip()
+    out.append("%s=%s\n" % (k, keys[k]) if k in keys else line)
+io.open(path, "w", encoding="utf-8", newline="\n").writelines(out)
+print("  application version set to %s" % ".".join(parts))
+PYSTAMP
 
 say "building"
 # There is no "jar" target: upstream builds per-platform, and the Windows jar is
