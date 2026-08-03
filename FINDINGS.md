@@ -3477,3 +3477,65 @@ where the converter and the shift itself are still settling, and there are only 
 
 **AWD behaviour.** Front-to-rear wheel speed difference stays between -2 and +4 km/h,
 mean 0.15, so the transfer clutch is holding the axles close to locked throughout.
+
+---
+
+## 36. THE LOGGED CAR IDENTIFIED, AND WHY FULL-THROTTLE SHIFTS IGNORE THE SPEED TABLE
+
+The logs came from unit A3DE207100. That single fact overturns section 35 and produces
+the most useful result the logs have given.
+
+### 36a. It is a DENSO image, and one already shipped
+
+A3DE207100 is 1 MB, opens `00 00 0b f8` - the SH-2 reset vector - and has no ASCII
+calibration id at 0x8008. It is not an M32R image at all, which is why the M32R
+checksum reports it as broken and why the M32R decompile script has always skipped
+`A3DE*`.
+
+Its Denso calibration id at 0x2000 is **WQDE2WB1**, and it is byte-for-byte identical
+to `rom-denso/Impreza_STI_3.583_JDM2011.bin`. So this project already ships a
+definition for the exact firmware these logs came from.
+
+Section 35 compared the log against the base M32R ROM's tables. That was the wrong
+family entirely. The conclusion there - that the comparison proved nothing - stands,
+but the reason was worse than stated.
+
+### 36b. At full pedal the shift is RPM-limited, not speed-limited
+
+Every one of WQDE2WB1's twelve shift tables reads 224 or 205 km/h in its full-pedal
+column. This car does not reach those speeds, so at wide-open throttle the speed table
+never fires. Its top entry is effectively "do not upshift on road speed".
+
+What actually triggers the shift is engine speed. Taking the shift instant from the
+turbine-to-road-speed ratio and converting through the measured gear ratios:
+
+    shift    road speed    turbine rpm at the shift
+    1->2       73 km/h            7300
+    2->3      103 km/h            6592
+    3->4      146 km/h            6278
+
+against a logged maximum of 6944 rpm. Those are redline shifts.
+
+This explains why no comparison of full-throttle shift points against the speed tables
+could ever have worked, in either family. The tables govern part-throttle shifts; at
+full pedal a different limit takes over.
+
+### 36c. The one part-throttle shift is consistent, not confirmed
+
+The 4-5 upshift at 99 km/h and 2970 rpm is a genuine speed-driven change. Searching all
+twelve tables for entries within 8 km/h of 99 returns 47 of them, spread across nine
+tables at pedal positions from 25% to 60%.
+
+Consistent with the tables, and no more than that. The log has an accelerator angle
+column but it is empty, so there is no way to say which entry applied. A log with
+pedal recorded would turn this into a real check, and it is now a small ask: the
+firmware is known, the tables are decoded, and only one channel is missing.
+
+### 36d. Correction to section 35
+
+Section 35 said the reported gear lags the real shift by 0.4 to 0.6 seconds and that
+reading a shift speed straight from the log puts it about 10 km/h late. The lag is
+real, but the effect was overstated. Recomputing the shift instants from the ratio
+moves them by only 2 to 4 km/h - 77 to 73, 106 to 103, 148 to 146. The correct
+statement is that the reported gear lags, and it is worth deriving the instant from
+the ratio, but the error it introduces is small.

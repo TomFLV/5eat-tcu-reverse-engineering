@@ -43,8 +43,30 @@ against published ratios of 4.25, 2.72, 1.76, 1.20 and 1.00 — fourth and fifth
 within 3%, the lower gears read low because nearly all their samples are taken mid-
 acceleration.
 
-**These logs cannot validate the shift maps.** The logged car's firmware is unknown,
-and shift speeds depend on final drive and tyre size as much as on the tables. Doing
-that properly needs a log from a car whose ROM has been read, with the shift instant
-taken from the ratio rather than the reported gear. See
-[FINDINGS.md](../FINDINGS.md) section 35.
+## The car these came from
+
+Unit **A3DE207100**, calibration **WQDE2WB1** — a **Denso** SH705x, byte-identical to
+`rom-denso/Impreza_STI_3.583_JDM2011.bin`. So the exact firmware is known and already
+has a definition here.
+
+**Full-throttle shifts do not use the speed tables.** All twelve of this calibration's
+shift tables read 224 or 205 km/h in their full-pedal column — speeds the car never
+reaches, so the entry means "do not upshift on road speed". What fires instead is
+engine speed. Converting the observed shifts through the measured gear ratios:
+
+| shift | road speed | turbine rpm |
+|---|---|---|
+| 1→2 | 73 km/h | 7300 |
+| 2→3 | 103 km/h | 6592 |
+| 3→4 | 146 km/h | 6278 |
+
+against a logged maximum of 6944 rpm. Those are redline shifts. The speed tables
+govern part-throttle behaviour only.
+
+The single part-throttle change here, 4→5 at 99 km/h and 2970 rpm, matches 47 table
+entries within 8 km/h across nine tables. Consistent with the calibration, but not a
+confirmation of it — **the accelerator angle column in this log is empty**, so there
+is no way to say which entry applied.
+
+A log with pedal recorded, from this same car, would turn that into a real check. It
+is the one channel missing. See [FINDINGS.md](../FINDINGS.md) sections 35 and 36.
