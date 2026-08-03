@@ -125,6 +125,25 @@ def main():
                         errors.append(f"{name}: data 0x{addr:06X} != X axis + sizex*2 "
                                       f"(0x{x_addr + sizex * 2:06X})")
 
+            elif name == "Shift Schedule Group Selector":
+                # A plain byte grid, not a strided record, so the geometry rule does
+                # not apply. Check the CONTENT instead: this table decides which
+                # schedule group runs, and its cells must be the selector codes the
+                # firmware's own comparison chain tests for.
+                codes = {0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x8C}
+                n = int(t.get("sizex")) * int(t.get("sizey"))
+                body = data[addr:addr + n]
+                checked += 1
+                hits = sum(1 for b in body if b in codes)
+                if hits < 3:
+                    errors.append(f"{name}: only {hits} selector codes in {n} bytes "
+                                  f"at 0x{addr:06X}")
+                checked += 1
+                stray = [b for b in body if b not in codes and b not in (0x00, 0xFF)]
+                if stray:
+                    errors.append(f"{name}: {len(stray)} byte(s) at 0x{addr:06X} are "
+                                  f"neither a selector code nor 0x00/0xFF")
+
             elif ttype == "3D":
                 sx, sy = int(t.get("sizex")), int(t.get("sizey"))
                 skip = int(t.get("skipCells", "0"))

@@ -16,6 +16,7 @@ python tools/checksum.py --fix edited.bin      # only if NOT using the bundled b
 | `generate_romraider_def.py` | Builds the definition. **Edit this, not the XML.** |
 | `validate_xml_defs.py` | Checks every address against its own firmware. Knows all six table geometries in use. |
 | `romraider-cli/` | Verify and render through RomRaider's real classes ([README](romraider-cli/README.md)). |
+| `extract_selector_table.py` | Locates the table deciding which shift schedule GROUP applies (FINDINGS 33) |
 | `extract_atf_blend.py` | Locates the ATF blend window per firmware by reading each one's own decompiler output |
 | `detect_fixed_point.py` | Finds tables stored as fixed point, provable from the stored bits alone |
 | `checksum.py` / `test_checksum.py` | Verify/fix both checksums. The bundled build does this on save; this is for stock RomRaider or scripting. |

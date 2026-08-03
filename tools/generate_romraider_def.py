@@ -1760,6 +1760,54 @@ def build_atf_blend_xml(profile):
   </table>"""
 
 
+# The table that decides which GROUP of ten shift schedules applies. See FINDINGS
+# section 33: the schedule index is DAT_0080485A * 2 + sVar1 * 10, and sVar1 comes
+# from a selector byte looked up here rather than read from a sensor.
+SELECTOR_TABLE = {}
+_sel_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "selector_table.json")
+if os.path.exists(_sel_path):
+    with open(_sel_path, encoding="utf-8") as _fh:
+        SELECTOR_TABLE = json.load(_fh)
+
+
+SELECTOR_DESC = (
+    "SHIFT SCHEDULE GROUP SELECTOR. The transmission carries ten complete shift "
+    "schedules in each of five groups, and this table decides which GROUP is in "
+    "use.\n\n"
+    "Each cell holds a selector code, not a number to scale:\n"
+    "  0x81, 0x82, 0x83, 0x85  select schedule groups 2, 3, 4 and 1\n"
+    "  0x80, 0x84, 0x8C        select group 0\n"
+    "  0xFF                    no override - the current position stands\n"
+    "  0x00                    entry unused\n\n"
+    "The firmware reads it as base + index*4 + a sub-index of -3 to +4, so the rows "
+    "and columns here are the raw storage rather than two named axes; what indexes "
+    "it is not established.\n\n"
+    "Worth knowing before changing anything: three firmwares - ACD1207000, "
+    "ACD1A06000 and ADE0236000 - carry 0x83 where the other thirteen carry 0xFF. "
+    "Those images force a gear limit where the rest leave the selector alone, so "
+    "this table really does differ between calibrations and is not boilerplate.\n\n"
+    "Codes confirmed from the firmware's own comparison chain, which tests exactly "
+    "0x80 to 0x85 and 0x8C."
+)
+
+
+def build_selector_xml(profile):
+    """The schedule group selector, or None if not located for this firmware."""
+    e = SELECTOR_TABLE.get(profile["id"])
+    if not e:
+        return None
+    return f"""  <table type="3D" name="Shift Schedule Group Selector" category="Transmission - Shift Schedule" storageaddress="0x{e['addr']:06X}" storagetype="uint8" endian="big" sizex="{e['cols']}" sizey="{e['rows']}" userlevel="4">
+   <scaling units="selector code (hex)" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="1" />
+   <table type="X Axis" name="Shift Schedule Group Selector (column)" storageaddress="0x{e['addr']:06X}" storagetype="uint8" endian="big" sizex="{e['cols']}">
+    <scaling units="sub-index" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="1" />
+   </table>
+   <table type="Y Axis" name="Shift Schedule Group Selector (row)" storageaddress="0x{e['addr']:06X}" storagetype="uint8" endian="big" sizey="{e['rows']}">
+    <scaling units="index" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="1" />
+   </table>
+   <description>{escape(SELECTOR_DESC)}</description>
+  </table>"""
+
+
 def build_rom_block(profile, rom_bytes, is_base):
     """Full table definitions for the base ROM; address overrides for derived."""
     global data
@@ -1778,6 +1826,13 @@ def build_rom_block(profile, rom_bytes, is_base):
         parts.append(build_info_table_xml(profile))
         parts.append("")
         total += 1
+
+        sel = build_selector_xml(profile)
+        if sel:
+            parts.append("  <!-- ============ Shift Schedule Group Selector ============ -->")
+            parts.append(sel)
+            parts.append("")
+            total += 1
 
         blend = build_atf_blend_xml(profile)
         if blend:

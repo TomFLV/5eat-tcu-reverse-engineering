@@ -1,0 +1,146 @@
+{
+ "91A0217300": {
+  "addr": 65802,
+  "cols": 4,
+  "index_var": "0x0080487c",
+  "rows": 5,
+  "sample": "00 00 00 00 00 00 00 83 00 00 82 FF 00 81 82 FF",
+  "selector_bytes": 7,
+  "sub_var": "0x008052c3"
+ },
+ "91A0217400": {
+  "addr": 65802,
+  "cols": 4,
+  "index_var": "0x00804884",
+  "rows": 5,
+  "sample": "00 00 00 00 00 00 00 83 00 00 82 FF 00 81 82 FF",
+  "selector_bytes": 7,
+  "sub_var": "0x008052cb"
+ },
+ "91A1207300": {
+  "addr": 65802,
+  "cols": 4,
+  "index_var": "0x0080487c",
+  "rows": 5,
+  "sample": "00 00 00 00 00 00 00 83 00 00 82 FF 00 81 82 FF",
+  "selector_bytes": 7,
+  "sub_var": "0x008052c3"
+ },
+ "91D0207500": {
+  "addr": 65802,
+  "cols": 4,
+  "index_var": "0x00804884",
+  "rows": 5,
+  "sample": "00 00 00 00 00 00 00 83 00 00 82 FF 00 81 82 FF",
+  "selector_bytes": 7,
+  "sub_var": "0x008052cb"
+ },
+ "91D1206000": {
+  "addr": 65800,
+  "cols": 4,
+  "index_var": "0x0080486e",
+  "rows": 5,
+  "sample": "00 00 00 00 FF FF FF 83 FF FF 82 FF FF 81 82 FF",
+  "selector_bytes": 7,
+  "sub_var": "0x008052b3"
+ },
+ "91D1207900": {
+  "addr": 65802,
+  "cols": 4,
+  "index_var": "0x00804884",
+  "rows": 5,
+  "sample": "00 00 00 00 00 00 00 83 00 00 82 FF 00 81 82 FF",
+  "selector_bytes": 7,
+  "sub_var": "0x008052cb"
+ },
+ "91F0217100": {
+  "addr": 65902,
+  "cols": 4,
+  "index_var": "0x00804884",
+  "rows": 5,
+  "sample": "00 00 00 00 FF FF FF 83 FF FF 82 FF FF 81 82 FF",
+  "selector_bytes": 7,
+  "sub_var": "0x008052cb"
+ },
+ "91FE207100": {
+  "addr": 65902,
+  "cols": 4,
+  "index_var": "0x00804884",
+  "rows": 5,
+  "sample": "00 00 00 00 FF FF FF 83 FF FF 82 FF FF 81 82 FF",
+  "selector_bytes": 7,
+  "sub_var": "0x008052cb"
+ },
+ "91FE216300": {
+  "addr": 65902,
+  "cols": 4,
+  "index_var": "0x0080487c",
+  "rows": 5,
+  "sample": "00 00 00 00 FF FF FF 83 FF FF 82 FF FF 81 82 FF",
+  "selector_bytes": 7,
+  "sub_var": "0x008052c3"
+ },
+ "AAD1A06000": {
+  "addr": 65922,
+  "cols": 4,
+  "index_var": "0x00804880",
+  "rows": 5,
+  "sample": "00 00 00 00 00 00 00 83 00 00 82 FF 00 81 82 FF",
+  "selector_bytes": 7,
+  "sub_var": "0x008052d3"
+ },
+ "AAD1A07100": {
+  "addr": 65922,
+  "cols": 4,
+  "index_var": "0x00804888",
+  "rows": 5,
+  "sample": "00 00 00 00 00 00 00 83 00 00 82 FF 00 81 82 FF",
+  "selector_bytes": 7,
+  "sub_var": "0x008052df"
+ },
+ "ABD1207000": {
+  "addr": 65902,
+  "cols": 4,
+  "index_var": "0x0080488e",
+  "rows": 5,
+  "sample": "00 00 00 00 00 00 00 83 00 00 82 FF 00 81 82 FF",
+  "selector_bytes": 7,
+  "sub_var": "0x008052f7"
+ },
+ "ABD1A03100": {
+  "addr": 65902,
+  "cols": 4,
+  "index_var": "0x0080488e",
+  "rows": 5,
+  "sample": "00 00 00 00 00 00 00 83 00 00 82 FF 00 81 82 FF",
+  "selector_bytes": 7,
+  "sub_var": "0x008052f7"
+ },
+ "ACD1207000": {
+  "addr": 65902,
+  "cols": 4,
+  "index_var": "0x00804846",
+  "rows": 5,
+  "sample": "00 00 00 00 00 00 00 83 00 00 82 83 00 81 82 83",
+  "selector_bytes": 10,
+  "sub_var": "0x008051b0"
+ },
+ "ACD1A06000": {
+  "addr": 65902,
+  "cols": 4,
+  "index_var": "0x00804846",
+  "rows": 5,
+  "sample": "00 00 00 00 00 00 00 83 00 00 82 83 00 81 82 83",
+  "selector_bytes": 10,
+  "sub_var": "0x008051b0"
+ },
+ "ADE0236000": {
+  "addr": 65902,
+  "cols": 4,
+  "index_var": "0x00804846",
+  "rows": 5,
+  "sample": "00 00 00 00 00 00 00 83 00 00 82 83 00 81 82 83",
+  "selector_bytes": 10,
+  "sub_var": "0x008051b0"
+ }
+}
