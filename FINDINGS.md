@@ -3539,3 +3539,64 @@ real, but the effect was overstated. Recomputing the shift instants from the rat
 moves them by only 2 to 4 km/h - 77 to 73, 106 to 103, 148 to 146. The correct
 statement is that the reported gear lags, and it is worth deriving the instant from
 the ratio, but the error it introduces is small.
+
+---
+
+## 37. THE SHIFT TABLES READ PROPERLY, AGAINST THE CAR THAT RAN THEM
+
+### 37a. First, a correction: the pedal WAS logged
+
+Sections 34 and 36 state that the accelerator angle column is empty. It is not. All
+568 rows carry a value; the column uses a **comma decimal separator** (`0,00`), and the
+parser silently dropped every one of them. The same fault would have hidden any other
+fractional column.
+
+Anyone writing a tool against these files should convert the comma before parsing.
+`float("0,00")` does not raise a useful error, it simply fails, and a column of real
+data reads as absent.
+
+### 37b. The table structure, resolved
+
+Each 15x5 table has one unused row and four live ones. Reading a pair:
+
+    table 0, pedal:   0   5  10  15  20  25  30  35  40  50  60  70  80  90 100
+      y=1            19  19  19  19  22  29  40  80  85 100 120 142 181 224 224
+      y=2            29  29  29  29  29  35  51  80  85 100 120 142 181 224 224
+      y=3            44  44  44  44  49  54  64  80  85 100 120 142 181 224 224
+      y=4            54  54  54  54  59  66  76  80  85 100 120 142 181 224 224
+
+The four live rows are the FOUR UPSHIFTS. At idle they read 19, 29, 44 and 54 km/h,
+rising in order, which is what 1-2, 2-3, 3-4 and 4-5 must do. Even-numbered tables
+converge on 224 and odd ones on 205, so the twelve are six upshift/downshift pairs -
+six schedules, not twelve.
+
+### 37c. Above about 35% pedal the speed table stops deciding
+
+Every curve flattens into the same tail - 80, 85, 100, 120, 142, 181, 224 - regardless
+of which shift it governs. At full pedal all four upshifts would need 224 km/h, which
+this car never reaches. The entry means "do not upshift on road speed".
+
+The observed full-throttle shifts confirm it. Converting through the measured gear
+ratios they occur at 7300, 6592 and 6278 turbine rpm against a logged maximum of 6944.
+They are redline shifts, governed by an engine speed limit that is not in these tables.
+
+This is worth stating plainly for anyone tuning: **raising or lowering the high-pedal
+end of a shift curve will not move a full-throttle shift point.** Only the part-throttle
+region of the curve does anything.
+
+### 37d. And below that, the table is necessary but not sufficient
+
+The log contains one genuine part-throttle upshift. The car cruised at 99 km/h in
+fourth at 18% pedal for four seconds, then went to fifth as the pedal eased to 17%.
+
+At 17% pedal the 4-5 threshold reads 56 km/h in table 0, and across all twelve tables
+the highest is 74 km/h in table 4. The car sat 25 to 45 km/h above every threshold it
+has, in the right gear, at a steady speed, and did not shift for four seconds.
+
+So something inhibits the upshift beyond the speed comparison. A timer, a temperature
+condition, or hold-gear logic following the hard acceleration run that preceded this
+stretch - the car had just come down from 173 km/h. The shift schedule tables give a
+threshold; they do not by themselves decide when the shift happens.
+
+That is the most useful thing the log has said about the tables, and it could not have
+been found without a car.

@@ -63,10 +63,31 @@ engine speed. Converting the observed shifts through the measured gear ratios:
 against a logged maximum of 6944 rpm. Those are redline shifts. The speed tables
 govern part-throttle behaviour only.
 
-The single part-throttle change here, 4→5 at 99 km/h and 2970 rpm, matches 47 table
-entries within 8 km/h across nine tables. Consistent with the calibration, but not a
-confirmation of it — **the accelerator angle column in this log is empty**, so there
-is no way to say which entry applied.
+## Parsing warning
 
-A log with pedal recorded, from this same car, would turn that into a real check. It
-is the one channel missing. See [FINDINGS.md](../FINDINGS.md) sections 35 and 36.
+**The numeric columns use a comma decimal separator** (`0,00`). `float()` fails on
+them silently, so a column of perfectly good data reads as empty. Convert the comma
+before parsing — an earlier pass here wrongly reported accelerator angle as unlogged
+for exactly this reason.
+
+## What the tables actually do
+
+Each 15×5 shift table has four live rows, and they are the four upshifts — at idle
+they read 19, 29, 44 and 54 km/h, rising in order. Even-numbered tables pair with
+odd ones as upshift/downshift, so the twelve are six schedules.
+
+**Above roughly 35% pedal the speed table stops deciding.** Every curve flattens into
+the same tail ending at 224 km/h, a speed this car never reaches, so the entry means
+"do not upshift on road speed". The full-throttle shifts in this log happen at 7300,
+6592 and 6278 turbine rpm against a 6944 rpm maximum — they are redline shifts.
+
+Practical consequence: **changing the high-pedal end of a shift curve will not move a
+full-throttle shift point.** Only the part-throttle region does anything.
+
+**Below that, the table is necessary but not sufficient.** The one part-throttle
+upshift here happened at 99 km/h and 17% pedal, where the highest threshold across all
+twelve tables is 74 km/h. The car sat 25–45 km/h above every threshold it has, in the
+right gear, for four seconds before shifting — so something inhibits the upshift
+beyond the speed comparison.
+
+See [FINDINGS.md](../FINDINGS.md) sections 35 to 37.
