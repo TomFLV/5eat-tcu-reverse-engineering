@@ -3646,3 +3646,50 @@ fifth and only 60 in first, so it is the element that distinguishes the low gear
 the rest. And L/U appears only in fifth here at a median of 40 kPa, consistent with
 section 34 finding it engaged in fourth as well but far less often - a median across
 all fourth-gear samples washes it out.
+
+---
+
+## 39. GEAR RATIOS LOCATED IN BOTH FAMILIES, AND A VARIANT WE DO NOT HAVE
+
+The 2006 Tribeca service manual quotes gear ratios of **3.841, 2.352, 1.529, 1.000
+and 0.839**. This project has always used **3.540, 2.264, 1.471, 1.000, 0.834**,
+confirmed to within 0.0007 in section 4. Both are correct; they are different 5EAT
+variants, and noticing that turned out to be worth more than the discrepancy itself.
+
+### 39a. The table is at a fixed address in every image
+
+Searching for a run of five values matching either set finds one in all 25 firmwares:
+
+    M32R    0x0844C in fifteen images, 0x0844A in the base ROM, as uint16 / 1024
+    Denso   0xB9234 to 0xCE658 depending on the image, as IEEE-754 float
+
+Each family stores them in its own convention - the same split seen everywhere else
+between the two. This is an independent confirmation of the `/1024` scaling: the
+ratios were originally derived from published figures, and here they are as a clean
+five-value run at a consistent address, in every image, arrived at from the other
+direction.
+
+### 39b. All 25 images use the Legacy set, including both Tribecas
+
+Every M32R image and every Denso image carries 3.540 through 0.834 - including
+`Tribeca_3.583_EDM_2009` and `8EFB206000` from the 2014 USDM Tribeca.
+
+So the 3.841 set the 2006 manual documents appears in nothing this project holds.
+Either the early Tribeca used a transmission variant later ones did not, or its
+calibration is one nobody here has dumped.
+
+### 39c. Why that matters for the bench unit
+
+A 2006 Tribeca TCM is now on the bench. If its ROM carries the 3.841 ratio set it is a
+variant this project has never seen, and reading it would be the most valuable single
+contribution available - a new calibration family rather than another member of one
+already covered.
+
+The check is cheap and needs no bench rig at all: dump the ROM and look for five
+consecutive values that decode to 3.841, 2.352, 1.529, 1.000, 0.839. `uint16 / 1024`
+if it is M32R, IEEE-754 float if Denso. Their addresses above say where to start
+looking.
+
+It also means the ratios in a definition are not a constant of the 5EAT. Anyone
+comparing a log against tables - as section 36 did - needs the ratios for the car that
+produced the log, not for the family in general.

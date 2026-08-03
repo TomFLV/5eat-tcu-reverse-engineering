@@ -71,6 +71,22 @@ The range sensor is a set of discrete switched lines — a rotary switch or a ba
 relays reproduces it. The TCM will not shift out of a fail-safe state without a valid
 range.
 
+## Before wiring anything: dump the ROM
+
+The single most valuable thing this unit can produce needs no rig at all.
+
+The 2006 Tribeca manual quotes gear ratios of **3.841, 2.352, 1.529, 1.000, 0.839**.
+Every one of the 25 firmwares this project holds — including both later Tribecas —
+carries **3.540, 2.264, 1.471, 1.000, 0.834** instead. So the early Tribeca's
+calibration is one nobody here has, and reading it would add a *variant* rather than
+another member of a family already covered.
+
+Check by searching the dump for five consecutive values decoding to the 3.841 set:
+`uint16 / 1024` if the unit is M32R, IEEE-754 float if Denso. In the images here that
+table sits at `0x0844C` on M32R and between `0xB9234` and `0xCE658` on Denso.
+
+See [FINDINGS.md](../FINDINGS.md) §39.
+
 ## What a rig would settle
 
 **Which channel is lock-up.** This is the one the firmware cannot answer. `0x804EB2`
