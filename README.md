@@ -166,7 +166,7 @@ again — sixteen firmwares in about five seconds.
 | [`decompiled-denso/`](decompiled-denso/) | Ghidra output, nine Denso images, with per-image coverage |
 | [`rom/`](rom/), [`rom-denso/`](rom-denso/) | ROM images |
 | [`logs/`](logs/) | RomRaider logs from a running 5EAT, the only real-vehicle data here |
-| [`docs/`](docs/) | [ROM details](docs/ROM-DETAILS.md) · [technical notes](docs/TECHNICAL-NOTES.md) · [manual setup](docs/ROMRAIDER-SETUP.md) |
+| [`docs/`](docs/) | [ROM details](docs/ROM-DETAILS.md) · [technical notes](docs/TECHNICAL-NOTES.md) · [manual setup](docs/ROMRAIDER-SETUP.md) · [bench rig](docs/BENCH-RIG.md) |
 | [`FINDINGS.md`](FINDINGS.md) | Full research log, in order, including wrong turns |
 
 ## Contributing
