@@ -2876,10 +2876,8 @@ So the tuning lever exists and is shipped. What is NOT covered:
   - the same structure for UPSHIFTS, which has not been located
   - the wider state machine - ten downshift combinations is not ~34 states, so this
     is one slice of the mechanism rather than all of it
-  - which of the pair is the step count and which the hold. They are labelled
-    `Ramp Step` in kPa and `Ramp Hold` in ticks, which was inferred from the code
-    rather than confirmed against a car, and rimwall's account would make the first
-    a count rather than a pressure. Worth re-deriving before anyone leans on it.
+  - ~~which of the pair is the step count and which the hold~~ - RESOLVED in
+    section 32; the shipped labels are correct.
 
 ---
 
@@ -3253,3 +3251,32 @@ What does not: naming the remaining tables by static analysis. The route from co
 table is computed at runtime, and neither cross-references nor GBR resolution recovers
 it. Emulating the relevant routines would, and that is a different and much larger
 undertaking than anything attempted here.
+
+---
+
+## 32. THE DOWNSHIFT RAMP PAIR, SETTLED
+
+Section 26a left a doubt worth closing. `Downshift Ramp Step` and `Downshift Ramp
+Hold` were labelled from the code but never confirmed, and rimwall's account of the
+control scheme would make the first a step COUNT rather than a pressure. If those two
+were the wrong way round, anyone tuning them would be editing the wrong field.
+
+They are correct. The control loop in the base ROM reads:
+
+    DAT_00804a8c = DAT_00804a8c + 1;                         // ticks every cycle
+    if (DAT_00804a8c < *(ushort *)(&PTR_DAT_0001200e + i))   // 0x1200E
+        pressure = min(DAT_00804a92, DAT_00804a94);          //   hold, pressure unchanged
+    else
+        pressure = DAT_008046e6                              // 0x1200C
+                 + *(ushort *)(&DAT_0001200c + i * 4);       //   add the step
+
+The halfword at 0x1200E is compared against a counter that increments once per cycle,
+so it is a DURATION in ticks. The halfword at 0x1200C is ADDED to a pressure, so it is
+a pressure STEP. The two sit 4 bytes apart per downshift, matching the ten-entry
+structure the extractor locates.
+
+So the shipped labels stand, and the doubt is closed rather than left hanging.
+
+It also says what rimwall's lever actually is here. Shortening a shift means reducing
+the HOLD at 0x1200E, so the ramp starts sooner, or raising the STEP at 0x1200C so the
+target pressure is reached in fewer cycles. Both are already editable.
