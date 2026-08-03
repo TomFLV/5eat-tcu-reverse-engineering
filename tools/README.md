@@ -16,6 +16,8 @@ python tools/checksum.py --fix edited.bin      # only if NOT using the bundled b
 | `generate_romraider_def.py` | Builds the definition. **Edit this, not the XML.** |
 | `validate_xml_defs.py` | Checks every address against its own firmware. Knows all six table geometries in use. |
 | `romraider-cli/` | Verify and render through RomRaider's real classes ([README](romraider-cli/README.md)). |
+| `extract_atf_blend.py` | Locates the ATF blend window per firmware by reading each one's own decompiler output |
+| `detect_fixed_point.py` | Finds tables stored as fixed point, provable from the stored bits alone |
 | `checksum.py` / `test_checksum.py` | Verify/fix both checksums. The bundled build does this on save; this is for stock RomRaider or scripting. |
 | `find_rom_offsets.py` | Derives a new firmware's table offsets. Run `--self-test` first: it must reproduce the offsets already recorded before its answers are worth anything. |
 
@@ -54,6 +56,22 @@ the M32R one.
 |---|---|
 | `generate_denso_def.py` | Builds `definitions/5eat_tcu_denso_romraider_defs.xml`. **Edit this, not the XML.** |
 | `survey_denso_tcu.py` | Identifies a Denso image, checks its block integrity table, and decodes its shift tables |
+| `find_denso_pointer_tables.py` | Finds the tables the firmware actually **indexes**, not merely the ones that parse. This is the filter that matters — see below |
+| `denso_data_ranges.py` | Computes which bytes are calibration data, so a disassembly sweep does not decode them as code |
+| `profile_denso_tables.py` | Measures every table: axis ranges, step patterns, monotonic rows, unused filler, firmware coverage. Proposes nothing |
+| `cluster_denso_tables.py` | Groups those into ~86 families by shape and axis signature |
+
+**Scanning for headers over-reports badly.** About 1770 structures per image satisfy
+the header format; in a megabyte, plenty of 28-byte windows have pointers the right
+distance apart by chance. The firmware settles it — tables are reached through arrays
+of pointers to their headers, so a run of consecutive words all pointing at valid
+headers is a real index. That leaves **140–186 tables per image**, and the definition
+ships only those.
+
+One exception, deliberately: the shift-schedule block is identified by a run of
+consecutive headers at an address rimwall reported independently, which is stronger
+evidence than the pointer index. Filtering it by the index too breaks that run and
+drops two schedules that are certainly real.
 
 Denso use the same table format as their engine ECUs, which RomRaider already
 understands, so no editor changes were needed to read them:

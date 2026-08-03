@@ -112,9 +112,14 @@ Nine of those are now supported, in their own definition
 vehicle speed in km/h. The address matches what rimwall reported for these TCUs, and
 the units are read from the data rather than assumed.
 
-Everything else is listed honestly as **unidentified**: a few hundred tables whose
-structure is certain but whose physical quantity is not established. They are shown
-raw, at `userlevel="4"`, so they are out of the way unless you go looking.
+Everything else is listed honestly as **unidentified**: tables whose structure is
+certain but whose physical quantity is not established. They are shown raw, at
+`userlevel="4"`, so they are out of the way unless you go looking.
+
+Those are filtered to what the firmware demonstrably reaches. Scanning for the header
+format finds about 1770 candidates per image, but the tables are indexed by arrays of
+pointers, and only 140–186 are named by one — the rest are byte patterns that pass a
+structural test by chance.
 
 Denso protect these images with a block table at `0xFFB80` rather than the M32R's
 two checksums; that is implemented as a separate plugin and is corrected on save.
