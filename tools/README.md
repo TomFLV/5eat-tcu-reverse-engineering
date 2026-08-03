@@ -69,6 +69,8 @@ of pointers to their headers, so a run of consecutive words all pointing at vali
 headers is a real index. That leaves **140–186 tables per image**, and the definition
 ships only those.
 
+The twelve shift tables are **six upshift/downshift pairs**, not twelve schedules, and each has four live rows which are the four upshifts in order (1-2, 2-3, 3-4, 4-5). Both facts come from comparing a calibration against a log from the car running it; see FINDINGS 37.
+
 One exception, deliberately: the shift-schedule block is identified by a run of
 consecutive headers at an address rimwall reported independently, which is stronger
 evidence than the pointer index. Filtering it by the index too breaks that run and

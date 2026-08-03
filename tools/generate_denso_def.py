@@ -139,19 +139,32 @@ def esc(s):
              .replace('"', "&quot;"))
 
 
-SHIFT_DESC = """SHIFT SCHEDULE {n} of {total}. Vehicle speed at which this shift
-happens, against accelerator pedal angle.
+SHIFT_DESC = """{kind} SCHEDULE {pair} of {pairs}. Road speed at which each shift
+happens, against accelerator angle.
 
-Raise a value to delay the shift and hold the lower gear longer; lower it to shift
-earlier. The transmission carries several complete schedules and selects between them
-by operating condition - WHICH condition picks WHICH schedule is not established, so
-treat them as a set unless you have logged which one is active.
+Each row is one shift:
 
-Rows reading 255 throughout are unused in this calibration.
+    1-2, 2-3, 3-4, 4-5   in that order, top to bottom
 
-The address of this block matches what rimwall reported for Denso 5EAT TCUs on the
-RomRaider forum, and the units are read from the data: the axis runs 0 to 100 percent
-pedal, and the values are road speeds in km/h."""
+A row reading 255 throughout is unused in this calibration.
+
+ABOVE ROUGHLY 35% PEDAL THIS TABLE STOPS DECIDING. Every row flattens into the same
+tail, ending at a speed the car cannot reach - 224 km/h on upshift schedules, 205 on
+downshift. That entry means "do not shift on road speed", and above it the shift is
+governed by an engine speed limit instead. Full-throttle shifts in a logged car occur
+at 6278 to 7300 turbine rpm against a 6944 rpm maximum: they are redline shifts.
+
+So changing the high-pedal end of these curves will NOT move a full-throttle shift
+point. Only the part-throttle region does anything.
+
+Below that, the threshold here is necessary but not sufficient. A logged car sat 25 to
+45 km/h above every 4-5 threshold it has, in the right gear at steady speed, and held
+fourth for four seconds before shifting - so something inhibits the change beyond this
+comparison. Raising a value will delay a shift; lowering one does not guarantee it
+happens sooner.
+
+Confirmed against a log from WQDE2WB1, the calibration these tables were read from.
+See FINDINGS.md sections 36 and 37."""
 
 RAW_DESC = """Unidentified {rows}x{cols} table, header at 0x{hdr:06X}.
 
@@ -174,9 +187,10 @@ def table_xml(t, name, category, desc, value_units, value_fmt, level):
     x = axis_xml("X Axis", "Accelerator pedal" if value_units else "X",
                  t["x"], t["rows"],
                  "% pedal" if value_units else "raw", "x", "0")
-    y = axis_xml("Y Axis", "Schedule" if value_units else "Y",
+    y = axis_xml("Y Axis", "Shift" if value_units else "Y",
                  t["y"], t["cols"],
-                 "index" if value_units else "raw", "x", "0")
+                 "0=unused, 1=1-2, 2=2-3, 3=3-4, 4=4-5" if value_units else "raw",
+                 "x", "0")
     return (
         '  <table type="3D" name="%s" category="%s" storageaddress="0x%06X"\n'
         '         storagetype="uint16" endian="big" sizex="%d" sizey="%d"\n'
@@ -227,8 +241,12 @@ def build_rom(path, d):
     parts.append("  <!-- ============ Shift Schedules ============ -->")
     for i, t in enumerate(shifts, 1):
         parts.append(table_xml(
-            t, "Shift Schedule %d" % i, "Transmission - Shift Schedule",
-            SHIFT_DESC.format(n=i, total=len(shifts)),
+            t,
+            "Shift Schedule %d - %s" % ((i + 1) // 2,
+                                        "Upshift" if i % 2 else "Downshift"),
+            "Transmission - Shift Schedule",
+            SHIFT_DESC.format(kind="UPSHIFT" if i % 2 else "DOWNSHIFT",
+                              pair=(i + 1) // 2, pairs=(len(shifts) + 1) // 2),
             "km/h", "0", 1))
     parts.append("")
 
