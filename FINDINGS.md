@@ -3280,3 +3280,62 @@ So the shipped labels stand, and the doubt is closed rather than left hanging.
 It also says what rimwall's lever actually is here. Shortening a shift means reducing
 the HOLD at 0x1200E, so the ramp starts sooner, or raising the STEP at 0x1200C so the
 target pressure is reached in fewer cycles. Both are already editable.
+
+---
+
+## 33. HOW A SHIFT SCHEDULE IS CHOSEN
+
+The oldest open question in this project - which operating condition selects which of
+the ten shift schedules - is answered. It was never going to come from pattern
+scanning; it is four lines of arithmetic in the base ROM.
+
+Searched first, which is worth recording: GitHub has essentially nothing on this ECU.
+A repository search for "5EAT" returns this project and two empty repositories, and
+"subaru transmission TCU" returns this project alone. `miikasyvanen/FastECU-m32r-flasher`
+is a recovery flasher with no table definitions. There is no prior work to borrow.
+
+### 33a. The selection
+
+    DAT_00804B94 = DAT_0080485A * 2 + sVar1 * 10;
+    schedule     = (&PTR_DAT_00017714)[DAT_00804B94];
+    partner      = (&PTR_DAT_00017718)[DAT_00804B94];
+
+Two pointer arrays, four bytes apart, indexed by one computed value. The `* 10` is
+the ten-schedule structure this project inferred from the data years of session notes
+ago, appearing directly in the code.
+
+`sVar1` picks the group of ten and comes from `FUN_00043428`:
+
+    if (DAT_00804858 == 0x80 || 0x84 || 0x8C)  sVar1 = 0
+    else if (DAT_00804858 == 0x85)             sVar1 = 1
+    else if (DAT_00804858 == 0x81)             sVar1 = 2
+    else if (DAT_00804858 == 0x82)             sVar1 = 3
+    else if (DAT_00804858 == 0x83)             sVar1 = 4
+
+`DAT_00804858` holds 0x80 to 0x85 and 0x8C. A small contiguous range of high-bit-set
+byte codes selecting one of five groups is a selector or range position, and it
+confirms from the code what section 17a inferred from the data: the five-axis is a
+GEAR LIMIT, not the fuelling state rimwall read it as. It initialises to 0x84, which
+maps to group 0 - the same group as 0x80 and 0x8C.
+
+`DAT_0080485A` picks within the group and holds 0 to 4, tested that way in about 189
+places across the firmware. That is the operating condition itself.
+
+### 33b. What is still not established, and a table this project does not ship
+
+Which physical condition each value of `DAT_0080485A` corresponds to. Sasha_A80's
+list from the forum - cold engine, warm engine, cold ATF, warm ATF, catalyst preheat,
+quick shift, hill assist, driver style - remains the candidate set, and nothing here
+picks between them. A log of that one byte against driving state would settle it in a
+single drive.
+
+More useful in the short term: `DAT_00804858` is not read from a sensor. It comes
+from `FUN_000433D8`, which reads a byte from a TABLE at 0x10108:
+
+    cVar1 = *(char *)(DAT_0080486E * 4 + 0x10108 + ((DAT_008052B3 ^ 0xFF) & 7) - 3);
+    if (cVar1 != 0 && cVar1 != -1) return cVar1;
+
+So the mapping from whatever `DAT_0080486E` is to a selector position is
+CALIBRATION DATA, at 0x10108 in the base ROM, and this project does not currently
+ship it. That is a tunable that decides which schedule group applies, and it is a
+better target than the remaining unidentified curves.
