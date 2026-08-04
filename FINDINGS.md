@@ -3897,11 +3897,39 @@ axis in the definition is out by 15 °C, which matters to anyone tuning temperat
 compensation, so this is recorded as a live uncertainty rather than a settled
 detail.
 
-### 41c. How to settle it
+### 41c. Evidence, from the family that stores temperature in real units
 
-The bench unit does it directly and cheaply. Feed the ATF sensor input a known
-resistance, read the raw linearisation output over SSM, and compare against the
-thermistor curve. One measurement at a known temperature decides it.
+The service manual does not settle it. Its P0712 and P0713 procedures test for an
+open or shorted circuit, not for a threshold in degrees, and the only temperatures
+quoted anywhere in the transmission section are 20, 25 and 80 °C - the last as a
+warm-up instruction, with the sensor reading 500-1,200 ohms at that point. That
+pins the sensor, not the encoding.
 
-Failing that, the fault thresholds for P0712 and P0713 in the service manual are
-quoted in real units and would pin the encoding without any hardware.
+The Denso family does better, because it stores axes as IEEE floats in real units
+and so carries no offset at all. Scanning `Impreza_STI_3.583_JDM2011` for monotonic
+float runs in a temperature range finds one axis repeated at `0xA0344`, `0xA038C`
+and `0xA0490`:
+
+    20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130 °C
+
+That is the range Subaru calibrates this gearbox over. Against it, the M32R blend
+window of section 32 - which RomRaider reads out of `ACD1A06000` as `15.0, 135.0`
+under the current scaling, from raw 55 and 175 - brackets the calibrated range
+symmetrically, five degrees clear at each end. Under `-55` the same window reads
+`0, 120`, putting its warm limit *inside* the calibrated range and cutting off the
+top ten degrees of it. A blend window that stops short of the data it blends is
+the less likely design.
+
+**The evidence therefore favours `-40`, and the definition stays as it is.** This
+is a consistency argument across two firmware families rather than a measurement,
+so 41b's uncertainty is reduced rather than closed.
+
+### 41d. What would close it
+
+Feed the ATF sensor input a known resistance on the bench unit, read the raw
+linearisation output over the Select Monitor, and compare. One measurement at one
+known temperature decides it outright.
+
+If `-55` did turn out to be right, the fix is mechanical: thirteen tables in the
+M32R definition change `x-40` to `x-55` and `x+40` to `x+55`. Nothing else in the
+project depends on the offset.

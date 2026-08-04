@@ -115,12 +115,15 @@ quantity is unknown. Their unit labels say so.
 
 ## Known limitations
 
-**The ATF temperature offset is not settled.** The definition applies `x-40` to every
-ATF temperature axis, inferred from the encoding range rather than measured. The
-firmware's own Select Monitor path implies `x-55` for the same variable. If the
-second is right, every temperature axis here is out by 15 °C. Neither number has
-been measured, so nothing has been changed; one reading at a known temperature on a
-bench unit decides it. See [FINDINGS.md](FINDINGS.md) §41.
+**The ATF temperature offset is supported but not measured.** The definition applies
+`x-40` to every ATF temperature axis. The firmware's own Select Monitor path implies
+`x-55` for the same variable, which would put every temperature axis here out by
+15 °C. The Denso firmwares settle the argument as far as static analysis can: they
+store temperature axes as floats in real degrees, calibrated over 20-130 °C, and
+`x-40` puts the M32R blend window at 15-135 °C, bracketing that range, where `x-55`
+would place its warm limit inside it. That is consistency across two families, not
+a measurement — one reading at a known temperature on a bench unit would close it.
+See [FINDINGS.md](FINDINGS.md) §41.
 
 **Torque converter lockup is not identified.** Narrowed to two of the seven solenoid
 channels, `0x804EB2` (TIO5) and `0x804EB6` (TIO7). Their drivers are exact mirrors,
