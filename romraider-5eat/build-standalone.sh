@@ -18,7 +18,7 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd "$HERE/.." && pwd)"
 OUT="${1:-$REPO/build/app-input}"
 WORK="${TMPDIR:-/tmp}/rr5eat-build"
-APP_VERSION="${APP_VERSION:-1.1.1}"
+APP_VERSION="${APP_VERSION:-1.1.2}"
 
 # Pinned so the patch applies cleanly. Upstream moves and the patch touches
 # build.xml, ECUExec.java, LookAndFeelManager.java and RomCellRenderer.java -
@@ -125,6 +125,12 @@ cp "$REPO"/rom/*.bin "$OUT/roms/"
 [ -d "$REPO/rom-denso" ] && cp "$REPO"/rom-denso/*.bin "$OUT/roms/"
 cp "$REPO/tools/checksum.py" "$OUT/"
 
+# jpackage needs the window icon, and it is upstream's artwork - so it is taken from
+# the checkout at build time rather than committed here. Staged outside $OUT so it
+# does not end up inside the application as a stray file.
+ICON="$(dirname "$OUT")/romraider-ico.ico"
+cp "$WORK/src/src/main/resources/graphics/romraider-ico.ico" "$ICON"
+
 say "staged application input at $OUT"
 du -sh "$OUT"
 
@@ -140,7 +146,7 @@ cannot happen here. From Windows, with a JDK 21+ on PATH:
   jpackage --type app-image --name RomRaider-TCU \\
       --input "$OUT" --main-jar RomRaider.jar \\
       --main-class com.romraider.ECUExec \\
-      --icon romraider-5eat/romraider-ico.ico \\
+      --icon "$ICON" \\
       --app-version $APP_VERSION --dest build \\
       --add-launcher tcu-cli=romraider-5eat/tcu-cli.properties \\
       --java-options -Xmx1024M \\
