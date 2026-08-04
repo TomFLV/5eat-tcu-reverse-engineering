@@ -87,9 +87,79 @@ table sits at `0x0844C` on M32R and between `0xB9234` and `0xCE658` on Denso.
 
 See [FINDINGS.md](../FINDINGS.md) §39.
 
+## Reading and writing on the bench
+
+### It is not BDM
+
+BDM is Motorola and Freescale terminology. Neither controller here has it. The
+Hitachi M32R and the Denso SH705x each have a **serial boot mode**: hold the mode
+pins in a particular state at reset and the part comes up running a small ROM
+loader that accepts a program over a UART, which then does the flash work.
+
+### What the tooling actually supports
+
+FastECU's `modules/` on the development branch, which is where the TCU work lives:
+
+| unit | CAN | K-line | boot mode |
+|---|---|---|---|
+| Hitachi M32R TCU | yes | yes | **yes** — `modules/bootmode/flash_ecu_subaru_unisia_jecs_m32r_bootmode.cpp` |
+| Denso SH705x TCU | yes | — | **no module exists** |
+
+So for the Denso there is a CAN path and nothing else. The only boot-mode module
+in the tree is the Unisia JECS M32R one, and it is an *ECU* module. There is a
+`kernels/ssmk_tcu_can_sh7058.bin`, which is the CAN route again.
+
+### The pads are real, and someone has traced them
+
+Forum topic 13725 post 368 — Gmguy, recovering a bricked Denso TCU, part number
+30919AB600. He identified the PCB programming pads and confirmed they match
+Tactrix's `shbootrecover` diagram, which is the standard SH boot mode wiring:
+
+    P441 – MD1   – MCU pin 55    (100 Ω)
+    P431 – FWE   – MCU pin 56    (100 Ω)
+    P431 – PD8   – MCU pin 1     (1 kΩ)      <- see below
+    P813 – PB15  – MCU pin 164   (0 Ω)
+    P808 – RxD1  – MCU pin 166   (0 Ω)
+    P439 – TxD1  – MCU pin 165   (1 kΩ)
+
+Board photographs are linked from posts 368 and 373.
+
+**`P431` is listed twice**, against both FWE and PD8. One of them is wrong, and
+it is not recoverable from the post. Ring both out against the MCU pins before
+connecting anything — tying FWE to the wrong pad is how a working unit becomes a
+second brick. The MCU pin numbers likewise want checking against the datasheet
+for the exact package on your board.
+
+### Nobody has reported it working
+
+Gmguy said he would report back once his interface parts arrived. He never did,
+and the thread has no other account of a successful hardware-level recovery on a
+Denso TCU. Post 368 also notes **ECUflash will not open the TCU ROM**, so its
+recovery path is not usable as-is.
+
+Treat this as a documented starting point, not a procedure. What is established:
+the pads exist, they are boot mode pads, and they correspond to a published
+diagram. What is not established: that the sequence completes on this unit.
+
+### The conservative order
+
+1. **Read over CAN first, with FastECU.** It is supported, it is non-destructive,
+   and a dump in hand is what makes everything else recoverable.
+2. Keep that dump. A known-good image of the same part number is what turns a
+   brick into an afternoon.
+3. Only then consider boot mode, and only with the pads verified by continuity.
+
+Post 361 reports a Denso 7058 CAN TCU reading fine but failing at the write step
+with `TCU operation failed`, so a successful read does not imply a successful
+write.
+
 ## What a rig would settle
 
-**Which channel is lock-up.** This is the one the firmware cannot answer. `0x804EB2`
+**Which channel is lock-up.** This is the one the firmware cannot answer. Note it
+is an **M32R** question: `0x804EB2` and `0x804EB6` are M32R addresses and section
+29 works from the 32176 manual, so it is settled on an M32R unit, not a Denso one.
+The Select Monitor cannot answer it either - what it reports for lock-up is derived
+from the commanded value rather than read back from the timer output (section 40c). `0x804EB2`
 drives TIO5 on package pin 102 and `0x804EB6` drives TIO7 on pin 104; their software
 drivers are exact mirrors (§29). On a bench, continuity or a scope from those MCU pins
 to **B54 pin 23** identifies it directly — no logging or driving required.

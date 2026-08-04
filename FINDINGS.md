@@ -3776,11 +3776,26 @@ routing section 29 could not settle.
 
 ### 40c. This does not settle TIO5 against TIO7
 
-Tempting, but no. Section 29's open question is about the **Denso** firmware, and
-`0x804EB2` and `0x804EB6` are Denso addresses. Section 40 is entirely M32R. What
-it gives is the M32R lock-up variables, which is worth having and is not the same
-thing. The bench measurement in [docs/BENCH-RIG.md](docs/BENCH-RIG.md) is still
-what settles the Denso question.
+Tempting, but no - though the first version of this section got the reason wrong
+and said section 29 concerned the Denso firmware. It does not. `0x804EB2` and
+`0x804EB6` sit in `0x0080xxxx`, which is M32R RAM, they appear only in
+`decompiled/91D1206000_5EAT.c`, and section 29a takes its pin numbers from the
+32176 Group User's Manual. **Section 29 is M32R throughout**, the same family as
+this section, so the two are directly comparable.
+
+They still do not settle it, for a substantive reason rather than a taxonomic
+one. Running the mapping against `91D1206000` - the image section 29 analysed -
+gives L/U solenoid current from `0x804758` and L/U pressure from `0x8046E2`. But
+the pressure is computed as
+
+    DAT_008046e2 = (short)((DAT_008045d6 * 100) / 0x100);
+
+from `0x8045D6`, a commanded value, and neither address reaches `0x804EB2` or
+`0x804EB6` within the two hops traced. What the Select Monitor reports for lock-up
+is derived from the **demand** side, not read back from whichever timer output
+actually drives the solenoid - so it cannot distinguish the two candidates. The
+bench measurement in [docs/BENCH-RIG.md](docs/BENCH-RIG.md) remains what settles
+it.
 
 ### 40d. Denso stores this differently, and it is not yet found
 
