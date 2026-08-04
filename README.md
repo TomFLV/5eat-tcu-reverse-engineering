@@ -150,11 +150,13 @@ tcu-cli info     definitions/5eat_tcu_romraider_defs.xml roms/ACD1A06000.bin
 tcu-cli dump     <def> <rom> "Shift Map"
 tcu-cli checksum <def> <rom> --fix fixed.bin
 tcu-cli set      <def> <rom> "Shift Map" 12 65 out.bin
-tcu-cli selftest <def> roms/*.bin
+tcu-cli selftest
 ```
 
 `selftest` loads each ROM, verifies its checksums, edits a cell, saves and verifies
-again — sixteen firmwares in about five seconds.
+again. Given no arguments it checks every definition and ROM the installation ships
+with — all twenty-five firmwares, both families, in a few seconds. Nothing is
+written: the save runs against a copy held in memory.
 
 ## Repository
 

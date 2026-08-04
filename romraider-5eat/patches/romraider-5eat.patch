@@ -52,10 +52,10 @@ index fd9b42d..e8e9f78 100644
                  ((int) (screenSize.getHeight() - windowSize.getHeight()) / 2));
 diff --git a/src/main/java/com/romraider/cli/TcuCli.java b/src/main/java/com/romraider/cli/TcuCli.java
 new file mode 100644
-index 0000000..62ef049
+index 0000000..e4ec732
 --- /dev/null
 +++ b/src/main/java/com/romraider/cli/TcuCli.java
-@@ -0,0 +1,477 @@
+@@ -0,0 +1,549 @@
 +/*
 + * RomRaider Open-Source Tuning, Logging and Reflashing
 + * Copyright (C) 2006-2012 RomRaider.com
@@ -386,17 +386,49 @@ index 0000000..62ef049
 +     * cell, save, and confirm the checksums are right again.
 +     */
 +    private static int selftest(String[] a) throws Exception {
-+        final String def = a[0];
++        final List<String> defs = new ArrayList<String>();
++        final List<String> roms = new ArrayList<String>();
++
++        if (a.length == 0) {
++            // No arguments is the useful default: check this installation against
++            // everything it ships with. Nothing is written — saveFile() works on a
++            // copy held in memory — so this is safe to run against the bundled ROMs.
++            final File base = bundleDir();
++            collect(base == null ? null : new File(base, "definitions"), ".xml", defs);
++            collect(base == null ? null : new File(base, "roms"), ".bin", roms);
++            if (defs.isEmpty() || roms.isEmpty()) {
++                return fail("no bundled definitions or ROMs found"
++                        + (base == null ? "" : " under " + base.getPath())
++                        + "; give <def> <rom>... explicitly");
++            }
++        } else if (a.length < 2) {
++            return fail("selftest needs <def> <rom>..., or no arguments to check the bundled set");
++        } else {
++            defs.add(a[0]);
++            for (int i = 1; i < a.length; i++) {
++                roms.add(a[i]);
++            }
++        }
++
 +        final List<String> bad = new ArrayList<String>();
 +        final StringBuilder b = new StringBuilder("{\"results\":[");
 +
-+        for (int i = 1; i < a.length; i++) {
-+            final String name = new File(a[i]).getName();
-+            if (i > 1) {
++        for (int i = 0; i < roms.size(); i++) {
++            final String path = roms.get(i);
++            final String name = new File(path).getName();
++            if (i > 0) {
 +                b.append(',');
 +            }
 +            try {
-+                final Rom rom = new RomLoad(def, a[i]).rom;
++                // Where several definitions are available, the right one is whichever
++                // recognises the image: the two families share no identifiers.
++                Rom rom = null;
++                for (String def : defs) {
++                    rom = new RomLoad(def, path).rom;
++                    if (rom != null) {
++                        break;
++                    }
++                }
 +                if (rom == null) {
 +                    bad.add(name + ": no match");
 +                    b.append("{\"rom\":").append(esc(name)).append(",\"ok\":false,\"error\":\"no match\"}");
@@ -454,6 +486,45 @@ index 0000000..62ef049
 +        return bad.isEmpty() ? 0 : 1;
 +    }
 +
++    /**
++     * The directory the application was installed into, or null if that cannot be
++     * worked out. The jar sits alongside the definitions and roms directories, so
++     * its own location is what locates them.
++     */
++    private static File bundleDir() {
++        try {
++            final File jar = new File(TcuCli.class.getProtectionDomain()
++                    .getCodeSource().getLocation().toURI());
++            final File dir = jar.isFile() ? jar.getParentFile() : jar;
++            if (dir != null && new File(dir, "definitions").isDirectory()) {
++                return dir;
++            }
++        } catch (Throwable ignored) {
++            // No resolvable code source; fall through to the working directory.
++        }
++        final File cwd = new File("").getAbsoluteFile();
++        return new File(cwd, "definitions").isDirectory() ? cwd : null;
++    }
++
++    /** Every file in dir ending in ext, sorted by path, appended to out. */
++    private static void collect(File dir, String ext, List<String> out) {
++        if (dir == null || !dir.isDirectory()) {
++            return;
++        }
++        final File[] found = dir.listFiles();
++        if (found == null) {
++            return;
++        }
++        final List<String> names = new ArrayList<String>();
++        for (File f : found) {
++            if (f.isFile() && f.getName().toLowerCase().endsWith(ext)) {
++                names.add(f.getAbsolutePath());
++            }
++        }
++        java.util.Collections.sort(names);
++        out.addAll(names);
++    }
++
 +    /** Loading without printing an error, for selftest's per-ROM reporting. */
 +    private static final class RomLoad {
 +        final Rom rom;
@@ -484,7 +555,8 @@ index 0000000..62ef049
 +          + "  dump      <def> <rom> <table>                cell values as JSON\n"
 +          + "  checksum  <def> <rom> [--fix <out.bin>]      report, and optionally correct\n"
 +          + "  set       <def> <rom> <table> <i> <v> <out>  edit one cell and save\n"
-+          + "  selftest  <def> <rom>...                     load, edit, save, re-check each ROM\n"
++          + "  selftest [<def> <rom>...]                    load, edit, save, re-check each ROM\n"
++          + "                                               (no arguments: the bundled set)\n"
 +          + "\nPrints one JSON object. Exit status is 0 only when the answer is yes.";
 +
 +    public static int run(String[] argv) {
@@ -2204,6 +2276,34 @@ index 42b2a0a..3700be6 100644
      }
  
      private static void rgbToHsb(Color color, float[] colorHSB) {
+diff --git a/src/main/java/com/romraider/util/ResourceUtil.java b/src/main/java/com/romraider/util/ResourceUtil.java
+index 2222c0a..64ba45b 100644
+--- a/src/main/java/com/romraider/util/ResourceUtil.java
++++ b/src/main/java/com/romraider/util/ResourceUtil.java
+@@ -39,10 +39,19 @@ public final class ResourceUtil {
+                     bundle, Locale.getDefault(), loader);
+             return rb;
+         } catch (Exception e) {
+-            showMessageDialog(null,
+-                    e.getLocalizedMessage(),
+-                    "Error",
+-                    ERROR_MESSAGE);
++            // A dialog here is fatal without a display: this runs from a static
++            // initialiser, so the HeadlessException surfaces as
++            // ExceptionInInitializerError and takes the process down before the
++            // caller can report anything. The CLI must be able to fail in JSON.
++            if (java.awt.GraphicsEnvironment.isHeadless()) {
++                System.err.println("missing resource bundle " + bundle + ": "
++                        + e.getLocalizedMessage());
++            } else {
++                showMessageDialog(null,
++                        e.getLocalizedMessage(),
++                        "Error",
++                        ERROR_MESSAGE);
++            }
+         }
+         return null;
+     }
 diff --git a/src/main/java/com/romraider/util/SettingsManager.java b/src/main/java/com/romraider/util/SettingsManager.java
 index 20798e0..562abfd 100644
 --- a/src/main/java/com/romraider/util/SettingsManager.java

@@ -126,7 +126,7 @@ Runs headless and prints one JSON object; the exit status is 0 only when the ans
 is yes. Commands are `info`, `tables`, `dump`, `checksum`, `set` and `selftest`.
 
     RomRaider-TCU.exe --cli checksum defs.xml rom.bin --fix fixed.bin
-    RomRaider-TCU.exe --cli selftest defs.xml roms\*.bin
+    RomRaider-TCU.exe --cli selftest              # everything the build ships with
 
 This drives the same parser and the same save path as the window does, so it is a
 check of the application and not of a reimplementation of it.

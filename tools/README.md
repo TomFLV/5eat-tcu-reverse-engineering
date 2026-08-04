@@ -100,7 +100,7 @@ tcu-cli tables   <def.xml> <rom.bin> [substring]        # list tables
 tcu-cli dump     <def.xml> <rom.bin> <table>            # cell values
 tcu-cli checksum <def.xml> <rom.bin> [--fix out.bin]    # report, optionally correct
 tcu-cli set      <def.xml> <rom.bin> <table> <i> <v> <out.bin>
-tcu-cli selftest <def.xml> <rom.bin>...                 # the whole family at once
+tcu-cli selftest [<def.xml> <rom.bin>...]               # no arguments: everything bundled
 ```
 
 **The contract, for scripting or for an LLM driving it:**
@@ -119,11 +119,21 @@ tcu-cli selftest <def.xml> <rom.bin>...                 # the whole family at on
 
 `selftest` is the one that matters: it loads each ROM, confirms the checksums as
 shipped, edits a cell through the real write path, saves through `Rom.saveFile`, and
-confirms them again. Sixteen M32R firmwares take about five seconds.
+confirms them again. Nothing reaches the disk — `saveFile` returns bytes rather than
+writing — so it is safe to point at the shipped ROMs.
+
+With no arguments it finds the definitions and ROMs beside the installed application
+and checks all of them, trying each definition against each image until one matches:
+
+```bash
+tcu-cli selftest
+# {"results":[...],"ok":true,"failed":0}     25 firmwares, both families
+```
+
+Explicit paths still work, for one definition against a chosen set:
 
 ```bash
 tcu-cli selftest definitions/5eat_tcu_romraider_defs.xml rom/*.bin
-# {"results":[...],"ok":true,"failed":0}
 ```
 
 Pointing a definition at the wrong family is expected to fail: each declines ROMs it
