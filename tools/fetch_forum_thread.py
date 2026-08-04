@@ -53,6 +53,27 @@ def fetch(url, tries=3):
     return ""
 
 
+DIV_TAG = re.compile(r"<(/?)div\b", re.I)
+
+
+def extract_div(segment, opener):
+    """The full contents of the div `opener` matched, nesting included.
+
+    A non-greedy match to the first </div> looks right and is not: a post that
+    quotes another contains a nested div, so the match ends at the quote's own
+    closing tag and everything the author actually wrote is discarded. That
+    silently emptied 122 of the 391 posts in the topic 13725 archive - every
+    post replying to someone, which is most of the technical argument.
+    """
+    start = opener.end()
+    depth = 1
+    for m in DIV_TAG.finditer(segment, start):
+        depth += -1 if m.group(1) else 1
+        if depth == 0:
+            return segment[start:m.start()]
+    return segment[start:]
+
+
 def strip_tags(fragment):
     # Keep quote blocks legible: they carry a lot of the technical back-and-forth.
     fragment = re.sub(r"<br\s*/?>", "\n", fragment)
@@ -88,11 +109,11 @@ def parse_posts(page):
             author = re.search(
                 r'memberlist\.php\?mode=viewprofile[^"]*"[^>]*>(?:<[^>]+>)*([^<]+)', seg)
         date = re.search(r'<b>Posted:</b>\s*([^<&]+)', seg)
-        body = re.search(r'<div class="postbody">(.*?)</div>', seg, re.S)
+        body = re.search(r'<div class="postbody">', seg, re.S)
 
         # Drop the quoted-reply chrome but keep the quoted text, since a lot of the
         # technical detail in this thread is inside quote blocks.
-        text = strip_tags(body.group(1)) if body else ""
+        text = strip_tags(extract_div(seg, body)) if body else ""
         posts.append((
             author.group(1).strip() if author else "unknown",
             date.group(1).strip() if date else "",

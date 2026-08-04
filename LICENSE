@@ -25,16 +25,24 @@ SOFTWARE.
 NOTE ON SCOPE
 
 This license covers only the original work in this repository: the tools in
-tools/, the RomRaider definition in definitions/, and the documentation in
-docs/ and README.md.
+tools/, the RomRaider definitions in definitions/, and the written analysis in
+docs/, FINDINGS.md and README.md.
 
 It does NOT cover:
 
-  - rom/*.bin — Subaru/Fuji Heavy Industries firmware, included for
-    interoperability and repair research. All rights remain with its owner.
+  - rom/*.bin and rom-denso/*.bin — Subaru/Fuji Heavy Industries firmware,
+    included for interoperability and repair research. All rights remain with
+    its owner.
 
-  - decompiled/*.c — machine-generated output derived from those binaries,
-    carrying the same status.
+  - decompiled/*.c and decompiled-denso/*.c — machine-generated output derived
+    from those binaries, carrying the same status.
+
+  - docs/forum_thread_13725.txt and docs/forum_thread_20850.txt — archives of
+    two RomRaider forum topics. These are other people's posts, kept because
+    forum threads are not permanent and because working from a partial copy has
+    cost this project time. Reproduced for reference and credited in README.md.
+
+  - logs/*.csv — vehicle logs recorded and shared by cortin. Not my work.
 
   - docs/shift-curves-reference.png — a chart produced and posted by a member
     of the RomRaider forum community (thread "5EAT TCM JECS ROM Image", page 9).
@@ -42,6 +50,10 @@ It does NOT cover:
     against it. Not my work and not mine to license. The author's username is
     not visible to logged-out visitors; if it is yours, open an issue and it
     will be credited or the file removed on request.
+
+  - romraider-5eat/ — patches against RomRaider, which is GPL-2.0. See
+    romraider-5eat/LICENSE. A package built from them is a derivative of a
+    GPL-2.0 program and carries that licence, not this one.
 
 The ROM images were dumped and shared by members of the RomRaider forum thread
 "5EAT TCM JECS ROM Image". They are included for interoperability and repair

@@ -34,6 +34,9 @@ TCU Logger init string = [A61022][91D12060000][100800400000000A1462C000800000000
 
 === post 5 | roadie | Mon May 01, 2017 6:39 pm | #p127324 ===
 dschultz wrote:
+What MCU part number is this from?
+
+Probably wa12212953www but Sasha will have to correct me if Im wrong.
 
 === post 6 | utc_pyro | Mon May 01, 2017 8:47 pm | #p127329 ===
 In the 05-06 USDM TCU at least the MCU is WA12212963WWN.
@@ -119,6 +122,13 @@ The executive code is located at another place of the code.
 
 === post 17 | roadie | Sun Jun 11, 2017 7:00 am | #p128259 ===
 Sasha_A80 wrote:
+Commands 81 83 27 10 are for TCM software updates.
+There are too many checks of the engine\tranny states to implent those commands for TCM reflash on the bench.
+
+The code above checks for commands being applicable.
+The executive code is located at another place of the code.
+
+Ok. Do you flash them via SIO1?
 
 === post 18 | Sasha_A80 | Sun Jun 11, 2017 9:07 am | #p128263 ===
 I do flash them in-circuitry on the bench.
@@ -132,6 +142,15 @@ Do we happen to know where the unique identifier is?
 
 === post 21 | roadie | Tue Jun 13, 2017 11:02 am | #p128299 ===
 Sasha_A80 wrote:
+The executive code is located at another place of the code.
+
+Yes found another place 25A7C where the response message is being built. But havent found the response data yet.
+
+Anyone can explain the adressing? fp
+
+seth fp, #0x81 ;set
+add3 fp, fp, #-0x8000 ;add
+ldub R0, @(-0x2EF4, fp) ;load, but from what resulting adress?
 
 === post 22 | Sasha_A80 | Tue Jun 13, 2017 2:41 pm | #p128304 ===
 seth fp, #0x81 ;set
@@ -175,6 +194,10 @@ Anyway you are able to read the flash by means of ecumem2 software.
 
 === post 29 | roadie | Fri Aug 18, 2017 5:40 am | #p129901 ===
 Sasha_A80 wrote:
+M32176 has completely another bootmode loader.
+Anyway you are able to read the flash bu ecumem2 software.
+
+Thats what I thought. Is this a Mitsubishi with protocol d autobaud bootmode like renesas but with diffrent commands?
 
 === post 30 | Sasha_A80 | Fri Aug 18, 2017 6:12 am | #p129902 ===
 This is Renesas M32R bootmode protocol.
@@ -182,6 +205,10 @@ Nothing near to Mitsubishi M32R bootmode.
 
 === post 31 | roadie | Fri Aug 18, 2017 6:41 am | #p129903 ===
 Sasha_A80 wrote:
+This is Renesas M32R bootmode protocol.
+Nothing near to Mitsbishi M32R bootmode.
+
+Thats good news. Thanks
 
 === post 32 | roadie | Fri Aug 18, 2017 6:50 pm | #p129913 ===
 M32176F4V read with ecumem.
@@ -210,6 +237,20 @@ You ARE TO use 5 V UART voltage level AND 18 or more sync 0's.
 
 === post 36 | roadie | Thu Aug 24, 2017 10:38 am | #p130047 ===
 Sasha_A80 wrote:
+I personnaly failed to understand whether you have got into bootmode or not..
+
+You ARE TO use 5 V UART voltage level AND 18 or more sync 0's.
+
+This is what I have:
+5v from the pcb to HL12 (mod0)
+watchdog from another tcu to keep reset happy
+
+when I have 5v to HL12 the ssm communication doesent work so its not in normal mode.
+
+5V uart to sio1 tx and rx (TP11, TP12, TP14 sclk1 pulled to ground)
+
+I have only sent 16 sync 0....
+Tried with more sync 0 now but didnt get any response
 
 === post 37 | roadie | Sat Aug 26, 2017 9:05 am | #p130088 ===
 Edited the post above. Didnt have anything connected to tp08. It was HL12
@@ -228,6 +269,12 @@ Outboard\bike Denso ecu's based on Renesas M32R follow Renesas bootmode specs.
 
 === post 41 | roadie | Sat Sep 02, 2017 10:29 am | #p130276 ===
 Sasha_A80 wrote:
+I do not have Subaru Denso TCU based on Renesas M32R at hand.
+Outboard\bike Denso ecu's based on Renesas M32R follow Renesas bootmode specs.
+
+Ok.
+
+31711ak570 tcu with m32176 says Hitachi on the cover. Can this be uj bootloader?
 
 === post 42 | Sasha_A80 | Sat Sep 02, 2017 11:26 am | #p130277 ===
 JECS/Hitachi labels for similar M32R chips are WA12212940WWW\ WA12212950WWW\ WA12212960WWW.
@@ -250,6 +297,7 @@ read with ecumem.
 06 JDM LGT
 
 Attachment:
+[ABD1207000-A61022].bin
 
 === post 45 | h82lose91 | Fri Nov 02, 2018 12:09 pm | #p139192 ===
 Just want to say its awesome to see you guys still working on this.
@@ -267,12 +315,52 @@ TCU bootloader is not updated during reflash and it looks like the same official
 I am working on bootloader swap to make these TCU ( chip ROM and 92C86 eeprom) to be flashable.
 
 roadie wrote:
+Sasha_A80 wrote:
+I do not have Subaru Denso TCU based on Renesas M32R at hand.
+Outboard\bike Denso ecu's based on Renesas M32R follow Renesas bootmode specs.
+
+Ok.
+
+31711ak570 tcu with m32176 says Hitachi on the cover. Can this be uj bootloader?
 
 === post 47 | Sasha_A80 | Mon Nov 19, 2018 5:37 pm | #p139570 ===
 b4andrey wrote:
+TCU 31711AG589 (origin unknown, doesn`t meet any database) but worked properly with JDM LGTB 5AT.
+was replaced by 31711AJ782
+chip WA12212953WWW
+511B101
+
+TCU 31711AJ782 JDM LGTB 03-04MY
+chip: cant say at the moment.
+can anyone say what is the difference?
+ 
+read with ecumem.
+
+AJ782 uses WA12212953
+AG589 uses WA12212953
+
+TCU calibration and code (0x8000:0x5FFFF) most probably is compatible for WA12212953 and M32176F4.
+The main difference is inside the loader - FlashInit and FlashWrite procedure. 
+Subaru reflash software most probably uses the same protocol and does no aware of the M32R chip variant used.
 
 === post 48 | P1on3R | Fri Jul 12, 2019 7:46 am | #p144900 ===
 roadie wrote:
+Sasha_A80 wrote:
+I personnaly failed to understand whether you have got into bootmode or not..
+You ARE TO use 5 V UART voltage level AND 18 or more sync 0's.
+
+This is what I have:
+5v from the pcb to HL12 (mod0)
+watchdog from another tcu to keep reset happy
+when I have 5v to HL12 the ssm communication doesent work so its not in normal mode.
+5V uart to sio1 tx and rx (TP11, TP12, TP14 sclk1 pulled to ground)
+I have only sent 16 sync 0....
+Tried with more sync 0 now but didnt get any response
+
+From what programmer you try to connect with this MCU?
+I interested to read the Flash from 2003Y Nissan Teana J31 4AT TCU Hitachi 31036-9Y610 A64-000 EA7 with MCU UJ wa12212954www.
+EcuMem don't help me, because the diagnistics occur from rx/tx (Consult-1 protocol), not from K-Line.
+Thanks
 
 === post 49 | Sasha_A80 | Fri Jul 12, 2019 9:05 am | #p144904 ===
 There should be some factory protocol for tcu update.
@@ -299,9 +387,28 @@ It will no doubt take some time to figure it all out. So, the big question is...
 
 === post 52 | riksk | Sat Apr 22, 2023 5:26 am | #p169242 ===
 rimwall wrote:
+I've had a look through the TCM ROM and found the 0x27 security access, encryption algo, on-board kernels for flashing etc.
+
+I can see the various tables, although table structure is different to an ECU ROM.
+
+I can also see the SSM functions that report data which should hopefully enable definition of RAM parameters and, from there, table axes. 
+
+It will no doubt take some time to figure it all out. So, the big question is.... is there any point (ie) does anyone want the ability to flash their TCM..??
+
+Would be nice to change shifting points and other thresholds. 
+
+Example: Higher Redline for 5EAT cars, etc.
 
 === post 53 | MiikaS | Sat Apr 22, 2023 5:43 am | #p169243 ===
 rimwall wrote:
+I've had a look through the TCM ROM and found the 0x27 security access, encryption algo, on-board kernels for flashing etc.
+
+I can see the various tables, although table structure is different to an ECU ROM.
+
+I can also see the SSM functions that report data which should hopefully enable definition of RAM parameters and, from there, table axes. 
+
+It will no doubt take some time to figure it all out. So, the big question is.... is there any point (ie) does anyone want the ability to flash their TCM..??
+Of course we would like to see this in FastECU if you have already something, just pm me so I could start adding it
 
 === post 54 | rimwall | Tue May 02, 2023 6:44 am | #p169339 ===
 Not hearing a lot of interest....
@@ -412,6 +519,59 @@ A few other points of interest:
 
 === post 62 | riksk | Tue Jun 06, 2023 5:07 pm | #p169658 ===
 rimwall wrote:
+Ok, after many hours of digging and head-scratching here is what should be the process to jump into the on-board kernel in a TCU. Not yet tested. I'm hoping MiikaS will be kind enough to add code for another module in FastECU to enable testing. Then I'll need some help with testing (I don't have an AT car). Or someone could donate a TCU for me to play with 
+
+Applies to Subaru TCU 5EAT M32R (specifically TCU ROM ACD1A06000). Probably works for other TCUs.
+
+ROM has code for Serial comms and CAN comms. Serial comms has normal SSM commands, and 0x27 process, but ability to jump to kernel appears to have been disabled - probably deprecated. CAN comms has SSM commands as well as 0x27 process providing the ability to ROM dump / flash via an on-board kernel.
+
+Car status
+- stationary, in park, solenoid lock on, good and stable Battery Voltage, ignition on
+
+Comms setup
+- laptop connected to Car via USB to OBD cable
+
+CAN Setup - TCU
+- TX to the TCU uses CAN ID 0x1f21
+- RX from the TCU uses CAN ID 0x1f1f (not sure about this, but should be easy to tell once we're communicating with the TCU)
+- CAN speed 500bps (per normal Subaru highspeed CAN). This is an assumption (not checked) 
+- CAN frame data has the message length in the first byte
+
+Command: 0x02 0x10 0x03 
+Response: 0x02 0x50 0x03
+
+Command: 0x02 0x27 0x01 [Security Access step 1]
+Response: 0x06 0x67 0x01 [S3] [S2] [S1] [S0]
+
+Decrypt seed bytes S3-S0 to key bytes K3-K0 using the Subaru decryption algorithm as for ECUs. The TCU algorithm looks the same, but I haven't confirmed in detail. Encryption words are different. Nybbles are the same. See values below. Reverse word order for decryption.
+
+Command: 0x06 0x27 0x02 [K3] [K2] [K1] [K0] [Security Access step 2]
+Response: 0x02 0x67 0x02
+
+Command: 0x02 0x10 0x02 
+Response: 0x02 0x50 0x02
+
+CAN Setup - Kernel
+- TX to the TCU kernel uses CAN ID 0x1f29 
+- RX from the TCU kernel uses CAN ID 0x???? (not sure about this, but should be easy to tell once we're in the kernel)
+- CAN speed is the same as normal TCU comms (500 bps)
+
+Command: 0x04 0x02 0x50 0x42 0x02
+Response: none?, code execution jumps to kernel in ROM
+
+[Kernel commands will added here later]
+
+Encryption Words: 
+F2CA, 2417, 21DE, 8475, 39AB, F767, 6204, 6BE0, BC63, 5988, 2845, 9846, EB97, 99DE, C7DB, EFAE
+
+Encryption Nybbles:
+05, 06, 07, 01, 09, 0c, 0d, 08, 0a, 0d, 02, 0b, 0f, 04, 00, 03, 0b, 04, 06, 00, 0f, 02, 0d, 09, 05, 0c, 01, 0a, 03, 0d, 0e, 08
+
+A few other points of interest:
+- It looks like the TCU has the so-called mode 0x22 for fast logging of multiple parameters. Which raises the question - how does RR do TCU logging (serial comms or CAN) and does it already use 'mode 0x22'? I had a quick look in the source code but couldn't figure it out. I couldn't find any hits for CAN ID "1f21" so I'm guessing RR does TCU logging via serial comms?
+- There are various ROM integrity checks on start-up so that will need to be satisfied by any modified ROM
+
+RR TCU logging is slow so I have to believe it's on serial comms.
 
 === post 63 | kiki86 | Wed Jun 07, 2023 6:57 pm | #p169664 ===
 To follow
@@ -440,6 +600,11 @@ Thanks for your afford, you all my hero
 
 === post 68 | rimwall | Tue Jun 13, 2023 4:56 am | #p169743 ===
 Quote:
+I'm using vag-com cable and it works well for flashing.
+
+Hi, based on what I have seen so far, the 5EAT TCU uses CAN comms for flashing. A VAG-COM cable can't do CAN comms. FastECU currently does CAN comms with a Tactrix - do you have access to one of those?
+
+First pass of software to access the on board kernel almost ready for testing... who is ready to help? Will need access to a Tactrix cable, or equivalent. I'll post a link to an updated FastECU when it's ready.
 
 === post 69 | Tugsay | Tue Jun 13, 2023 8:54 am | #p169744 ===
 My cable have FTDI232RL chipset and it says vag kkl. 
@@ -449,6 +614,12 @@ I can read and wrtite ecu but I don't know anything about tcu.
 
 === post 70 | uprev | Tue Jun 13, 2023 1:14 pm | #p169750 ===
 rimwall wrote:
+Getting closer. I will start writing the code soon.
+
+To get ready for testing TCU comms, logging & ROM dumps - @uprev and @kiki86 - do you have a Tactrix cable? Or other cable for CAN comms?
+I have a Tactrix ready to use
+
+Sent from my iPhone using Tapatalk
 
 === post 71 | kiki86 | Tue Jun 13, 2023 5:06 pm | #p169751 ===
 I also have Tactrix cable
@@ -517,12 +688,36 @@ Thanks, AJ
 
 === post 79 | MiikaS | Wed Jun 21, 2023 12:27 pm | #p169795 ===
 rimwall wrote:
+Hi again, a couple of things to try. These use iso15765 instead of CAN protocol. One of them uses a different CAN ID. The commands are also simpler - typical OBD commands. No wait time for a response too. If you could please try these and post up or PM the results.
+
+Updated files are all located here 
+- different protocols.cfg to go into ./config folder
+- FastECU_1f21.exe to go into same folder as FastECU.exe. Can run it without changing the filename.
+- FastECU_1f1f.exe to go into same folder as FastECU.exe. Can run it without changing the filename.
+
+Thanks again.
+
+Just for check, did you use 11-bit identifier with iso15765? CAN (extended) uses 29-bit, iso15765 uses 11-bit.
 
 === post 80 | rimwall | Wed Jun 21, 2023 10:02 pm | #p169797 ===
 Thanks for giving it a go. Hmmm, still no response from the TCU. 
 
 Hi MiikaS, I copied it from the *denso_sh7058_can* modules. Which uses this:
 Code:
+    // Set serial port
+    serial->is_iso14230_connection = false;
+    serial->is_can_connection = false;
+    serial->is_iso15765_connection = true;
+    serial->is_29_bit_id = false;
+    serial->can_speed = "500000";
+    serial->can_source_address = 0x1f1f;
+    serial->can_destination_address = 0x1f29;
+    // Open serial port
+    serial->open_serial_port();
+
+It would be great if you could have a quick look at the code in the repo - perhaps there is something I am doing incorrectly? See the extra class / module called tcu_subaru_hitachi* This is the 0x1f1f version.
+
+In the meantime, I will think about some other things to try...
 
 === post 81 | rimwall | Thu Jun 22, 2023 5:13 am | #p169798 ===
 Ok, two steps back to hopefully go one step forward. It is possible that your TCU doesn't have CAN or iso15765 comms implemented, but it should definitely have basic iso14230 comms implemented. So, next step is to try a simple iso14230 init command to the TCU. If this doesn't work, then I must be doing something wrong in the code.
@@ -545,6 +740,21 @@ I’m not sure why the log screen text can’t be copied, but this should be an 
 
 === post 84 | MiikaS | Thu Jun 22, 2023 10:53 am | #p169803 ===
 rimwall wrote:
+The TCU uses iso15765 protocol, so the first byte is the message length. When I was using FastECU’s CAN protocol I have to put this byte in manually. I wasn’t doing it manually when using iso15765 protocol because I’m assuming the message length byte is constructed automatically when using iso15765 (because FastECU, when in iso15765 protocol, appears to work with ECUs).
+
+0xAA is the iso15765 equivalent of 0xBF. It should report the capability bits.
+
+When iso15765 mode is used with tactrix (or any other mode), all necessary steps is done without any additional input from user, only ID and message needs to be sent to adapter.
+
+rimwall wrote:
+In iso15765, are the trailing zeros sent? The echo to the log screen doesn’t show them being sent. But if they *are* being sent in the background it would cause problems. Although the TCU should still reply with ‘bad message’
+
+No trailing zeroes, message length is exactly what is added to it.
+
+rimwall wrote:
+I’m not sure why the log screen text can’t be copied, but this should be an easy fix once we get a reply from our shy TCU 
+
+If operation is succesful, log window is automatically closed so it could not be copied, but in failure, it will remain open to manually close so text could be copied from it.
 
 === post 85 | rimwall | Sat Jun 24, 2023 8:37 am | #p169814 ===
 Hi, has anyone tried FastECU_bf.exe from a few posts earlier? It will help to know if it worked. Thanks.
@@ -645,6 +855,7 @@ Hi guys,
 === post 103 | ajayel | Sat Jul 01, 2023 3:05 am | #p169863 ===
 hi @rimwall. I was using the new protocol to connect to the TCU which picks up the TCU ID, I tried over again just now and was able to get a screenshot of the initial conversation;
 Attachment:
+tcu-comms0.png
 
 === post 104 | MiikaS | Sun Jul 02, 2023 9:13 pm | #p169870 ===
 Found some bugs that are causing crashing at different states of software, but not on every machine/compile versions. I will fix them and check and fix few other things also asap, but it may take some days to get them done as I have very limited time now.
@@ -707,12 +918,16 @@ Looks like you entered the TCU ROM successfully, but the dump command didn't wor
 
 === post 113 | ajayel | Fri Jul 07, 2023 8:58 pm | #p169925 ===
 Attachment:
+20230708-1.png
 
 === post 114 | rimwall | Sat Jul 08, 2023 7:15 am | #p169930 ===
 @ajayel - looks like it’s not passing the security key stage. Your ROM could have different encryption words. What is your TCU ID? RR will report this, or higher up in the log window it will be reported. Based on what happened with ECUs, different chips (Hitachi vs Denso) had different encryption words.
 
 === post 115 | ajayel | Sat Jul 08, 2023 8:40 am | #p169931 ===
 rimwall wrote:
+@ajayel - looks like it’s not passing the security key stage. Your ROM could have different encryption words. What is your TCU ID? RR will report this, or higher up in the log window it will be reported. Based on what happened with ECUs, different chips (Hitachi vs Denso) had different encryption words.
+
+Hi, Romraider logger, and FastECU shows my TCU with ID TCU 0217500 with the transmission physically labeled TG5D7CVDBA.
 
 === post 116 | rimwall | Sat Jul 08, 2023 10:40 am | #p169932 ===
 Ok, another version to try.
@@ -749,6 +964,10 @@ TCU ID - 99AE203000
 Used FastECU_34_short
 
 Attachment:
+attempt1.png
+
+Attachment:
+attempt1-1.png
 
 === post 122 | rimwall | Mon Jul 10, 2023 8:36 am | #p169958 ===
 Thanks. Looks like it is talking CAN ok, but the responses got out of sync with the commands. I'll post up another version with different delay timing.
@@ -784,12 +1003,23 @@ No worries. There's a new version in the repo to try.
 The other fun aspect to this is manipulating the tables. The TCU uses a different table format, so it doesn't automatically work with RR editor. So, instead the TCU tables need to be reconstructed in ECU format in a temporary bin file, which can then be manipulated in RR. Here's my first attempt at that as a preview. Plenty of headaches getting this to work, but finally got something workable...
 
 Attachment:
+RR snip.PNG
 
 === post 129 | MiikaS | Wed Jul 12, 2023 10:08 pm | #p170027 ===
 What's the differences in table format? Should be easy to fix to work straight in FastECU and why not in RomRaider too.
 
 === post 130 | riksk | Wed Jul 12, 2023 10:30 pm | #p170028 ===
 rimwall wrote:
+No worries. There's a new version in the repo to try.
+
+The other fun aspect to this is manipulating the tables. The TCU uses a different table format, so it doesn't automatically work with RR editor. So, instead the TCU tables need to be reconstructed in ECU format in a temporary bin file, which can then be manipulated in RR. Here's my first attempt at that as a preview. Plenty of headaches getting this to work, but finally got something workable...
+
+Attachment:
+RR snip.PNG
+
+If the tables are so different I guess changes would be necessary software-side
+
+Thanks to RR Open Source, it's do-able.
 
 === post 131 | rimwall | Wed Jul 12, 2023 10:52 pm | #p170029 ===
 I don't think my coding skills are up to editing RR. And I figured if I got it working in an unedited RR it would then also work in FastECU.
@@ -810,9 +1040,45 @@ TCU
 
 === post 132 | riksk | Thu Jul 13, 2023 1:38 am | #p170030 ===
 rimwall wrote:
+I don't think my coding skills are up to editing RR. And I figured if I got it working in an unedited RR it would then also work in FastECU.
+
+But I'd be more than happy for someone to do the required coding! Although it would be good to fix the FastECU crashes first.
+
+Summary of Table differences...
+
+ECU
+- tables have a table header with number of items, data type, pointers to table data. This makes the table data 'clean' (not mixed with other data)
+
+TCU
+- no table header, only a pointer to the start of the data
+- some tables have the number of elements at the start of the data. Other tables are terminated with 0xffff to signify end of data
+- arrangement of data varies. 2D table data is generally intermixed (ie) x1, y1, x2, y2 and so on. 3D table data is generally split into the columns (ie) d11, d12, d13, d21, d22, d23, d31, d32, d33 where dxy means data item y in column x.
+
+@riksk - did you have a go with the KLine version? I'm trying to see if we can access a broader range of TCUs, which will hopefully make all this effort applicable to more folks.
+
+If you managed to edit the bin file to work with RR, that's one hard approach. Editing the software would be easier imo, haha.
+
+Here's the log file from using Kline. It dumps just ffff's.
 
 === post 133 | MiikaS | Thu Jul 13, 2023 5:18 am | #p170031 ===
 rimwall wrote:
+I don't think my coding skills are up to editing RR. And I figured if I got it working in an unedited RR it would then also work in FastECU.
+
+But I'd be more than happy for someone to do the required coding! Although it would be good to fix the FastECU crashes first.
+
+Summary of Table differences...
+
+ECU
+- tables have a table header with number of items, data type, pointers to table data. This makes the table data 'clean' (not mixed with other data)
+
+TCU
+- no table header, only a pointer to the start of the data
+- some tables have the number of elements at the start of the data. Other tables are terminated with 0xffff to signify end of data
+- arrangement of data varies. 2D table data is generally intermixed (ie) x1, y1, x2, y2 and so on. 3D table data is generally split into the columns (ie) d11, d12, d13, d21, d22, d23, d31, d32, d33 where dxy means data item y in column x.
+
+@riksk - did you have a go with the KLine version? I'm trying to see if we can access a broader range of TCUs, which will hopefully make all this effort applicable to more folks.
+
+I will try to get few crashpoint fixed tonight so you can add them to test codes. Also need to check few other things after that with ECU on bench. Can you send me TCU ROM you are using and point few table locations/format so I can test some table parsing code after that?
 
 === post 134 | rimwall | Thu Jul 13, 2023 6:39 am | #p170032 ===
 Hi @MiikaS, sounds great. 
@@ -824,6 +1090,9 @@ The shift table pointers start at 0x180e8. The first lot of data is at 0x0001683
 Doing each table as a 2D table is a start. Ideally the software would construct a chart like this...
 
 Attachment:
+ShiftCurves.PNG
+
+Thanks @riksk - looks like your ROM won't expose your encryption words, maybe like @ajayel. @ajayel is trying one possible alternative approach. Let me think about other techniques...
 
 === post 135 | Tugsay | Thu Jul 13, 2023 5:59 pm | #p170036 ===
 I want to change 5h gear to 3rd gear downshift and lockup durations.
@@ -922,6 +1191,9 @@ Thanks @ajayel, not much joy with those CAN commands. A few more to try - please
 
 === post 154 | ajayel | Thu Jul 20, 2023 3:15 am | #p170126 ===
 rimwall wrote:
+Thanks @ajayel, not much joy with those CAN commands. A few more to try - please try FastECU_b0_a8_b8.exe in the repo. Just CAN, no need to do KLine with these ones. If this fails we will try security access on KLine and see if that releases some constraints.
+
+Hi, here's the log from FastECU_b0_a8_b8, seems the received bytes varied a little, maybe?
 
 === post 155 | rimwall | Fri Jul 21, 2023 6:13 am | #p170132 ===
 @Blake_Volpex - good news is that your TCU uses the currently known encryption words and dumping works. The bad news is that your connection seems to be inconsistent. It dropped out halfway through the dump. If you can get a reliable connection then flashing will be possible.
@@ -938,6 +1210,9 @@ How would you suggest I begin troubleshooting this?
 
 === post 157 | ajayel | Sat Jul 22, 2023 3:29 am | #p170135 ===
 rimwall wrote:
+@ajayel - still no chink in the armour. Next thing to try is security access via KLine, let's see if that provides anything useful. Please try FastECU_Kline_27 in the repo.
+
+Hi, please find log.txt attached thanks
 
 === post 158 | rimwall | Sun Jul 23, 2023 9:55 pm | #p170143 ===
 @Blake_Volpex - you could try turning off background processes one at a time, or try running it from safe-mode, or try using a different laptop. Beyond that we would need help from MiikaS.
@@ -948,6 +1223,15 @@ Does anyone on the forums know the access method and comms protocol for boot mod
 
 === post 159 | MiikaS | Mon Jul 24, 2023 10:57 am | #p170148 ===
 rimwall wrote:
+@Blake_Volpex - you could try turning off background processes one at a time, or try running it from safe-mode, or try using a different laptop. Beyond that we would need help from MiikaS.
+
+@ajayel - looks like K-Line access is pretty much deleted in your ROM. No response to anything except a couple of basic commands. Pretty much tried everything for access via normal comms. Trying boot mode might be the next option, however, that does require opening up the TCU box and accessing the PCB directly, so it typically means trying it on a spare TCU.
+
+Does anyone on the forums know the access method and comms protocol for boot mode on these M32R processors?
+
+@rimwall - looking at Blake_Volpex logs, it looks there is no visible response for request 27 01 nor TCU ID request, does it actually receive response for those? Or am I missing some logs or something?
+
+@ajayel - answered to you on my forum, did you see it?
 
 === post 160 | rimwall | Mon Jul 24, 2023 9:48 pm | #p170150 ===
 @MiikaS - the start of the log file is a CAN attempt. That doesn't work (as expected). On line 541 there is a KLine attempt. That works. The dump then works from line 550 to line 1047 after which nothing is received. It gets a bit jumbled after that, almost as if two KLine attempts are going at the same time. The second KLine attempt works for a while, then that also fails.
@@ -1008,9 +1292,28 @@ However, I'm pretty sure I have found the shifting tables. See pics.
 Next I will look at what ROM integrity checks there are, because these will need to be understood before flashing will be effective.
 
 Attachment:
+Excel View of Shift Curves.JPG
+
+Attachment:
+RR Shift Tables.JPG
 
 === post 167 | riksk | Tue Aug 15, 2023 11:57 am | #p170318 ===
 rimwall wrote:
+Ayayayay... the Denso TCU ROM is tough going... I've been chipping away at @ajayel's Outback TCU ROM.
+
+Some tables have the same format as ECU tables, and there are extra table formats. All up some ~1500 tables along with ~3800 functions. Lots of gbr addressing too which makes referencing messy.
+
+However, I'm pretty sure I have found the shifting tables. See pics.
+
+Next I will look at what ROM integrity checks there are, because these will need to be understood before flashing will be effective.
+
+Attachment:
+Excel View of Shift Curves.JPG
+
+Attachment:
+RR Shift Tables.JPG
+
+Is that rom similar to my SH7058 TCU or is it completely different ? Did you compare them ?
 
 === post 168 | kiki86 | Wed Aug 16, 2023 8:52 pm | #p170335 ===
 Hi guy's,
@@ -1041,12 +1344,44 @@ Who is ready to try a flash?
 
 === post 171 | riksk | Thu Aug 17, 2023 5:58 pm | #p170354 ===
 rimwall wrote:
+So, it looks like Denso ROM integrity checks are the same for TCUs as they are for ECUs. There is a table at the end of the ROM structured like this:
+0xffb80 [start address] 4 bytes
+0xffb84 [end address] 4 bytes
+0xffb88 [chksum balance] 4 bytes
+
+The above 12 bytes repeat if there are multiple ROM blocks checked.
+
+The simple 32 bit sum across [start address] to [end address] (inclusive) plus [chksum balance] needs to equal 0x5aa5a55a.
+
+The FastECU Denso TCU module needs to be expanded to allow flashing, but that should essentially be a copy of the existing ECU flashing module. So, the pieces are now in place to try a TCU ROM edit and flash. The usual risks apply regarding flashing, although options to recover from a bricking will include the Denso recovery method and SH boot mode (already done by @riksk).
+
+Who is ready to try a flash?
+
+Using Denso recovery over CAN, it may access the TCU, or the ECU, whatever controller responds first, since the access method is pretty much the same. So then flashing a TCU over CAN using the recovery method, you either have to pull the ECU fuse or disconnect it completely to prevent access to the ECU instead.
+
+Same for the ECU on CAN cars, to use Denso Recovery method over CAN on the ECU, if the TCU is SH7058, you have to disconnect the TCU, otherwise it might happen exactly what happened to me; Trying to write over an ECU lead to a TCU write. 
+
+Also, just to clarify, I have sucessfully recovered my TCU using the Denso recovery method over CAN, I haven't tried the SH boot mode yet on the TCU, I believe it will work just fine as the controller is also SH7058. However I'm not sure about the test pads on that board yet, I forgot to take pictures of the other side of the board to check if any test pads exists there.
 
 === post 172 | curt4576 | Fri Aug 18, 2023 9:23 pm | #p170370 ===
 I just pulled. The ROM off my 09 FXT TCU.
 
 === post 173 | ajayel | Sun Aug 20, 2023 4:11 am | #p170383 ===
 rimwall wrote:
+So, it looks like Denso ROM integrity checks are the same for TCUs as they are for ECUs. There is a table at the end of the ROM structured like this:
+0xffb80 [start address] 4 bytes
+0xffb84 [end address] 4 bytes
+0xffb88 [chksum balance] 4 bytes
+
+The above 12 bytes repeat if there are multiple ROM blocks checked.
+
+The simple 32 bit sum across [start address] to [end address] (inclusive) plus [chksum balance] needs to equal 0x5aa5a55a.
+
+The FastECU Denso TCU module needs to be expanded to allow flashing, but that should essentially be a copy of the existing ECU flashing module. So, the pieces are now in place to try a TCU ROM edit and flash. The usual risks apply regarding flashing, although options to recover from a bricking will include the Denso recovery method and SH boot mode (already done by @riksk).
+
+Who is ready to try a flash?
+
+I'm keen and almost ready - I'm currently tracking down a backup 3.0 TCU locally as I bricked my ECU a few years back and need a plug and play backup for the daily driver. Appreciate that there are a huge number of tables and functions in the Denso TCU ROM I am interested in how calculated torque, requested torque, other ECU or CAN params play into the shift equation and wish I could help more but don't have the skills. Thanks again for sharing your incredible work!
 
 === post 174 | rimwall | Mon Aug 21, 2023 6:32 am | #p170390 ===
 @curt4576 - thanks for having a go, however, that ROM file looks like it didn't work. Can you post up the log.txt file?
@@ -1055,30 +1390,114 @@ rimwall wrote:
 
 === post 175 | MiikaS | Mon Aug 21, 2023 7:03 am | #p170391 ===
 rimwall wrote:
+@curt4576 - thanks for having a go, however, that ROM file looks like it didn't work. Can you post up the log.txt file?
+
+@ajayel - sounds good, let me know when you're good to go. Is there a particular table you're interested in? Is there any more detail on how it works (eg) the ECU sends a request via byte [x] of a CAN ID [yyy] message. The TCU then targets this torque by changing [???] which then changes [???]. The TCU then replies with CAN ID [zzz]. Any tiny little bits of info can hugely help tracking down the particular table.
+I think it goes just like ECU sends continuously data over CAN and different controllers use that data for their needs. There is some info on internet for data and values that ECU sends and what I have logged from 2003-2007 Legacy ECUs, there is CAN ID 0x4?? and 0x6?? data sent over CAN with some 0.1s (or 0.01s) interval. Unfortunately I didn't save those data values anywhere...
+
+TCU might then send some data back to ECU when it needs to manipulate ECU behavior when shifting normally/wot (ign retard/fuel cut).
 
 === post 176 | Sasha_A80 | Mon Aug 21, 2023 7:08 am | #p170392 ===
 rimwall wrote:
+So, it looks like Denso ROM integrity checks are the same for TCUs as they are for ECUs. There is a table at the end of the ROM structured like this:
+0xffb80 [start address] 4 bytes
+0xffb84 [end address] 4 bytes
+0xffb88 [chksum balance] 4 bytes
+
+The above 12 bytes repeat if there are multiple ROM blocks checked.
+
+The simple 32 bit sum across [start address] to [end address] (inclusive) plus [chksum balance] needs to equal 0x5aa5a55a.
+
+Obsolete Denso 4AT TCM use completely another approach.
 
 === post 177 | ajayel | Mon Aug 21, 2023 7:47 am | #p170393 ===
 rimwall wrote:
+@curt4576 - thanks for having a go, however, that ROM file looks like it didn't work. Can you post up the log.txt file?
+
+@ajayel - sounds good, let me know when you're good to go. Is there a particular table you're interested in? Is there any more detail on how it works (eg) the ECU sends a request via byte [x] of a CAN ID [yyy] message. The TCU then targets this torque by changing [???] which then changes [???]. The TCU then replies with CAN ID [zzz]. Any tiny little bits of info can hugely help tracking down the particular table.
+
+I was just thinking about my ECU's Requested (0xff8264) and Calculated Torque (0xff65cc) params as there's discussions if the transmission uses them or if they are just for ECU throttle control. It's more out of curiosity but thought it could be interesting to finally see things from the TCU's perspective!
 
 === post 178 | riksk | Mon Aug 21, 2023 7:33 pm | #p170395 ===
 Sasha_A80 wrote:
+rimwall wrote:
+So, it looks like Denso ROM integrity checks are the same for TCUs as they are for ECUs. There is a table at the end of the ROM structured like this:
+0xffb80 [start address] 4 bytes
+0xffb84 [end address] 4 bytes
+0xffb88 [chksum balance] 4 bytes
+
+The above 12 bytes repeat if there are multiple ROM blocks checked.
+
+The simple 32 bit sum across [start address] to [end address] (inclusive) plus [chksum balance] needs to equal 0x5aa5a55a.
+
+Obsolete Denso 4AT TCM use completely another approach.
+
+2011 Forester 4EAT and 2011 Forester 5EAT seems to use the same TCU (same Part number).
+
+I have yet to pull the ROM from the 4EAT TCU (don't have access to one right now), but pretty confident it will use a similar ROM.
 
 === post 179 | V6er | Tue Aug 22, 2023 11:38 pm | #p170402 ===
 riksk wrote:
+2011 Forester 4EAT and 2011 Forester 5EAT seems to use the same TCU (same Part number).
+
+I have yet to pull the ROM from the 4EAT TCU (don't have access to one right now), but pretty confident it will use a similar ROM.
+
+are you sure that Forester had BOTH transmissions in the same year?
+https://parts.subaru.com/ - this doesn't even offer 5eat...
 
 === post 180 | riksk | Wed Aug 23, 2023 1:12 am | #p170403 ===
 V6er wrote:
+riksk wrote:
+2011 Forester 4EAT and 2011 Forester 5EAT seems to use the same TCU (same Part number).
+
+I have yet to pull the ROM from the 4EAT TCU (don't have access to one right now), but pretty confident it will use a similar ROM.
+
+are you sure that Forester had BOTH transmissions in the same year?
+https://parts.subaru.com/ - this doesn't even offer 5eat...
+
+Yeah I personally own an 5EAT version.
+
+Forester S Edition 5EAT.
+
+It's an EJ255 Forester with a VF52 turbo from the factory, same as the GR WRX.
+
+Stock 17 inch STI wheels (same model from the 18 inch wheels, but it's 5x100 and 17 inch), blue alcantara interior, 5EAT transmission, etc...
+
+The Forester XT and LX variant (2.0 n/a) has the 4EAT.
 
 === post 181 | V6er | Wed Aug 23, 2023 10:30 am | #p170405 ===
 riksk wrote:
+Yeah I personally own an 5EAT version.
+
+Forester S Edition 5EAT.
+
+is it ADM?
 
 === post 182 | cortin | Wed Aug 23, 2023 10:37 am | #p170406 ===
 V6er wrote:
+riksk wrote:
+Yeah I personally own an 5EAT version.
+
+Forester S Edition 5EAT.
+
+is it ADM?
+
+JDM
 
 === post 183 | riksk | Wed Aug 23, 2023 6:07 pm | #p170421 ===
 V6er wrote:
+riksk wrote:
+Yeah I personally own an 5EAT version.
+
+Forester S Edition 5EAT.
+
+is it ADM?
+
+it’s SADM. 
+
+AZ1J500T 
+
+There was ADM and SADM versions, not sure about JDM, JDM had the tS version.
 
 === post 184 | rimwall | Fri Aug 25, 2023 4:59 am | #p170440 ===
 Been doing some digging in the Hitachi M32R 5EAT TCU to figure out how the TCU uses Calculated Engine Torque (CET). The following should also apply to Denso SH705x ROMs. 
@@ -1088,12 +1507,20 @@ CET is sent from the ECU via bytes 3 & 4 of CAN ID 0x412. The TCU calculates sli
 So, it seems that artificially increasing CET will increase the line pressure target and cause faster movement of the various clutches. Is that consistent with what is observed?
 
 Attachment:
+LinePressure.JPG
 
 === post 185 | MiikaS | Fri Aug 25, 2023 5:02 am | #p170441 ===
 CAN ID 0x412 also matches to what I have logged from ECUs.
 
 === post 186 | alesv | Fri Aug 25, 2023 3:23 pm | #p170443 ===
 rimwall wrote:
+So, it seems that artificially increasing CET will increase the line pressure target and cause faster movement of the various clutches. Is that consistent with what is observed?
+
+I confirm that increasing CET affects gear upshifts on 4AT/5AT. As for me, they become a little bit faster and smoother.
+
+On CVT TR690 inreasing CET reduces bump during lockup switch-off but also increases engine revs in the certain conditions. I think that increasing CET on CVT also affects gear ratio, that's why revs are slightly higher. I did not log, just guessing.
+
+By the way, TCU ROM should include a multiplier that corresponds transmission's gear ratio to calculate vehicle speed correctly.
 
 === post 187 | curt4576 | Fri Aug 25, 2023 9:08 pm | #p170444 ===
 Here is the error I get when I try to read my 2009 Forester XT 4AT
@@ -1103,6 +1530,10 @@ Here is the error I get when I try to read my 2009 Forester XT 4AT
 
 === post 189 | curt4576 | Sat Aug 26, 2023 3:24 am | #p170447 ===
 rimwall wrote:
+@curt4576 - it is failing at the seed / key step. You are using the Hitachi method. Do you know whether your TCU is Hitachi or Denso? You could try using the Denso method (the third of the TCU read options)
+
+I think it's a Denso TCU. It is a cobb tuned ECU as well.
+What settings should I use to attempt to pull the TCU ROM?
 
 === post 190 | rimwall | Sat Aug 26, 2023 3:54 am | #p170448 ===
 The ECU type shouldn’t matter.
@@ -1117,6 +1548,12 @@ V0.18 of the kernel
 
 === post 192 | curt4576 | Sat Aug 26, 2023 4:27 am | #p170451 ===
 rimwall wrote:
+Yes, use the latest files from the repo. Off memory this is:
+V0.19 of FastECU
+V0.16 of protocols.cfg
+V0.18 of the kernel
+
+Using your latest files now. Here is the error I get now.
 
 === post 193 | rimwall | Sat Aug 26, 2023 4:31 am | #p170452 ===
 It’s not recognising the ‘jump to kernel’ command.
@@ -1125,6 +1562,92 @@ What happens prior to this snip? There should be a log.txt file that includes al
 
 === post 194 | curt4576 | Sat Aug 26, 2023 4:35 am | #p170454 ===
 rimwall wrote:
+It’s not recognising the ‘jump to kernel’ command.
+
+What happens prior to this snip? There should be a log.txt file that includes all attempts.
+
+Here is log.
+
+[2023-08-25 21:29:27.927] Read memory with flashmethod 'sub_tcu_denso_can' and kernel 'kernels/ssmk_tcu_CAN_SH7058.bin'
+[2023-08-25 21:29:34.283] Connecting to Subaru Denso CAN bootloader, please wait...
+[2023-08-25 21:29:34.304] Checking if kernel is already running...
+[2023-08-25 21:29:34.539] Trying TCU Init...
+[2023-08-25 21:29:34.548] Sent: 00 00 07 e1 aa 
+[2023-08-25 21:29:34.567] 0: 0xAA response: 00 00 07 e9 ea a2 10 21 97 fe 60 60 00 01 00 80 04 00 00 00 00 bd c3 c0 00 00 00 00 00 00 00 00 00 fd 06 00 0a 21 c0 00 00 01 1f 00 80 00 00 00 00 00 00 00 06 e0 40 00 00 00 01 20 00 
+[2023-08-25 21:29:34.576] Init Success: CAL ID = 97FE606000
+[2023-08-25 21:29:34.580] Trying 0x09 0x04...
+[2023-08-25 21:29:34.584] Sent: 00 00 07 e1 09 04 
+[2023-08-25 21:29:34.590] 0: 0x09 0x04 response: 00 00 07 e9 49 04 01 50 46 46 45 36 57 41 30 00 00 00 00 00 00 00 00 
+[2023-08-25 21:29:34.594] Init Success: TCU ID = PFFE6WA0
+[2023-08-25 21:29:34.600] Initializing bootloader...
+[2023-08-25 21:29:34.605] Sent: 00 00 07 e1 10 03 
+[2023-08-25 21:29:34.608] 0: 0x10 0x03 response: 00 00 07 e9 50 03 
+[2023-08-25 21:29:34.611] Sent: 00 00 07 e1 27 01 
+[2023-08-25 21:29:34.613] 0: 0x27 0x01 response: 00 00 07 e9 67 01 91 22 5b 5b 
+[2023-08-25 21:29:34.617] Seed request ok
+[2023-08-25 21:29:34.620] Calculated seed key: b6 32 52 a6 
+[2023-08-25 21:29:34.623] Sending seed key
+[2023-08-25 21:29:34.627] Sent: 00 00 07 e1 27 02 b6 32 52 a6 
+[2023-08-25 21:29:34.630] 0: 0x27 0x02 response: 00 00 07 e9 67 02 
+[2023-08-25 21:29:34.633] Seed key ok
+[2023-08-25 21:29:34.636] Sent: 00 00 07 e1 10 02 
+[2023-08-25 21:29:34.667] Sent: 00 00 07 e1 10 02 
+[2023-08-25 21:29:34.670] 1: 0x10 0x02 response: 00 00 07 e9 50 02 
+[2023-08-25 21:29:34.672] Initializing Subaru Denso CAN kernel upload, please wait...
+[2023-08-25 21:29:34.677] Sent: 00 00 07 e1 34 04 33 ff 30 00 00 0b 80 
+[2023-08-25 21:29:34.678] 0: 0x34 0x04 response: 00 00 07 e9 7f 34 22 
+[2023-08-25 21:29:34.689] Sent: 00 00 07 e1 b6 ff 30 00 39 52 cc 9d 9c 03 0e 17 0e fb 16 00 6e d5 37 a4 e2 98 c7 99 5b 9b 71 24 fa d8 1f 99 81 9a 2f 2a 0c f9 7c ed 50 33 f0 ab 6c ec 6c a7 4e 7a fe e6 8f ed b1 37 4e a5 96 a4 f9 7c 8c 3a 42 1b 6f cd c0 50 50 78 cd 37 78 bd 18 f2 ce 9f db 14 eb aa b3 23 42 52 b5 c9 e4 2f 10 1f cf e4 01 06 a6 93 0a 23 c8 9f 48 2f 80 a4 ad aa 55 df 82 b6 35 60 31 2b 36 cb 4d 42 1a 74 23 b3 a2 fc ed a8 40 d4 
+[2023-08-25 21:29:34.701] Sent: 00 00 07 e1 b6 ff 30 80 96 57 b0 41 8b d8 fa 6c 70 4b 86 a1 b5 91 55 d3 0d 32 25 b6 0e 4b f5 df 70 34 2a 90 b2 9e 3d 71 03 02 c9 58 d5 5d 0f 54 a1 90 0d 99 4f b2 f4 d9 0e 09 3d f4 db 52 09 5e da f7 c1 cd 0a 71 6a 49 a0 43 3e bb 6c c5 49 7c 27 cb e3 dd f0 b7 8c be 88 15 83 91 d8 f5 e1 ab fa 8a 2c 81 dd 3e 3c 06 82 0e 74 18 f6 37 18 a0 c4 52 ab 7f c9 f3 b8 6d a5 af 25 29 06 31 29 25 b5 ec ff 65 3a 23 70 e6 
+[2023-08-25 21:29:34.712] Sent: 00 00 07 e1 b6 ff 31 00 24 22 9c fb a2 2c fb da 67 ea 1d c7 5c 7e fd 83 e3 4d fa 8f 2c 7d b9 68 27 76 63 01 dd 50 e4 1a f7 fd 1d 60 97 32 42 76 3f 90 3e f8 f1 d9 62 40 32 ed 58 5e 84 8e 01 90 5c 34 a1 93 71 59 20 71 61 54 1d 59 79 5d 1a 27 7c 15 41 0d f2 4b 8f cb 84 b3 8e e8 87 b3 22 8b b2 ef d3 00 13 30 14 f4 e2 ac b4 fe 92 4d 56 de df 46 aa 18 b7 fb 76 1f 34 c1 9a dd 10 ef a2 05 e6 a5 46 e2 b2 91 00 02 
+[2023-08-25 21:29:34.725] Sent: 00 00 07 e1 b6 ff 31 80 bf 83 04 43 35 df 3b 84 67 f5 7f e6 2b 15 53 de 22 fb ee 7e 4e f5 18 58 fc 5e 43 1d b4 22 6b 64 e7 df 6a 6f 58 4b 3d 3d c6 08 a4 31 ba 11 74 c2 b1 fa 41 3f db 89 e5 5a da 75 ca 18 c4 d5 32 6d d1 d5 17 85 83 47 8d 48 f4 72 ba 31 91 8a e5 54 fa a0 46 6f 46 a8 ed 2f 04 5e 15 26 cf 7b 1c dc 67 dd 33 bd 8f 6c ac 00 4f cc 3b 03 f3 64 c0 12 c3 c9 2a a3 af 27 7d 61 fb 4b 6d 76 93 c9 bb 39 
+[2023-08-25 21:29:34.740] Sent: 00 00 07 e1 b6 ff 32 00 2b 6c 6d 23 5a 7c 2e 29 d1 43 6b 8c 5f 6e 8f ad 29 35 74 5a e0 5c 6e 55 5c 79 bf dc 5b aa b0 ef 1b 09 15 af fe fa dc 5a 54 50 cd aa cf be 52 2f 14 4d fe ab d0 91 94 ca 8a 73 a5 0f 3f b6 16 e1 90 0a ab cb b9 ba c5 6e e9 4e cb 87 d0 d3 34 c1 df 55 98 4c 2d 6c 13 67 80 d5 66 d8 6c 9f 92 df 71 c4 f7 13 19 75 53 47 23 30 ec a1 5a 53 66 c7 10 13 d4 67 3c 21 8f 7b 6d 06 5e 8b 96 cf 80 49 
+[2023-08-25 21:29:34.750] Sent: 00 00 07 e1 b6 ff 32 80 f6 35 7e 23 f3 54 c7 c0 17 f6 59 f8 24 3b de 20 8f 7e 01 63 df 41 17 42 93 74 f0 c9 27 5d 3e 7e 1f bd 1a af 49 c9 6e 73 66 b2 23 7e 0a 8d 89 a1 d7 d9 a2 a1 55 0c cb c8 10 2d e7 31 c1 49 6a a7 4c 3e 52 58 39 e9 07 da 2a 0e c3 0a d6 af dc 0a dd 50 e4 1a cc 03 71 bc 3f d9 1e 1d 27 76 63 01 7f 81 c2 82 6e 42 27 15 d8 6c 83 ba 10 13 d4 67 1d fd 29 3a 1d 45 8b eb 2e cb 28 47 a4 40 d8 5d 
+[2023-08-25 21:29:34.789] Sent: 00 00 07 e1 b6 ff 33 00 25 94 d6 d1 a3 a4 99 ed a1 9b db 1a 25 94 d6 d1 68 ac 19 2a 2d 6c 13 67 5a 8f c3 df 86 76 89 af 6c 9f 92 df ad 32 5c 14 73 0b e0 ab 26 8e 52 55 1a 86 e7 c8 71 39 96 93 50 60 46 4d e4 fb fc 37 9f 77 9f 9d fd df 3a 08 78 9d 2a 0c 22 c9 08 ea cc 99 1f 9d 50 99 d4 60 a5 3e ec 55 b8 aa 32 8c c8 b0 4a 28 ea 98 e8 d3 79 a0 d5 c5 4b 64 37 9f 3e 3a 2b 88 fe cb 58 19 72 4e 0e b5 f4 a9 df 0b 
+[2023-08-25 21:29:34.801] Sent: 00 00 07 e1 b6 ff 33 80 5f 8c c4 3d f6 ac ad 80 1c c9 0e 2c 79 ab 9c ae 9e cb 01 b8 d1 d9 dd dc af 4d 0b 50 66 08 a5 53 94 ca af 2f 87 f0 16 74 c9 21 3f 3d ee a3 56 5c 1d ec 9f d2 da 9e 74 8a b5 30 6e 45 ea 50 85 3a 43 40 ae fc 94 ca af 2f 87 f0 16 74 c9 21 3f 3d 37 5c 52 4b 76 14 be 31 ad 61 de 15 58 d1 00 0c d7 e9 66 7c e1 5e c6 ba eb 66 f5 65 91 e8 9e bf 68 e3 f1 ab 0d e5 ff be fc c9 5a aa f8 16 28 41 
+[2023-08-25 21:29:34.813] Sent: 00 00 07 e1 b6 ff 34 00 9e 4e df a8 e4 cd 81 b7 15 46 92 29 10 3a 2c ca aa 8e 51 15 4e ea 60 f3 11 08 98 15 8b 2e 8d e5 d4 0b 0b 2e 55 9a a4 e5 85 69 67 98 3b d5 7b f8 f8 10 99 d4 0f 51 20 c7 65 a3 8e 01 0d d6 50 c0 d0 70 93 c6 83 36 d5 8c 78 d7 9e 68 71 77 5a 74 2f 22 30 03 a0 54 62 d4 ec f0 6f e4 38 02 1a cb c8 25 7f db c8 21 ff 1b 7d 03 e8 88 b0 b8 7f 6f e8 1e f9 84 42 d2 00 11 ec 5d b4 7b e6 d3 4c 87 
+[2023-08-25 21:29:34.827] Sent: 00 00 07 e1 b6 ff 34 80 8f b4 ea 96 a8 71 b3 c6 28 70 f3 c4 9a 6d d8 17 d7 cd c6 a1 88 9f 68 8b 30 a6 1a b4 16 c5 2e 13 2f 2b bc a2 73 47 a9 e8 8b 2e 8d e5 87 f0 16 74 c9 21 3f 3d ee a3 56 5c a8 c7 dc f4 c3 b2 d3 60 2e 31 4f 4c e9 2d 40 6a 12 f9 04 ef 27 76 63 01 dd 50 e4 1a fb 0f 14 45 de 5b 8f ae 7f 81 c2 82 3a 37 90 d2 89 a7 e6 66 2e cd b5 18 aa b1 8a 94 cc 03 71 bc d9 e9 86 14 d8 6c 83 ba 8b 2e 8d e5 
+[2023-08-25 21:29:34.841] Sent: 00 00 07 e1 b6 ff 35 00 16 22 2e 4f 7e ba 32 a2 19 e1 4f a3 53 03 54 1c ff 5a 7e 33 17 0a 6f 82 09 98 da d6 a4 66 3f 39 aa 47 b4 2d ee 7a 77 d2 c0 70 cf ec ff e2 62 37 d9 7a 08 5f a7 e9 8b 42 54 78 d0 8b 7d dd 7d 08 1a e7 30 74 41 a7 f5 c1 b0 ed 9a 23 4f 71 a0 2c d3 b6 2a 86 76 d8 ee 66 f4 84 0a bc 27 67 95 de d3 d1 81 a7 a8 fb 35 3b da 75 ca 18 b9 57 44 84 ad 4a ab 52 04 bd b5 47 d2 d3 25 f1 e7 a0 8b 18 
+[2023-08-25 21:29:34.857] Sent: 00 00 07 e1 b6 ff 35 80 a2 c9 3a be 38 6c 22 39 3c 9f dc 4a 89 60 c9 a4 45 1d b6 31 1c 73 f6 1c fe 79 05 ca c5 fb d2 31 62 a4 b3 11 36 31 18 7d e9 1a eb a1 f6 49 f5 22 8b 53 4d 9e 40 77 0e 04 27 36 13 16 68 4c 1f e9 c0 4d 83 d5 47 2b c1 8d 64 4b a7 b4 da 75 ca 18 e4 49 ac d0 1c d8 77 63 9d dc 15 4e 66 80 b9 f5 36 25 27 d4 58 c2 0e fe c9 6d ec 23 ea 6a 3b 5f b1 5f f9 f0 eb 72 ec 82 4a 49 50 13 2a a9 28 9b 
+[2023-08-25 21:29:34.869] Sent: 00 00 07 e1 b6 ff 36 00 91 70 ef 6d c8 c9 1a a4 3a c8 64 d7 b2 92 5d 23 51 8c 56 f7 d3 d1 81 a7 ce 58 1d 49 a6 46 11 4b 5d a1 20 aa 3c 58 30 90 ef a8 1e 3f da 9d 02 81 46 5d 11 cd 6f 2b 14 01 89 cd 05 69 0f 27 3f 90 f2 cb ee 67 6f a7 5f d1 da 9d 02 81 bd 35 b7 ae 06 1d 6e 25 6e 42 27 15 89 a7 e6 66 d2 f9 10 94 d8 6c 83 ba d9 e9 86 14 aa b1 8a 94 89 a7 e6 66 c2 4c 89 b4 27 76 63 01 dd 50 e4 1a 3a 37 90 d2 
+[2023-08-25 21:29:34.881] Sent: 00 00 07 e1 b6 ff 36 80 12 f9 04 ef a6 06 32 26 7f 81 c2 82 63 b2 c1 31 98 f1 b1 99 31 38 4a f4 d3 1d 95 b0 da 9d 02 81 b5 5f be 8d 5d 66 cd 85 98 f1 b1 99 31 38 4a f4 01 ff 7e 51 27 91 26 32 b4 bf bc 81 b8 22 ee c5 17 e9 ab 73 8b 1d ef 6f c1 aa 65 16 bf 9a a7 51 ab de a3 cb d4 a0 b7 3d a6 06 32 26 86 14 0d f9 b9 39 9b 85 0b b7 3d 35 e2 30 eb 12 18 f2 ce 9f e6 74 b1 1b e2 64 b1 bb 82 6e 20 22 14 7b 89 f2 
+[2023-08-25 21:29:34.897] Sent: 00 00 07 e1 b6 ff 37 00 b0 48 9a c2 f4 40 a4 68 45 34 5b f4 e6 74 b1 1b e2 64 b1 bb 42 66 f8 68 9a e5 b1 51 f9 85 17 1c bd 3e d7 94 77 d9 4c 34 1d 1f 57 0c c3 12 af 2f 41 7a af 42 a9 48 1b 65 65 5a 69 8e 89 aa 97 ac 74 8e 97 06 84 76 cc a6 41 7a af 42 8b a1 09 d7 e7 e0 d4 f0 33 b2 6d be 23 3e c3 98 bc b9 65 b4 03 b7 c7 ca 82 ac 98 b8 c1 ab 25 8e da 9d 02 81 ce fc 86 a8 65 03 48 48 3b b8 cd 00 17 ff 72 f3 
+[2023-08-25 21:29:34.912] Sent: 00 00 07 e1 b6 ff 37 80 31 e9 67 ab 05 55 cf b5 df bf de 6a 6b a8 7c 34 88 bb 7a 2e 9b a0 76 c5 4d a6 f9 af bf 9f 4d cf dd 1d 34 49 d0 fd 65 35 e6 00 b6 8b c5 a3 ef a8 09 5c 70 32 22 8d 63 3b 0a 3f 91 e7 d7 86 36 5a f2 54 4a 06 67 15 71 aa fb 1a 31 82 55 9d 76 1f 76 8f 08 14 67 15 71 aa 67 15 71 aa 67 15 71 aa 67 15 71 aa 67 15 71 aa 67 15 71 aa 67 15 71 aa 26 b6 94 42 db c3 3d 45 d1 12 13 c5 42 52 1e 42 
+[2023-08-25 21:29:34.927] Sent: 00 00 07 e1 b6 ff 38 00 e6 0d 54 52 0f c6 9e 63 69 17 e3 e5 79 b3 85 e6 d8 23 36 e1 35 6c b3 7b 28 12 af 17 dc c5 d4 55 28 cd 94 a0 28 cd 94 a0 55 93 50 8b b3 2c 16 0e e4 49 ac d0 bf 03 a3 aa 62 b5 e2 d0 b2 b9 28 ee 3e 36 71 10 2b ea e8 49 33 8c 81 36 00 5a 49 8b f7 24 c0 8f 00 5a 49 8b 94 16 7b 38 3a b3 26 48 38 62 e5 3e 99 28 ac 1f 5f cb 94 8e 08 01 cb 4f 3c 7d 52 c8 0e 56 6a 3b 3c d9 39 58 b2 36 ea bd 
+[2023-08-25 21:29:34.943] Sent: 00 00 07 e1 b6 ff 38 80 1b e7 57 e1 d6 31 d3 f0 20 a3 a5 79 18 f2 ce 9f f4 a2 53 dd de bf 79 20 d9 62 95 14 16 38 6f f9 3f 33 1f 3e 38 9a df b0 af 86 42 56 3d 89 61 55 40 c0 9f bb 76 c0 24 31 f6 81 14 3c 81 9a 2f 2a 0e 0d 36 27 50 cf e7 fe 96 63 de 54 0f 3a 1c d0 7c ce f2 74 8b a1 09 d7 0b 21 c2 c0 13 30 14 f4 8a 30 1e 9e 8c 1e 95 31 00 e1 a0 b5 87 28 b1 3f 39 41 20 f9 04 08 ef 0d 83 01 b6 a2 16 33 8a dd 
+[2023-08-25 21:29:34.961] Sent: 00 00 07 e1 b6 ff 39 00 e3 af 95 1c 1a d0 ab 51 3d 93 35 70 3c 6e ad 16 75 05 ad 48 1c 8a bc 32 59 49 25 3a 24 c5 cd 78 7a 50 1c 7b 5d a1 4f 72 17 6c 48 11 89 68 08 19 02 46 54 bf d7 96 71 d8 eb 6c 84 d0 32 75 92 40 1f d6 0a 3c 8f 71 b3 7c fa 6c 1d ef dc a3 ed 50 10 0a 4b ac 07 17 8d 08 10 8a 2f 5a ab 2f 63 b9 fe 4d 7b ea 39 52 cc 9d 39 52 cc 9d 39 52 cc 9d 80 56 8b 55 96 6a 35 06 a8 98 11 87 c1 a0 da 36 
+[2023-08-25 21:29:34.980] Sent: 00 00 07 e1 b6 ff 39 80 0a 6f 07 33 2e 91 6b 49 e2 84 bd 5a c2 ad ee 61 e9 2e e8 ee 63 f4 c9 e4 3b e6 29 ab fd bc 06 da f5 2f 76 76 58 cf 9c 88 39 52 cc 9d 39 52 cc 9d 39 52 cc 9d 39 52 cc 9d 7a fa 57 4e a8 98 11 87 c1 a0 da 36 0a 6f 07 33 9a 5f 65 43 c7 92 c9 fb c9 54 4f 55 d0 cf 80 8f a5 f8 87 29 e4 cd 6f 77 07 b1 9f 63 50 cf e7 fe 02 63 5e cb a2 f3 a6 a4 09 e0 5d f7 0a 14 83 ff b7 fa a8 32 bc e5 14 78 
+[2023-08-25 21:29:35.000] Sent: 00 00 07 e1 b6 ff 3a 00 f2 84 83 c3 16 68 88 31 52 2e f0 e2 76 df af 66 07 b1 9f 63 50 cf e7 fe 02 63 5e cb f1 2c c8 20 4d 8a b7 df e9 93 af e0 3e 2c 74 1d fb 66 f2 10 67 ea 1d c7 c8 41 37 15 37 11 7f a6 db 1f 12 b9 ec b3 ec 52 90 8f 6e 03 5e f2 92 1b 20 78 1a e5 b9 42 31 37 98 b9 e4 e5 c0 c3 0b 34 20 20 ca f5 ae 86 2c 23 5e f2 92 1b 6b 14 40 3d b0 1c 69 af 50 66 3f d7 00 09 f5 24 3c 4f ff 71 2b 54 6d 1b 
+[2023-08-25 21:29:35.022] Sent: 00 00 07 e1 b6 ff 3a 80 2d d5 5c 26 0a 14 83 ff 8d df 98 05 e9 fa 42 a9 57 a2 a2 bb 23 b3 88 91 f1 2c c8 20 4e 05 23 3a 67 ea 1d c7 c8 41 37 15 25 99 35 3e 5e f2 92 1b 6d 8a 12 d9 a3 a6 03 03 ab a2 3d c8 30 66 b2 4d f0 cb 9c 56 49 7c 2f 9d 64 49 33 78 3d 34 01 24 ac 5d ba 89 2b 2d 36 17 6b ac e2 f5 fc 9d c2 df 68 3e c4 82 b4 ed 21 14 aa 21 d7 b3 08 7e fb 43 d4 7d 02 5c f7 81 9b cd 0d 81 aa 55 e9 48 3b 19 
+[2023-08-25 21:29:35.058] Sent: 00 00 07 e1 b6 ff 3b 00 5d 06 3b a5 33 14 d4 2b 79 b2 a3 83 99 16 f2 c6 b9 8c 33 d1 58 8e 60 a4 f6 ce f0 b4 6b f3 b8 a4 74 6c 57 98 fd b3 41 1e b6 bd 3b ce 9f c3 c0 cb 6d 7c 90 db 86 1c 87 e4 15 6a 66 30 c8 5d ec 1e 44 8e 93 58 c9 94 4d 7d 81 d9 36 ce 3e 2c 74 1d fb 66 f2 10 67 ea 1d c7 c8 41 37 15 c3 e5 a5 71 7d 74 44 78 8e f6 ee 19 7e 4b 85 b0 42 13 22 f1 5e f2 92 1b a5 d3 e7 19 e7 e2 14 30 ac eb 69 30 
+[2023-08-25 21:29:35.070] Sent: 00 00 07 e1 b6 ff 3b 80 
+[2023-08-25 21:29:35.081] Sent: 00 00 07 e1 37 
+[2023-08-25 21:29:35.084] 0: 0x37 response: 00 00 07 e9 7f 37 22 
+[2023-08-25 21:29:35.094] Sent: 00 00 07 e1 31 01 02 02 02 
+[2023-08-25 21:29:35.104] 0: 0x31 response: 00 00 07 e9 7f 31 22 
+[2023-08-25 21:29:35.108] Kernel started, initializing...
+[2023-08-25 21:29:35.909] Requesting kernel ID
+[2023-08-25 21:29:35.912] Kernel ID request: 00 00 07 e1 7a a0 00 00 00 00 00 00 
+[2023-08-25 21:29:36.842] Kernel ID response: 
+[2023-08-25 21:29:36.849] Kernel ID request: 00 00 07 e1 7a a0 00 00 00 00 00 00 
+[2023-08-25 21:29:37.777] Kernel ID response: 
+[2023-08-25 21:29:37.784] Kernel ID request: 00 00 07 e1 7a a0 00 00 00 00 00 00 
+[2023-08-25 21:29:38.710] Kernel ID response: 
+[2023-08-25 21:29:38.718] Kernel ID request: 00 00 07 e1 7a a0 00 00 00 00 00 00 
+[2023-08-25 21:29:39.643] Kernel ID response: 
+[2023-08-25 21:29:39.650] Kernel ID request: 00 00 07 e1 7a a0 00 00 00 00 00 00 
+[2023-08-25 21:29:40.570] Kernel ID response: 
+[2023-08-25 21:29:40.570] Kernel ID: 
+[2023-08-25 21:29:40.583] Reading ROM from Subaru Denso using CAN
+[2023-08-25 21:29:40.607] Start reading ROM, please wait...
+[2023-08-25 21:29:40.648] Page data request failed!
+[2023-08-25 21:29:40.654] Received msg: 
+[2023-08-25 21:29:48.636] Kernel read addr: 0x00000000 length: 0x00000400, 1 B/s 8681 s remaining
+[2023-08-25 21:29:48.664] Page data request failed!
+[2023-08-25 21:29:48.669] Received msg: 
+[2023-08-25 21:29:56.577] Kernel read addr: 0x00000400 length: 0x00000400, 128 B/s 8185 s remaining
+[2023-08-25 21:29:56.728] Page data request failed!
+[2023-08-25 21:29:56.738] Received msg: 
+[2023-08-25 21:30:04.290] Kernel read addr: 0x00000800 length: 0x00000400, 132 B/s 7929 s remaining
 
 === post 195 | rimwall | Sat Aug 26, 2023 4:43 am | #p170455 ===
 It doesn’t like the 5EAT kernel load address in RAM. Must be different for a 4EAT. Are you sure it’s a SH7058? And not something like a SH7055?
@@ -1133,6 +1656,11 @@ We might find load address by trial and error (try FastECU v0.15 - it tests diff
 
 === post 196 | curt4576 | Sat Aug 26, 2023 4:46 am | #p170456 ===
 rimwall wrote:
+It doesn’t like the 5EAT kernel load address in RAM. Must be different for a 4EAT. Are you sure it’s a SH7058? And not something like a SH7055?
+
+We might find load address by trial and error (try FastECU v0.15 - it tests different load addresses), but ideally we need to know the chip type for the kernel.
+
+I will try 0.15. I know the ECU is 7058, you would think it is the same for TCU. But maybe not.
 
 === post 197 | curt4576 | Sat Aug 26, 2023 4:50 am | #p170457 ===
 Here is log from 0.15.
@@ -1199,6 +1727,10 @@ That will require a new kernel and FastECU coding updates. I’ll post when read
 
 === post 199 | MiikaS | Sat Aug 26, 2023 5:42 am | #p170459 ===
 rimwall wrote:
+Expected kernel load address is 0xffff9000.
+
+That will require a new kernel and FastECU coding updates. I’ll post when ready to try.
+Btw, protocols.cfg contains kernel load address, so if you use it in code, new kernel should not need for code changes if all else remains the same.
 
 === post 200 | rimwall | Sat Aug 26, 2023 8:35 am | #p170460 ===
 Yes, good point, thanks @MiikaS
@@ -1211,6 +1743,122 @@ See how you go @curt4576. Btw, the kernel's ability to write is disabled, so lit
 
 === post 201 | curt4576 | Sat Aug 26, 2023 4:55 pm | #p170464 ===
 rimwall wrote:
+Yes, good point, thanks @MiikaS
+
+I'm 95% certain that a TCU expecting the kernel to be loaded at 0xffff9000 is an SH7055. So, there is now a kernel for this.
+
+The repo now has a v0.20 protocols.cfg and a v0.20 kernel called ssmk_tcu_CAN_7055_35.bin. If I've got it right, these should work with FastECU v0.19
+
+See how you go @curt4576. Btw, the kernel's ability to write is disabled, so little chance of any accidental flashing.
+
+It looks like it pulled this time. Here is the bin.
+Here is part of log as well.
+
+[2023-08-26 09:49:09.730] Read memory with flashmethod 'sub_tcu_denso_can_SH7055' and kernel 'kernels/ssmk_tcu_CAN_SH7055_35.bin'
+[2023-08-26 09:49:13.663] Connecting to Subaru Denso CAN bootloader, please wait...
+[2023-08-26 09:49:13.668] Checking if kernel is already running...
+[2023-08-26 09:49:13.900] Trying TCU Init...
+[2023-08-26 09:49:13.908] Sent: 00 00 07 e1 aa 
+[2023-08-26 09:49:13.918] 0: 0xAA response: 00 00 07 e9 ea a2 10 21 97 fe 60 60 00 01 00 80 04 00 00 00 00 bd c3 c0 00 00 00 00 00 00 00 00 00 fd 06 00 0a 21 c0 00 00 01 1f 00 80 00 00 00 00 00 00 00 06 e0 40 00 00 00 01 20 00 
+[2023-08-26 09:49:13.933] Init Success: CAL ID = 97FE606000
+[2023-08-26 09:49:13.939] Trying 0x09 0x04...
+[2023-08-26 09:49:13.943] Sent: 00 00 07 e1 09 04 
+[2023-08-26 09:49:13.947] 0: 0x09 0x04 response: 00 00 07 e9 49 04 01 50 46 46 45 36 57 41 30 00 00 00 00 00 00 00 00 
+[2023-08-26 09:49:13.953] Init Success: TCU ID = PFFE6WA0
+[2023-08-26 09:49:13.958] Initializing bootloader...
+[2023-08-26 09:49:13.964] Sent: 00 00 07 e1 10 03 
+[2023-08-26 09:49:13.968] 0: 0x10 0x03 response: 00 00 07 e9 50 03 
+[2023-08-26 09:49:13.972] Sent: 00 00 07 e1 27 01 
+[2023-08-26 09:49:13.975] 0: 0x27 0x01 response: 00 00 07 e9 67 01 5e 08 3d 78 
+[2023-08-26 09:49:13.978] Seed request ok
+[2023-08-26 09:49:13.982] Calculated seed key: 5a 57 b7 43 
+[2023-08-26 09:49:13.984] Sending seed key
+[2023-08-26 09:49:13.988] Sent: 00 00 07 e1 27 02 5a 57 b7 43 
+[2023-08-26 09:49:13.990] 0: 0x27 0x02 response: 00 00 07 e9 67 02 
+[2023-08-26 09:49:13.991] Seed key ok
+[2023-08-26 09:49:13.995] Sent: 00 00 07 e1 10 02 
+[2023-08-26 09:49:14.019] Sent: 00 00 07 e1 10 02 
+[2023-08-26 09:49:14.021] 1: 0x10 0x02 response: 00 00 07 e9 50 02 
+[2023-08-26 09:49:14.022] Initializing Subaru Denso CAN kernel upload, please wait...
+[2023-08-26 09:49:14.029] Sent: 00 00 07 e1 34 04 33 ff 90 00 00 0e 00 
+[2023-08-26 09:49:14.031] 0: 0x34 0x04 response: 00 00 07 e9 74 20 00 84 
+[2023-08-26 09:49:14.043] Sent: 00 00 07 e1 b6 ff 90 00 39 52 cc 9d 9c 03 0e 17 0e fb 16 00 6e d5 37 a4 e2 98 c7 99 5b 9b 71 24 fa d8 1f 99 2b cd 8b d4 81 d4 3c e9 c0 37 7d 42 d4 f7 17 b5 db 14 eb aa b3 23 42 52 b5 c9 e4 2f 10 1f cf e4 01 06 a6 93 0a 23 c8 9f 48 2f 80 a4 ad aa 55 df 82 b6 35 60 31 2b 36 cb 4d 42 1a 74 23 b3 a2 fc ed a8 40 d4 96 57 b0 41 8b d8 fa 6c 70 4b 86 a1 b5 91 55 d3 0d 32 25 b6 0e 4b f5 df 70 34 2a 90 b2 9e 3d 71 
+[2023-08-26 09:49:14.055] Sent: 00 00 07 e1 b6 ff 90 80 03 02 c9 58 d5 5d 0f 54 a1 90 0d 99 4f b2 f4 d9 0e 09 3d f4 db 52 09 5e da f7 c1 cd 0a 71 6a 49 a0 43 3e bb 6c c5 49 7c 27 cb e3 dd f0 b7 8c be 88 15 83 91 d8 f5 e1 ab fa 8a 2c 81 dd 3e 3c 06 f4 ea e1 86 7f c6 d2 31 fa a5 18 bb 89 aa ae a4 8e e6 c2 25 a1 a3 d2 c9 d1 25 c4 1b 3a 23 70 e6 20 a6 e3 5a a2 2c fb da 67 ea 1d c7 10 95 e5 dc 89 91 eb 76 82 f3 13 34 02 17 eb 59 0d ad be 68 
+[2023-08-26 09:49:14.067] Sent: 00 00 07 e1 b6 ff 91 00 78 c8 aa fe 4c 57 db a2 c0 37 7d 42 f7 fd 1d 60 97 32 42 76 3f 90 3e f8 f1 d9 62 40 32 ed 58 5e 84 8e 01 90 5c 34 a1 93 71 59 20 71 61 54 1d 59 79 5d 1a 27 7c 15 41 0d f2 4b 8f cb 84 b3 8e e8 c8 6c 11 03 9d 30 9d fd 13 30 14 f4 e2 ac b4 fe 92 4d 56 de df 46 aa 18 fa 1b 60 1d fa 28 db 7c 10 ef a2 05 e6 a5 46 e2 b2 91 00 02 d9 d1 62 92 04 c5 03 bc 02 ec b8 50 5d fd cb 3e a4 41 13 d8 
+[2023-08-26 09:49:14.080] Sent: 00 00 07 e1 b6 ff 91 80 06 e9 47 3b e1 5f 57 13 15 f2 46 41 da 21 a2 8d 4a 93 55 b5 d8 c3 ac ce d8 2a c6 3d c6 5b 7c f5 62 cf 7f 02 e0 76 a1 38 89 cd 05 69 0f 27 3f 90 f1 48 6f 74 b5 c2 2b 46 d7 e5 b8 f9 31 bb 73 db ac 30 33 45 dd fa 17 56 96 53 83 b2 52 56 3c af 1a 4c 0d 62 d0 f2 f8 1b f6 8e 36 a1 b8 50 7c 23 02 df 87 73 bd 48 77 de 3a aa 65 ca f7 c7 95 a1 16 da a1 81 ec 48 9c 09 4f 85 fd 36 5e fe 2d 9c 
+[2023-08-26 09:49:14.095] Sent: 00 00 07 e1 b6 ff 92 00 fc 2d 7f 9a c0 e9 09 3f bb 9e 48 26 ef 04 f3 eb 1c 60 bf 24 70 14 ed f6 9e a2 09 6b 3e 21 75 c5 0e 0e 01 ad 39 89 d7 8a c5 ac b2 1c 69 70 58 e4 12 50 93 c0 60 ee 42 37 81 14 9f 41 45 2a 24 9a 78 d7 9e 68 e8 5c a0 3e 08 7f aa 0d 3e b3 cc f1 6a 0f 0e 0b fc 14 5f d5 a4 df bc 0f a1 9b db 1a fc 14 5f d5 d2 7d b1 a5 bc 75 26 fd 4b bf 08 26 aa 5f 17 9e d1 01 7f 5c a6 4b 63 8b fd 52 94 f8 
+[2023-08-26 09:49:14.108] Sent: 00 00 07 e1 b6 ff 92 80 71 54 f3 f3 1b ce b0 73 0f e8 f1 08 69 dd 8e bc d5 18 c2 67 8b 4d a4 b7 08 a7 c4 2a b7 dc 1c 14 e2 2b 1c 85 c7 3f bf fd 9c c8 d4 69 1e 44 b9 8c 5c 9f 74 a5 26 af 15 9d 67 74 fd 84 62 ad f3 6c cd 2f bb 45 0d ad be 68 e0 68 6c a1 99 fd 67 c1 02 17 eb 59 8d 0c 72 a1 a4 1d 37 27 f3 bf fe 89 10 13 d4 67 1d fd 29 3a 1d 45 8b eb 2e cb 28 47 a4 40 d8 5d 25 94 d6 d1 a3 a4 99 ed a1 9b db 1a 
+[2023-08-26 09:49:14.149] Sent: 00 00 07 e1 b6 ff 93 00 25 94 d6 d1 68 ac 19 2a 2d 6c 13 67 5a 8f c3 df 86 76 89 af 6c 9f 92 df ad 32 5c 14 73 0b e0 ab 26 8e 52 55 1a 86 e7 c8 71 39 96 93 50 60 46 4d e4 fb fc 37 9f 77 9f 9d fd df 3a 08 78 9d 2a 0c 22 c9 08 ea cc 99 1f 9d 50 99 d4 60 a5 3e ec 55 b8 aa 32 8c c8 b0 4a 28 ea 98 e8 d3 79 a0 d5 c5 4b 64 37 9f 3e 3a 2b 88 fe cb 58 19 72 4e 0e b5 f4 a9 df 0b 5f 8c c4 3d ff b3 7c 61 1c c9 0e 2c 
+[2023-08-26 09:49:14.163] Sent: 00 00 07 e1 b6 ff 93 80 79 ab 9c ae 9e cb 01 b8 d1 d9 dd dc af 4d 0b 50 66 08 a5 53 94 ca af 2f 87 f0 16 74 c9 21 3f 3d ee a3 56 5c 1d ec 9f d2 da 9e 74 8a b5 30 6e 45 ea 50 85 3a 43 40 ae fc 94 ca af 2f 87 f0 16 74 c9 21 3f 3d 37 5c 52 4b 76 14 be 31 ad 61 de 15 58 d1 00 0c d7 e9 66 7c e1 5e c6 ba eb 66 f5 65 91 e8 9e bf 68 e3 f1 ab 0d e5 ff be fc c9 5a aa f8 16 28 41 9e 4e df a8 e4 cd 81 b7 15 46 92 29 
+[2023-08-26 09:49:14.180] Sent: 00 00 07 e1 b6 ff 94 00 10 3a 2c ca aa 8e 51 15 4e ea 60 f3 11 08 98 15 8b 2e 8d e5 d4 0b 0b 2e 55 9a a4 e5 85 69 67 98 3b d5 7b f8 f8 10 99 d4 0f 51 20 c7 65 a3 8e 01 0d d6 50 c0 d0 70 93 c6 83 36 d5 8c 78 d7 9e 68 71 77 5a 74 2f 22 30 03 a0 54 62 d4 ec f0 6f e4 38 02 1a cb c8 25 7f db c8 21 ff 1b 7d 03 e8 88 b0 b8 7f 6f e8 1e f9 84 42 d2 00 11 ec 5d b4 7b e6 d3 4c 87 8f b4 ea 96 a8 71 b3 c6 28 70 f3 c4 
+[2023-08-26 09:49:14.196] Sent: 00 00 07 e1 b6 ff 94 80 9a 6d d8 17 d7 cd c6 a1 88 9f 68 8b 2e 94 02 90 16 c5 2e 13 2f 2b bc a2 73 47 a9 e8 8b 2e 8d e5 87 f0 16 74 c9 21 3f 3d ee a3 56 5c a8 c7 dc f4 c3 b2 d3 60 2e 31 4f 4c e9 2d 40 6a 3c cc 04 59 02 17 eb 59 0d ad be 68 d1 e9 82 60 11 87 97 14 8d 0c 72 a1 c8 5f 92 b1 de 36 05 21 d3 10 24 42 77 d9 87 26 e0 68 6c a1 02 05 97 c6 f3 bf fe 89 8b 2e 8d e5 16 22 2e 4f 7e ba 32 a2 19 e1 4f a3 
+[2023-08-26 09:49:14.211] Sent: 00 00 07 e1 b6 ff 95 00 53 03 54 1c ff 5a 7e 33 17 0a 6f 82 09 98 da d6 a4 66 3f 39 aa 47 b4 2d ee 7a 77 d2 c0 70 cf ec ff e2 62 37 d9 7a 08 5f a7 e9 8b 42 54 78 d0 8b 7d dd 7d 08 1a e7 30 74 41 a7 f5 c1 b0 ed 9a 23 4f 71 a0 2c d3 b6 2a 86 76 d8 ee 66 f4 84 0a bc 27 67 95 de d3 d1 81 a7 a8 fb 35 3b da 75 ca 18 b9 57 44 84 ad 4a ab 52 04 bd b5 47 d2 d3 25 f1 e7 a0 8b 18 a2 c9 3a be 38 6c 22 39 3c 9f dc 4a 
+[2023-08-26 09:49:14.225] Sent: 00 00 07 e1 b6 ff 95 80 89 60 c9 a4 45 1d b6 31 1c 73 f6 1c fe 79 05 ca c5 fb d2 31 62 a4 b3 11 36 31 18 7d e9 1a eb a1 f6 49 f5 22 8b 53 4d 9e 40 77 0e 04 27 36 13 16 68 4c 1f e9 c0 4d 83 d5 47 2b c1 8d 64 4b a7 b4 da 75 ca 18 e4 49 ac d0 1c d8 77 63 9d dc 15 4e 66 80 b9 f5 36 25 27 d4 58 c2 0e fe c9 6d ec 23 ea 6a 3b 5f b1 5f f9 f0 eb 72 ec 82 4a 49 50 13 4d 68 de e0 91 70 ef 6d c8 c9 1a a4 3a c8 64 d7 
+[2023-08-26 09:49:14.240] Sent: 00 00 07 e1 b6 ff 96 00 b2 92 5d 23 51 8c 56 f7 d3 d1 81 a7 ce 58 1d 49 a6 46 11 4b 5d a1 20 aa 3c 58 30 90 ef a8 1e 3f da 9d 02 81 46 5d 11 cd 6f 2b 14 01 89 cd 05 69 0f 27 3f 90 f2 cb ee 67 6f a7 5f d1 da 9d 02 81 00 34 df a2 06 1d 6e 25 a4 1d 37 27 de 36 05 21 0f f1 1d 26 f3 bf fe 89 02 05 97 c6 77 d9 87 26 de 36 05 21 d8 ce e5 62 02 17 eb 59 0d ad be 68 c8 5f 92 b1 3c cc 04 59 08 ae e9 05 8d 0c 72 a1 
+[2023-08-26 09:49:14.255] Sent: 00 00 07 e1 b6 ff 96 80 63 b2 c1 31 98 f1 b1 99 31 38 4a f4 d3 1d 95 b0 da 9d 02 81 b5 5f be 8d 5d 66 cd 85 98 f1 b1 99 31 38 4a f4 01 ff 7e 51 27 91 26 32 b4 bf bc 81 b8 22 ee c5 17 e9 ab 73 8b 1d ef 6f f8 f2 ba 64 a2 8d 47 a0 77 36 62 b2 48 92 5f 8c 08 ae e9 05 86 14 0d f9 b9 39 9b 85 0b b7 3d 35 e2 30 eb 12 18 f2 ce 9f 53 c4 a0 b4 84 be 8f d4 82 6e 20 22 14 7b 89 f2 b0 48 9a c2 f4 40 a4 68 45 34 5b f4 
+[2023-08-26 09:49:14.269] Sent: 00 00 07 e1 b6 ff 97 00 53 c4 a0 b4 84 be 8f d4 42 66 f8 68 9a e5 b1 51 f9 85 17 1c bd 3e d7 94 77 d9 4c 34 1d 1f 57 0c c3 12 af 2f 41 7a af 42 a9 48 1b 65 65 5a 69 8e 89 aa 97 ac 74 8e 97 06 84 76 cc a6 41 7a af 42 8b a1 09 d7 e3 42 f5 70 33 b2 6d be 23 3e c3 98 bc b9 65 b4 03 b7 c7 ca 82 ac 98 b8 c1 ab 25 8e da 9d 02 81 ce fc 86 a8 65 03 48 48 3b b8 cd 00 17 ff 72 f3 31 e9 67 ab 05 55 cf b5 df bf de 6a 
+[2023-08-26 09:49:14.282] Sent: 00 00 07 e1 b6 ff 97 80 6b a8 7c 34 88 bb 7a 2e 9b a0 76 c5 4d a6 f9 af bf 9f 4d cf 2d da 58 a2 d0 fd 65 35 e6 00 b6 8b c5 a3 ef a8 09 5c 70 32 22 8d 63 3b 0a 3f 91 e7 d7 86 36 5a f2 54 4a 06 67 15 71 aa fb 1a 31 82 55 9d 76 1f 76 8f 08 14 67 15 71 aa 67 15 71 aa 67 15 71 aa 67 15 71 aa 67 15 71 aa 67 15 71 aa 67 15 71 aa 26 b6 94 42 db c3 3d 45 d1 12 13 c5 42 52 1e 42 e6 0d 54 52 0f c6 9e 63 69 17 e3 e5 
+[2023-08-26 09:49:14.300] Sent: 00 00 07 e1 b6 ff 98 00 79 b3 85 e6 d8 23 36 e1 35 6c b3 7b 28 12 af 17 dc c5 d4 55 28 cd 94 a0 28 cd 94 a0 55 93 50 8b b3 2c 16 0e e4 49 ac d0 bf 03 a3 aa 62 b5 e2 d0 b2 b9 28 ee 3e 36 71 10 2b ea e8 49 33 8c 81 36 00 5a 49 8b f7 24 c0 8f 00 5a 49 8b 94 16 7b 38 3a b3 26 48 38 62 e5 3e 99 28 ac 1f 5f cb 94 8e 08 01 cb 4f 3c 7d 52 c8 0e 56 6a 3b 3c d9 39 58 b2 36 ea bd 1b e7 57 e1 d6 31 d3 f0 20 a3 a5 79 
+[2023-08-26 09:49:14.315] Sent: 00 00 07 e1 b6 ff 98 80 18 f2 ce 9f f4 a2 53 dd de bf 79 20 d9 62 95 14 16 38 6f f9 3f 33 1f 3e 38 9a df b0 af 86 42 56 3d 89 61 55 d8 e3 37 35 ef 1e 5a 24 4f ff 5e 22 2b cd 8b d4 0e 0d 36 27 50 cf e7 fe 96 63 de 54 0f 3a 1c d0 7c ce f2 74 8b a1 09 d7 0b 21 c2 c0 ea 19 c4 36 2b f3 c2 22 7a 0f 08 41 15 d9 ae f8 1b d3 3d 04 39 52 cc 9d 59 04 81 94 ea 19 c4 36 bb 84 7f 54 7d 59 41 be 04 7d 89 51 18 f2 ce 9f 
+[2023-08-26 09:49:14.330] Sent: 00 00 07 e1 b6 ff 99 00 d1 bf 8f 6a 59 04 81 94 bd 27 76 9b 54 12 81 2a 4b a4 fe 88 19 1c a7 88 d7 e3 4e f0 9e d8 06 22 b4 c2 2f 75 ea 1c 9c af 2c df 4e 99 e6 5e c7 c7 97 e1 19 24 16 98 71 d5 2b f3 c2 22 59 54 42 03 25 46 8f 29 2b f3 c2 22 1d af 0b 13 aa 21 6e 3a fc ef d4 f0 d7 43 1e f8 65 93 a7 65 04 39 bc eb d0 ab 21 e9 34 1f 94 0d 7f 20 83 2a 98 f1 b1 99 92 9a 1a e5 09 be 56 ba ba 4a 1f 93 15 e0 6b 27 
+[2023-08-26 09:49:14.344] Sent: 00 00 07 e1 b6 ff 99 80 bd 19 9b 9d 59 04 81 94 39 91 56 31 a5 cd 49 0e 14 a3 41 bd a0 d5 67 93 74 7c 99 89 48 44 a0 14 d0 25 4a 1d dc 7c b4 bd a3 a6 03 03 8c 1e 95 31 77 ac b3 5d ca 97 94 54 a3 b5 ba 0c fc 69 0e 97 23 14 99 75 ec 4a 50 04 df 28 af 35 4a 2f 56 4d 31 78 93 fa ce eb c7 49 0a da a3 be cf 60 35 e9 80 e4 89 96 0a 14 63 e1 98 75 05 e9 57 3f 0b a3 f7 2e 86 9f 96 be bc cc 37 fc 4a 2a 03 3f 40 76 
+[2023-08-26 09:49:14.360] Sent: 00 00 07 e1 b6 ff 9a 00 6f 26 3c 8e 77 ce ad 7d 50 6f 1f 59 9d 07 22 85 5f 8e 76 0e df 28 af 35 4d fc 2e 40 fa e6 e0 c4 ff 46 39 16 08 2e 0a 14 78 82 cd 74 04 7d 89 51 dd f2 7c ff 47 7b e4 31 23 00 d8 37 c7 de 01 8a e3 1c 5b b7 15 77 3b 86 aa 21 6e 3a a9 2e 6f 9d 3a 6b 02 c4 d6 53 8b 2c 14 d7 f0 10 46 d0 ad a5 2e b7 fe 65 0b ea d2 78 7d ea 32 43 16 76 b1 54 84 fc e0 8a 71 f9 27 98 f2 d4 a3 19 5a f8 a7 bc 
+[2023-08-26 09:49:14.377] Sent: 00 00 07 e1 b6 ff 9a 80 e2 40 3a 3a 04 7d 89 51 d4 8b 5d 2e 92 2a db 0c d3 de 9b 69 80 17 d6 3e 14 57 37 16 84 60 0e 49 af 6c 2c 1b 66 d6 c1 e1 56 f2 d2 b8 ba fc a4 f5 22 39 18 49 c3 05 0b 54 a5 14 9d e7 3c 58 30 90 4e 9d 16 51 c0 ee 0c 64 fe b4 df 90 b8 3d 2a 65 81 d9 36 ce 3e 2c 74 1d fb 66 f2 10 67 ea 1d c7 f0 8d e9 77 16 45 c4 2a 7d fb b6 b4 15 e0 6b 27 53 a8 0f b8 88 fe 96 b0 34 b8 d1 8c 8e f6 ee 19 
+[2023-08-26 09:49:14.392] Sent: 00 00 07 e1 b6 ff 9b 00 28 eb f7 bc 59 04 81 94 b7 a9 4b 00 02 17 eb 59 b8 e2 39 9c 65 09 fb 18 64 04 7b c9 6b 14 40 3d b4 18 23 09 69 29 90 b5 92 4d 56 de 9b e7 92 a5 e7 0e 4b fa 5f 2c 84 ba 6c e4 c9 ce 31 e8 e7 15 54 b3 52 af 3e e0 5c e7 09 a1 32 69 f9 bb ad c4 6b ef ea 56 1e 9a 9b 43 1b 3e 7c 80 b4 74 5d 20 cd 53 53 4b 61 bb 0d 86 53 42 78 69 cb 89 4b d5 ce 66 4f ea 45 c1 46 30 c2 8c a8 ee e9 fb b9 05 
+[2023-08-26 09:49:14.405] Sent: 00 00 07 e1 b6 ff 9b 80 0d 12 e8 4b a1 61 aa fd 0e 02 4e 43 42 b2 64 b1 e7 90 eb 89 b9 e1 16 0a 1b 99 67 25 c7 05 ee 55 8d bb 18 a3 2b f3 c2 22 ba 09 08 33 47 63 c0 9c 04 39 bc eb ee 37 3c 2d 20 a4 77 98 cb 7a 68 48 2b f3 c2 22 aa f7 cb 8c 6c c9 e6 e9 cb ae 64 28 62 e6 4d d2 ab e6 c1 fa cb 7a 68 48 ae 31 28 cf f6 be 06 c4 a6 70 f1 b1 97 bc 2f 75 01 8d 04 0d 29 9c d0 0b cb 7a 68 48 24 b4 8f eb cb 7a 68 48 
+[2023-08-26 09:49:14.421] Sent: 00 00 07 e1 b6 ff 9c 00 08 c9 43 f9 b5 cf 3d 7d fd ab b7 b2 87 99 f0 49 cc 2b de d5 86 c0 0b c8 1f e5 94 19 cb 7a 68 48 a2 e9 4c 18 29 38 34 c5 da 9d 02 81 a5 51 58 c2 ca 66 96 0a 38 18 15 51 f2 52 1c 7b 19 8d 36 11 67 88 68 96 15 6a 66 30 30 da 1a d7 7e ee 09 b6 54 ba 77 e1 7a e1 5d 7e 78 1f fb de ca 08 19 6f 18 f2 ce 9f f3 0a 72 38 3c e9 73 88 15 60 6d 25 94 53 fe 6b 3b 44 e5 31 45 fc e6 22 39 7a 14 bd 
+[2023-08-26 09:49:14.436] Sent: 00 00 07 e1 b6 ff 9c 80 99 18 bc f4 18 9d 63 d6 28 eb f7 bc 59 04 81 94 b7 a9 4b 00 b8 e2 39 9c 2b 6f 42 dd 64 04 7b c9 5d 31 30 8f e2 ac b4 fe 6a 1a 31 3b 2e 7b a3 bb df 05 35 cb 56 3e f9 ef 38 3d 60 35 bb c5 1e 85 6b ac e2 f5 35 7d 77 3a 00 09 f5 24 13 6b 96 65 d8 12 5f 6a c9 7e 4e 76 0f fe 50 27 1b 7a 72 71 bb a4 1a e7 ed 2c 1e a9 fc 3b 14 ec 56 c2 99 9b f9 ee b7 b2 29 ac aa 27 00 28 9b 1f 78 89 73 19 
+[2023-08-26 09:49:14.451] Sent: 00 00 07 e1 b6 ff 9d 00 df 28 af 35 be 70 f0 b5 7a e1 5d 7e 78 1f fb de ca 08 19 6f 18 f2 ce 9f c3 e5 a5 71 7d 74 44 78 7f 6a 81 b8 99 18 bc f4 d1 9e b7 1a 13 30 14 f4 34 65 b6 2c 39 41 20 f9 23 91 76 11 7a 0f 08 41 ea d3 2f 0d 40 fe d0 3e 5b f7 22 95 14 98 8c fd 02 b7 d5 5c 28 9c 05 0a 45 a1 a1 2c e6 cd b9 22 6e 16 f2 95 f0 d4 81 c1 5b a8 d7 e2 69 fa 86 48 e5 c3 b9 c2 da 9d 02 81 24 2c b6 29 be e9 cc c5 
+[2023-08-26 09:49:14.464] Sent: 00 00 07 e1 b6 ff 9d 80 89 c1 cf 57 cf ae da 69 4d 33 36 e6 09 06 9b 71 67 ea 1d c7 55 d6 24 57 8f 88 3c f4 99 18 bc f4 bf 04 49 d3 b7 a9 4b 00 20 20 ca f5 ae 86 2c 23 99 18 bc f4 e7 e2 14 30 b1 53 41 03 6f 1c 19 fe 11 4e 4f e9 a8 0a 0b d0 4d 55 55 f1 08 22 0a 34 71 24 43 19 e1 3c 0f f4 d0 d9 7f 90 86 e3 12 32 f7 f8 6f 92 49 22 02 34 90 39 7d 94 a7 62 16 36 e8 18 07 97 0f 63 76 39 e7 e2 14 30 53 d2 74 d2 
+[2023-08-26 09:49:14.474] Sent: 00 00 07 e1 b6 ff 9e 00 
+[2023-08-26 09:49:14.482] Sent: 00 00 07 e1 37 
+[2023-08-26 09:49:14.484] 0: 0x37 response: 00 00 07 e9 77 
+[2023-08-26 09:49:14.491] Sent: 00 00 07 e1 31 01 02 02 02 
+[2023-08-26 09:49:14.492] 0: 0x31 response: 00 00 07 e9 71 01 02 02 
+[2023-08-26 09:49:14.500] Kernel started, initializing...
+[2023-08-26 09:49:15.306] Requesting kernel ID
+[2023-08-26 09:49:15.308] Kernel ID request: 00 00 07 e1 7a a0 00 00 00 00 00 00 
+[2023-08-26 09:49:15.416] Kernel ID response: 7f a1 34 00 00 00 00 00 
+[2023-08-26 09:49:15.634] Kernel ID request: 00 00 07 e1 7a a0 00 00 00 00 00 00 
+[2023-08-26 09:49:15.770] Kernel ID response: 7f a1 34 00 00 00 00 00 
+[2023-08-26 09:49:15.985] Kernel ID request: 00 00 07 e1 7a a0 00 00 00 00 00 00 
+[2023-08-26 09:49:16.104] Kernel ID response: 7f a1 34 00 00 00 00 00 
+[2023-08-26 09:49:16.330] Kernel ID request: 00 00 07 e1 7a a0 00 00 00 00 00 00 
+[2023-08-26 09:49:16.438] Kernel ID response: 7f a1 34 00 00 00 00 00 
+[2023-08-26 09:49:16.642] Kernel ID request: 00 00 07 e1 7a a0 00 00 00 00 00 00 
+[2023-08-26 09:49:16.757] Kernel ID response: 7f a1 34 00 00 00 00 00 
+[2023-08-26 09:49:16.966] Kernel ID: 4
+[2023-08-26 09:49:16.984] Reading ROM from Subaru Denso using CAN
+[2023-08-26 09:49:17.002] Start reading ROM, please wait...
+[2023-08-26 09:49:17.124] Kernel read addr: 0x00000000 length: 0x00000400, 1 B/s 4341 s remaining
+[2023-08-26 09:49:17.237] Kernel read addr: 0x00000400 length: 0x00000400, 9061 B/s 58 s remaining
+[2023-08-26 09:49:17.354] Kernel read addr: 0x00000800 length: 0x00000400, 8752 B/s 60 s remaining
+[2023-08-26 09:49:17.468] Kernel read addr: 0x00000C00 length: 0x00000400, 9061 B/s 58 s remaining
+[2023-08-26 09:49:17.587] Kernel read addr: 0x00001000 length: 0x00000400, 8677 B/s 60 s remaining
+[2023-08-26 09:49:17.702] Kernel read addr: 0x00001400 length: 0x00000400, 8904 B/s 59 s remaining
+[2023-08-26 09:49:17.821] Kernel read addr: 0x00001800 length: 0x00000400, 8677 B/s 60 s remaining
+[2023-08-26 09:49:17.938] Kernel read addr: 0x00001C00 length: 0x00000400, 8752 B/s 60 s remaining
+[2023-08-26 09:49:18.056] Kernel read addr: 0x00002000 length: 0x00000400, 8677 B/s 60 s remaining
+[2023-08-26 09:49:18.171] Kernel read addr: 0x00002400 length: 0x00000400, 8982 B/s 58 s remaining
+[2023-08-26 09:49:18.291] Kernel read addr: 0x00002800 length: 0x00000400, 8533 B/s 61 s remaining
+[2023-08-26 09:49:18.417] Kernel read addr: 0x00002C00 length: 0x00000400, 8192 B/s 63 s remaining
+[2023-08-26 09:49:18.536] Kernel read addr: 0x00003000 length: 0x00000400, 8677 B/s 60 s remaining
+[2023-08-26 09:49:18.649] Kernel read addr: 0x00003400 length: 0x00000400, 8982 B/s 57 s remaining
+[2023-08-26 09:49:18.771] Kernel read addr: 0x00003800 length: 0x00000400, 8462 B/s 61 s remaining
+[2023-08-26 09:49:18.890] Kernel read addr: 0x00003C00 length: 0x00000400, 8605 B/s 60 s remaining
+[2023-08-26 09:49:19.011] Kernel read addr: 0x00004000 length: 0x00000400, 8462 B/s 61 s remaining
+[2023-08-26 09:49:19.128] Kernel read addr: 0x00004400 length: 0x00000400, 8827 B/s 58 s remaining
+[2023-08-26 09:49:19.249] Kernel read addr: 0x00004800 length: 0x00000400, 8533 B/s 60 s remaining
+[2023-08-26 09:49:19.369] Kernel read addr: 0x00004C00 length: 0x00000400, 8533 B/s 60 s remaining
+[2023-08-26 09:49:19.490] Kernel read addr: 0x00005000 length: 0x00000400, 8533 B/s 60 s remaining
+[2023-08-26 09:49:19.604] Kernel read addr: 0x00005400 length: 0x00000400, 8982 B/s 56 s remaining
+[2023-08-26 09:49:19.723] Kernel read addr: 0x00005800 length: 0x00000400, 8677 B/s 58 s remaining
+[2023-08-26 09:49:19.841] Kernel read addr: 0x00005C00 length: 0x00000400, 8677 B/s 58 s remaining
+[2023-08-26 09:49:19.961] Kernel read addr: 0x00006000 length: 0x00000400, 8605 B/s 59 s remaining
+[2023-08-26 09:49:20.080] Kernel read addr: 0x00006400 length: 0x00000400, 8605 B/s 58 s remaining
+[2023-08-26 09:49:20.200] Kernel read addr: 0x00006800 length: 0x00000400, 8605 B/s 58 s remaining
+[2023-08-26 09:49:20.327] Kernel read addr: 0x00006C00 length: 0x00000400, 8126 B/s 62 s remaining
+[2023-08-26 09:49:20.454] Kernel read addr: 0x00007000 length: 0x00000400, 8062 B/s 62 s remaining
 
 === post 202 | rimwall | Sat Aug 26, 2023 11:33 pm | #p170465 ===
 Yep, magic, looks like a successful dump. Seems like it is a SH7055.
@@ -1219,15 +1867,38 @@ So, we can add Denso 4AT to the dumping / flashing list...
 
 === post 203 | curt4576 | Sat Aug 26, 2023 11:37 pm | #p170466 ===
 rimwall wrote:
+Yep, magic, looks like a successful dump. Seems like it is a SH7055.
+
+So, we can add Denso 4AT to the dumping / flashing list...
+
+Awesome! 
+Are you using Ghidra to find the tables on the ROM?
 
 === post 204 | rimwall | Sun Aug 27, 2023 2:19 am | #p170467 ===
 Yep, Ghidra is my preferred RE platform.
 
 === post 205 | ajayel | Sun Aug 27, 2023 5:47 am | #p170468 ===
 rimwall wrote:
+Been doing some digging in the Hitachi M32R 5EAT TCU to figure out how the TCU uses Calculated Engine Torque (CET). The following should also apply to Denso SH705x ROMs. 
+
+CET is sent from the ECU via bytes 3 & 4 of CAN ID 0x412. The TCU calculates slip via the ratio between Turbine Speed and Engine Speed. A factor is looked up from a table based on the slip. For high slip (~0.5) the factor is ~1.4. For low slip, the factor is ~1.0. The CET is multiplied by this factor. Factored CET is then smoothed and further factored by a lookup based on ATF Temp. The twice factored and smoothed CET is then used to lookup a Line Pressure target. The Line Pressure solenoid is then controlled to achieve this target Line Pressure.
+
+So, it seems that artificially increasing CET will increase the line pressure target and cause faster movement of the various clutches. Is that consistent with what is observed?
+
+Attachment:
+LinePressure.JPG
+
+This is .... awesome ... so CET is used over CAN! I've only changed CET a couple of times. On my car with higher CET at higher gears and higher speeds the drivetrain felt twitchy and saw more engine knock. I should now experiment with different ranges on where to maintain or increase this value.
 
 === post 206 | riksk | Mon Aug 28, 2023 2:43 am | #p170477 ===
 rimwall wrote:
+Yep, magic, looks like a successful dump. Seems like it is a SH7055.
+
+So, we can add Denso 4AT to the dumping / flashing list...
+
+Just to add an info;
+
+There is also SH7058 on newer 4EATs, possible in 2011 and 2012 (two last years before CVT)
 
 === post 207 | kiki86 | Mon Aug 28, 2023 5:00 pm | #p170478 ===
 Hi,
@@ -1237,6 +1908,15 @@ If someone can have a look
 
 === post 208 | curt4576 | Mon Aug 28, 2023 5:12 pm | #p170479 ===
 kiki86 wrote:
+Hi,
+It's seems not working for me.
+
+If someone can have a look
+
+You need to download latest files from repo.
+V0.19 of FastECU
+V0.20 of protocols.cfg
+V0.20 of the kernel
 
 === post 209 | kiki86 | Mon Aug 28, 2023 6:32 pm | #p170483 ===
 I do it but not working
@@ -1251,9 +1931,38 @@ do I need to "tick" ECU or TCU in top toolbar?
 
 === post 210 | curt4576 | Mon Aug 28, 2023 6:46 pm | #p170484 ===
 kiki86 wrote:
+I do it but not working
+
+copy FastECU_TCU019 in base folder
+copy protocols.cfg in config folder
+copy kernels folder
+
+but seems not working
+maybe I do something wrong?
+do I need to "tick" ECU or TCU in top toolbar?
+
+You should have more options in unknown. I have 3 different options. Seems like it is still using old config file.
 
 === post 211 | kiki86 | Mon Aug 28, 2023 7:45 pm | #p170485 ===
 curt4576 wrote:
+kiki86 wrote:
+I do it but not working
+
+copy FastECU_TCU019 in base folder
+copy protocols.cfg in config folder
+copy kernels folder
+
+but seems not working
+maybe I do something wrong?
+do I need to "tick" ECU or TCU in top toolbar?
+
+You should have more options in unknown. I have 3 different options. Seems like it is still using old config file.
+
+Yes, I copy complet folder and it's works
+
+I attached log file
+
+Ready for next step
 
 === post 212 | curt4576 | Tue Aug 29, 2023 1:40 am | #p170487 ===
 I think this may be a shift table. This program says it is a 16 bit CPU.
@@ -1267,6 +1976,9 @@ There should actually be 4 entries under "Unknown". Hitachi KLine, Hitachi CAN, 
 
 === post 214 | kiki86 | Tue Aug 29, 2023 1:09 pm | #p170492 ===
 rimwall wrote:
+@kiki86 - it passed the security step, but it doesn't look like the download worked over K-Line. Have you tried over CAN?
+
+@rimwall : I test all different configuration and each time no message at reception or fail
 
 === post 215 | curt4576 | Tue Aug 29, 2023 10:40 pm | #p170498 ===
 Is there any template to help make definitions for the TCU Roms?
@@ -1280,9 +1992,21 @@ Is there any template to help make definitions for the TCU Roms?
 
 === post 217 | kiki86 | Wed Aug 30, 2023 12:50 pm | #p170508 ===
 rimwall wrote:
+@kiki86 - that TCU should have CAN comms, but you aren't getting any response at all over CAN. Are you using a tactrix cable? Does it work over CAN with other applications (eg) romraider? K-line comms are working with your cable. You definitely have a Hitachi TCU because it is passing the Hitachi security process. You can try FastECU v0.20 from the repo which has a revised Hitachi K-Line ROM dump process which might work.
+
+Yes I use OpenPort cable, and it's work with RR and Open ECU, I can flash, and log ECU.
+I used FastECU_TCU019.exe, what do you mean by FastECU v0.20?
 
 === post 218 | curt4576 | Wed Aug 30, 2023 5:16 pm | #p170513 ===
 kiki86 wrote:
+rimwall wrote:
+@kiki86 - that TCU should have CAN comms, but you aren't getting any response at all over CAN. Are you using a tactrix cable? Does it work over CAN with other applications (eg) romraider? K-line comms are working with your cable. You definitely have a Hitachi TCU because it is passing the Hitachi security process. You can try FastECU v0.20 from the repo which has a revised Hitachi K-Line ROM dump process which might work.
+
+Yes I use OpenPort cable, and it's work with RR and Open ECU, I can flash, and log ECU.
+I used FastECU_TCU019.exe, what do you mean by FastECU v0.20?
+
+This file you are missing.
+https://github.com/rimwall/fastecu-oem/ ... 055_35.bin
 
 === post 219 | rimwall | Wed Aug 30, 2023 10:02 pm | #p170516 ===
 this file
@@ -1320,9 +2044,17 @@ If you want to tune your TCU, first step is to do a ROM dump using the instructi
 Read a 2010 EDM LGT, but after reading - ECU and TCU became unresponsive. Could not connect to TCU at all, ECU didn't want to reset. Battery disconnect resolved it.
 
 Attachment:
+ecu error.png
 
 === post 226 | curt4576 | Wed Oct 04, 2023 8:30 pm | #p170834 ===
 rimwall wrote:
+Great to see some folks are interested.
+
+I’ve been slugging my way through the TCU ROM trying to figure out some key routines and tables. Pretty close now. Plus I have decoded a bunch of CAN messages that folks might find useful. I’ll post that up soon.
+
+If you want to tune your TCU, first step is to do a ROM dump using the instructions in this thread. Then doing some logging of RAM addresses will help accelerate the reverse engineering of the ROM.
+
+Can't wait to see what you have found.
 
 === post 227 | rimwall | Tue Oct 17, 2023 5:55 am | #p170944 ===
 Moving forward gradually. I've now looked through some 1200 subroutines and have a reasonable understanding of how the ROM works. Shift curves were located some time ago. The Line Pressure calcs have now been located, including the conversion from Engine Torque to Line Pressure. This uses factors for each brake / clutch which account for the number of plates in each brake/clutch. So, modification of line pressure should be possible.
@@ -1366,9 +2098,27 @@ Not sure what the specific prompts are, which makes completing the relearn unach
 
 === post 231 | V6er | Sun Oct 22, 2023 3:30 pm | #p170992 ===
 rimwall wrote:
+Hi @jimihimisimi, great to hear it worked! The TCU kernel is the same as ECU kernels, so it’s unlikely to be the kernel. I suspect what happens is that once the kernel is running on the TCU, the TCU naturally stops responding to the ECU. So the ECU then decides the CAN network is bad and raises a DTC. This remains until the ECU DTC is cleared.
+
+I have found the relearn procedure so it should be quick to figure out the commands, provided you are willing to test it out…?
+
+I have MY2008 Tribeca with 5eat (TG5D) - I am willing to test relearn too!
+in one of telegram chats - there was rumour that TG5D transmissions can relearn do just accelerating up to 140kmh. switch to neutral and coast to the stop, no brakes, no gas, on even surface... don't know if that is true...
+
+p.s. how can we check if learning has been finished succesfully or not?
 
 === post 232 | V6er | Sun Oct 22, 2023 3:31 pm | #p170993 ===
 jimihimisimi wrote:
+@rimwall that would be great. Can you point to the location in the bin where these are at?
+
+ Per the FSM the process is to:
+-Clear Memory 2
+-Select AT Relearn
+-Follow prompts on SSM screen
+
+Not sure what the specific prompts are, which makes completing the relearn unachievable without further exploring (unless some already sorted all this out)
+
+do NOT forget lifting car in the air!!!
 
 === post 233 | Tugsay | Sun Oct 22, 2023 7:01 pm | #p170996 ===
 05 outback 5eat, I'd used relearn procedure several times by using free ssm. Connect to teansmission, clear memory 2. The things I'd done was be sure that the fuel trims are settled (stft bank 1 and bank 2 are on +or- 0.78 and settled on there. Ltft's can be far between on idle like bank 1= -2 bank 2= -12 or something like that)
@@ -1389,6 +2139,23 @@ I hope this will help
 
 === post 234 | V6er | Sun Oct 22, 2023 11:55 pm | #p170998 ===
 Tugsay wrote:
+05 outback 5eat, I'd used relearn procedure several times by using free ssm. Connect to teansmission, clear memory 2. The things I'd done was be sure that the fuel trims are settled (stft bank 1 and bank 2 are on +or- 0.78 and settled on there. Ltft's can be far between on idle like bank 1= -2 bank 2= -12 or something like that)
+After stft are settled and the engine is in normal operation temperature, clear memory2(not memory1).
+After turning the ignition on, wait for 5secs, the dash lights will be stabilise and start the car.
+Turn off all the electrical components like headlights, radio, a/c and fans, seat heaters etc, everything you can turn of.
+Wait a little like 20-30 secs for engine to stabilise. (This is up to you)
+Now pull the gear knob to D by stopping a littlw on each gear. Don't hurry.
+Know wait a little like 10secs(10sec-20sec is not must, just gibe some time gor the car to settle.)
+
+First give light throttle steadily and go until the gears up 1st to 5th gear. Then slowly stop. Do it again. Then do it again with a little more throttle not much but a little more. You will feel that gear changes becomes smoother. Then do it again but don't stop, while cruising on 5th gear, give throttle to
+Make downshift to 4th gear several times, downshifts to 4th then upshifts to fifth. 
+
+I'm just explaining the transmission relearn procedure, similar to the service manual says.
+On service manual, it says that, this procedure goes up to 5 times for the teansmission to learn the gear shift. Normally if you are happy with the result, feel the smoothnes, 2 times accelarating from zero to fifth geart then while cruising downshift to 4th and upshift to five is ok. 
+
+I hope this will help
+
+that is for TG5C. for me and jimihimisimi - it is TG5D (which doesn't have this learning procedure available without SSM).
 
 === post 235 | mrdohca | Mon Oct 23, 2023 4:17 am | #p170999 ===
 5EATs do a lot of self shift learning. The learn procedure in the earlier 5EATs in legacys (all BP/BL) were just a drive procedure till shift shock was reduced after clearing memory 2.
@@ -1445,6 +2212,22 @@ Then post up the log so we can figure out what needs to be changed...
 
 === post 240 | jimihimisimi | Tue Oct 24, 2023 9:55 pm | #p171018 ===
 rimwall wrote:
+Ok, to try a TCU relearn, use FastECU_TCU021 from the repo. Do everything the same as for a TCU read and you will now be asked to proceed with the TCU read, or do a TCU relearn.
+
+This is definitely a trial, it most likely won't be the right sequence of commands, but it will report various values that we can use to figure out the right sequence.
+
+After a couple of initial steps, it will enter a loop (terminates after 200 cycles). This loop is logging the status of the relearn. Hopefully you will see some numbers change. If they don't change after a while, try the next step in the SSMIII sequence and see if the numbers change. Wait until they stop changing and then try the next step etc. The SSMIII sequence is:
+8. Car must be off the ground! At this step Engine is warm, running, stick in D
+9-10. Release brake pedal (4WD Solenoid Learning occurs)
+11-12. Fully press brake pedal
+13-14. Select R
+15. Select N
+16-17. Turn off engine (keep ignition on)
+18-19. Turn on engine
+
+Then post up the log so we can figure out what needs to be changed...
+
+Great, hopefully I can give this a shot this weekend
 
 === post 241 | rimwall | Fri Oct 27, 2023 5:44 am | #p171045 ===
 As an update, the current focus is on possible levers to increase shifting times. It looks like there are tables with a number of steps for each gear shift (eg: 4th to 5th, 3rd to 4th) and each direction (brake or clutch engaging or disengaging). Pressure is changed based on the number of steps (the less steps, the faster the change). There is a huge amount of complexity how the pressure is controlled through the various states from fully disengaged to engaged or vice versa (each brake / clutch can be in any one of ~70 states). I guess it's not surprising given that engaging and disengaging the brakes and clutches is the core function of the TCM. In any case, it's gradually unravelling with help from @ajayel's logging data.
@@ -1479,6 +2262,11 @@ This could mean they can be used to produce 'harsher' but therefore faster shift
 
 === post 246 | jimihimisimi | Thu Nov 02, 2023 4:49 pm | #p171102 ===
 rimwall wrote:
+Digging through the code a bit more, the TCU data that can be entered essentially overwrites the values from the TCU relearn process.
+
+This could mean they can be used to produce 'harsher' but therefore faster shifts... we just need someone to try them to find out what they do.
+
+Fascinating. I am willing to pull the current values, but I would like to compare against someone else's before just pushing random values
 
 === post 247 | rimwall | Fri Nov 03, 2023 4:11 am | #p171109 ===
 Ok, an updated FastECU v0.22 (in the precompiled folder of the development branch) has a trial to read these 'hidden' parameters. It will only read them at this stage.
@@ -1489,6 +2277,40 @@ The more folks that do this, the better, so we can compare.
 
 === post 248 | jimihimisimi | Sat Nov 04, 2023 2:41 am | #p171117 ===
 rimwall wrote:
+Ok, an updated FastECU v0.22 (in the precompiled folder of the development branch) has a trial to read these 'hidden' parameters. It will only read them at this stage.
+
+Use the same procedure as a TCU ROM dump. You will get a message box with 3 choices. Pick 'params' and post up the results. I think I have the SSM commands right, so hopefully it will pull some data.
+
+The more folks that do this, the better, so we can compare.
+
+Got the "TCU Operation Failed" Popup, see console output below:
+
+Code:
+[2023-11-04 02:36:34.832]  Attempting to read TCU parameters
+[2023-11-04 02:36:37.082]  Commencing to read TCU parameters, please wait...
+[2023-11-04 02:36:37.088]  Reading TCU parameters...
+[2023-11-04 02:36:37.112]  Sent: 00 00 07 e1 a8 00 00 01 6c 00 01 6d 00 01 6e 00 01 6f 00 01 70 00 01 71 00 06 f0 00 06 f1 00 06 f2 00 06 f3 
+[2023-11-04 02:36:37.118]  0: 0xA8 response: 00 00 07 e9 7f a8 12 
+[2023-11-04 02:36:37.128]  Sent: 00 00 07 e1 a8 00 00 01 6c 00 01 6d 00 01 6e 00 01 6f 00 01 70 00 01 71 00 06 f0 00 06 f1 00 06 f2 00 06 f3 
+[2023-11-04 02:36:37.135]  1: 0xA8 response: 00 00 07 e9 7f a8 12 
+[2023-11-04 02:36:37.146]  Sent: 00 00 07 e1 a8 00 00 01 6c 00 01 6d 00 01 6e 00 01 6f 00 01 70 00 01 71 00 06 f0 00 06 f1 00 06 f2 00 06 f3 
+[2023-11-04 02:36:37.149]  2: 0xA8 response: 00 00 07 e9 7f a8 12 
+[2023-11-04 02:36:37.149]  Sent: 00 00 07 e1 a8 00 00 01 6c 00 01 6d 00 01 6e 00 01 6f 00 01 70 00 01 71 00 06 f0 00 06 f1 00 06 f2 00 06 f3 
+[2023-11-04 02:36:37.165]  3: 0xA8 response: 00 00 07 e9 7f a8 12 
+[2023-11-04 02:36:37.176]  Sent: 00 00 07 e1 a8 00 00 01 6c 00 01 6d 00 01 6e 00 01 6f 00 01 70 00 01 71 00 06 f0 00 06 f1 00 06 f2 00 06 f3 
+[2023-11-04 02:36:37.180]  4: 0xA8 response: 00 00 07 e9 7f a8 12 
+[2023-11-04 02:36:37.190]  Sent: 00 00 07 e1 a8 00 00 01 6c 00 01 6d 00 01 6e 00 01 6f 00 01 70 00 01 71 00 06 f0 00 06 f1 00 06 f2 00 06 f3 
+[2023-11-04 02:36:37.195]  5: 0xA8 response: 00 00 07 e9 7f a8 12 
+[2023-11-04 02:36:37.197]  Input Clutch Pressure Correction (raw byte): 168
+[2023-11-04 02:36:37.199]  High Low Reverse Clutch Pressure Correction (raw byte): 18
+[2023-11-04 02:36:37.202]  Direct Clutch Pressure Correction (raw byte): 0
+[2023-11-04 02:36:37.204]  Front Brake Pressure Correction (raw byte): 0
+[2023-11-04 02:36:37.206]  Correction of AWD Clutch Torque (raw byte, high): 0
+[2023-11-04 02:36:37.211]  Correction of AWD Clutch Torque (raw byte, low): 0
+[2023-11-04 02:36:37.214]  Forward Brake Pressure Correction (raw byte): 0
+[2023-11-04 02:36:37.216]  4WD Pressure Correction (raw byte): 0
+[2023-11-04 02:36:37.218]  Low Coast Brake Pressure Correction (raw byte): 0
+[2023-11-04 02:36:37.219]  Temperature basis for all above Corrections (raw byte): 0
 
 === post 249 | rimwall | Sat Nov 04, 2023 12:25 pm | #p171120 ===
 Aw shoot... sorry, I forgot to divide the second lot of offsets by 4. I suspect that's why it is was returning a 0x12 error.
@@ -1517,12 +2339,53 @@ ook. a s newbie here (while I sort out qt missing dlls):
 
 === post 252 | MiikaS | Sun Nov 05, 2023 12:12 pm | #p171126 ===
 V6er wrote:
+ook. a s newbie here (while I sort out qt missing dlls):
+1) I need to download newest TCU_023.exe, kernels folder and protocol folder(and add newest protocols.cfg)? or do I need something else?
+2) what is right way of getting Qt installed? open source 3.7gig download (like https://www.qt.io/offline-installers ) to get those qt5core.dll, qt5gui.dll, qt5widgets.dll, qt5serialport.dll ?
+FastECU windows precompiled folder includes all necessary files to run it, so download it (test it) and copy all other files in that folder.
 
 === post 253 | V6er | Sun Nov 05, 2023 12:44 pm | #p171127 ===
 MiikaS wrote:
+FastECU windows precompiled folder includes all necessary files to run it, so download it (test it) and copy all other files in that folder.
+
+ah! thanks! will go try it out now
 
 === post 254 | jimihimisimi | Sun Nov 05, 2023 1:49 pm | #p171129 ===
 rimwall wrote:
+Aw shoot... sorry, I forgot to divide the second lot of offsets by 4. I suspect that's why it is was returning a 0x12 error.
+
+Please try again. v0.23 in the repo. Thanks!
+
+Note: the 14 Tribeca ROM has a few more ssm_get parameters than the 08 Outback ROM I've looked at in detail.
+
+Same error popup, log below:
+
+Code:
+[2023-11-05 13:46:54.575]  Attempting to read TCU parameters
+[2023-11-05 13:46:56.289]  Commencing to read TCU parameters, please wait...
+[2023-11-05 13:46:56.294]  Reading TCU parameters...
+[2023-11-05 13:46:56.318]  Sent: 00 00 07 e1 a8 00 00 01 6c 00 01 6d 00 01 6e 00 01 6f 00 01 70 00 01 71 00 01 bc 00 01 bd 00 01 be 00 01 bf 
+[2023-11-05 13:46:56.321]  0: 0xA8 response: 00 00 07 e9 e8 00 00 00 00 00 00 00 00 00 00 
+[2023-11-05 13:46:56.331]  Sent: 00 00 07 e1 a8 00 00 01 6c 00 01 6d 00 01 6e 00 01 6f 00 01 70 00 01 71 00 01 bc 00 01 bd 00 01 be 00 01 bf 
+[2023-11-05 13:46:56.335]  1: 0xA8 response: 00 00 07 e9 e8 00 00 00 00 00 00 00 00 00 00 
+[2023-11-05 13:46:56.345]  Sent: 00 00 07 e1 a8 00 00 01 6c 00 01 6d 00 01 6e 00 01 6f 00 01 70 00 01 71 00 01 bc 00 01 bd 00 01 be 00 01 bf 
+[2023-11-05 13:46:56.349]  2: 0xA8 response: 00 00 07 e9 e8 00 00 00 00 00 00 00 00 00 00 
+[2023-11-05 13:46:56.360]  Sent: 00 00 07 e1 a8 00 00 01 6c 00 01 6d 00 01 6e 00 01 6f 00 01 70 00 01 71 00 01 bc 00 01 bd 00 01 be 00 01 bf 
+[2023-11-05 13:46:56.362]  3: 0xA8 response: 00 00 07 e9 e8 00 00 00 00 00 00 00 00 00 00 
+[2023-11-05 13:46:56.374]  Sent: 00 00 07 e1 a8 00 00 01 6c 00 01 6d 00 01 6e 00 01 6f 00 01 70 00 01 71 00 01 bc 00 01 bd 00 01 be 00 01 bf 
+[2023-11-05 13:46:56.379]  4: 0xA8 response: 00 00 07 e9 e8 00 00 00 00 00 00 00 00 00 00 
+[2023-11-05 13:46:56.390]  Sent: 00 00 07 e1 a8 00 00 01 6c 00 01 6d 00 01 6e 00 01 6f 00 01 70 00 01 71 00 01 bc 00 01 bd 00 01 be 00 01 bf 
+[2023-11-05 13:46:56.392]  5: 0xA8 response: 00 00 07 e9 e8 00 00 00 00 00 00 00 00 00 00 
+[2023-11-05 13:46:56.394]  Input Clutch Pressure Correction (raw byte): 0
+[2023-11-05 13:46:56.396]  High Low Reverse Clutch Pressure Correction (raw byte): 0
+[2023-11-05 13:46:56.398]  Direct Clutch Pressure Correction (raw byte): 0
+[2023-11-05 13:46:56.401]  Front Brake Pressure Correction (raw byte): 0
+[2023-11-05 13:46:56.403]  Correction of AWD Clutch Torque (raw byte, high): 0
+[2023-11-05 13:46:56.405]  Correction of AWD Clutch Torque (raw byte, low): 0
+[2023-11-05 13:46:56.407]  Forward Brake Pressure Correction (raw byte): 0
+[2023-11-05 13:46:56.409]  4WD Pressure Correction (raw byte): 0
+[2023-11-05 13:46:56.411]  Low Coast Brake Pressure Correction (raw byte): 0
+[2023-11-05 13:46:56.413]  Temperature basis for all above Corrections (raw byte): 0
 
 === post 255 | V6er | Sun Nov 05, 2023 2:13 pm | #p171130 ===
 ok. the car is MY2008 Subaru Tribeca (TG5D and EZ36). manufactured in may 2007.
@@ -1535,6 +2398,72 @@ bottom right corner has text "Unknown unk-unk CAN (Hitachi M32176F4/384kb)"
 
 Chose vehicle "unknown" and "5eat" (tried SH7058 variants, but it didn't work). and here is log file:
 Quote:
+[2023-11-05 08:43:33.838] Read memory with flashmethod 'sub_tcu_hitachi_can' and kernel 'kernels/ '
+[2023-11-05 08:43:50.784] Connecting to Subaru TCU Hitachi CAN bootloader, please wait...
+[2023-11-05 08:43:50.805] Checking if kernel is already running...
+[2023-11-05 08:43:50.812] Send msg: 00 00 07 e1 31 02 02 01 
+[2023-11-05 08:43:51.019] Received msg: 00 00 07 e9 7f 31 12 
+[2023-11-05 08:43:51.021] Trying TCU Init...
+[2023-11-05 08:43:51.023] Sent: 00 00 07 e1 aa 
+[2023-11-05 08:43:51.039] 0: 0xAA response: 00 00 07 e9 ea a2 10 22 8c fb 20 63 00 01 00 80 04 00 00 00 00 a1 42 0c 00 08 00 00 00 00 00 00 00 dc 06 00 0a 29 c0 04 7a 01 1f 00 bc 00 00 00 00 00 00 00 a6 c0 00 fe fe 03 09 20 00 
+[2023-11-05 08:43:51.050] Init Success: CAL ID = 8CFB206300
+[2023-11-05 08:43:51.107] Trying 0x09 0x04...
+[2023-11-05 08:43:51.111] Sent: 00 00 07 e1 09 04 
+[2023-11-05 08:43:51.121] 0: 0x09 0x04 response: 00 00 07 e9 49 04 01 30 32 46 42 32 57 41 33 00 00 00 00 00 00 00 00 
+[2023-11-05 08:43:51.126] Init Success: TCU ID = 02FB2WA3
+[2023-11-05 08:43:51.132] Initializing bootloader...
+[2023-11-05 08:43:51.138] Send msg: 00 00 07 e1 10 03 
+[2023-11-05 08:43:51.346] Received msg: 00 00 07 e9 50 03 
+[2023-11-05 08:43:51.347] Starting seed request...
+[2023-11-05 08:43:51.349] Send msg: 00 00 07 e1 27 01 
+[2023-11-05 08:43:51.558] Received msg: 00 00 07 e9 67 01 1c 76 47 27 
+[2023-11-05 08:43:51.560] Seed request ok
+[2023-11-05 08:43:51.562] Sending seed key...
+[2023-11-05 08:43:51.564] Send msg: 00 00 07 e1 27 02 4f ea 30 bd 
+[2023-11-05 08:43:51.766] Received msg: 00 00 07 e9 7f 27 35 
+[2023-11-05 08:43:51.768] Bad response to seed request
+[2023-11-05 08:43:51.771] Seed key ok
+[2023-11-05 08:43:51.773] Jumping to onboad kernel...
+[2023-11-05 08:43:51.775] Send msg: 00 00 07 e1 10 02 
+[2023-11-05 08:43:51.978] Received msg: 00 00 07 e9 7f 10 22 
+[2023-11-05 08:43:51.981] Bad response to jumping to onboard kernel
+[2023-11-05 08:43:51.984] Jump to kernel ok
+[2023-11-05 08:43:51.986] Checking if jump successful and kernel alive...
+[2023-11-05 08:43:51.988] Send msg: 00 00 07 e1 31 02 02 01 
+[2023-11-05 08:43:52.192] Received msg: 00 00 07 e9 7f 31 12 
+[2023-11-05 08:43:52.194] Test script complete
+[2023-11-05 08:43:52.195] Not yet implemented: Reading ROM from TCU Subaru Hitachi using CAN
+[2023-11-05 08:43:52.198] Settting dump start & length...
+[2023-11-05 08:43:52.201] Send msg: 00 00 07 e1 34 04 33 00 80 00 05 80 00 
+[2023-11-05 08:43:52.416] Received msg: 00 00 07 e9 7f 34 12 
+[2023-11-05 08:43:52.417] Bad response to setting dump start & length
+[2023-11-05 08:43:52.420] Start reading ROM, please wait...
+[2023-11-05 08:43:52.423] Send msg: 00 00 07 e1 b7 00 80 00 
+[2023-11-05 08:43:52.626] Received msg: 00 00 07 e9 7f b7 22 
+[2023-11-05 08:43:52.629] Page data request failed!
+[2023-11-05 08:43:52.631] Received pagedata: b7 22 
+[2023-11-05 08:43:52.634] Kernel read addr: 0x00008000 length: 0x00000100, 1 B/s 485 s remaining
+[2023-11-05 08:43:52.637] Send msg: 00 00 07 e1 b7 00 81 00 
+[2023-11-05 08:43:52.846] Received msg: 00 00 07 e9 7f b7 22 
+[2023-11-05 08:43:52.848] Page data request failed!
+[2023-11-05 08:43:52.849] Received pagedata: b7 22 
+[2023-11-05 08:43:52.852] Kernel read addr: 0x00008100 length: 0x00000100, 1174 B/s 307 s remaining
+
+... and it goes on and on up to
+Quote:
+[2023-11-05 08:54:59.284] Send msg: 00 00 07 e1 b7 05 ff 00 
+[2023-11-05 08:54:59.487] Received msg: 00 00 07 e9 7f b7 22 
+[2023-11-05 08:54:59.489] Page data request failed!
+[2023-11-05 08:54:59.492] Received pagedata: b7 22 
+[2023-11-05 08:54:59.494] Kernel read addr: 0x0005FF00 length: 0x00000100, 1196 B/s 1 s remaining
+[2023-11-05 08:54:59.497] ROM read complete
+[2023-11-05 08:54:59.499] Sending stop command...
+[2023-11-05 08:54:59.504] Sent: 00 00 07 e1 37 
+[2023-11-05 08:54:59.707] 0: 0x37 response: 00 00 07 e9 7f 37 22 
+
+and I got empty 35kb file with trash at the end.
+
+any suggestions?
 
 === post 256 | MiikaS | Sun Nov 05, 2023 2:36 pm | #p171131 ===
 Quick look at the log shows everything is ok up to sending calculated seed key back to TCU and that point it fails (response 7f 27 35 = wrong seed key). Maybe it uses different key set or something so @rimwall can suggest what else to try
@@ -1546,12 +2475,27 @@ Quick look at the log shows everything is ok up to sending calculated seed key b
 
 === post 258 | jimihimisimi | Mon Nov 06, 2023 3:07 pm | #p171143 ===
 rimwall wrote:
+@V6er - MiikaS is correct, it is failing at the security key stage. Are you sure it's a Hitachi ROM? If you can find your TCU part number, we can probably confirm via web images. What happened when you selected SH7058 Denso (under the same Unknown section)? 
+
+@jimihimisimi - it worked this time (you can ignore the popup). The values are all zero. Which seems odd. Looking at the ROM further, it looks like these values are inputs only. They can be used to enter a value, but they aren't updated to reflect the current value. I'm also not sure how they interact with the 'learning' process. It might be that they are simply a starting point, and, over time, the TCU will drifts back to a learned state that it always ends up in. Or it might be that they are permanent offsets. I need to look at the ROM more. Do you know if your TCU supports K-line logging (eg: FreeSSM)? If so, we might be able to log some RAM values to confirm. Or we could just try setting one of the SSM parameters and see what happens...
+
+The transmission was cold when I grabbed these readings... any idea if the TCU will respond different with temp?
 
 === post 259 | V6er | Mon Nov 06, 2023 4:54 pm | #p171145 ===
 rimwall wrote:
+@V6er - MiikaS is correct, it is failing at the security key stage. Are you sure it's a Hitachi ROM? If you can find your TCU part number, we can probably confirm via web images. What happened when you selected SH7058 Denso (under the same Unknown section)? 
+
+that's the funny part - under unknown car - there is just one choice - that Hitachi. I tried generic car "SH7058 denso" something - but it produced some error again.
+may be I messed up with copying over those kernels...?
 
 === post 260 | MiikaS | Mon Nov 06, 2023 5:01 pm | #p171146 ===
 V6er wrote:
+rimwall wrote:
+@V6er - MiikaS is correct, it is failing at the security key stage. Are you sure it's a Hitachi ROM? If you can find your TCU part number, we can probably confirm via web images. What happened when you selected SH7058 Denso (under the same Unknown section)? 
+
+that's the funny part - under unknown car - there is just one choice - that Hitachi. I tried generic car "SH7058 denso" something - but it produced some error again.
+may be I messed up with copying over those kernels...?
+Everything shown there is on protocols.cfg so if something is missing, you have wrong version of file. Did you copy it from rimwalls repo?
 
 === post 261 | rimwall | Tue Nov 07, 2023 7:03 am | #p171151 ===
 @V6er - it should look like the screen grab below
@@ -1574,9 +2518,36 @@ Ok, I've done some more digging. Here's a summary of how the SSM corrections int
 For upshifts (1->2, 2->3, 3->4, 4->5), the TCU tracks the pressure of the relevant clutch and works out an approximate linear relationship between Target Clutch Pressure (TCP) and Factored Engine Torque (FET) such that TCP = M x FET + O, where M = multiplier and O = offset. FET is Calculated Engine Torque (CET from the ECU via CAN) multiplied by a factor between 1.8 (when slip is at maximum - nil Turbine Speed) and 1.0 (when no slip - Turbine Speed equals Engine Speed). This relationship means that when CET is high and slip is high, the TCP will be very high resulting in a fast increase in clutch pressure to get the Turbine Speed closer to Engine Speed and rapidly reduce slip. It also means that, even when there is no slip, TCP increases with CET to keep the clutch engaged and stop any slip. On each cycle the TCU trials values of M and O slightly bigger and smaller than the current values, and chooses the values that give the best match to recent clutch performance. This allows adjustments for clutch degradation etc. The last 8 values of M and O are stored in RAM and on the EEPROM so they are available even after loss of power to the TCU. The TCU ROM also has what are essentially default values for M and O, which are used when brand new or after 'Clear Memory 2'. Let's call the default values M_d and O_d. As the TCU is updating M and O over time, the calculations of TCP have to be adjusted for changes between M and M_d and O and O_d. Most of the TCU calculations carry on unaffected and calculate TCP regardless of any changes in M and O, and then an adjustment to TCP is made as follows.
  
 Code:
+The default calculations are:       TCP_d = M_d x FET + O_d            ...(1)
+Updated TCP would be calculated as: TCP = M x FET + O                  ...(2)
+
+Given that FET is the same, (1) and (2) can be combined...
+From (1):                           FET = (TCP_d - O_d) / M_d          ...(3)
+Sub (3) into (2):                   TCP = M / M_d x (TCP_d - O_d) + O  ...(4)
+
+This provides a TCP each computational cycle using the latest values of M and O. M and O values from the same Transmission may be useful to track over time because they will probably indicate clutch wear. M and O can possibly be compared between Tranmissions although may not be directly comparable (because each Transmission will have minor dimensional differences which may affect M and O).
+
+The SSM corrections (when entered) replace the value of O. There is some logic that attempts a smooth transition from the prior value of O, but this is transitory. Once O is updated, the automatic tuning of M and O carries on as normal, so it is possible that any adjustment to O will gradually be tuned away. However, an increase in O will result in a decrease to M, which may take the ongoing tuning to a different equilibrium point with a higher O. So it's also possible that the correction will be retained. *In addition, the automatic tuning of O is restricted to remain within a tight bound from the originally entered value of O, so this seems to indicate the correction will be mostly retained. A TCU relearn provides new values for O, which provide a new starting point for the ongoing tuning.
+
+Other SSM corrections like Line Pressure and 4WD Pressure are much simpler. These flow directly through. The Line Pressure increase is relative to a default value and is only applied during normal gearchanges (ie) not limp mode settings.
+
+There are no SSM parameters to read the current values of M and O. However, they are stored in a standard location in RAM before being transferred to the EEPROM, so they will be fairly easy to read from a K-Line enabled TCU or from a CAN TCU that has a logging patch applied. Alternatively, if M and O cannot be read, the default values can be extracted from the ROM and entered via SSM, which will effectively take the TCU back to a state from which it should gradually get to the same equilibrium values of M and O it had reached previously.
+
+In nutting all this out, I did also find the ROM has the ability to add another offset to each clutch/brake, which is a simple increase / decrease to all pressures at all times. This might also be useful, but does require a reflash.
+
+Does someone want to try out the SSM corrections? Let me know and I'll take a crack at the SSM commands...
+
+[EDIT: *]
 
 === post 263 | jimihimisimi | Thu Nov 09, 2023 4:28 pm | #p171159 ===
 rimwall wrote:
+Does someone want to try out the SSM corrections? Let me know and I'll take a crack at the SSM commands...
+
+The upshifts on my car typically aren't a problem, mostly just getting into 1st. I wonder if increasing the Line Pressure or 4WD pressure would help or not.
+
+I have not had luck with K-Line logging (not sure it's feasible with MY2014) and I am not comfortable with a guess-and-check approach as it is my wife's car. I would like to log pressure readings/etc before just throwing values at the TCU.
+
+Edit: I will try seeing what RomRaider can do for logging with the TCU...
 
 === post 264 | rimwall | Fri Nov 10, 2023 6:34 am | #p171163 ===
 On CAN only cars, the SSM commands do not allow logging of any RAM address. A reflash with a patched ROM is required to enable this. I can patch the ROM if you want to do a reflash.
@@ -1585,6 +2556,11 @@ I have done the coding to try setting these parameters. All we need now is someo
 
 === post 265 | jimihimisimi | Fri Nov 10, 2023 2:40 pm | #p171165 ===
 rimwall wrote:
+On CAN only cars, the SSM commands do not allow logging of any RAM address. A reflash with a patched ROM is required to enable this. I can patch the ROM if you want to do a reflash.
+
+I have done the coding to try setting these parameters. All we need now is someone to try it.
+
+Let's do it! My TCU from image is a few pages back.
 
 === post 266 | rimwall | Mon Nov 13, 2023 1:22 am | #p171178 ===
 Took a bit of fiddling, but here is a patched Tribeca TCU ROM. This has a different 0xa8 command handler to allow logging of any RAM address. The ROM checksum is also updated.
@@ -1603,6 +2579,13 @@ Let us know how it goes!
 
 === post 267 | jimihimisimi | Mon Nov 13, 2023 3:02 pm | #p171182 ===
 rimwall wrote:
+Took a bit of fiddling, but here is a patched Tribeca TCU ROM. This has a different 0xa8 command handler to allow logging of any RAM address. The ROM checksum is also updated.
+
+...
+
+Let us know how it goes!
+
+Currently doing some maintenance on the car, once it's back in once piece I will try pulling the TCU code again and let you know how it goes.
 
 === post 268 | V6er | Thu Nov 23, 2023 10:02 pm | #p171254 ===
 Hello!
@@ -1630,6 +2613,82 @@ General approach:
 1. Log your current values by adding the following to your RR logger *.xml file. Replace XXXXXXXXXX with your 5 byte (10 nybble) TCU ID.
 
 Code:
+<ecuparam id="T020" name="3rd to 4th IC Pressure Correction" desc="T020" target="1">
+                    <ecu id="XXXXXXXXXX">
+                        <address length="1">0xFF2184</address>
+                    </ecu>
+                    <conversions>
+                        <conversion units="none" storagetype="uint8" expr="x" format="0" />
+                    </conversions>
+                </ecuparam>
+<ecuparam id="T021" name="2nd to 3rd HLRC Pressure Correction" desc="T021" target="1">
+                    <ecu id="XXXXXXXXXX">
+                        <address length="1">0xFF2185</address>
+                    </ecu>
+                    <conversions>
+                        <conversion units="none" storagetype="uint8" expr="x" format="0" />
+                    </conversions>
+                </ecuparam>
+<ecuparam id="T022" name="1st to 2nd DC Pressure Correction" desc="T022" target="1">
+                    <ecu id="XXXXXXXXXX">
+                        <address length="1">0xFF2186</address>
+                    </ecu>
+                    <conversions>
+                        <conversion units="none" storagetype="uint8" expr="x" format="0" />
+                    </conversions>
+                </ecuparam>
+<ecuparam id="T023" name="2nd to 3rd FB Pressure Correction" desc="T023" target="1">
+                    <ecu id="XXXXXXXXXX">
+                        <address length="1">0xFF2187/address>
+                    </ecu>
+                    <conversions>
+                        <conversion units="none" storagetype="uint8" expr="x" format="0" />
+                    </conversions>
+                </ecuparam>
+<ecuparam id="T024" name="4th to 5th FwdB Pressure Correction" desc="T024" target="1">
+                    <ecu id="XXXXXXXXXX">
+                        <address length="1">0xFF2188/address>
+                    </ecu>
+                    <conversions>
+                        <conversion units="none" storagetype="uint8" expr="x" format="0" />
+                    </conversions>
+                </ecuparam>
+<ecuparam id="T025" name="4WD Pressure Correction" desc="T025" target="1">
+                    <ecu id="XXXXXXXXXX">
+                        <address length="1">0xFF2189/address>
+                    </ecu>
+                    <conversions>
+                        <conversion units="none" storagetype="uint8" expr="x" format="0" />
+                    </conversions>
+                </ecuparam>
+<ecuparam id="T026" name="Line Pressure Correction" desc="T026" target="1">
+                    <ecu id="XXXXXXXXXX">
+                        <address length="1">0xFF218a/address>
+                    </ecu>
+                    <conversions>
+                        <conversion units="none" storagetype="uint8" expr="x" format="0" />
+                    </conversions>
+                </ecuparam>
+<ecuparam id="T027" name="Temp Basis" desc="T027" target="1">
+                    <ecu id="XXXXXXXXXX">
+                        <address length="1">0xFF218b/address>
+                    </ecu>
+                    <conversions>
+                        <conversion units="none" storagetype="uint8" expr="x" format="0" />
+                    </conversions>
+                </ecuparam>
+
+2. Review the attached pdf file to choose what offset you want to enter. For example, if your logged Line Pressure offset is 186 at a logged Temp of 50, this means your TCU is currently applying an offset of 7 kPa to Line Pressure. To increase Line Pressure offset by 23 kPa to 30 kPa, you want to enter a pressure offset of 178.
+
+3. Enter your new values using the Read, Set Params option in Fast ECU v0.27. If you want to leave a value unchanged, enter your currently logged value. The 4WD Torque Correction can be entered as 0 if you don't want to change this. Do not enter a 0 for any pressures or the temperature (entering a zero stops any settings being saved). Note that the Read, Read Params option will only report back any values you have just entered. It does not report the values that the TCU actually uses for its calculations.
+
+4. Log again using the RAM addresses above to confirm the values have been saved to your TCU EEPROM. Then log TCU pressures (using the normally available parameters) to see the effect on the pressures. Hopefully you will also feel the changes in how the TCU behaves.
+
+5. If you don't like the new settings, just use the Set Parms process to reset to your originally logged values.
+
+Note: this uses SSM set commands (ie: there is no flashing involved). This is still in Beta stage and may not be 100% correct. Let me know of anything that needs fixing.
+
+Enjoy!
 
 === post 271 | jimihimisimi | Fri Dec 01, 2023 6:27 pm | #p171292 ===
 Working for me with v0.27, thanks rimwall!
@@ -1640,6 +2699,32 @@ Thanks!
 
 My Values: Default, Logged, Written:
 Code:
+Direct Clutch Pressure Correction
+DC, 75, 71,71
+
+High Low Reverse Clutch Pressure Correction
+HLRC, 74, 73,73
+
+Input Clutch Pressure Correction
+IC, 81, 83,83
+
+Front Brake Pressure Correction
+FB, 195, 191,191
+
+Forward Brake Pressure Correction
+FwdB, 183, 188,188
+
+4WD Pressure Correction
+4WD,170,162,162
+
+Line Pressure Correction
+PL 189, 181,189
+
+Temperature Basis for Above Corrections
+Temp, 100, 107,107
+
+AWD torque Correction;
+AWD,?,?,0
 
 === post 272 | rimwall | Wed Dec 06, 2023 7:21 am | #p171323 ===
 Good stuff, glad it's useful! 
@@ -1652,6 +2737,17 @@ With 5EAT TCU ROM access, dumping, flashing, adjusting shift curves, shift durat
 
 === post 273 | jimihimisimi | Thu Dec 07, 2023 1:41 pm | #p171327 ===
 rimwall wrote:
+Good stuff, glad it's useful! 
+
+The bounds are the upper / lower values in the pdf because the table lookup function defaults to the boundary value if the attempted lookup is beyond the boundary.
+
+I have updated the repo with v0.28 which fixes a bug in the ROM dump code.
+
+With 5EAT TCU ROM access, dumping, flashing, adjusting shift curves, shift durations and 'hidden' SSM parameters all now possible, I'm not sure of the next step for TCU tuning. Folks can get in touch with me if they have any suggestions...
+
+Really impressive job on putting this all together! Great work
+
+As far as whats next... manual swaps?
 
 === post 274 | jimihimisimi | Fri Jan 05, 2024 12:56 am | #p171519 ===
 So, after 2000 miles of driving I did some logging, and the line pressure variable is still the updated value.
@@ -1670,6 +2766,7 @@ Gear switching is generally determined by graphs of Accelerator Pedal Angle and 
 Once these graphs are located in the TCU ROM, they can be changed, the ROM checksum updated and then flashed back to the TCU.
 
 Attachment:
+Excel View of Shift Curves.JPG
 
 === post 277 | rimwall | Sun Feb 18, 2024 10:46 pm | #p171846 ===
 Comer352L, who currently manages the repo for FreeSSM, has very kindly updated the FreeSSM source code to enable changes to the 'hidden' parameters on 5EAT TCUs. The code is in the the branch "e5at-permanent-adjustments" of the FreeSSM repo. I haven't yet tried to build it.
@@ -1680,16 +2777,25 @@ I haven't tried to build the beta version myself because I can't test it (I don'
 
 === post 278 | jimihimisimi | Wed Feb 21, 2024 7:01 pm | #p171867 ===
 rimwall wrote:
+Comer352L, who currently manages the repo for FreeSSM, has very kindly updated the FreeSSM source code to enable changes to the 'hidden' parameters on 5EAT TCUs. The code is in the the branch "e5at-permanent-adjustments" of the FreeSSM repo. I haven't yet tried to build it.
+
+You will need a Denso TCU with SysID of A21022 in order to see the new settings. And the increases / decreases to the pressure corrections are made in 'steps' instead of kPa values to make it simpler to use. 
+
+I haven't tried to build the beta version myself because I can't test it (I don't have an AT car). Is there anyone who wants to test the updated FreeSSM?
+
+I can give it a shot. I have FreeSSM on my laptop already, will just need to grab the branch.
 
 === post 279 | SergArb | Thu Feb 22, 2024 3:28 am | #p171871 ===
 Something wrong with updated brunch. Older one compiles fine ((
 
 Attachment:
+FreeSSM_ERR.jpg
 
 === post 280 | SergArb | Fri Feb 23, 2024 11:19 am | #p171893 ===
 Idents from Subaru CVT 
 
 Attachment:
+uNOIcHWJESU.jpg
 
 === post 281 | SergArb | Tue Feb 27, 2024 6:55 am | #p171937 ===
 Fresh GIT build of FreeSSM with 5EAT additions.
@@ -1702,6 +2808,63 @@ Trying to manage with Subaru CVT Melco, MH8104/512KB. Need help.
 
 Changed some commands in Rimwall sources, now it request bytes for seed key calculation. But my skills not enough to find algorithm.
 Code:
+[2024-03-19 17:22:50.501]  Trying TCU Init...
+[2024-03-19 17:22:50.501]  Sent: 00 00 07 e1 aa 
+[2024-03-19 17:22:50.516]  0: 0xAA response: 00 00 07 e9 ea a4 10 40 b1 e5 f0 82 00 01 00 80 04 00 00 00 00 8d 02 00 00 00 00 00 00 00 00 00 00 9c 06 00 0a 21 c0 00 00 05 1f 00 80 00 00 00 00 00 00 00 16 e1 c0 00 00 00 04 20 00 00 00 40 00 00 00 00 00 00 bb 7e 40 00 00 00 00 00 00 00 80 
+[2024-03-19 17:22:50.516]  Init Success: CAL ID = B1E5F08200
+[2024-03-19 17:22:50.516]  Trying 0x09 0x04...
+[2024-03-19 17:22:50.532]  Sent: 00 00 07 e1 09 04 
+[2024-03-19 17:22:50.532]  0: 0x09 0x04 response: 00 00 07 e9 49 04 01 5a 35 45 35 46 30 38 32 00 00 00 00 00 00 00 00 
+[2024-03-19 17:22:50.532]  Init Success: TCU ID = Z5E5F082
+[2024-03-19 17:22:50.532]  Initializing bootloader...
+[2024-03-19 17:22:50.532]  Send msg: 00 00 07 e1 10 43 
+[2024-03-19 17:22:50.750]  Received msg: 00 00 07 e9 50 43 
+[2024-03-19 17:22:50.750]  Starting seed request...
+[2024-03-19 17:22:50.750]  Send msg: 00 00 07 e1 27 01 
+[2024-03-19 17:22:50.953]  Received msg: 00 00 07 e9 67 01 0e 45 7a 5f 
+[2024-03-19 17:22:50.953]  Seed request ok
+[2024-03-19 17:22:50.953]  Sending seed key...
+[2024-03-19 17:22:50.953]  Send msg: 00 00 07 e1 27 02 1d c5 de e2 
+[2024-03-19 17:22:51.156]  Received msg: 00 00 07 e9 7f 27 35 
+[2024-03-19 17:22:51.156]  Bad response to seed request
+
+I have couple requests and calculated seed keys:
+
+Code:
+00 00 07 E1 27 01 - command 27 01 
+00 00 07 E9 67 01  *D8 39 3B 06* - answer with 4 bytes for seed key calculation.
+00 00 07 E1 27 02  *41 38 18 79* - last 4 bytes is calculated seed key.
+00 00 07 E9 67 02 - Positive answer, seed key is OK.
+
+And another one:
+
+Code:
+00 00 07 E1 27 01
+00 00 07 E9 67 01  *E8 62 72 AF*
+00 00 07 E1 27 02  *1D C5 DE E2* - Seed key.
+00 00 07 E9 67 02
+
+Can we somehow find the algorithm for them?
+
+I can't find any datasheet on internet.
+
+But i think they using M32R language.
+
+In IDA we should make this settings for starting points. I don't know what RAM segments to use.
+Attachment:
+IDA1.jpg
+
+And choose device:
+Attachment:
+IDA2.jpg
+
+Then we have some code:
+Attachment:
+IDA.jpg
+
+Here my CVT ROM.
+Attachment:
+Z5D3F080_B1D3F08000-20240218-141156.zip
 
 === post 283 | rimwall | Wed Mar 20, 2024 6:00 am | #p172120 ===
 Hi, the ROM will need to be reverse engineered to find the algo. I will have a look when I find some spare time.
@@ -1713,15 +2876,41 @@ Thank you, will be waiting
 Same algo. Different words...
 
 Code:
+    const uint16_t keytogenerateindex[]={
+        0x9E99, 0x685C, 0x874D, 0xF11E,
+        0x27D4, 0xA967, 0xB63B, 0x7A37,
+        0xE23B, 0xA8D0, 0x9B82, 0xAC43,
+        0xE874, 0x7FC5, 0x7141, 0x8B44
+    };
+
+This will allow passing 0x27 access to make a kernel jump possible.
+
+The ROM dump is all 0xff from address 0x0 to 0x8000, so this region didn't dump properly. This is where the onboard kernel resides. The kernel usually uses different encryption words to upload / download a ROM. Ideally you find some way of dumping from this address space (eg: boot mode). Or, the encryption words might be able to be figured out from sniffing original ROM -vs- encrypted ROM during an upload / download.
 
 === post 286 | SergArb | Thu Mar 21, 2024 5:52 am | #p172136 ===
 Wow, thank you!
 
 Found them:
 Attachment:
+Keywords.jpg
+
+Can't find anything about boot mode 
+
+"Or, the encryption words might be able to be figured out from sniffing original ROM -vs- encrypted ROM during an upload / download."
+How can I do that? Just sniff reading and writing flow from J2534 device?
 
 === post 287 | rimwall | Thu Mar 21, 2024 6:45 am | #p172137 ===
 Quote:
+Found them:
+
+Yes, much simpler once you know what they are . Finding them took a few hours and a little luck.
+
+For boot mode, see Ch 6.5 of the M32R Hardware Manual (I will send it to you). @jimihimisimi has just done something similar for a TPMS module, so might be able to help.
+
+Quote:
+How can I do that? Just sniff reading and writing flow from J2534 device?
+
+Yes, compare unencrypted data and captured encrypted data and then brute force 16^16 combinations (4 encryption words) until you get a match. This assumes algo and number of words is the same. 16^16 sounds a lot, but shouldn't take too long to crunch through. Much more feasible than 16^64 for security words! Also a lot more data to validate solutions (compared to only 4 bytes for security step). First solutions might not be unique, so might have to try a few different data sets.
 
 === post 288 | SergArb | Thu Mar 21, 2024 11:53 am | #p172138 ===
 Oh... I can't imagine how to do that brute force stuff 
@@ -1740,18 +2929,84 @@ Decrypting the data is probably the only way forward on this for now. The lower 
 
 === post 290 | SergArb | Fri Mar 22, 2024 2:23 am | #p172144 ===
 jimihimisimi wrote:
+Getting the data out via 'boot mode' or similar is going to require removing the TCU and moving 'strap' resistors around to get the MOD inputs in the correct config. I am assuming this is a no-go based on the previous responses.
+
+Hi, I'm not aware the soldering iron 
+Few MD pins is not scaring. After this viewtopic.php?f=40&t=17584
 
 === post 291 | MiikaS | Fri Mar 22, 2024 4:57 am | #p172146 ===
 jimihimisimi wrote:
+Getting the data out via 'boot mode' or similar is going to require removing the TCU and moving 'strap' resistors around to get the MOD inputs in the correct config. I am assuming this is a no-go based on the previous responses.
+
+@rimwall - can you give a quick primer on how this data gets encrypted and what is preventing the bytes from being read out from the lower address unencrypted? I don't think any of the M32R series have security-on-chip, but I am not familiar with the entire family.
+
+Decrypting the data is probably the only way forward on this for now. The lower addresses (0x0000) are going to be all the the vectors, so I would assume the leading bytes for each of these will be '0x00 0x00 0xXX 0xXX' for big endian. This would reduce the amount of brute forcing, or at least make finding the successful decrypt easier as the dataset will have a lot less entropy than the encrypted.
+
+Don't remember/know about this particular chip, but many others (like Renesas SH) protect their memory being read by erasing whole memory when entering boot mode and reading it is only possible after writing (to verify it). So there needs to be some other interface enabled to use for reading.
+
+Usually software bootloaders just prevents reading/writing some protected areas if "security level" is not high enough, or preventing it no matter what to protect it. If I recall right, older Subaru Hitachi ECUs prevents writing over that lower area (it just ignores write command) but reads it ok.
+
+So reading/writing it with some other tool and sniffing communications can give hint of seed keys and answers and possible way to test algos against those combinations.
 
 === post 292 | SergArb | Fri Mar 22, 2024 5:04 am | #p172147 ===
 MiikaS wrote:
+jimihimisimi wrote:
+So reading/writing it with some other tool and sniffing communications can give hint of seed keys and answers and possible way to test algos against those combinations.
+
+Hi! That's we are trying to do now 
+
+MH8104F has a QFP-144 case, which looks similar to 32176F4.
+But I can't find any software to read them in boot mode. Only erase and write - UFLA32r software.
+So, it's useless for our purposes
 
 === post 293 | jimihimisimi | Fri Mar 22, 2024 3:20 pm | #p172155 ===
 SergArb wrote:
+MiikaS wrote:
+jimihimisimi wrote:
+So reading/writing it with some other tool and sniffing communications can give hint of seed keys and answers and possible way to test algos against those combinations.
+
+Hi! That's we are trying to do now 
+
+MH8104F has a QFP-144 case, which looks similar to 32176F4.
+But I can't find any software to read them in boot mode. Only erase and write - UFLA32r software.
+So, it's useless for our purposes 
+
+So a couple of thoughts on exploiting the UFLA32r software:
+- You can use the 'lock bits' function to confirm those addresses are locked
+- Run the 'verify' command and sniff the RS323 data between the PC and the ECU during the command execution to see what data gets passed back and forth. In many cases the 'Boot ROM' has just enough code to bootstrap the ECU and then the host PC passes a binary blob with a bunch of code over the 232 to load into the ECUs RAM. Also the CPU is going to need the whole ROM contents to run the checksum on, so the locked regions may get accessed via some undoc commands and passed back to the programmer. This is all a bunch of speculation, but I have had success with this in the past on other processors.
+
+Obviously, but worth mentioning, DO NOT run the program or erase commands!
 
 === post 294 | rimwall | Sat Mar 23, 2024 10:44 am | #p172163 ===
 Quote:
+@rimwall - can you give a quick primer on how this data gets encrypted and what is preventing the bytes from being read out from the lower address unencrypted? I don't think any of the M32R series have security-on-chip, but I am not familiar with the entire family.
+
+Under normal comms, any upload / download to / from the ROM is decrypted / encrypted by the firmware residing on the processor. The routines on the processor that handle the normal comms restrict the addresses that can be read / written.
+
+Quote:
+thoughts on exploiting the UFLA32r software:
+
+Good point about the checksum calcs. Maybe @SergArb can sniff this out.
+
+I've edited the ROM file to modify the assembly so that the normal SSM 0xa8 command should report values at ROM addresses less than 0x8000. I have no way of checking whether the revised assembly actually works. I've loaded it into Ghidra and it decompiles successfully and looks like it will work. There were some instruction addresses that were no longer being accessed, so I've overwritten them with values that should mean the overall checksum doesn't change. This is assuming the ROM uses a 32 bit checksum like most Subaru ROMs. 
+
+Use at own risk! This could brick your TCU and you won't be able to recover it without using boot mode, or maybe UFLA32R. If you're curious, the assembly mods are at addresses 0x3c86c onwards.
+
+To use it, you need to send a 5 byte 0xa8 command for each address to be read. Command syntax is:
+0xa8 0x00 [addr_high] [addr_mid] [addr_low]
+
+So, to read the bytes from 0x0 to 0x7fff you would use these commands:
+0xa8 0x00 0x00 0x00 0x00
+0xa8 0x00 0x00 0x00 0x01
+0xa8 0x00 0x00 0x00 0x02
+0xa8 0x00 0x00 0x00 0x03
+...
+0xa8 0x00 0x00 0x7f 0xfe
+0xa8 0x00 0x00 0x7f 0xff
+
+To implement, modify the FastECU code.
+
+There are a number of reasons why this may not work. In particular, the processor may have internal protection (read protection is possible on a M32R). Fingers crossed...!
 
 === post 295 | SergArb | Sat Mar 23, 2024 1:26 pm | #p172168 ===
 Flashed modified rom. It's not bricked 
@@ -1759,10 +3014,92 @@ Flashed modified rom. It's not bricked
 Trying to implement A8 command, but there is no answer from TCU, tried two different formats:
 
 Code:
+[2024-03-23 21:18:02.793]  Read memory with flashmethod 'sub_tcu_hitachi_can' and kernel 'kernels/ '
+[2024-03-23 21:18:04.043]  Connecting to Subaru TCU Hitachi CAN bootloader, please wait...
+[2024-03-23 21:18:04.053]  Checking if kernel is already running...
+[2024-03-23 21:18:04.053]  Send msg: 00 00 07 e1 31 02 02 01 
+[2024-03-23 21:18:04.263]  Received msg: 00 00 07 e9 7f 31 12 
+[2024-03-23 21:18:04.263]  Trying TCU Init...
+[2024-03-23 21:18:04.263]  Sent: 00 00 07 e1 aa 
+[2024-03-23 21:18:04.283]  0: 0xAA response: 00 00 07 e9 ea a4 10 40 b1 d3 f0 80 00 01 00 80 04 00 00 00 00 8d 02 00 00 00 00 00 00 00 00 00 00 9c 06 00 0a 21 c0 00 00 05 1f 80 80 00 00 00 00 00 00 00 16 e1 c0 00 00 00 04 20 00 00 00 40 00 00 00 00 00 00 bb 7e 40 00 00 00 00 00 00 00 80 
+[2024-03-23 21:18:04.283]  Init Success: CAL ID = B1D3F08000
+[2024-03-23 21:18:04.283]  Trying 0x09 0x04...
+[2024-03-23 21:18:04.293]  Sent: 00 00 07 e1 09 04 
+[2024-03-23 21:18:04.293]  0: 0x09 0x04 response: 00 00 07 e9 49 04 01 5a 35 44 33 46 30 38 30 00 00 00 00 00 00 00 00 
+[2024-03-23 21:18:04.303]  Init Success: TCU ID = Z5D3F080
+[2024-03-23 21:18:04.403]  Send msg: a8 00 00 00 01 
+[2024-03-23 21:18:04.713]  Received msg: 
+
+Code:
+[2024-03-23 21:12:54.302]  Read memory with flashmethod 'sub_tcu_hitachi_can' and kernel 'kernels/ '
+[2024-03-23 21:12:55.612]  Connecting to Subaru TCU Hitachi CAN bootloader, please wait...
+[2024-03-23 21:12:55.622]  Checking if kernel is already running...
+[2024-03-23 21:12:55.622]  Send msg: 00 00 07 e1 31 02 02 01 
+[2024-03-23 21:12:55.832]  Received msg: 00 00 07 e9 7f 31 12 
+[2024-03-23 21:12:55.832]  Trying TCU Init...
+[2024-03-23 21:12:55.842]  Sent: 00 00 07 e1 aa 
+[2024-03-23 21:12:55.852]  0: 0xAA response: 00 00 07 e9 ea a4 10 40 b1 d3 f0 80 00 01 00 80 04 00 00 00 00 8d 02 00 00 00 00 00 00 00 00 00 00 9c 06 00 0a 21 c0 00 00 05 1f 80 80 00 00 00 00 00 00 00 16 e1 c0 00 00 00 04 20 00 00 00 40 00 00 00 00 00 00 bb 7e 40 00 00 00 00 00 00 00 80 
+[2024-03-23 21:12:55.852]  Init Success: CAL ID = B1D3F08000
+[2024-03-23 21:12:55.852]  Trying 0x09 0x04...
+[2024-03-23 21:12:55.862]  Sent: 00 00 07 e1 09 04 
+[2024-03-23 21:12:55.862]  0: 0x09 0x04 response: 00 00 07 e9 49 04 01 5a 35 44 33 46 30 38 30 00 00 00 00 00 00 00 00 
+[2024-03-23 21:12:55.872]  Init Success: TCU ID = Z5D3F080
+[2024-03-23 21:12:56.072]  Send msg: 00 00 07 a8 00 00 00 01 
+[2024-03-23 21:12:58.302]  Received msg: 
+
+Code:
+    // Trying to impement A8 Command
+    output.clear();
+//    output.append((uint8_t)0x00);
+//    output.append((uint8_t)0x00);
+//    output.append((uint8_t)0x07);
+    output.append((uint8_t)0xA8);
+    output.append((uint8_t)0x00);
+    output.append((uint8_t)0x00);
+    output.append((uint8_t)0x00);
+    output.append((uint8_t)0x01);
+    delay(100);
+    send_log_window_message("Send msg: " + parse_message_to_hex(output), true, true);
+    serial->write_serial_data_echo_check(output);
+    delay(100);
+    received = serial->read_serial_data(20, 200);
+    send_log_window_message("Received msg: " + parse_message_to_hex(received), true, true);
+    delay(200000);
+
+Perhaps I'm doing it wrong...
 
 === post 296 | SergArb | Sat Mar 23, 2024 3:18 pm | #p172169 ===
 Another try, but no success 
 Code:
+[2024-03-23 23:16:20.076]  Trying TCU Init...
+[2024-03-23 23:16:20.076]  Sent: 00 00 07 e1 aa 
+[2024-03-23 23:16:20.091]  0: 0xAA response: 00 00 07 e9 ea a4 10 40 b1 d3 f0 80 00 01 00 80 04 00 00 00 00 8d 02 00 00 00 00 00 00 00 00 00 00 9c 06 00 0a 21 c0 00 00 05 1f 80 80 00 00 00 00 00 00 00 16 e1 c0 00 00 00 04 20 00 00 00 40 00 00 00 00 00 00 bb 7e 40 00 00 00 00 00 00 00 80 
+[2024-03-23 23:16:20.091]  Init Success: CAL ID = B1D3F08000
+[2024-03-23 23:16:20.091]  Trying 0x09 0x04...
+[2024-03-23 23:16:20.107]  Sent: 00 00 07 e1 09 04 
+[2024-03-23 23:16:20.107]  0: 0x09 0x04 response: 00 00 07 e9 49 04 01 5a 35 44 33 46 30 38 30 00 00 00 00 00 00 00 00 
+[2024-03-23 23:16:20.107]  Init Success: TCU ID = Z5D3F080
+[2024-03-23 23:16:20.107]  Not yet implemented: Reading ROM from TCU Subaru Hitachi using CAN
+[2024-03-23 23:16:20.107]  Settting dump start & length...
+[2024-03-23 23:16:20.122]  Start reading ROM, please wait...
+[2024-03-23 23:16:20.122]  Initializing bootloader...
+[2024-03-23 23:16:20.122]  Send msg: a8 00 00 00 00 
+[2024-03-23 23:16:20.559]  Received msg: 
+[2024-03-23 23:16:20.559]  Received pagedata: 
+[2024-03-23 23:16:20.559]  Kernel read addr:  0x00000000  length:  0x00000001,       1  B/s    4341 s remaining
+[2024-03-23 23:16:20.575]  Send msg: a8 00 00 00 01 
+[2024-03-23 23:16:21.012]  Received msg: 
+[2024-03-23 23:16:21.012]  Received pagedata: 
+[2024-03-23 23:16:21.012]  Kernel read addr:  0x00000001  length:  0x00000001,       2  B/s    2170 s remaining
+[2024-03-23 23:16:21.027]  Send msg: a8 00 00 00 02 
+[2024-03-23 23:16:21.448]  Received msg: 
+[2024-03-23 23:16:21.448]  Received pagedata: 
+[2024-03-23 23:16:21.448]  Kernel read addr:  0x00000002  length:  0x00000001,       2  B/s    2170 s remaining
+[2024-03-23 23:16:21.464]  Send msg: a8 00 00 00 03 
+[2024-03-23 23:16:21.901]  Received msg: 
+[2024-03-23 23:16:21.901]  Received pagedata: 
+[2024-03-23 23:16:21.901]  Kernel read addr:  0x00000003  length:  0x00000001,       2  B/s    2169 s remaining
+[2024-03-23 23:16:21.916]  Send msg: a8 00 00 00 04
 
 === post 297 | rimwall | Sat Mar 23, 2024 9:39 pm | #p172172 ===
 You still need the CAN ID for it to work.
@@ -1774,6 +3111,110 @@ Thank you, seems it's reading something. Very slow, so i reduced delay between c
 Leaving it for while, will see...
 
 Code:
+[2024-03-24 10:45:51.200]  Read memory with flashmethod 'sub_tcu_hitachi_can' and kernel 'kernels/ '
+[2024-03-24 10:45:54.920]  Connecting to Subaru TCU Hitachi CAN bootloader, please wait...
+[2024-03-24 10:45:54.920]  Checking if kernel is already running...
+[2024-03-24 10:45:54.920]  Send msg: 00 00 07 e1 31 02 02 01 
+[2024-03-24 10:45:55.130]  Received msg: 00 00 07 e9 7f 31 12 
+[2024-03-24 10:45:55.130]  Trying TCU Init...
+[2024-03-24 10:45:55.130]  Sent: 00 00 07 e1 aa 
+[2024-03-24 10:45:55.150]  0: 0xAA response: 00 00 07 e9 ea a4 10 40 b1 d3 f0 80 00 01 00 80 04 00 00 00 00 8d 02 00 00 00 00 00 00 00 00 00 00 9c 06 00 0a 21 c0 00 00 05 1f 80 80 00 00 00 00 00 00 00 16 e1 c0 00 00 00 04 20 00 00 00 40 00 00 00 00 00 00 bb 7e 40 00 00 00 00 00 00 00 80 
+[2024-03-24 10:45:55.150]  Init Success: CAL ID = B1D3F08000
+[2024-03-24 10:45:55.150]  Trying 0x09 0x04...
+[2024-03-24 10:45:55.160]  Sent: 00 00 07 e1 09 04 
+[2024-03-24 10:45:55.160]  0: 0x09 0x04 response: 00 00 07 e9 49 04 01 5a 35 44 33 46 30 38 30 00 00 00 00 00 00 00 00 
+[2024-03-24 10:45:55.160]  Init Success: TCU ID = Z5D3F080
+[2024-03-24 10:45:55.170]  Not yet implemented: Reading ROM from TCU Subaru Hitachi using CAN
+[2024-03-24 10:45:55.170]  Settting dump start & length...
+[2024-03-24 10:45:55.170]  Start reading ROM, please wait...
+[2024-03-24 10:45:55.180]  Initializing bootloader...
+[2024-03-24 10:45:55.180]  Send msg: 00 00 07 e1 a8 00 00 00 00 
+[2024-03-24 10:45:55.230]  Received msg: 00 00 07 e9 e8 ff 
+[2024-03-24 10:45:55.230]  Received pagedata: ff 
+[2024-03-24 10:45:55.230]  Kernel read addr:  0x00000000  length:  0x00000001,       1  B/s    4341 s remaining
+[2024-03-24 10:45:55.240]  Send msg: 00 00 07 e1 a8 00 00 00 01 
+[2024-03-24 10:45:55.290]  Received msg: 00 00 07 e9 e8 00 
+[2024-03-24 10:45:55.290]  Received pagedata: 00 
+[2024-03-24 10:45:55.290]  Kernel read addr:  0x00000001  length:  0x00000001,      16  B/s    2771 s remaining
+[2024-03-24 10:45:55.300]  Send msg: 00 00 07 e1 a8 00 00 00 02 
+[2024-03-24 10:45:55.350]  Received msg: 00 00 07 e9 e8 03 
+[2024-03-24 10:45:55.350]  Received pagedata: 03 
+[2024-03-24 10:45:55.350]  Kernel read addr:  0x00000002  length:  0x00000001,      17  B/s     844 s remaining
+[2024-03-24 10:45:55.360]  Send msg: 00 00 07 e1 a8 00 00 00 03 
+[2024-03-24 10:45:55.410]  Received msg: 00 00 07 e9 e8 00 
+[2024-03-24 10:45:55.410]  Received pagedata: 00 
+[2024-03-24 10:45:55.410]  Kernel read addr:  0x00000003  length:  0x00000001,      16  B/s    2771 s remaining
+[2024-03-24 10:45:55.420]  Send msg: 00 00 07 e1 a8 00 00 00 04 
+[2024-03-24 10:45:55.492]  Received msg: 00 00 07 e9 e8 ff 
+[2024-03-24 10:45:55.492]  Received pagedata: ff 
+[2024-03-24 10:45:55.492]  Kernel read addr:  0x00000004  length:  0x00000001,      11  B/s    7667 s remaining
+[2024-03-24 10:45:55.512]  Send msg: 00 00 07 e1 a8 00 00 00 05 
+[2024-03-24 10:45:55.562]  Received msg: 00 00 07 e9 e8 ff 
+[2024-03-24 10:45:55.562]  Received pagedata: ff 
+[2024-03-24 10:45:55.562]  Kernel read addr:  0x00000005  length:  0x00000001,      14  B/s    7452 s remaining
+[2024-03-24 10:45:55.582]  Send msg: 00 00 07 e1 a8 00 00 00 06 
+[2024-03-24 10:45:55.632]  Received msg: 00 00 07 e9 e8 ff 
+[2024-03-24 10:45:55.632]  Received pagedata: ff 
+[2024-03-24 10:45:55.632]  Kernel read addr:  0x00000006  length:  0x00000001,      14  B/s    7452 s remaining
+[2024-03-24 10:45:55.652]  Send msg: 00 00 07 e1 a8 00 00 00 07 
+[2024-03-24 10:45:55.702]  Received msg: 00 00 07 e9 e8 ff 
+[2024-03-24 10:45:55.702]  Received pagedata: ff 
+[2024-03-24 10:45:55.702]  Kernel read addr:  0x00000007  length:  0x00000001,      14  B/s    7452 s remaining
+[2024-03-24 10:45:55.722]  Send msg: 00 00 07 e1 a8 00 00 00 08 
+[2024-03-24 10:45:55.772]  Received msg: 00 00 07 e9 e8 ff 
+[2024-03-24 10:45:55.772]  Received pagedata: ff 
+[2024-03-24 10:45:55.772]  Kernel read addr:  0x00000008  length:  0x00000001,      14  B/s    7452 s remaining
+[2024-03-24 10:45:55.792]  Send msg: 00 00 07 e1 a8 00 00 00 09 
+[2024-03-24 10:45:55.842]  Received msg: 00 00 07 e9 e8 ff 
+[2024-03-24 10:45:55.842]  Received pagedata: ff 
+[2024-03-24 10:45:55.842]  Kernel read addr:  0x00000009  length:  0x00000001,      14  B/s    7452 s remaining
+[2024-03-24 10:45:55.862]  Send msg: 00 00 07 e1 a8 00 00 00 0a 
+[2024-03-24 10:45:55.912]  Received msg: 00 00 07 e9 e8 ff 
+[2024-03-24 10:45:55.912]  Received pagedata: ff 
+[2024-03-24 10:45:55.912]  Kernel read addr:  0x0000000A  length:  0x00000001,      14  B/s    7452 s remaining
+[2024-03-24 10:45:55.932]  Send msg: 00 00 07 e1 a8 00 00 00 0b 
+[2024-03-24 10:45:55.982]  Received msg: 00 00 07 e9 e8 ff 
+[2024-03-24 10:45:55.982]  Received pagedata: ff 
+[2024-03-24 10:45:55.982]  Kernel read addr:  0x0000000B  length:  0x00000001,      14  B/s    7452 s remaining
+[2024-03-24 10:45:56.002]  Send msg: 00 00 07 e1 a8 00 00 00 0c 
+[2024-03-24 10:45:56.052]  Received msg: 00 00 07 e9 e8 ff 
+[2024-03-24 10:45:56.052]  Received pagedata: ff 
+[2024-03-24 10:45:56.052]  Kernel read addr:  0x0000000C  length:  0x00000001,      14  B/s    7452 s remaining
+[2024-03-24 10:45:56.072]  Send msg: 00 00 07 e1 a8 00 00 00 0d 
+[2024-03-24 10:45:56.122]  Received msg: 00 00 07 e9 e8 ff 
+[2024-03-24 10:45:56.122]  Received pagedata: ff 
+[2024-03-24 10:45:56.122]  Kernel read addr:  0x0000000D  length:  0x00000001,      14  B/s    7452 s remaining
+[2024-03-24 10:45:56.142]  Send msg: 00 00 07 e1 a8 00 00 00 0e 
+[2024-03-24 10:45:56.192]  Received msg: 00 00 07 e9 e8 ff 
+[2024-03-24 10:45:56.192]  Received pagedata: ff 
+[2024-03-24 10:45:56.192]  Kernel read addr:  0x0000000E  length:  0x00000001,      14  B/s    7452 s remaining
+[2024-03-24 10:45:56.212]  Send msg: 00 00 07 e1 a8 00 00 00 0f 
+[2024-03-24 10:45:56.262]  Received msg: 00 00 07 e9 e8 ff 
+[2024-03-24 10:45:56.262]  Received pagedata: ff 
+[2024-03-24 10:45:56.262]  Kernel read addr:  0x0000000F  length:  0x00000001,      14  B/s    7452 s remaining
+[2024-03-24 10:45:56.282]  Send msg: 00 00 07 e1 a8 00 00 00 10 
+[2024-03-24 10:45:56.332]  Received msg: 00 00 07 e9 e8 ff 
+[2024-03-24 10:45:56.332]  Received pagedata: ff 
+[2024-03-24 10:45:56.332]  Kernel read addr:  0x00000010  length:  0x00000001,      14  B/s    7452 s remaining
+[2024-03-24 10:45:56.352]  Send msg: 00 00 07 e1 a8 00 00 00 11 
+[2024-03-24 10:45:56.402]  Received msg: 00 00 07 e9 e8 00 
+[2024-03-24 10:45:56.402]  Received pagedata: 00 
+[2024-03-24 10:45:56.402]  Kernel read addr:  0x00000011  length:  0x00000001,      14  B/s    7451 s remaining
+[2024-03-24 10:45:56.422]  Send msg: 00 00 07 e1 a8 00 00 00 12 
+[2024-03-24 10:45:56.472]  Received msg: 00 00 07 e9 e8 03 
+[2024-03-24 10:45:56.472]  Received pagedata: 03 
+[2024-03-24 10:45:56.472]  Kernel read addr:  0x00000012  length:  0x00000001,      14  B/s    7451 s remaining
+[2024-03-24 10:45:56.492]  Send msg: 00 00 07 e1 a8 00 00 00 13 
+[2024-03-24 10:45:56.542]  Received msg: 00 00 07 e9 e8 2a 
+[2024-03-24 10:45:56.542]  Received pagedata: 2a 
+[2024-03-24 10:45:56.542]  Kernel read addr:  0x00000013  length:  0x00000001,      14  B/s    7451 s remaining
+[2024-03-24 10:45:56.562]  Send msg: 00 00 07 e1 a8 00 00 00 14 
+[2024-03-24 10:45:56.612]  Received msg: 00 00 07 e9 e8 ff 
+[2024-03-24 10:45:56.612]  Received pagedata: ff 
+[2024-03-24 10:45:56.612]  Kernel read addr:  0x00000014  length:  0x00000001,      14  B/s    7451 s remaining
+[2024-03-24 10:45:56.632]  Send msg: 00 00 07 e1 a8 00 00 00 15 
+[2024-03-24 10:45:56.682]  Received msg: 00 00 07 e9 e8 ff 
+[2024-03-24 10:45:56.682]  Received pagedata: ff
 
 === post 299 | rimwall | Sun Mar 24, 2024 3:20 am | #p172175 ===
 Yes, it looks like it’s working. Cool .The bytes aren’t all 0xff or 0x00 so that’s good.
@@ -1797,6 +3238,7 @@ Yes, you are right! Recompiled with 0x8000, starting again
 === post 303 | SergArb | Sun Mar 24, 2024 4:30 am | #p172179 ===
 Got it! 
 Attachment:
+8000_Z5D3F080_B1D3F08000.zip
 
 === post 304 | rimwall | Sun Mar 24, 2024 5:48 am | #p172180 ===
 Good work!
@@ -1822,20 +3264,71 @@ Writing is also working now.
 But TCU rejects E1 37 and checksum command between blocks.
 
 Code:
+[2024-03-24 21:34:08.771]  Sent: 00 00 07 e1 b6 00 ff 80 1c 87 6a ae 94 68 56 30 25 ea 5e d3 7d c2 c1 54 38 9c 5f b5 96 a2 4e 8f 67 c3 d7 29 ae ef d2 1f 72 00 b2 eb 1d a6 44 ff dd 41 cf 89 4b fc 06 cb 88 a7 93 0a f4 69 28 89 e3 da 2c d0 a8 ec 90 ce 29 cf 58 cd ab 42 e3 59 35 d6 2e 91 c2 dd bb a7 69 9b ea 5d 83 6b f8 a4 c4 85 5c 09 02 a6 cb 90 e4 73 62 af a2 38 4e 5a 62 86 ff ca 55 39 31 7d 84 b0 2f a2 8c c2 ac 41 bd d5 d3 24 96 a2 4e 8f 
+[2024-03-24 21:34:08.803]  Closing out Flashing of this block...
+[2024-03-24 21:34:08.803]  Sent: 00 00 07 e1 37 
+[2024-03-24 21:34:09.005]  0: 0x37 response: 00 00 07 e9 7f 37 22 
+[2024-03-24 21:34:09.005]  No or bad response received
+[2024-03-24 21:34:09.115]  Verifying checksum...
+[2024-03-24 21:34:09.115]  Sent: 00 00 07 e1 31 01 02 02 01 
+[2024-03-24 21:34:09.317]  0: 0x31 response: 00 00 07 e9 7f 31 22 
+[2024-03-24 21:34:09.317]  No or bad response received
+
+After all blocks are written, it accepts checksum command "31 01 02 02 01" and closes writing.
+
+Code:
+[2024-03-24 21:44:11.057]  Sent: 00 00 07 e1 b6 07 ff 80 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 68 fc 4e 1c 3c 56 d7 d6 
+[2024-03-24 21:44:11.087]  Closing out Flashing of this block...
+[2024-03-24 21:44:11.087]  Sent: 00 00 07 e1 37 
+[2024-03-24 21:44:11.287]  0: 0x37 response: 00 00 07 e9 7f 37 22 
+[2024-03-24 21:44:11.287]  No or bad response received
+[2024-03-24 21:44:11.387]  Verifying checksum...
+[2024-03-24 21:44:11.387]  Sent: 00 00 07 e1 31 01 02 02 01 
+[2024-03-24 21:44:11.587]  0: 0x31 response: 00 00 07 e9 71 01 02 02 
+[2024-03-24 21:44:11.587]  Checksum verified...
+[2024-03-24 21:44:11.587]  Block 10 reflash complete.
+
+Rimwall, can you modify the code to download all rom at once, not by blocks?
 
 === post 308 | SergArb | Wed Mar 27, 2024 8:31 am | #p172210 ===
 Successfully download a rom with FastECU from CVT MH8111 1536kb.
 
 For writing need to define flash blocks, like with 512kb.
 Code:
+const struct flashblock fblocks_M32R_512KB[] = {
+    {0x00000000,    0x00004000},
+    {0x00004000,    0x00002000},
+    {0x00006000,    0x00002000},
+    {0x00008000,    0x00008000},
+    {0x00010000,    0x00010000},
+    {0x00020000,    0x00010000},
+    {0x00030000,    0x00010000},
+    {0x00040000,    0x00010000},
+    {0x00050000,    0x00010000},
+    {0x00060000,    0x00010000},
+    {0x00070000,    0x00010000},
+};
+
+Can't find any datasheet on MH8111
 
 === post 309 | jimihimisimi | Wed Mar 27, 2024 1:05 pm | #p172212 ===
 SergArb wrote:
+Successfully download a rom with FastECU from CVT MH8111 1536kb.
+
+Can't find any datasheet on MH8111 
+
+Picture? How many pins?
 
 === post 310 | SergArb | Wed Mar 27, 2024 1:46 pm | #p172213 ===
 That's was enough for writing. We almost done with it.
 
 Code:
+const struct flashblock fblocks_M32R_1536KB[] = {
+    {0x00000000,    0x00040000},
+    {0x00040000,    0x00020000},
+    {0x00060000,    0x00020000},
+    {0x00080000,    0x00100000},
+};
 
 === post 311 | SergArb | Sat Mar 30, 2024 12:24 pm | #p172230 ===
 Thanks to MiikaS for good base! Rimwall for discovering algo's, code for CAN M32R TCU's, keywords and many many other.
@@ -1847,9 +3340,82 @@ Need to order few test ECU's for bench tests
 
 === post 312 | jimihimisimi | Wed Apr 10, 2024 4:15 pm | #p172292 ===
 jimihimisimi wrote:
+rimwall wrote:
+Comer352L, who currently manages the repo for FreeSSM, has very kindly updated the FreeSSM source code to enable changes to the 'hidden' parameters on 5EAT TCUs. The code is in the the branch "e5at-permanent-adjustments" of the FreeSSM repo. I haven't yet tried to build it.
+
+You will need a Denso TCU with SysID of A21022 in order to see the new settings. And the increases / decreases to the pressure corrections are made in 'steps' instead of kPa values to make it simpler to use. 
+
+I haven't tried to build the beta version myself because I can't test it (I don't have an AT car). Is there anyone who wants to test the updated FreeSSM?
+
+I can give it a shot. I have FreeSSM on my laptop already, will just need to grab the branch.
+
+So got around to compiling and plugging this one in and it's not connecting to the TCU, loading up Qt Creator to see if I can get it in debug mode because there's no logging in the program
 
 === post 313 | jimihimisimi | Thu Apr 11, 2024 3:11 am | #p172303 ===
 Code:
+SSMP2communication::run():   operation: readCUdata
+SSMP2communication_core::SndRcvMessage(...):   sending message:
+   00 00 07 E1 AA
+PassThruReadMsgs(): received 1 J2534-messages:
+  PASSTHRU_MSG #0: protocol id 0x6, rx status 0x9, extra data index 0:
+  00 00 07 E1
+  => message is transmit confirmation message
+SSMP2communication_core::readFromInterface():   error: timeout while reading from interface !
+SSMP2communication::run():   communication operation error counter=1
+SSMP2communication_core::SndRcvMessage(...):   sending message:
+   00 00 07 E1 AA
+PassThruReadMsgs(): received 1 J2534-messages:
+  PASSTHRU_MSG #0: protocol id 0x6, rx status 0x9, extra data index 0:
+  00 00 07 E1
+  => message is transmit confirmation message
+SSMP2communication_core::readFromInterface():   error: timeout while reading from interface !
+SSMP2communication::run():   communication operation error counter=2
+SSMP2communication::run():   communication operation finished.
+SSMP2communication::run():   operation: readCUdata
+SSMP2communication_core::SndRcvMessage(...):   sending message:
+   80 18 F0 01 BF 48
+PassThruReadMsgs(): received 2 J2534-messages:
+  PASSTHRU_MSG #0: protocol id 0x3, rx status 0x2, extra data index 0:
+  => message indicates that an incoming message transfer has commenced.
+  PASSTHRU_MSG #1: protocol id 0x3, rx status 0x1, extra data index 6:
+  80 18 F0 01 BF 48
+  => message is loopback message
+SSMP2communication_core::readFromInterface():   error: timeout while reading from interface !
+SSMP2communication::run():   communication operation error counter=1
+SSMP2communication_core::SndRcvMessage(...):   sending message:
+   80 18 F0 01 BF 48
+PassThruReadMsgs(): received 2 J2534-messages:
+  PASSTHRU_MSG #0: protocol id 0x3, rx status 0x2, extra data index 0:
+  => message indicates that an incoming message transfer has commenced.
+  PASSTHRU_MSG #1: protocol id 0x3, rx status 0x1, extra data index 6:
+  80 18 F0 01 BF 48
+  => message is loopback message
+SSMP2communication_core::readFromInterface():   error: timeout while reading from interface !
+SSMP2communication::run():   communication operation error counter=2
+SSMP2communication::run():   communication operation finished.
+SSMP2communication::run():   operation: readCUdata
+SSMP2communication_core::SndRcvMessage(...):   sending message:
+   80 01 F0 01 BF 31
+PassThruReadMsgs(): received 2 J2534-messages:
+  PASSTHRU_MSG #0: protocol id 0x3, rx status 0x2, extra data index 0:
+  => message indicates that an incoming message transfer has commenced.
+  PASSTHRU_MSG #1: protocol id 0x3, rx status 0x1, extra data index 6:
+  80 01 F0 01 BF 31
+  => message is loopback message
+SSMP2communication_core::readFromInterface():   error: timeout while reading from interface !
+SSMP2communication::run():   communication operation error counter=1
+SSMP2communication_core::SndRcvMessage(...):   sending message:
+   80 01 F0 01 BF 31
+PassThruReadMsgs(): received 2 J2534-messages:
+  PASSTHRU_MSG #0: protocol id 0x3, rx status 0x2, extra data index 0:
+  => message indicates that an incoming message transfer has commenced.
+  PASSTHRU_MSG #1: protocol id 0x3, rx status 0x1, extra data index 6:
+  80 01 F0 01 BF 31
+  => message is loopback message
+SSMP2communication_core::readFromInterface():   error: timeout while reading from interface !
+SSMP2communication::run():   communication operation error counter=2
+SSMP2communication::run():   communication operation finished.
+Error: selected protocol is not supported
 
 === post 314 | rimwall | Fri Apr 12, 2024 12:27 am | #p172311 ===
 Looks like the software is not getting any response from the cable. It tries a CAN protocol first, no response. Then it tries iso14230, no response.
@@ -1860,6 +3426,40 @@ Does FreeSSM work if you use a pre-complied version from (eg) SourceForge?
 
 === post 315 | jimihimisimi | Fri Apr 12, 2024 1:25 am | #p172312 ===
 rimwall wrote:
+Looks like the software is not getting any response from the cable. It tries a CAN protocol first, no response. Then it tries iso14230, no response.
+
+I've not attempted to compile FreeSSM myself, so will struggle to help. Perhaps it might be a 32bit -vs- 64bit issue?
+
+Does FreeSSM work if you use a pre-complied version from (eg) SourceForge?
+
+FreeSSM comms work; I can connect to the ECU no problem and pull the ID/etc. It's the TCU portion that's not connecting/working. The OpenPort driver does not like to be ran in Debug mode with QT creator - I think I got it working(ish) but it makes debugging the comms a pain. I spent several hours with the Tribeca trying to solve this and ended up running the battery flat - oops. This wipes out the TCU magic values... fun!
+
+Below is a code chunk from SSMprotocol2.cpp. Before this point 'CUaddress = 0x18;' is executated to set the TCU address as the target. (the SSM2_ISO14230 type being used) But then, after the getCUdata returns 'fasle'... the CUaddress gets swapped to 0x01 (or 0x02 if ECU)... i don't understand what's going on here. I am wondering if there needs to be further special handling for these later model ECUs
+
+Code:
+// Get control unit data:
+   if (!SSMP2com->getCUdata(_ssmCUdata))
+   {
+      if (_diagInterface->protocolType() == AbstractDiagInterface::protocol_type::SSM2_ISO14230)
+      {
+         SSMP2com->setCUaddress(0x01);
+         if (!SSMP2com->getCUdata(_ssmCUdata))
+         {
+            if (CU == CUtype::Engine)
+            {
+               SSMP2com->setCUaddress(0x02);
+               if (!SSMP2com->getCUdata(_ssmCUdata))
+                  goto commError;
+            }
+            else
+               goto commError;
+         }
+      }
+      else
+         goto commError;
+   }
+
+I will be out of town for the next week, but will pick back up on it.
 
 === post 316 | trcxsa | Tue Apr 16, 2024 11:29 pm | #p172351 ===
 This is super exciting! 
@@ -1895,6 +3495,16 @@ Im probably being an idiot, any pointers would be appreciated.
 
 === post 320 | MiikaS | Mon Apr 29, 2024 8:19 pm | #p172537 ===
 trcxsa wrote:
+Hmm not having much luck.
+
+Tried using the unk 5EAT model when selecting a car. It just pops up with unknown flash method. Flashmethod not yet implemented. 
+
+I can download the ECU rom using the forester XT's 2.0AT Denso SH7055 sti04. But even with TCU selected at the top right, it just pulls the ECU rom. 
+
+Tried with both VAG-COM and Openport 2.0. 
+
+Im probably being an idiot, any pointers would be appreciated.
+On the top right ECU/TCU checkboxes has no effect on reading/writing ECU or TCU, those were only meant to use for logging purposes (that is yet unfinished).
 
 === post 321 | rimwall | Tue Apr 30, 2024 5:43 am | #p172540 ===
 Hi @trcxsa, did you get the v0.28 from the development branch? Under precompiled - FastECU_TCU028.exe
@@ -1920,6 +3530,13 @@ https://github.com/miikasyvanen/fastecu ... recompiled - is this the correct spo
 
 === post 325 | MiikaS | Tue Apr 30, 2024 10:02 am | #p172547 ===
 trcxsa wrote:
+Hmm, I may be downloading from the wrong repo then? 
+
+There is only one windows build listed under precompiled (FastECU-Windows) with only a single FastECU.exe listed. 
+
+https://github.com/miikasyvanen/fastecu ... recompiled - is this the correct spot?
+No, this is the right one 
+https://github.com/rimwall/fastecu-oem/tree/development
 
 === post 326 | trcxsa | Tue Apr 30, 2024 11:27 am | #p172548 ===
 Doh my bad. Now it makes sense .
@@ -1959,6 +3576,15 @@ Any ideas on how to speed it up?
 
 === post 330 | jimihimisimi | Thu May 02, 2024 6:40 pm | #p172579 ===
 trcxsa wrote:
+So gave it another shot last night, Seems it connected succesfully, but took ages to download, I eventually stopped the transfer as it seems there was no end to it. 
+
+Looks like hitachi Kline did the trick with the VAG-COM dongle. 
+
+Ive attached the bin file up to the point where I stopped the transfer. 
+
+Any ideas on how to speed it up?
+
+I would try the openport cable, it supports faster speeds than K-Line
 
 === post 331 | rimwall | Sun May 05, 2024 6:06 am | #p172592 ===
 I looked at the first attached default.bin. That is a successful ROM dump. Not sure why it appeared not to work. If you post up the logfile.txt I can have a look. I didn't look at the second attachment - I assume this is a duplicate?
@@ -2002,6 +3628,12 @@ Using hitachi kline
 
 === post 336 | jimihimisimi | Mon Jul 01, 2024 12:59 pm | #p172930 ===
 Waselon wrote:
+Hello, ive managed to get my TCU ROM dump, but i dont know where to go from there, can i get like a guide for dummies?
+
+TCU ID: AD E0 23 60 00
+Using hitachi kline
+
+Looks similar to the JDM 06/07 LGT 5EAT. Where to go depends on what your goal is... something not working right or just want to tinker for performance or something else?
 
 === post 337 | rimwall | Tue Jul 02, 2024 2:23 am | #p172938 ===
 Waselon - at this stage, TCU tuning relies on someone digging through the ROM, finding relevant parameters to change (by a combination of reverse engineering and logging), changing the parameters, updating the ROM checksum and then flashing it back. In the longer term, as we get familiar with how the ROMs work, we'll be able to standardise key tables & parameters that become easy to find, similar to how it currently operates for ECUs. But that requires some folks keen enough to spend the time on the journey with me and others...
@@ -2010,6 +3642,22 @@ Let me know if you want to volunteer!
 
 === post 338 | Waselon | Tue Jul 02, 2024 4:19 am | #p172939 ===
 jimihimisimi wrote:
+Waselon wrote:
+Hello, ive managed to get my TCU ROM dump, but i dont know where to go from there, can i get like a guide for dummies?
+
+TCU ID: AD E0 23 60 00
+Using hitachi kline
+
+Looks similar to the JDM 06/07 LGT 5EAT. Where to go depends on what your goal is... something not working right or just want to tinker for performance or something else?
+
+I want to tune line pressure to improve shift speeds. Other way would be buying a reprograming kit, but that involves getting soaked in ATF so i thought i would try this first.
+
+rimwall wrote:
+Waselon - at this stage, TCU tuning relies on someone digging through the ROM, finding relevant parameters to change (by a combination of reverse engineering and logging), changing the parameters, updating the ROM checksum and then flashing it back. In the longer term, as we get familiar with how the ROMs work, we'll be able to standardise key tables & parameters that become easy to find, similar to how it currently operates for ECUs. But that requires some folks keen enough to spend the time on the journey with me and others...
+
+Let me know if you want to volunteer!
+
+I did some decoding with IDA, got some functions and data... but again i have no idea of what to do with all that as i have limited knowledge and no experience in reverse engineering.
 
 === post 339 | rimwall | Tue Jul 02, 2024 6:01 am | #p172940 ===
 There is a way to adjust line pressure across the board (and/or each clutch/brake) without flashing. See around p18 of this thread.
@@ -2018,6 +3666,11 @@ This relies on the TCU ROM having this capability. You can find out by trying (n
 
 === post 340 | Waselon | Tue Jul 02, 2024 7:19 am | #p172941 ===
 rimwall wrote:
+There is a way to adjust line pressure across the board (and/or each clutch/brake) without flashing. See around p18 of this thread.
+
+This relies on the TCU ROM having this capability. You can find out by trying (no harm done if it doesn't have the capability).
+
+SSM has only 4wd pressure correction for my tcu, and it is not permanent afaik?
 
 === post 341 | rimwall | Tue Jul 02, 2024 7:39 am | #p172945 ===
 FreeSSM doesn’t support the changes described on p18 of this thread.
@@ -2030,6 +3683,16 @@ I can also look in your ROM to see whether it has the capability, but trying v0.
 
 === post 342 | Waselon | Tue Jul 02, 2024 3:51 pm | #p172951 ===
 rimwall wrote:
+FreeSSM doesn’t support the changes described on p18 of this thread.
+
+I suspect SSM proper also doesn’t support it because I couldn’t find any mention in the SSM-III manual.
+
+Try the extra menu item in v0.28 of FastECU from the repo and see if you are able to change the values.
+
+I can also look in your ROM to see whether it has the capability, but trying v0.28 will be faster.
+
+All corrections in RR logger read 0
+And additional menu to set params doesnt pop up
 
 === post 343 | rimwall | Thu Jul 04, 2024 2:23 am | #p172977 ===
 Hmmm... interesting.
@@ -2045,9 +3708,19 @@ An update: I've now worked out most of the process that controls the brake / clu
 In each state the basic approach is to calculate a target pressure (for that state), and the number of steps to reach that target pressure. Then pressure is increased accordingly. Therefore, the simplest approach to getting faster changes would be to reduce the number of steps. This should essentially compress the time axis of the below charts.
 
 Attachment:
+GearChange.JPG
 
 === post 346 | cortin | Wed Oct 16, 2024 9:41 am | #p173715 ===
 rimwall wrote:
+Good stuff, glad it's useful! 
+
+The bounds are the upper / lower values in the pdf because the table lookup function defaults to the boundary value if the attempted lookup is beyond the boundary.
+
+I have updated the repo with v0.28 which fixes a bug in the ROM dump code.
+
+With 5EAT TCU ROM access, dumping, flashing, adjusting shift curves, shift durations and 'hidden' SSM parameters all now possible, I'm not sure of the next step for TCU tuning. Folks can get in touch with me if they have any suggestions...
+
+the correct values ​​are shown?
 
 === post 347 | rimwall | Wed Oct 16, 2024 12:02 pm | #p173717 ===
 Looks like you’re using the updated FreeSSM?
@@ -2068,6 +3741,27 @@ The "steps" in FreeSSM are the same as the "logged / entered byte" in the tables
 
 === post 350 | cortin | Thu Oct 17, 2024 5:44 am | #p173729 ===
 rimwall wrote:
+Looks like you’re using the updated FreeSSM?
+
+The implementation in FreeSSM uses ‘steps’ as a simplification of the kPa tables that I posted earlier in the thread.
+
+You are probably the first person to test the FreeSSM code (I couldn’t test it, I don’t have a 5EAT). Looks like FreeSSM is mainly working. I don’t think the numbers should be negative.
+
+If you want Pressures instead of steps, you can use FastECU.
+
+I’ll be interested to hear how you go adjusting the settings.
+
+1st to 2nd DC Pressure Correction (none) - 75.
+FreeSSM won't let me set it below -23.
+my rom https://www.romraider.com/forum/viewtop ... 51#p173451
+
+rimwall wrote:
+
+If you want Pressures instead of steps, you can use FastECU.
+
+I’ll be interested to hear how you go adjusting the settings.
+
+I didn't find how to change it in fastecu
 
 === post 351 | rimwall | Thu Oct 17, 2024 5:58 am | #p173730 ===
 Yes, the lowest that particular value can go is 52 (75-23). If you look at the attached charts from from page 18 of this thread, a value of 52 equates to approx 70kPa reduction in clutch pressure.
@@ -2092,9 +3786,33 @@ Should have read the rules
 
 === post 354 | jimihimisimi | Tue Nov 05, 2024 1:57 pm | #p173879 ===
 Alucard7002 wrote:
+Hi folks,
+
+Been lurking on here for years quietly watching and learning - I've got a EUDM 2007 Legacy 3.0R Spec B with the 5EAT. 
+
+I've tried attaching the .bin but getting an error saying "The extension bin is not allowed."
+
+I don't see any options in FastECU to make any changes I'm assuming because this dump has no definitions currently. 
+
+MORE than happy to help dev any defs or whatever's needed so I can make this bloody thing behave itself. The gearbox is the only let down of this car. 
+
+You will all have to hold my hand a little though as I'm not brilliantly computer savvy (it took me months to understand how to navigate GitHub effectively....)
+
+What is the transmission doing/not-doing that's letting you down?
 
 === post 355 | Alucard7002 | Wed Nov 06, 2024 11:35 pm | #p173884 ===
 jimihimisimi wrote:
+What is the transmission doing/not-doing that's letting you down?
+
+It's a combination of three things that irk me. 
+
+One is the self learning, I grandad it around 80-90% of the time and it shifts fine and is lovely and smooth. However come up to a slip road and it needing full beans it's very lazy to grab the next gear and occasionally flares the 2-3 shift quite badly. If I beat on it for most of a tank it doesn't do it after learning "aggressively" 
+
+Two, shift points are utter crap for a 3.0 with a dead flat torque curve from 2500-6000 - I had it on the rollers and made 210 to all 4 tyres with some basic bolt ons and timing tweaks (I run it on 99 all the time) It doesn't need to drop 3 gears to make it to 70 by the end of the slip road but manually pedalling it to stop it from changing down too aggressively is getting very annoying. 
+
+Three, even with it self learned aggressively the shifting is slow and ponderous at best, it's no DSG I know but my 1966 Ford grabs gears faster (and harder) than this thing does when I want to get a shuffle on. 
+
+It's had multiple fluid changes and filter changes, checked all the data as best I can and it all seems happy - just too "soft"
 
 === post 356 | rimwall | Thu Nov 07, 2024 1:04 am | #p173886 ===
 There aren’t any definitions for TCUs, because modifying them is ‘frontier’ stuff at the moment - the TCU ROM needs to be dumped, then it needs some reverse engineering to locate key tables, and then changes can be made followed by a reflash.
@@ -2103,6 +3821,12 @@ Or, you can try changing some limited variables (eg: clutch target pressures) us
 
 === post 357 | alesv | Sat Dec 21, 2024 12:36 pm | #p174170 ===
 alesv wrote:
+rimwall wrote:
+So, it seems that artificially increasing CET will increase the line pressure target and cause faster movement of the various clutches. Is that consistent with what is observed?
+
+I confirm that increasing CET affects gear upshifts on 4AT/5AT. As for me, they become a little bit faster and smoother.
+
+I tuned a Tribeca today and I suspect that increasing CET also affects gear downshifts. It looks like downshifts in middle load occur earlier when one increases CET.
 
 === post 358 | ciper | Tue Jan 14, 2025 12:03 am | #p174295 ===
 I would like to contribute to this project. I have an 05 OBXT with the transgo shiftkit. What type of tests or experiment would be useful to the group? 
@@ -2131,9 +3855,21 @@ Ideally @MiikaS chimes in to help out.
 
 === post 363 | RAVEN | Mon Jul 21, 2025 2:34 pm | #p175480 ===
 rimwall wrote:
+Hi, I couldn't find your post on the FastECU forums. Can you post up the full text of the FastECU logfile?
+
+Ideally @MiikaS chimes in to help out.
+
+Looks like my post wasn't approved yet.
+
+The best i could get was a camera shot of the console log if that's fine, nothing useful showed up in the logs within the syslogs.
 
 === post 364 | trcxsa | Thu Jul 31, 2025 9:54 am | #p175514 ===
 ciper wrote:
+I would like to contribute to this project. I have an 05 OBXT with the transgo shiftkit. What type of tests or experiment would be useful to the group? 
+
+Although not fully relevant to the tuning, I have both front/rear lsd installed from a 2005 sti on my 5eat and the center diff has been modified to be permanent rear wheel drive with the clutches now engaging the front wheels, so similar to MPT but flipped 180 degrees.
+
+Any further info / build log on how you did the RWD mods? Hows it holding up? Would like a bit more RWD fun out of my Outback, not sure how the rear diff and shafts would hold up tho.
 
 === post 365 | ciper | Wed Aug 13, 2025 5:52 am | #p175563 ===
 The VTD style center diff is basically an open differential with a clutch pack to increase lock. Unlike the MPT it is truly able to have the front wheels stopped and the rear wheels spin or vice versa.
@@ -2143,12 +3879,25 @@ The "gearbox" output shaft and shaft that connects to the driveshaft are normall
 The first image shows unmodified parts on top and the two shafts welded together below. The second image shows the shaft installed into the clutch section with the planet gears removed 
 
 Attachment:
+FB_IMG_1754972157309.jpg
+
+Attachment:
+FB_IMG_1755064235336.jpg
 
 === post 366 | ciper | Wed Aug 13, 2025 6:21 am | #p175564 ===
 trcxsa wrote:
+Any further info / build log on how you did the RWD mods? Hows it holding up? Would like a bit more RWD fun out of my Outback, not sure how the rear diff and shafts would hold up tho.
+
+Originally mine came wirh the "VA2 type" rear differential that people incorrectly call a one bolt r160, it's even weaker than an r160! Before it had a chance to fail I swapped in an r180 with aftermarket "Spec B" style axles that are only $140 online. The exact rear to front Ring/pinion ratios are (39:11)/(43:12)=0.9894 so only 1% different in speed and it's been great for many miles.
 
 === post 367 | trcxsa | Wed Aug 13, 2025 8:15 am | #p175566 ===
 ciper wrote:
+trcxsa wrote:
+Any further info / build log on how you did the RWD mods? Hows it holding up? Would like a bit more RWD fun out of my Outback, not sure how the rear diff and shafts would hold up tho.
+
+Originally mine came wirh the "VA2 type" rear differential that people incorrectly call a one bolt r160, it's even weaker than an r160! Before it had a chance to fail I swapped in an r180 with aftermarket "Spec B" style axles that are only $140 online. The exact rear to front Ring/pinion ratios are (39:11)/(43:12)=0.9894 so only 1% different in speed and it's been great for many miles.
+
+Aah awesome! Thanks for this info! Time to go find an R180 methinks
 
 === post 368 | Gmguy | Sun Nov 16, 2025 7:14 am | #p175968 ===
 Trying to recover one of these Denso units
@@ -2207,6 +3956,15 @@ Bits to make the interface will hopefully arrive tomorrow so I will report back 
 Are you sure these numbers are correct? Maybe post a pic?
 
 Quote:
+31711 AN 65 0
+
+30919 AB 600
+
+112400 - 8280
+
+The first and second numbers look like 10 digit subaru part numbers, but they don't come up in any part search.
+
+Another way to get your TCU part number would be to put your VIN number in partsouq.com, look through the part diagrams for your car and locate your TCU part number.
 
 === post 373 | Gmguy | Mon Nov 17, 2025 11:06 pm | #p175979 ===
 The part numbers are correct, spacing went a bit funny when i copy and pasted them but they are correct.
@@ -2227,9 +3985,24 @@ In partsouq, when you click on that part number, it should bring up a popup wind
 edit: That took a long time. Can someone confirm this dump is correct? Early 2005 USDM Outback XT
 
 Attachment:
+91FE216300_2026-03-21_18h17m30s.bin
+
+How long should a TCU dump take? I feel as if I am doing this incorrectly. 
+
+I set the method to "subaru legacy/outback 2003-2007 kline (hitachi m32176f4/512kb) and hit connect, at the bottom left it shows ECU ID 91fe216300 in green, I then select read from TCU and it scrolls "rom read address XX length 96" for many minutes without stopping or the percentage at the bottom changing.
 
 === post 378 | MidnightTuning | Sun Mar 22, 2026 9:08 am | #p176625 ===
 ciper wrote:
+edit: That took a long time. Can someone confirm this dump is correct? Early 2005 USDM Outback XT
+
+Attachment:
+91FE216300_2026-03-21_18h17m30s.bin
+
+How long should a TCU dump take? I feel as if I am doing this incorrectly. 
+
+I set the method to "subaru legacy/outback 2003-2007 kline (hitachi m32176f4/512kb) and hit connect, at the bottom left it shows ECU ID 91fe216300 in green, I then select read from TCU and it scrolls "rom read address XX length 96" for many minutes without stopping or the percentage at the bottom changing.
+
+My 2008 ADM Liberty GT was a 40 minute procedure, just have to connect a charger and wait it out it seems. The K line units I think are just very slow to read and write. File size looks correct though for the selected method.
 
 === post 379 | rimwall | Sun Mar 22, 2026 10:53 pm | #p176628 ===
 @ciper - 
@@ -2270,12 +4043,38 @@ A few thoughts:
 
 === post 382 | jimihimisimi | Tue Jul 28, 2026 5:54 am | #p177688 ===
 SCAR17s wrote:
+Anyone still working on this? I'm getting pretty deep into it right now. Ill make a github for all of the findings.
+
+Sasha and others, have a poke at this.
+
+What is the best 5eat TCU/Trans on the market? I'm planning on building one for my bugeye. 
+
+https://github.com/TomFLV/5eat-tcu-reverse-engineering
+
+https://github.com/jimihimi/TCURoms I've been trying to store all the tcu images I find in there. There is more than just 5eat, iirc
+
+As far as the best 5eat - the Tribeca and some outback (xt?) have higher final drive ratios - this makes for better acceleration (at the expense of top speed)
 
 === post 383 | ciper | Tue Jul 28, 2026 8:31 am | #p177689 ===
 SCAR17s wrote:
+What is the best 5eat TCU/Trans on the market? I'm planning on building one for my bugeye. 
+
+What ecu will you use to send the canbus messages to the TCU? Even the 2005 models are canbus even though its not exposed to the obd2 port.
 
 === post 384 | SCAR17s | Thu Jul 30, 2026 12:09 am | #p177695 ===
 ciper wrote:
+SCAR17s wrote:
+What is the best 5eat TCU/Trans on the market? I'm planning on building one for my bugeye. 
+
+What ecu will you use to send the canbus messages to the TCU? Even the 2005 models are canbus even though its not exposed to the obd2 port.
+
+I have pretty much all ecu's, from the motec M4 to the haltech s3, and plenty of options in between, current setup is c185 dash, pdm30, and the S3, though I can rotate back to the motec M800 (fully reverse engineered so many new options can be added) 
+
+I used Claude opus 5 to flesh things out, deff need disassembly work, but lets see what I can find
+
+The goal is to build a standalone tcu, so using oem hardware is just the initial work.
+
+Huge updates to the repo coming tonight. Get ready to have a fresh poke at it!
 
 === post 385 | SCAR17s | Thu Jul 30, 2026 9:14 pm | #p177701 ===
 Just ordered a 31711AJ675 from a 06 tribeca for bench testing.
@@ -2284,9 +4083,24 @@ anyone have a datalog from a tcu while driving?
 
 === post 386 | cortin | Fri Jul 31, 2026 4:41 pm | #p177703 ===
 SCAR17s wrote:
+Just ordered a 31711AJ675 from a 06 tribeca for bench testing.
+
+anyone have a datalog from a tcu while driving?
+
+viewtopic.php?p=173451#p173451
+Hi, I have log for this.
 
 === post 387 | SCAR17s | Fri Jul 31, 2026 8:53 pm | #p177706 ===
 cortin wrote:
+SCAR17s wrote:
+Just ordered a 31711AJ675 from a 06 tribeca for bench testing.
+
+anyone have a datalog from a tcu while driving?
+
+viewtopic.php?p=173451#p173451
+Hi, I have log for this.
+
+Id love to have a look at it if you dont mind.
 
 === post 388 | SCAR17s | Mon Aug 03, 2026 2:07 am | #p177716 ===
 Repo update, need testers to have a poke!
@@ -2295,6 +4109,16 @@ https://github.com/TomFLV/5eat-tcu-reverse-engineering
 
 === post 389 | cortin | Mon Aug 03, 2026 4:30 am | #p177717 ===
 SCAR17s wrote:
+cortin wrote:
+SCAR17s wrote:
+Just ordered a 31711AJ675 from a 06 tribeca for bench testing.
+
+anyone have a datalog from a tcu while driving?
+
+viewtopic.php?p=173451#p173451
+Hi, I have log for this.
+
+Id love to have a look at it if you dont mind.
 
 === post 390 | SCAR17s | Mon Aug 03, 2026 9:22 pm | #p177730 ===
 Awesome, thank you, I got my 06 tribeca TCU today, just about to get it set up in the lab, was wondering if we have a BDM flash/recovery method for these yet?
@@ -2337,4 +4161,7 @@ I wonder whether it is worth feeding Claude the full decompiler listings from th
 The upside is that it could really accelerate the table definition. The downside is I may have misinterpreted some things.
 
 I also have some reference material in an Excel spreadsheet that I kept as I worked through the ROMs.
+
+=== post 392 | SCAR17s | Tue Aug 04, 2026 9:13 pm | #p177752 ===
+feel free to share what you have, ill keep pushing updates! have you tried the modified romraider in the repo?
 

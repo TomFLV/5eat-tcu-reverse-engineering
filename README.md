@@ -220,7 +220,16 @@ Blake_Volpex, ciper, SergArb, roadie, Waselon, dschultz, b4andrey, Tugsay,
 Alucard7002, alesv, lvkeith and fenugrec contributed analysis, dumps, corrections and
 domain knowledge.
 
-Comer352L wrote FreeSSM and the branch adding 5EAT TCU adjustment support.
+cortin recorded and shared the vehicle logs in [`logs/`](logs/) - the only
+real-vehicle data here, and the basis for everything in FINDINGS sections 34 to 38.
+
+Gmguy traced the boot-mode programming pads on a Denso TCU board and matched them
+to the published SH recovery wiring, which is what
+[`docs/BENCH-RIG.md`](docs/BENCH-RIG.md) records.
+
+Comer352L wrote FreeSSM and the branch adding 5EAT TCU adjustment support. Its
+measuring-block list, combined with the SSM table in the ROM, is what names the
+RAM addresses in FINDINGS section 40 - an approach rimwall pointed out.
 
 If you are on this list and want your name removed, changed, or your contribution
 described differently, open an issue.
@@ -238,7 +247,14 @@ described differently, open an issue.
 - [RomRaider](https://github.com/RomRaider/RomRaider) — the editor.
 
 Gear ratios, line-pressure targets and ATF temperatures come from the Subaru factory
-service manual (2004 Legacy), which is not redistributed here.
+service manual for the 2004 Legacy; the TCM connector pinout and DTC criteria in
+[`docs/BENCH-RIG.md`](docs/BENCH-RIG.md) come from the 2006 Tribeca USDM manual.
+Neither is redistributed here.
+
+The thread archives in [`docs/`](docs/) are copies of those forum topics, kept
+because working from a partial copy has cost this project time more than once and
+because forum posts are not permanent. They are other people's writing, reproduced
+for reference and not claimed here.
 
 ### Scope of this work
 
@@ -250,9 +266,15 @@ detection and multi-firmware porting. That is what the MIT licence covers.
 
 ## Legal
 
-The ROM images are Subaru/Fuji Heavy Industries firmware, included for
-interoperability and repair research. No rights claimed. The decompiler output in
-[`decompiled/`](decompiled/) is derived from them and carries the same status.
+The ROM images in [`rom/`](rom/) and [`rom-denso/`](rom-denso/) are Subaru/Fuji
+Heavy Industries firmware, included for interoperability and repair research. No
+rights claimed. The decompiler output in [`decompiled/`](decompiled/) and
+[`decompiled-denso/`](decompiled-denso/) is derived from them and carries the same
+status.
+
+The forum thread archives in [`docs/`](docs/), the logs in [`logs/`](logs/) and the
+reference chart in [`docs/`](docs/shift-curves-reference.png) are other people's
+work, reproduced with credit above and not covered by this project's licence.
 
 My own contributions are MIT licensed — see [LICENSE](LICENSE).
 
