@@ -93,8 +93,9 @@ payload. Three firmwares require the full 32-bit sum to reach `0x5AA5A55A`; the 
 test only its low half against `0x5AA5` and keep their balance in the halfword at
 `0x8022`. Both forms are detected per image.
 
-**Releases up to 1.4.2 maintained only the first**, so a ROM edited and saved with one
-of those fails its own integrity check. Re-save with 1.4.3 or later.
+**Builds released before August 2026 maintained only the first**, so a ROM edited and
+saved with one of those fails its own integrity check. They have been withdrawn; re-save
+any ROM they produced with the current release.
 
 Verified byte-for-byte against the project's Python implementation on all sixteen
 images, and end to end: each ROM is edited through the real editor write path, saved,
@@ -161,7 +162,8 @@ than pretending to do it.
 
 Verify the finished archive, not the build tree: extract `RomRaider.jar` back out
 of the zip and check the translation bundles are in it. A jar that was correct in
-the build tree and wrong in the zip shipped once as 1.4.1 and would not start.
+the build tree and wrong in the zip shipped once in an early build and would not
+start.
 
 
 What is modified versus upstream

@@ -307,8 +307,9 @@ Recorded so they aren't mistaken for oversights:
   The earlier reading failed because it assumed a single 32-bit form: three
   firmwares test the full sum against `0x5AA5A55A`, and the other thirteen test only
   the low half against `0x5AA5`, keeping their balance in the halfword at `0x8022`.
-  Both forms are detected per image. Releases up to 1.4.2 shipped without this, so
-  a ROM saved by one of those fails the check the TCU runs at start-up.
+  Both forms are detected per image. Builds released before August 2026 shipped
+  without this, so a ROM saved by one of those fails the check the TCU runs at
+  start-up. Those builds have been withdrawn.
 
 
 ---

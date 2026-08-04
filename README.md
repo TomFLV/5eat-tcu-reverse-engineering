@@ -17,9 +17,10 @@ Already using RomRaider? Point it at [`definitions/`](definitions/) instead. Req
 
 > **Checksums are handled on save.** M32R images carry two — an additive checksum at
 > `0x8000`/`0x8004` and a balance at `0x8020` — and the TCU verifies both at start-up.
-> Releases up to 1.4.2 maintained only the first, so a ROM saved with one of those
-> will fail its own integrity check. Re-save with 1.4.3 or later, or run
-> `python tools/checksum.py --fix edited.bin`.
+> Builds released before August 2026 maintained only the first, so a ROM saved with
+> one of those fails its own integrity check. If you used an early build, re-save the
+> ROM with the current release or run `python tools/checksum.py --fix edited.bin`
+> before flashing. Those builds have been withdrawn.
 
 ---
 
