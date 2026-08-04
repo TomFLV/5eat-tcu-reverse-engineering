@@ -139,7 +139,7 @@ Tables are **big-endian 16-bit** values, laid out as:
 
 ### Table catalog (high-confidence, pointer-cross-referenced)
 
-Full machine-generated catalog of all 307 pattern candidates (with pointer refs annotated where found) is at `table_catalog.txt` in the project root (regenerate with `tools/extract_tables.py`).
+Full machine-generated catalog of all 307 pattern candidates (with pointer refs annotated where found) is at `table_catalog.txt` in the project root (a fixed artefact now — the script that produced it was removed, §15f).
 
 Key confirmed families:
 
@@ -169,10 +169,13 @@ Key confirmed families:
 
 ## 4. Scripts (in `tools/`, this project folder — persistent)
 
-- `tools/scan_rom.py` — 256-byte-block Shannon entropy map, used to find the calibration-data region and code/blank boundaries.
-- `tools/find_tables.py` — arithmetic-progression scanner (BE16, configurable width/sign/endian) that first surfaced the repeated-axis pattern.
-- `tools/extract_tables.py` — full `[count][axis][data]` pattern extractor + 32-bit pointer cross-referencer; writes the catalog. Run with `python tools/extract_tables.py` from the project root (paths inside are absolute to this folder already).
-- `table_catalog.txt` (project root) — full machine-generated dump of all 307 pattern candidates, with pointer-reference annotations where found. Regenerate any time by re-running `extract_tables.py`.
+These four were removed once their findings were recorded here; they are described
+for the record, not as tooling you can run (§15f).
+
+- `scan_rom.py` — 256-byte-block Shannon entropy map, used to find the calibration-data region and code/blank boundaries.
+- `find_tables.py` — arithmetic-progression scanner (BE16, configurable width/sign/endian) that first surfaced the repeated-axis pattern.
+- `extract_tables.py` — full `[count][axis][data]` pattern extractor + 32-bit pointer cross-referencer; wrote the catalog.
+- `table_catalog.txt` (project root) — full machine-generated dump of all 307 pattern candidates, with pointer-reference annotations where found. Not regenerable now that the script is gone.
 
 ---
 
@@ -213,7 +216,7 @@ Algorithm: treat the ROM as an array of 32-bit big-endian words. `C = -(sum of e
 
 Reusable implementation in **`tools/checksum.py`**: `compute_checksum(data)`, `verify_checksum(data)` (currently `True` for the stock ROM), `fix_checksum(data)` (returns a copy with both slots corrected — use this after any table edit before flashing).
 
-This was found on the first serious attempt by brute-force trying standard checksum forms (byte sum, word sum, dword sum, XOR, ones'-complement, CRC-16/32, each over several candidate ranges) against the repeated 4-byte value that sits immediately before the calibration-ID block — see `tools/find_checksum.py` for the search script if this ever needs redoing (e.g. if a different ROM revision stores things differently).
+This was found on the first serious attempt by brute-force trying standard checksum forms (byte sum, word sum, dword sum, XOR, ones'-complement, CRC-16/32, each over several candidate ranges) against the repeated 4-byte value that sits immediately before the calibration-ID block — the search script `find_checksum.py` has since been removed (§15f), though the method is worth repeating if this ever needs redoing (e.g. if a different ROM revision stores things differently).
 
 **Not yet known:** whether this is the *only* checksum. The boot-time `55 AA CC 33` signature check (§2a) at 0xFFFC is separate and still unexplained — worth revisiting once table semantics work resumes, in case it's a second, independent integrity check (e.g. a smaller checksum over just the boot block) rather than a pure magic-number/presence check.
 
@@ -998,7 +1001,7 @@ Note the gear-ratio pattern appears **three times** in the new ROM (`0x00844C`, 
 
 ### Porting path (not yet done)
 
-Byte-pattern searching our known table contents against a new ROM is a reliable, automatable way to relocate them — worth writing as `tools/port_definition.py` rather than repeating by hand. For tables whose content genuinely differs, fall back to locating them via the same call-site enumeration used originally (§11o), which requires decompiling this ROM separately. **No definition file has been produced for `91FE216300` yet.**
+Byte-pattern searching our known table contents against a new ROM is a reliable, automatable way to relocate them — which `tools/find_rom_offsets.py` now does. For tables whose content genuinely differs, fall back to locating them via the same call-site enumeration used originally (§11o), which requires decompiling this ROM separately. **Since resolved:** `91FE216300` now carries a full definition alongside the rest of the M32R family.
 
 ---
 
