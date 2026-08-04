@@ -1,15 +1,25 @@
-# Never apply line-ending conversion to ROM images — it would corrupt them.
+# Never apply line-ending conversion to binaries — it would corrupt them.
 *.bin binary
+*.png binary
 
-# Text files: normalise to LF in the repository.
-*.md   text eol=lf
-*.py   text eol=lf
-*.java text eol=lf
-*.xml  text eol=lf
-*.c    text eol=lf
-*.sh   text eol=lf
-*.yml  text eol=lf
-*.txt  text eol=lf
+# Text files: normalise to LF in the repository. Everything here is read by tools
+# that are particular about it — git apply rejects a CRLF patch against LF sources,
+# and a shell script with CRLF line endings will not execute under WSL.
+*.md         text eol=lf
+*.py         text eol=lf
+*.java       text eol=lf
+*.xml        text eol=lf
+*.c          text eol=lf
+*.sh         text eol=lf
+*.yml        text eol=lf
+*.txt        text eol=lf
+*.patch      text eol=lf
+*.properties text eol=lf
+*.json       text eol=lf
+*.csv        text eol=lf
+*.log        text eol=lf
+.gitattributes text eol=lf
+.gitignore     text eol=lf
 
 # Large generated decompiler output — keep it out of diffs and language stats.
 # This is Ghidra output, not hand-written source: a diff of it is noise, and
