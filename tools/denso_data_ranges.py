@@ -50,6 +50,10 @@ def headers(d):
 
 
 def main():
+    if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"):
+        print(__doc__.strip())
+        print("\n    python tools/denso_data_ranges.py <rom.bin>")
+        return 0 if len(sys.argv) > 1 else 2
     d = open(sys.argv[1], "rb").read()
     spans = []
     for a, rows, cols, xp, dp in headers(d):

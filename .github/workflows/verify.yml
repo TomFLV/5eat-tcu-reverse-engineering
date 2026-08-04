@@ -32,6 +32,9 @@ jobs:
         run: |
           python tools/generate_romraider_def.py
           python tools/generate_denso_def.py
+          # The logger definition is generated too, and lands in definitions/, so
+          # the diff below covers it without a separate check.
+          python tools/generate_logger_def.py
 
       - name: Generated output matches what is committed
         run: |
@@ -75,3 +78,18 @@ jobs:
 
       - name: Checksum implementation agrees with itself across all images
         run: python tools/test_checksum.py
+
+      # The Select Monitor parameter table is what the logger definition is built
+      # from, so its detection has to keep working. Run offline: naming the
+      # parameters needs FreeSSM, but finding the tables is this project's own
+      # work and should be checkable without reaching the network.
+      - name: Select Monitor table found in every M32R firmware
+        run: python tools/map_ssm_parameters.py rom/*.bin --offline --expect 16 --show 0
+
+      - name: Every tool answers --help
+        run: |
+          fail=0
+          for t in tools/*.py; do
+            python "$t" --help >/dev/null 2>&1 || { echo "no --help: $t"; fail=1; }
+          done
+          exit $fail

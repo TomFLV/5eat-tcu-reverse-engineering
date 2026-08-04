@@ -155,7 +155,12 @@ def test_rom(src, scratch):
 
 
 def main():
-    roms = sys.argv[1:] or [DEFAULT_ROM]
+    args = sys.argv[1:]
+    if args and args[0] in ("-h", "--help"):
+        print(__doc__.strip())
+        print("\n    python tools/test_checksum.py [rom.bin ...]")
+        return 0
+    roms = args or [DEFAULT_ROM]
     missing = [r for r in roms if not os.path.exists(r)]
     if missing:
         sys.exit("ROM not found: " + ", ".join(missing))

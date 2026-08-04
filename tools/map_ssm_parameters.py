@@ -53,13 +53,20 @@ def in_ram(v):
 MIN_ENTRIES = 128
 
 
-def fetch_defs(path):
-    """The FreeSSM definitions, from a local copy or from upstream."""
+def fetch_defs(path, offline=False):
+    """The FreeSSM definitions, from a local copy or from upstream.
+
+    Offline the join is skipped rather than failed: finding the tables and tracing
+    them back is this tool's own work and needs nothing external, so that part
+    stays checkable somewhere with no network.
+    """
     if path and os.path.exists(path):
         return open(path, encoding="utf-8", errors="replace").read()
     cached = os.path.join(HERE, "SSMFlagbyteDefinitions_en.cpp")
     if os.path.exists(cached):
         return open(cached, encoding="utf-8", errors="replace").read()
+    if offline:
+        return ""
     sys.stderr.write("fetching %s\n" % DEFS_URL)
     req = urllib.request.Request(DEFS_URL, headers={"User-Agent": "Mozilla/5.0"})
     text = urllib.request.urlopen(req, timeout=60).read().decode("utf-8", "replace")
@@ -209,9 +216,13 @@ def main():
     ap.add_argument("--show", type=int, default=12, help="rows to print per ROM")
     ap.add_argument("--decompiled", default=os.path.join(HERE, "..", "decompiled"),
                     help="directory of Ghidra listings, to trace the staging buffer back")
+    ap.add_argument("--offline", action="store_true",
+                    help="skip the FreeSSM join; find and trace the tables only")
+    ap.add_argument("--expect", type=int, metavar="N",
+                    help="fail unless a table is found in N firmwares")
     args = ap.parse_args()
 
-    defs = parse_defs(fetch_defs(args.defs))
+    defs = parse_defs(fetch_defs(args.defs, args.offline))
     named = sum(1 for d in defs.values() if d.get("name") or d.get("switches"))
     print("FreeSSM: %d SSM addresses described\n" % named)
 
@@ -272,9 +283,15 @@ def main():
         if len(known) > args.show:
             print("      ... %d more" % (len(known) - args.show))
 
-    with open(OUT, "w", encoding="utf-8", newline="\n") as fh:
-        json.dump(result, fh, indent=1, sort_keys=True)
-    print("\n-> %s" % OUT)
+    if not args.offline:
+        with open(OUT, "w", encoding="utf-8", newline="\n") as fh:
+            json.dump(result, fh, indent=1, sort_keys=True)
+        print("\n-> %s" % OUT)
+
+    if args.expect is not None and len(result) != args.expect:
+        sys.stderr.write("expected a parameter table in %d firmwares, found %d\n"
+                         % (args.expect, len(result)))
+        return 1
     return 0
 
 
