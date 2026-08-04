@@ -115,6 +115,13 @@ quantity is unknown. Their unit labels say so.
 
 ## Known limitations
 
+**The ATF temperature offset is not settled.** The definition applies `x-40` to every
+ATF temperature axis, inferred from the encoding range rather than measured. The
+firmware's own Select Monitor path implies `x-55` for the same variable. If the
+second is right, every temperature axis here is out by 15 °C. Neither number has
+been measured, so nothing has been changed; one reading at a known temperature on a
+bench unit decides it. See [FINDINGS.md](FINDINGS.md) §41.
+
 **Torque converter lockup is not identified.** Narrowed to two of the seven solenoid
 channels, `0x804EB2` (TIO5) and `0x804EB6` (TIO7). Their drivers are exact mirrors,
 so the code cannot separate them, and a vehicle log names the parameter without

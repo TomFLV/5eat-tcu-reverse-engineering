@@ -3825,3 +3825,83 @@ He has also offered his working decompiler listings - roughly 1000 of 1300 M32R
 functions and 2800 of 4200 Denso functions given meaningful names, with comments
 and named RAM values - and a spreadsheet of reference material. That would be the
 single largest input this project could receive.
+
+---
+
+## 41. THE SSM PATH CROSS-CHECKS THE UNIT SCALINGS, AND CONTRADICTS ONE OF THEM
+
+Section 40 named RAM addresses. That does not by itself add anything to the
+definition, which describes ROM tables - different address space, different
+purpose. What it does give is the first **independent check** on the unit scalings
+the definition depends on, because the routine that fills the Select Monitor
+buffer applies a known conversion to a variable FreeSSM independently names.
+
+Read together: `ROM conversion` then `FreeSSM conversion` must produce the real
+physical quantity. Two agree with this project. One does not.
+
+### 41a. Confirmed
+
+| quantity | ROM applies | FreeSSM applies | implies |
+|---|---|---|---|
+| Turbine speed | `>> 5` | `x * 32` | working variable is **rpm directly** |
+| Gear position | none | `x + 1` | working variable is **zero-based** |
+| Accelerator pedal | none | `x / 255 * 100` | working variable is **0-255 for 0-100%** |
+| Solenoid pressure | `/ 100` | `x * 10` | working variable is **kPa x 10** |
+| Solenoid current | `* 255 / 400` | `x / 255` | working variable is **mA-ish, full scale 400** |
+
+The turbine speed result is the useful one: the two conversions cancel exactly, so
+`0x8042CC` holds rpm with no scaling at all. That is consistent with section 11s
+and arrived at independently.
+
+The pressure result is worth carrying into section 34, which recorded that the
+Select Monitor reported P/L up to 2520 kPa where the line-pressure tables hold
+1370. The working variable being `kPa x 10` is a lead on that, not yet a
+resolution.
+
+### 41b. Contradicted: ATF temperature, by 15 degrees
+
+Section 11t established **`°C = raw - 40`** and the definition applies `x-40` to
+thirteen tables, including every ATF temperature axis and the cold-lockout
+constants.
+
+The SSM path disagrees. For `ACD1A06000`:
+
+    DAT_008047cc = FUN_00046cd4(&DAT_00008080, 0, adc);      linearisation lookup
+    SSM value    = DAT_008047cc - 5
+    FreeSSM      = value - 50                                 SSM 0x56
+
+so the firmware's own published temperature is **`raw - 55`**, not `raw - 40`.
+
+These are the same variable, not two encodings of one quantity. `FUN_00046cd4`
+looks up the table at ROM `0x8080`, which is exactly what the definition calls
+`Temp Sensor 1 Linearisation - °C`, and its result is what `0x8047CC` holds.
+
+**Neither figure is measured.** Section 11t inferred `-40` from plausibility: the
+tables map `0..255` onto `0..255`, and `-40` makes that `-40 °C` to `+215 °C`,
+the standard automotive unsigned encoding. That is a good argument, not a
+measurement. FreeSSM's `-50` is equally unverified for this unit - its list is
+shared across every Subaru controller, it carries three different ATF temperature
+encodings for different SSM addresses, and nothing says the TCU follows the same
+one as the ECU.
+
+What is new is that there is now evidence on both sides where before there was
+plausibility on one. Under `-55` the constants section 11t decoded as
+`-10, -5, 15, 38, 55, 65, 71, 75, 95, 125, 135, 139, 145 °C` become
+`-25, -20, 0, 23, 40, 50, 56, 60, 80, 110, 120, 124, 130 °C`, and the ATF blend
+window of section 32 moves from 15-135 °C to 0-120 °C. Both sets are physically
+plausible for a transmission.
+
+**The definition has not been changed.** Rescaling thirteen tables on an inference
+would replace one unverified number with another. If `-40` is wrong then every ATF
+axis in the definition is out by 15 °C, which matters to anyone tuning temperature
+compensation, so this is recorded as a live uncertainty rather than a settled
+detail.
+
+### 41c. How to settle it
+
+The bench unit does it directly and cheaply. Feed the ATF sensor input a known
+resistance, read the raw linearisation output over SSM, and compare against the
+thermistor curve. One measurement at a known temperature decides it.
+
+Failing that, the fault thresholds for P0712 and P0713 in the service manual are
+quoted in real units and would pin the encoding without any hardware.
