@@ -117,6 +117,18 @@ tcu-cli selftest [<def.xml> <rom.bin>...]               # no arguments: everythi
 * **It is headless.** No display, no window, no dialog that can block waiting for
   someone to click it.
 
+## Repository traffic
+
+GitHub keeps view counts private to the repository owner and exposes only a rolling
+fourteen-day window. There is no public badge for them: the third-party ones count
+requests for the badge image, which is a different number and trivially inflated.
+Download counts are public, which is why the README carries a badge for those and
+not for views.
+
+    gh api repos/:owner/:repo/traffic/views
+    gh api repos/:owner/:repo/traffic/clones
+    gh api repos/:owner/:repo/releases --jq '.[] | .tag_name, ([.assets[].download_count] | add)'
+
 ## Naming the RAM
 
 `map_ssm_parameters.py` joins the SSM parameter table in the ROM to FreeSSM's list

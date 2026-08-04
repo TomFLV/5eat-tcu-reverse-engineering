@@ -52,10 +52,10 @@ index fd9b42d..e8e9f78 100644
                  ((int) (screenSize.getHeight() - windowSize.getHeight()) / 2));
 diff --git a/src/main/java/com/romraider/cli/TcuCli.java b/src/main/java/com/romraider/cli/TcuCli.java
 new file mode 100644
-index 0000000..e4ec732
+index 0000000..796b7fa
 --- /dev/null
 +++ b/src/main/java/com/romraider/cli/TcuCli.java
-@@ -0,0 +1,549 @@
+@@ -0,0 +1,605 @@
 +/*
 + * RomRaider Open-Source Tuning, Logging and Reflashing
 + * Copyright (C) 2006-2012 RomRaider.com
@@ -77,6 +77,7 @@ index 0000000..e4ec732
 +
 +package com.romraider.cli;
 +
++import com.romraider.logger.ecu.comms.query.EcuInit;
 +import com.romraider.maps.DataCell;
 +import com.romraider.maps.Rom;
 +import com.romraider.maps.Table;
@@ -525,6 +526,54 @@ index 0000000..e4ec732
 +        out.addAll(names);
 +    }
 +
++    /**
++     * Load a logger definition and report what it offers, per unit identifier.
++     *
++     * A logger definition that fails to parse does not announce itself - the
++     * logger simply shows nothing to select, which looks like an empty ECU rather
++     * than a broken file. Loading it through the real handler is the only check
++     * worth having.
++     */
++    private static int logger(String[] a) throws Exception {
++        final String path = a[0];
++        // Parameters bound to specific units are only produced when the loader
++        // knows which unit is connected, so without an identifier the answer is
++        // always zero and says nothing about the file.
++        final String ecuId = a.length > 1 ? a[1] : null;
++        final EcuInit init = ecuId == null ? null : new EcuInit() {
++            public String getEcuId() {
++                return ecuId;
++            }
++
++            public byte[] getEcuInitBytes() {
++                return new byte[0];
++            }
++        };
++        final com.romraider.logger.ecu.definition.EcuDataLoaderImpl loader =
++                new com.romraider.logger.ecu.definition.EcuDataLoaderImpl();
++        loader.loadConfigFromXml(path, "SSM", "P8", init);
++
++        final java.util.List<com.romraider.logger.ecu.definition.EcuParameter> params =
++                loader.getEcuParameters();
++        final java.util.List<com.romraider.logger.ecu.definition.EcuSwitch> switches =
++                loader.getEcuSwitches();
++
++        final StringBuilder b = new StringBuilder("{\"file\":");
++        b.append(esc(new File(path).getName()));
++        b.append(",\"parameters\":").append(params.size());
++        b.append(",\"switches\":").append(switches.size());
++        b.append(",\"names\":[");
++        for (int i = 0; i < params.size(); i++) {
++            if (i > 0) {
++                b.append(',');
++            }
++            b.append(esc(params.get(i).getName()));
++        }
++        b.append("],\"ok\":").append(!params.isEmpty()).append('}');
++        OUT.println(b.toString());
++        return params.isEmpty() ? 1 : 0;
++    }
++
 +    /** Loading without printing an error, for selftest's per-ROM reporting. */
 +    private static final class RomLoad {
 +        final Rom rom;
@@ -557,6 +606,7 @@ index 0000000..e4ec732
 +          + "  set       <def> <rom> <table> <i> <v> <out>  edit one cell and save\n"
 +          + "  selftest [<def> <rom>...]                    load, edit, save, re-check each ROM\n"
 +          + "                                               (no arguments: the bundled set)\n"
++          + "  logger    <logger.xml> [unit-id]             load a logger definition, list parameters\n"
 +          + "\nPrints one JSON object. Exit status is 0 only when the answer is yes.";
 +
 +    public static int run(String[] argv) {
@@ -584,6 +634,12 @@ index 0000000..e4ec732
 +        System.arraycopy(argv, 1, rest, 0, rest.length);
 +
 +        try {
++            if ("logger".equals(cmd)) {
++                if (rest.length < 1) {
++                    return fail("logger needs a logger definition file");
++                }
++                return logger(rest);
++            }
 +            if (rest.length < 2 && !"selftest".equals(cmd)) {
 +                return fail("command '" + cmd + "' needs a definition and a ROM");
 +            }

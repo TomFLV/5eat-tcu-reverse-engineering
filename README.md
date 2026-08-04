@@ -1,5 +1,9 @@
 # Subaru 5EAT TCU
 
+[![Latest release](https://img.shields.io/github/v/release/TomFLV/5eat-tcu-reverse-engineering?label=release)](../../releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/TomFLV/5eat-tcu-reverse-engineering/total?label=downloads)](../../releases)
+[![verify](https://github.com/TomFLV/5eat-tcu-reverse-engineering/actions/workflows/verify.yml/badge.svg)](../../actions/workflows/verify.yml)
+
 RomRaider tuning definitions for the Subaru 5EAT transmission control unit, with the
 tooling and analysis behind them.
 
@@ -112,6 +116,26 @@ Each verified against an external reference and against the firmware's own arith
 Fourteen further tables are shown scaled but unnamed: every value in every firmware is
 an exact multiple of a power of two, which fixes the storage format even where the
 quantity is unknown. Their unit labels say so.
+
+## Logging
+
+`definitions/5eat_tcu_logger.xml` is a Select Monitor logger definition for the
+sixteen M32R firmwares. Point RomRaider's logger at it and the parameters the
+connected unit actually supports appear — 25 of them, with units and conversions.
+
+Support is not guessed. Each firmware carries its own table of which Select Monitor
+addresses it answers, so the definition states per unit identifier what that unit
+reports, rather than inferring it from the init response the way a generic
+definition must.
+
+It also carries the two **torque converter lock-up candidates** as raw memory reads,
+`0x804EB2` and `0x804EB6`. Their code paths are identical, so only observation
+separates them: log both against gear and whichever tracks lock-up is the answer.
+The firmware permits this because its request handler sends addresses below `0x200`
+through the translation table and everything above straight to memory.
+
+Denso units are not covered — their equivalent table has not been located
+(see [FINDINGS.md](FINDINGS.md) §40d).
 
 ## Known limitations
 

@@ -18,7 +18,7 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd "$HERE/.." && pwd)"
 OUT="${1:-$REPO/build/app-input}"
 WORK="${TMPDIR:-/tmp}/rr5eat-build"
-APP_VERSION="${APP_VERSION:-1.1.2}"
+APP_VERSION="${APP_VERSION:-1.1.3}"
 
 # Pinned so the patch applies cleanly. Upstream moves and the patch touches
 # build.xml, ECUExec.java, LookAndFeelManager.java and RomCellRenderer.java -
@@ -115,6 +115,10 @@ mkdir -p "$OUT/definitions"
 # unsupported with no indication why.
 cp "$REPO/definitions/5eat_tcu_romraider_defs.xml" "$OUT/definitions/"
 cp "$REPO/definitions/5eat_tcu_denso_romraider_defs.xml" "$OUT/definitions/"
+
+# The logger definition answers a different question from the editor ones - what the
+# Select Monitor can read out of a running unit, rather than what is in the ROM.
+cp "$REPO/definitions/5eat_tcu_logger.xml" "$OUT/definitions/"
 cp "$REPO/README.md" "$OUT/README.txt"
 
 # The ROM images and the checksum tool ship with the application so it is usable
