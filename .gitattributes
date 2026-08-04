@@ -7,8 +7,12 @@
 *.java text eol=lf
 *.xml  text eol=lf
 *.c    text eol=lf
+*.sh   text eol=lf
+*.yml  text eol=lf
+*.txt  text eol=lf
 
 # Large generated decompiler output — keep it out of diffs and language stats.
 # This is Ghidra output, not hand-written source: a diff of it is noise, and
 # letting it count toward language statistics would label the whole project C.
-decompiled/*.c linguist-generated=true -diff
+decompiled/*.c       linguist-generated=true -diff
+decompiled-denso/*.c linguist-generated=true -diff
