@@ -8,6 +8,8 @@ __pycache__/
 *.rep/
 
 # Reference material that belongs to other people — cited, not redistributed
+# FreeSSM is Comer352L's, GPLv3; tools/map_ssm_parameters.py downloads it when run.
+tools/SSMFlagbyteDefinitions_en.cpp
 forum_full_thread.txt
 subaru_5eat_service_manual.pdf
 subaru_5eat_service_manual_extract.txt

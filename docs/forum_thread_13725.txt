@@ -2282,3 +2282,59 @@ Just ordered a 31711AJ675 from a 06 tribeca for bench testing.
 
 anyone have a datalog from a tcu while driving?
 
+=== post 386 | cortin | Fri Jul 31, 2026 4:41 pm | #p177703 ===
+SCAR17s wrote:
+
+=== post 387 | SCAR17s | Fri Jul 31, 2026 8:53 pm | #p177706 ===
+cortin wrote:
+
+=== post 388 | SCAR17s | Mon Aug 03, 2026 2:07 am | #p177716 ===
+Repo update, need testers to have a poke!
+
+https://github.com/TomFLV/5eat-tcu-reverse-engineering
+
+=== post 389 | cortin | Mon Aug 03, 2026 4:30 am | #p177717 ===
+SCAR17s wrote:
+
+=== post 390 | SCAR17s | Mon Aug 03, 2026 9:22 pm | #p177730 ===
+Awesome, thank you, I got my 06 tribeca TCU today, just about to get it set up in the lab, was wondering if we have a BDM flash/recovery method for these yet?
+
+=== post 391 | rimwall | Tue Aug 04, 2026 3:52 am | #p177735 ===
+I read through the entire "Findings.md" of your repo. It's impressive (and perhaps also deflating) to see how quickly Claude chows through it all.
+
+Claude seems to conclude that there was nothing of use in FreeSSM. Have a look in the FreeSSM repo in file "SSMFlagbyteDefinitions_en.cpp". This provides the ordered list of parameters that SSM reports for both the ECU and TCU, along with units and any unit conversions (note that this information is also in the RomRaider logger xml file, I can't recall which source is more comprehensive). This list is replicated in the TCU ROM following the SSM_Get_Base (eg: at 0x1d600 in ROM ACD1A06000). This allows multiple RAM addresses in the ROM to be matched to real-world parameters. These values can then be traced back through the ROM logic to define ROM logic and table properties.
+
+I did make some progress on defining the Drive Modes. Here is my summary, shown as value-used-by-ROM, Drive Mode:
+
+Denso SH7058s
+0 Unused
+1 I-Mode
+2 Normal (Sport)
+3 Sport#
+4 Unknown
+5 Unknown - hard acceleration / temp conditions?
+6 Unknown - hard acceleration / temp conditions?
+7 Unknown - hard acceleration / temp conditions?
+
+Hitachi M32R
+0 Normal (Sport)
+1 Sport#
+2 Unused
+3 Unknown
+4 Manual Mode
+5 Unknown
+6 Unknown
+7 Unused
+8 ATF Temp Low
+9 Unknown
+10 Unused
+11 I Mode
+12 Slope
+13 Kickdown / hard acceleration
+
+I wonder whether it is worth feeding Claude the full decompiler listings from the two TCU ROMs I partially Reverse Engineered. The M32R ROM has ~1300 functions of which I have worked through ~1000. The Denso ROM has ~4200 functions of which I have worked through ~2800. Generally I will have given the Functions meaningful names with words separated by underscores. And many RAM values and some tables have also been given meaningful names. I have used abbreviations which might need some deciphering. There are also comments scattered throughout the code. 
+
+The upside is that it could really accelerate the table definition. The downside is I may have misinterpreted some things.
+
+I also have some reference material in an Excel spreadsheet that I kept as I worked through the ROMs.
+

@@ -1371,7 +1371,8 @@ unanalysed code.
 ### What would actually settle it
 
 1. **A Select Monitor / SSM parameter definition for the TCU** giving the address
-   and formula. FreeSSM does not ship one (11m).
+   and formula. FreeSSM ships no TCU-specific one, but its shared measuring-block
+   list combined with the ROM's own SSM table supplies both - section 40.
 2. **Empirical logging** -- read the raw variable over K-Line SSM while watching the
    Select Monitor's kPa readout, and derive the mapping from the pairs.
 
@@ -1519,8 +1520,11 @@ decoding still lists as unknown.
 
 - **Pressure units from the ROM** (12d). Four tests across 11 firmwares, all
   negative. Needs hardware, not analysis.
-- **FreeSSM as a source of TCU unit conversions** (11m). No TCU definitions exist
-  in any branch.
+- **FreeSSM as a source of TCU unit conversions** (11m). ~~No TCU definitions
+  exist in any branch.~~ **Reopened and largely answered - see section 40.** There
+  is no TCU-specific definition file, which is what 11m checked, but the shared
+  measuring-block list names parameters by SSM address, and the ROM maps SSM
+  address to RAM address.
 - **A pre-existing RomRaider TCU definition** — none exists; the forum thread says
   so explicitly. This project's is the first.
 - **Byte-pattern porting of table addresses between firmwares** — resolves only
@@ -3696,3 +3700,113 @@ looking.
 It also means the ratios in a definition are not a constant of the 5EAT. Anyone
 comparing a log against tables - as section 36 did - needs the ratios for the car that
 produced the log, not for the family in general.
+
+---
+
+## 40. THE SELECT MONITOR TABLE NAMES THE RAM, AND FreeSSM WAS NOT A DEAD END
+
+Section 11m closed FreeSSM as a dead end. That conclusion was too broad, and the
+correction is rimwall's - forum topic 13725, post 391. Section 11m looked for
+per-model TCU definitions in `SSM1defs_*.xml` and the transmission dialog, found
+only generic wiring, and stopped. It never opened the file that matters:
+FreeSSM's
+`SSMFlagbyteDefinitions_en.cpp` is the ordered list of every parameter the Select
+Monitor can report, with units and conversions, and the TCU ROM holds the other
+half of the same mapping. Joining them names RAM addresses, which is the thing
+that was missing.
+
+### 40a. The table, and where it is
+
+Every M32R image carries a run of 512 big-endian pointers into on-chip RAM,
+indexed by SSM address, with a single dummy address filling every slot the unit
+does not support:
+
+    ACD1A06000    0x1D600      76 supported of 512
+    ACD1207000    0x1D5F0      76
+    the other 14  0x1C5D4 to 0x1D44C   74 each
+
+rimwall gave `0x1d600` in `ACD1A06000` and it is exactly right. Reading entry `n`
+gives the RAM address the Select Monitor reads when asked for SSM parameter `n`.
+Cross-referencing against FreeSSM names **36 or 37 parameters per image**.
+
+The check that this is real rather than a coincidence of ranges: SSM addresses
+`0x0E` and `0x0F` are Engine Speed's two halves in FreeSSM, and in the ROM they
+map to `0x00805139` and `0x0080513A` - adjacent, in order, as a 16-bit value must
+be.
+
+### 40b. The addresses are a staging buffer, and that is the useful part
+
+The named addresses are contiguous, which is the signature of a copy made for the
+Select Monitor rather than of the variables the control logic uses. That could
+have been a disappointment. It is the opposite: the routine that fills the buffer
+names its own sources, so one hop back gives the working variable *and* its
+scaling.
+
+    DAT_00805139 = (undefined1)(((uint)DAT_008042bc << 2) >> 8);   Engine Speed
+    iVar2 = (int)DAT_008046c6 / 100;
+    DAT_00805173 = (undefined1)iVar2;                              L/U pressure
+
+`tools/map_ssm_parameters.py` does the join and follows that hop, resolving the
+temporaries Ghidra introduces for the range checks. It reports **27 working
+variables per image**, consistent across all sixteen. Among them, for
+`ACD1A06000`:
+
+| parameter | working variable | scaling |
+|---|---|---|
+| Engine Speed | `0x8042BC` | `<< 2` |
+| Turbine Revolution Speed | `0x8042CC` | `>> 5` |
+| AT Turbine Speed 1 / 2 | `0x8042C8` / `0x8042CA` | |
+| Gear Position | `0x804846` | |
+| Accelerator Pedal Travel | `0x804923` | |
+| Front / Rear Wheel Speed | `0x8051D6` / `0x8051D8` | `>> 8` |
+| ATF Temperature 1 / 2 | `0x8047CC` / `0x8047DA` | |
+| Battery Voltage | `0x804BAA` | |
+| Solenoid pressures, H&LR/C to AWD | `0x8046CA`-`0x8046D4` | `/ 100` |
+| **L/U solenoid pressure** | **`0x8046C6`** | `/ 100` |
+| Solenoid currents, P/L to AWD | `0x80473C`-`0x80474A` | `* 255 / 400` |
+
+The ten that do not resolve are the switch bitfields, assembled a bit at a time
+rather than copied.
+
+Note that the solenoid pressure block runs `0x8046CA` to `0x8046D4` in SSM order
+H&LR/C, D/C, F/B, I/C, P/L, AWD - and **L/U sits apart at `0x8046C6`**, outside
+that run. The lock-up channel is handled separately from the other six in the
+M32R firmware, which is consistent with it being the one channel whose hardware
+routing section 29 could not settle.
+
+### 40c. This does not settle TIO5 against TIO7
+
+Tempting, but no. Section 29's open question is about the **Denso** firmware, and
+`0x804EB2` and `0x804EB6` are Denso addresses. Section 40 is entirely M32R. What
+it gives is the M32R lock-up variables, which is worth having and is not the same
+thing. The bench measurement in [docs/BENCH-RIG.md](docs/BENCH-RIG.md) is still
+what settles the Denso question.
+
+### 40d. Denso stores this differently, and it is not yet found
+
+No Denso image has a comparable run. Their on-chip RAM lives at `0xFFFF8000` and
+up, and a scan of that range finds 1745 distinct addresses across 5228
+occurrences, scattered as SH-2 literal pools rather than gathered into a table.
+The logs in `logs/` prove a Denso TCU answers the Select Monitor, so the mapping
+exists in some form - most likely as displacements from GBR rather than absolute
+addresses, which would fit the ~3800 GBR-relative accesses section 27 counted.
+Worth another look; the M32R result is what is established.
+
+### 40e. rimwall's drive mode enumerations
+
+Recorded from post 391 as his work, not verified here. Section 33 found the
+schedule index is `condition x 2 + group x 10` without establishing what each
+condition value means; this is a direct answer to that, and checking it against
+the selector table is the obvious next step.
+
+Denso SH7058S: 0 unused, 1 I-Mode, 2 Normal (Sport), 3 Sport#, 4-7 unknown, with
+5 to 7 possibly hard acceleration or temperature conditions.
+
+Hitachi M32R: 0 Normal (Sport), 1 Sport#, 2 unused, 3 unknown, 4 Manual Mode,
+5-7 unknown, 8 ATF Temp Low, 9 unknown, 10 unused, 11 I Mode, 12 Slope,
+13 Kickdown / hard acceleration.
+
+He has also offered his working decompiler listings - roughly 1000 of 1300 M32R
+functions and 2800 of 4200 Denso functions given meaningful names, with comments
+and named RAM values - and a spreadsheet of reference material. That would be the
+single largest input this project could receive.

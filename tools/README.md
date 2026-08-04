@@ -117,6 +117,27 @@ tcu-cli selftest [<def.xml> <rom.bin>...]               # no arguments: everythi
 * **It is headless.** No display, no window, no dialog that can block waiting for
   someone to click it.
 
+## Naming the RAM
+
+`map_ssm_parameters.py` joins the SSM parameter table in the ROM to FreeSSM's list
+of what each SSM address means, which names on-chip RAM addresses:
+
+```bash
+python tools/map_ssm_parameters.py rom/*.bin
+# ACD1A06000...  table 0x1D600  76 supported  37 named  27 traced to a variable
+```
+
+The named addresses are a staging buffer the Select Monitor reads, not the working
+variables - but the routine that fills it names its sources, so the tool follows
+that hop and reports the real variable and its scaling. Output goes to
+`tools/ssm_parameters.json`.
+
+Works on the sixteen M32R images. The Denso equivalent has not been located; see
+FINDINGS section 40.
+
+FreeSSM is Comer352L's, GPLv3. It is downloaded when the tool runs and is not
+redistributed here. The approach is rimwall's, from forum topic 13725.
+
 `selftest` is the one that matters: it loads each ROM, confirms the checksums as
 shipped, edits a cell through the real write path, saves through `Rom.saveFile`, and
 confirms them again. Nothing reaches the disk — `saveFile` returns bytes rather than
