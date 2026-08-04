@@ -20,6 +20,7 @@
 *.log        text eol=lf
 .gitattributes text eol=lf
 .gitignore     text eol=lf
+LICENSE        text eol=lf
 
 # Large generated decompiler output — keep it out of diffs and language stats.
 # This is Ghidra output, not hand-written source: a diff of it is noise, and
