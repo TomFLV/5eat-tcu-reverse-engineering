@@ -9,7 +9,12 @@
 #
 # Four passes per image:
 #   1. denso_data_ranges.py computes which bytes are calibration data
-#   2. import as SuperH:BE:32:SH-2   (the SH7058S core is SH-2E, not SH-2A)
+#   2. import as SuperH:BE:32:SH-2E. Ghidra ships no SH-2E, so this project adds
+#      one: it is SH_VERSION "2" with FPU defined, two lines in a slaspec. The
+#      stock SH-2 has no FPU constructors at all, so the whole 0xF000-0xFFFF
+#      opcode space fails to decode - 165 halt_baddata markers in one image, and
+#      5.6 points of coverage. SH-2A decodes the FPU but over-accepts about twenty
+#      SH-2A-only instructions this core cannot execute. See tools/ghidra/sh-2e.slaspec.
 #   3. auto-analysis, then DensoFull.java sweeps every 2-byte-aligned address
 #      OUTSIDE those data ranges and disassembles whatever decodes, repeating until
 #      a pass finds nothing new
@@ -20,7 +25,7 @@
 # unrestricted sweep produced 77 referrers to the shift-schedule array, every one of
 # them the sweep reading its own mis-decoded pointers.
 #
-# Expect roughly 50% instruction coverage against 47% code-like content, which means
+# Expect roughly 57% instruction coverage against 47% code-like content, which means
 # essentially all the code. The rest is blank flash and constant pools; chasing 100%
 # would decode padding into fake instructions.
 #
@@ -65,7 +70,7 @@ for rom in "$REPO"/rom-denso/*.bin; do
     cp "$rom" "$WORK/t.bin"
 
     "$GH" "$WORK" p -import "$WORK/t.bin" \
-        -processor "SuperH:BE:32:SH-2" -loader BinaryLoader -loader-baseAddr 0x0 \
+        -processor "SuperH:BE:32:SH-2E" -loader BinaryLoader -loader-baseAddr 0x0 \
         >/dev/null 2>&1
 
     "$GH" "$WORK" p -process t.bin -analysisTimeoutPerFile 3000 >/dev/null 2>&1
