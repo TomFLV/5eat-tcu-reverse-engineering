@@ -46,7 +46,13 @@ DEFS_URL = ("https://raw.githubusercontent.com/Comer352L/FreeSSM/master/"
 # 0xFFFFFFFF is excluded deliberately: erased flash is a run of it tens of
 # thousands of entries long, which otherwise wins every time.
 ADDR_RANGES = (
-    (0x00800000, 0x0080FFFF),   # Hitachi M32R on-chip RAM
+    (0x00804000, 0x00809FFF),   # Hitachi M32R on-chip RAM, 24 KB. From the 32176
+                                # Group Hardware Manual (REJ09B0067-0110) section
+                                # 3.4.2, with the errata applied: figure 3.2.1
+                                # misprints the top as H'008F 9FFF, corrected to
+                                # H'0080 9FFF by TN-32R-A080A/E. Below 0x804000 is
+                                # SFR space, not RAM. All 1,190 entries the sixteen
+                                # M32R tables point at fall inside this window.
     (0xFFFF0000, 0xFFFFFFFE),   # Denso SH705x on-chip RAM - reaches down to
                                 # 0xFFFF2800 in practice, well below the 0xFFFF8000
                                 # this first assumed, which is why the Denso tables

@@ -4054,3 +4054,101 @@ simply does not line up with the selector, and the two should not be conflated.
 
 Worth asking him directly which variable the values belong to - that would connect
 his work to section 33 immediately.
+
+---
+
+## 44. THE 32176 HARDWARE MANUAL, AND WHAT IT CONFIRMS
+
+The manual for the exact part in the M32R TCUs turns out to be public. It reads as
+missing because Renesas files it as a *Hardware Manual*, not a User's Manual, so
+the obvious URL 404s:
+
+    32176 Group Hardware Manual   REJ09B0067-0110, Rev.1.10, Jun.2006, 744 pp
+    Errata                        TN-32R-A080A/E, Sep.2010
+    M32R Family Software Manual   MEJ19B0001-0102Z, Rev.1.2 (the instruction set)
+
+All are downloadable without an account from renesas.com. Copies are kept outside
+this repository - they are Renesas documents, not ours to redistribute.
+
+### 44a. The lock-up pin assignment is confirmed
+
+Section 29 traced the two torque converter candidates to package pins and could not
+verify the mapping. The manual states it directly, in the pin assignment table:
+
+    102 P115/TO5
+    104 P117/TO7
+
+which is exactly what section 29 recorded. The bench measurement in
+[docs/BENCH-RIG.md](docs/BENCH-RIG.md) can be taken at those pins with confidence
+that they are the right ones - the remaining question is only which of the two the
+lock-up solenoid hangs off.
+
+The package is **144-pin LQFP** (PLQP0144KA-A), which is worth stating because a
+100-pin assumption would make both numbers meaningless.
+
+Timer registers sit at `H'0080 0300` upward, and the manual places `TIO7CT` at
+`H'0080 0370` and TIO5's reload registers around `H'0080 0356`. None of these
+addresses appear in the decompiled listings, so the firmware reaches the timer
+block through a base register rather than absolutely - which is why section 29 had
+to identify the channel from the driver structure rather than from a register write.
+
+### 44b. The RAM map, and an errata that matters
+
+Section 3.4.2 gives the M32176F4 map as flash `H'0000 0000`-`H'0007 FFFF`, SFR
+`H'0080 0000`-`H'0080 3FFF`, and **24 KB of internal RAM at `H'0080 4000`-`H'0080
+9FFF`**.
+
+Figure 3.2.1 misprints the RAM top as `H'008F 9FFF`, in three places in the text.
+The errata corrects it to `H'0080 9FFF`. Anyone reading the manual alone would take
+the wrong number.
+
+This is checkable against the ROMs, and it checks out exactly. The sixteen M32R
+parameter tables of section 40 point at **1,190 addresses, every one of them inside
+`0x804000`-`0x809FFF`, none outside**. Two independent things confirm each other:
+the errata is right, and the table extraction is picking up real RAM addresses
+rather than coincidences.
+
+`tools/map_ssm_parameters.py` now uses the documented window instead of the whole
+`0x0080xxxx` page it assumed, which also excludes SFR space from consideration.
+Detection is unchanged on all 25 firmwares.
+
+### 44c. The processor module in use is the stale one
+
+This project's disassembly used [ripnet/ghidra-m32r](https://github.com/ripnet/ghidra-m32r),
+last touched March 2022, with five open issues and two unmerged pull requests. Two
+better forks exist:
+
+  * [StackwalkerInc/ghidra-m32r](https://github.com/StackwalkerInc/ghidra-m32r) -
+    active, and it already carries rimwall's ADDX and TSTb31 work, audited. Worth
+    noting that it **corrected** rimwall's `TSTb31`, which modified `Rdest` when it
+    should not have. It also replaces rimwall's hardcoded frame-pointer base with a
+    language variant.
+  * [tiredboffin/ghidra-m32r](https://github.com/tiredboffin/ghidra-m32r) - the most
+    recently updated, with Ghidra 11.x support and fixes to `LDH`, `SUBX` and `ADDX`.
+    It is camera firmware work, not automotive, so its ABI assumptions do not carry
+    over even though the instruction fixes do.
+
+The frame-pointer question is now decidable from the manual rather than by taste.
+ripnet's module assumes `0x80C000`; rimwall changed it to `0x808000`. RAM ends at
+`0x809FFF`, so **`0x80C000` is not in RAM at all** and cannot be a frame pointer.
+rimwall's value is inside RAM and is the plausible one.
+
+What that means for the findings here: results resting on absolute addresses - the
+tables, the checksums, the parameter maps, everything in sections 1 to 43 - are
+unaffected, because those come from data references rather than from frame
+resolution. Stack-local variables in the decompiled output may be mislabelled.
+Re-running the disassembly against StackwalkerInc's module is worth doing before
+the next round of function-level analysis, and is a prerequisite for making good
+use of rimwall's annotated listings if he shares them.
+
+### 44d. Also established
+
+`m32r-elf-objdump` and the GDB simulator at `sim/m32r` both still exist in binutils
+and GDB. Neither is used here yet, and both are worth keeping in reach as an
+independent check: every M32R Ghidra fork has been chasing the same handful of
+instruction bugs (`ADDX`, `SUBX`, `LDH`), and a second disassembler settles that
+class of question immediately.
+
+`jimihimi/TCURoms` on GitHub holds further stock TCU images across EDM, JDM and USDM
+markets. Worth checking against the 25 already here for variants this project does
+not have - particularly the early Tribeca calibration section 39 is missing.

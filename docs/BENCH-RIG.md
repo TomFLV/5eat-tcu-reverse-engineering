@@ -155,7 +155,11 @@ write.
 
 ## What a rig would settle
 
-**Which channel is lock-up.** This is the one the firmware cannot answer. Note it
+**Which channel is lock-up.** This is the one the firmware cannot answer. The pin
+numbers are confirmed against the 32176 Group Hardware Manual, whose pin assignment
+table reads `102 P115/TO5` and `104 P117/TO7` on a 144-pin LQFP package
+(FINDINGS section 44a) - so those are the right pins to probe, and the only
+remaining question is which of the two the lock-up solenoid hangs off. Note it
 is an **M32R** question: `0x804EB2` and `0x804EB6` are M32R addresses and section
 29 works from the 32176 manual, so it is settled on an M32R unit, not a Denso one.
 The Select Monitor cannot answer it either - what it reports for lock-up is derived
