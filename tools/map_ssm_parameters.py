@@ -30,6 +30,7 @@ import sys
 import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+REPO = os.path.dirname(HERE)
 OUT = os.path.join(HERE, "ssm_parameters.json")
 
 DEFS_URL = ("https://raw.githubusercontent.com/Comer352L/FreeSSM/master/"
@@ -38,16 +39,28 @@ DEFS_URL = ("https://raw.githubusercontent.com/Comer352L/FreeSSM/master/"
 # The two families put their on-chip RAM in different places - M32R at 0x0080xxxx,
 # SH705x high in the address space - so a pointer table is a run of values inside
 # one of these, and a value outside every range ends the run.
+# What a table entry may point at. Both families keep most parameters in on-chip
+# RAM, but a handful - the unit identifier among them - are constants read straight
+# out of ROM, so the ROM range has to be accepted too.
+#
 # 0xFFFFFFFF is excluded deliberately: erased flash is a run of it tens of
 # thousands of entries long, which otherwise wins every time.
-RAM_RANGES = (
-    (0x00800000, 0x0080FFFF),   # Hitachi M32R
-    (0xFFFF8000, 0xFFFFEFFF),   # Denso SH705x on-chip RAM
+ADDR_RANGES = (
+    (0x00800000, 0x0080FFFF),   # Hitachi M32R on-chip RAM
+    (0xFFFF0000, 0xFFFFFFFE),   # Denso SH705x on-chip RAM - reaches down to
+                                # 0xFFFF2800 in practice, well below the 0xFFFF8000
+                                # this first assumed, which is why the Denso tables
+                                # went unfound: the run broke at the first such entry
+    (0x00000100, 0x000FFFFF),   # ROM, both families
 )
+
+# Both families size this table at 512 entries, one per addressable Select Monitor
+# parameter. Requiring that is what separates it from every other pointer block.
+TABLE_ENTRIES = 512
 
 
 def in_ram(v):
-    return any(lo <= v <= hi for lo, hi in RAM_RANGES)
+    return any(lo <= v <= hi for lo, hi in ADDR_RANGES)
 
 # A table shorter than this is a coincidence, not the parameter map.
 MIN_ENTRIES = 128
@@ -138,8 +151,13 @@ def find_table(data):
         while j <= n and in_ram(struct.unpack_from(">I", data, j)[0]):
             j += 4
         count = (j - i) // 4
-        if count >= MIN_ENTRIES and count > best[1] and looks_like_map(data, i, count):
-            best = (i, count)
+        # A run can be longer than the table when whatever follows happens to look
+        # like an address, so judge the first TABLE_ENTRIES of it rather than the
+        # whole thing, and report that length.
+        if count >= TABLE_ENTRIES and looks_like_map(data, i, TABLE_ENTRIES):
+            if best[0] is None or TABLE_ENTRIES > best[1]:
+                best = (i, TABLE_ENTRIES)
+                break
         i = j
     return best
 
@@ -156,7 +174,8 @@ def looks_like_map(data, start, count):
     for v in vals:
         counts[v] = counts.get(v, 0) + 1
     filler = max(counts, key=counts.get)
-    return counts[filler] >= count * 0.4 and 8 <= len(counts) - 1 <= count * 0.5
+    distinct = len(counts) - 1
+    return counts[filler] >= count * 0.4 and 8 <= distinct <= count * 0.5
 
 
 ASSIGN = re.compile(r"^\s*DAT_00([0-9a-fA-F]{6})\s*=\s*([^;]+);")
@@ -244,7 +263,12 @@ def main():
         filler = max(counts, key=counts.get)
 
         mirror = {v for v in vals if v != filler}
-        listing = os.path.join(args.decompiled, os.path.splitext(name)[0] + ".c")
+        # The two families keep their listings in separate directories, named after
+        # the image either way.
+        stem = os.path.splitext(name)[0] + ".c"
+        listing = os.path.join(args.decompiled, stem)
+        if not os.path.exists(listing):
+            listing = os.path.join(REPO, "decompiled-denso", stem)
         traced = trace_sources(listing, mirror)
 
         rows = []

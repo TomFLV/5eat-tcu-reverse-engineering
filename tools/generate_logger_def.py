@@ -15,9 +15,10 @@ Two things make it possible to do properly rather than by guesswork:
   * FreeSSM's measuring-block list names those addresses and gives their units and
     conversions.
 
-The unit identifier RomRaider matches against is the five bytes at ROM 0x802A,
-which is also what the firmware copies into the first Select Monitor slots. That
-was rimwall's, from forum topic 13725 post 379.
+The unit identifier RomRaider matches against is read from the table itself:
+parameters 1 to 5 answer with it. The M32R copies it from ROM 0x802A, the Denso
+points straight at ROM at an address that moves between images. rimwall gave the
+M32R location, forum topic 13725 post 379.
 
 Raw memory is readable too. The request handler routes addresses below 0x200
 through the translation table and everything else to a direct read, guarded only
@@ -76,15 +77,34 @@ def expression(conv):
     return "x", False
 
 
-def unit_ids():
-    """firmware filename -> the identifier the Select Monitor reports."""
-    out = {}
-    for path in glob.glob(os.path.join(REPO, "rom", "*.bin")):
-        with open(path, "rb") as fh:
-            fh.seek(ID_OFFSET)
-            out[os.path.basename(path)] = "".join(
-                "%02X" % b for b in fh.read(ID_LEN))
-    return out
+def unit_ids(data):
+    """firmware filename -> the identifier the Select Monitor reports.
+
+    Both families answer parameters 1 to 5 with the five identifier bytes, but they
+    reach them differently: the M32R copies them from ROM 0x802A into the staging
+    buffer, so its table points at RAM, while the Denso table points at the ROM
+    bytes directly and at an address that moves between images. So take the address
+    from the table where it points into ROM, and fall back to the fixed M32R offset
+    where it does not.
+    """
+    out, m32r = {}, set()
+    for folder in ("rom", "rom-denso"):
+        for path in glob.glob(os.path.join(REPO, folder, "*.bin")):
+            name = os.path.basename(path)
+            info = data.get(name)
+            if not info:
+                continue
+            rows = {r["ssm"]: r["ram"] for r in info["rows"]}
+            first = rows.get(1)
+            offset = first if first is not None and first < 0x100000 else ID_OFFSET
+            with open(path, "rb") as fh:
+                fh.seek(offset)
+                ident = "".join("%02X" % b for b in fh.read(ID_LEN))
+            if len(ident) == ID_LEN * 2:
+                out[name] = ident
+                if folder == 'rom':
+                    m32r.add(ident)
+    return out, m32r
 
 
 def collect(data, ids):
@@ -118,7 +138,7 @@ def main():
         sys.stderr.write("run tools/map_ssm_parameters.py first\n")
         return 1
     data = json.load(open(SSM_JSON, encoding="utf-8"))
-    ids = unit_ids()
+    ids, m32r_ids = unit_ids(data)
     known = sorted({v for k, v in ids.items() if k in data})
     if not known:
         sys.stderr.write("no firmware in %s matched a ROM in rom/\n" % SSM_JSON)
@@ -156,7 +176,9 @@ def main():
         ET.SubElement(convs, "conversion", units=(unit or "raw"), expr=expr,
                       format="0.00" if "/" in expr else "0")
 
-    # Raw RAM reads: the two lock-up candidates.
+    # Raw RAM reads: the two lock-up candidates. These are M32R addresses, so they
+    # are offered only to M32R units - pointing a Denso unit at them would read an
+    # unrelated part of its address space and report a plausible-looking number.
     for n, (name, ram) in enumerate(LOCKUP, 1):
         ep = ET.SubElement(
             proto, "ecuparam", id="LU%d" % n, name=name,
@@ -167,7 +189,7 @@ def main():
                  "rather than through the Select Monitor translation table."
                  % ram,
             target="2")
-        ecu = ET.SubElement(ep, "ecu", id=",".join(known))
+        ecu = ET.SubElement(ep, "ecu", id=",".join(sorted(m32r_ids)))
         ET.SubElement(ecu, "address").text = "0x%06X" % ram
         convs = ET.SubElement(ep, "conversions")
         ET.SubElement(convs, "conversion", units="duty (raw)", expr="x", format="0")

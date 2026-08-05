@@ -83,8 +83,8 @@ jobs:
       # from, so its detection has to keep working. Run offline: naming the
       # parameters needs FreeSSM, but finding the tables is this project's own
       # work and should be checkable without reaching the network.
-      - name: Select Monitor table found in every M32R firmware
-        run: python tools/map_ssm_parameters.py rom/*.bin --offline --expect 16 --show 0
+      - name: Select Monitor table found in every firmware, both families
+        run: python tools/map_ssm_parameters.py rom/*.bin rom-denso/*.bin --offline --expect 25 --show 0
 
       - name: Every tool answers --help
         run: |

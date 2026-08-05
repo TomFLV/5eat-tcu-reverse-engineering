@@ -134,8 +134,12 @@ separates them: log both against gear and whichever tracks lock-up is the answer
 The firmware permits this because its request handler sends addresses below `0x200`
 through the translation table and everything above straight to memory.
 
-Denso units are not covered — their equivalent table has not been located
-(see [FINDINGS.md](FINDINGS.md) §40d).
+Denso units are covered too. Their equivalent table was found by reading the
+request handler rather than scanning for it, and it is confirmed against a real
+car: the identifier it points at for `Impreza_STI_3.583_JDM2011` is `A3DE207100`,
+the unit the logs in [`logs/`](logs/) came from. The lock-up entries stay M32R-only,
+since those addresses mean nothing on a Denso unit. See [FINDINGS.md](FINDINGS.md)
+§42.
 
 ## Known limitations
 

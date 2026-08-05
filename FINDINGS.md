@@ -3933,3 +3933,85 @@ known temperature decides it outright.
 If `-55` did turn out to be right, the fix is mechanical: thirteen tables in the
 M32R definition change `x-40` to `x-55` and `x+40` to `x+55`. Nothing else in the
 project depends on the offset.
+
+---
+
+## 42. THE DENSO SELECT MONITOR TABLE, FOUND BY READING THE HANDLER
+
+Section 40d recorded that no Denso image had a parameter table like the M32R one,
+and guessed it was probably stored as GBR displacements. That guess was wrong, and
+the table was found the way section 40 should have been approached from the start:
+by reading the code rather than scanning for a shape.
+
+### 42a. The handler has the same structure in both families
+
+The M32R request handler splits on the requested address:
+
+    if ((uVar7 < 0x200) && ((DAT_00805001 & 2) == 0)) { table lookup }
+    else                                              { direct read }
+
+Searching the Denso listing for the same two conditions finds one match, at line
+4090 of `Impreza_STI_3.583_JDM2011.c`:
+
+    if (((*(byte *)(iVar1 + 5) & 2) == 0) && (uVar2 < 0x200)) {
+        *(undefined4 *)DAT_00009bb2 =
+            *(undefined4 *)(PTR_DAT_00009be0 + (addr & 0xffff) * 4);
+    }
+
+`PTR_DAT_00009be0` is the table base. Reading the pointer stored at ROM `0x9BE0`
+gives `0x00086870`, and that is the table.
+
+### 42b. Why the scan missed it
+
+Two assumptions in section 40's detector, both wrong for this family:
+
+**Entries point into ROM as well as RAM.** The dummy address that fills every
+unsupported slot is `0x000D1109`, a ROM address, and the five identifier bytes are
+read straight out of ROM too. The detector only accepted RAM pointers, so the run
+broke immediately.
+
+**Denso RAM starts far lower than assumed.** The detector used `0xFFFF8000` as the
+floor. Real entries reach down to `0xFFFF2800`, so even after admitting ROM
+addresses the run broke at the first low one - 41 entries in, out of 512.
+
+Both are now handled, and requiring the run to be exactly 512 entries long, which
+both families are, is what keeps the wider address ranges from matching unrelated
+pointer blocks.
+
+### 42c. What it gives
+
+All 25 firmwares now yield a table:
+
+    M32R    16 images, 74 to 76 supported parameters, 36 or 37 named
+    Denso    9 images, 86 to 95 supported parameters, 39 or 40 named
+
+The Denso units report *more* than the M32R ones, which is the opposite of what
+the older, smaller M32R calibrations would suggest.
+
+### 42d. It is confirmed against a real car
+
+Table entries 1 to 5 answer with the five identifier bytes. On the Denso side they
+point straight at ROM, and for `Impreza_STI_3.583_JDM2011` they point at `0xD110E`,
+where the bytes are:
+
+    A3DE207100
+
+which is exactly the unit identifier recorded in `logs/README.md` for the car
+cortin logged - a car whose ROM is byte-identical to that image. The table was
+located from the disassembly with no reference to the logs, and it independently
+reproduces a fact established months earlier from a completely different source.
+
+That also fixes how the identifier is found. Section 40 took it from a fixed
+`0x802A`, which is right for the M32R but wrong for Denso, where the address moves
+between images. Reading it from the table works for both.
+
+### 42e. The logger definition now covers both families
+
+`definitions/5eat_tcu_logger.xml` carries all 25 unit identifiers. The two lock-up
+candidates stay restricted to the M32R units, since `0x804EB2` and `0x804EB6` are
+M32R addresses and pointing a Denso unit at them would read an unrelated part of
+its address space and report a number that looks perfectly reasonable.
+
+Tracing Denso parameters back to their working variables is still not done: the
+tracer matches Ghidra's `DAT_00xxxxxx` naming and the Denso listings use
+`DAT_ffffxxxx`. The naming, which is what the logger definition needs, is complete.
