@@ -88,6 +88,10 @@ image, and every one of the nine Denso images improved by 3.5 to 5.7 points.
 
 The four excluded instructions are a much smaller correction. Across all nine images
 those bit patterns occur **twice** - a single `0xF06D` at `0x0C9F5A` in two of them,
-in code territory rather than masked calibration data, so each was being decoded as a
-spurious `fsqrt fr0`. Two instructions out of roughly 600,000. Worth fixing because it
-is free and it is correct, not because it changes any conclusion.
+in code territory rather than masked calibration data, so each could have decoded as a
+spurious `fsqrt fr0`. Two instructions out of roughly 600,000.
+
+Regenerating those two images with the restriction in place produced **byte-identical
+output**, so in practice it changed nothing: whatever sits at that address never
+reached the decompiled listing. The restriction is kept because it is correct and
+costs nothing, not because it fixed an observed problem.
