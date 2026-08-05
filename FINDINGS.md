@@ -4012,6 +4012,15 @@ candidates stay restricted to the M32R units, since `0x804EB2` and `0x804EB6` ar
 M32R addresses and pointing a Denso unit at them would read an unrelated part of
 its address space and report a number that looks perfectly reasonable.
 
-Tracing Denso parameters back to their working variables is still not done: the
-tracer matches Ghidra's `DAT_00xxxxxx` naming and the Denso listings use
-`DAT_ffffxxxx`. The naming, which is what the logger definition needs, is complete.
+Tracing Denso parameters back to their working variables is still not done, and
+it is not a matter of adjusting the tracer. The M32R trace works because the
+routine filling the staging buffer names its sources as absolute `DAT_` symbols.
+The Denso listings contain only 61 `DAT_ffff` references in total and none at all
+to the buffer addresses the table points at, because SH-2 reaches that RAM
+GBR-relative - the ~3,800 accesses counted in section 27 - so Ghidra never
+materialises a symbol to match against.
+
+Getting the same result on Denso means resolving GBR at each access site, which is
+a real piece of work rather than a regex. The *naming*, which is what the logger
+definition needs, is complete for both families; only the second hop to the working
+variable is M32R-only.
