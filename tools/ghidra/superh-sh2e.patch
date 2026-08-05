@@ -1,0 +1,48 @@
+--- /home/rust/superh.sinc.orig	2026-08-04 21:42:12.348080404 -0400
++++ superh.sinc	2026-08-04 21:46:03.355664827 -0400
+@@ -2019,16 +2019,22 @@
+ # TODO: FCMP/GT DRm, DRn          1111nnn0mmm00101 (DRn>DRm)? 1:0 → T
+ 
+ # FCNVDS DRm, FPUL          1111mmm010111101 (float) DRm → FPUL
++# --- not present on SH-2E (SH7058 manual section 2.4.1) ---
++@ifndef SH2E
+ :fcnvds fdrm_09_11, fpul    is fpul & fop_12_15=0b1111 & fdrm_09_11 & fop_08_08=0b0 & fop_00_07=0b10111101
+ {
+     fpul = float2float(fdrm_09_11);
+ }
++@endif
+ 
+ # FCNVSD FPUL, DRn          1111nnn010101101 (double) FPUL → DRn
++# --- not present on SH-2E (SH7058 manual section 2.4.1) ---
++@ifndef SH2E
+ :fcnvsd fpul, fdrn_09_11    is fpul & fop_12_15=0b1111 & fdrn_09_11 & fop_08_08=0b0 & fop_00_07=0b10101101
+ {
+     fdrn_09_11 = float2float(fpul);
+ }
++@endif
+ 
+ # FDIV FRm, FRn             1111nnnnmmmm0011 FRn/FRm → FRn
+ :fdiv ffrm_04_07, ffrn_08_11    is fop_12_15=0b1111 & ffrn_08_11 & ffrm_04_07 & fop_00_03=0b0011
+@@ -2165,16 +2171,22 @@
+ 
+ # TODO: FNEG DRn                    1111nnn001001101 -DRn → DRn
+ # FSCHG                       1111001111111101 FPSCR.SZ = ~ FPSCR.SZ
++# --- not present on SH-2E (SH7058 manual section 2.4.1) ---
++@ifndef SH2E
+ :fschg  is fop_00_15=0b1111001111111101
+ {
+     $(FP_SZ) = ~ $(FP_SZ);
+ }
++@endif
+ 
+ # FSQRT FRn                   1111nnnn01101101 √FRn → FRn
++# --- not present on SH-2E (SH7058 manual section 2.4.1) ---
++@ifndef SH2E
+ :fsqrt ffrn_08_11   is fop_12_15=0b1111 & ffrn_08_11 & fop_00_07=0b01101101
+ {
+     ffrn_08_11 = sqrt(ffrn_08_11);
+ }
++@endif
+ 
+ # TODO: FSQRT DRn                   1111nnn001101101 √DRn → DRn
+ # FSTS FPUL, FRn              1111nnnn00001101 FPUL → FRn

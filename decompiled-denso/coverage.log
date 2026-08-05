@@ -16,3 +16,7 @@
   SH7058S_TG5_3.083 RESULT decompiled=2424 failed=0 coverage=52.5% functions=2424 (GhidraScript)  
   COVERAGE instructions=454182 (43.3%) data=76372 (7.3%) undefined=502119 (47.9%) total=1048576 (GhidraScript)  
   Tribeca_3.583_EDM_2009 RESULT decompiled=2222 failed=0 coverage=43.3% functions=2222 (GhidraScript)  
+  COVERAGE instructions=457390 (43.6%) data=77064 (7.3%) undefined=497676 (47.5%) total=1048576 (GhidraScript)  
+  5AT_3.583_LEGASE_JDM2008 RESULT decompiled=2224 failed=0 coverage=43.6% functions=2224 (GhidraScript)  
+  COVERAGE instructions=457020 (43.6%) data=77064 (7.3%) undefined=499298 (47.6%) total=1048576 (GhidraScript)  
+  SH7058S-3171121010_STI RESULT decompiled=2222 failed=0 coverage=43.6% functions=2222 (GhidraScript)  
