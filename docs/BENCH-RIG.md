@@ -109,45 +109,102 @@ So for the Denso there is a CAN path and nothing else. The only boot-mode module
 in the tree is the Unisia JECS M32R one, and it is an *ECU* module. There is a
 `kernels/ssmk_tcu_can_sh7058.bin`, which is the CAN route again.
 
-### The pads are real, and someone has traced them
+### The CPU pin numbers are confirmed
 
-Forum topic 13725 post 368 — Gmguy, recovering a bricked Denso TCU, part number
-30919AB600. He identified the PCB programming pads and confirmed they match
-Tactrix's `shbootrecover` diagram, which is the standard SH boot mode wiring:
+Forum topic 13725 post 368 - Gmguy, recovering a bricked Denso TCU, part number
+30919AB600 - traced his board's programming pads to CPU pins. Those pin numbers
+check out exactly against Table 1.3 of the Renesas SH7058 hardware manual
+(REJ09B0046, Rev 3.00), package **FP-256H, 256-pin QFP**:
 
-    P441 – MD1   – MCU pin 55    (100 Ω)
-    P431 – FWE   – MCU pin 56    (100 Ω)
-    P431 – PD8   – MCU pin 1     (1 kΩ)      <- see below
-    P813 – PB15  – MCU pin 164   (0 Ω)
-    P808 – RxD1  – MCU pin 166   (0 Ω)
-    P439 – TxD1  – MCU pin 165   (1 kΩ)
+    pin   1   PD8/PULS0
+    pin  55   MD1
+    pin  56   FWE
+    pin 164   PB15/PULS5/SCK2
+    pin 165   PC0/TxD1
+    pin 166   PC1/RxD1
 
-Board photographs are linked from posts 368 and 373.
+Verified three ways in the manual - Figure 1.2, Table 1.2 and Table 1.3 - and stable
+across SH7055S, SH7058S and SH7059, which share the numbering. They are **not**
+valid for the BP-272 BGA package, whose designators are different, and not valid for
+older SH705x parts such as the SH7050, where the same pin numbers are entirely
+different functions.
 
-**`P431` is listed twice**, against both FWE and PD8. One of them is wrong, and
-it is not recoverable from the post. Ring both out against the MCU pins before
-connecting anything — tying FWE to the wrong pad is how a working unit becomes a
-second brick. The MCU pin numbers likewise want checking against the datasheet
-for the exact package on your board.
+### The pad numbers are a different matter
 
-### Nobody has reported it working
+Gmguy's `P4xx` numbers are **his board's test pads, not CPU pins**, and they are not
+the same as the ones in Tactrix's diagram. That diagram is titled *"ECU test pad
+schematic (for reference only)"* and was taken from an '05 STi DBW **engine** ECU,
+so its pad numbers describe that board:
 
-Gmguy said he would report back once his interface parts arrived. He never did,
-and the thread has no other account of a successful hardware-level recovery on a
-Denso TCU. Post 368 also notes **ECUflash will not open the TCU ROM**, so its
-recovery path is not usable as-is.
+    Tactrix engine ECU        Gmguy's Denso TCU
+    P405 = FWE                P431 = FWE
+    P413 = MD1                P441 = MD1
+    P407 = PB15               P813 = PB15
+    P411 = TxD1               P439 = TxD1
+    P409 = RxD1               P808 = RxD1
 
-Treat this as a documented starting point, not a procedure. What is established:
-the pads exist, they are boot mode pads, and they correspond to a published
-diagram. What is not established: that the sequence completes on this unit.
+The document is `shbootmode.pdf`, not `shbootrecover.pdf` - that filename 404s.
+It is public at `tactrix.com/downloads/shbootmode.pdf`.
+
+**`P431` still appears twice in post 368**, against both FWE and PD8, and one of
+those is wrong. Trace the pads to the CPU pins yourself before connecting anything;
+the pin numbers above are what to trace *to*.
+
+### Entering boot mode
+
+From Tables 4.1 and 23.1 of the manual. Normal operation is mode 3: FWE low, MD2,
+MD1 and MD0 all high. Boot mode is **FWE high, MD2 high, MD1 low**, MD0 don't care -
+so assert FWE and pull *only* MD1 down.
+
+    FWE    pin 56    to +5 V
+    MD1    pin 55    to ground
+    PB15   pin 164   toggle at ~125 Hz, TTL
+    TxD1   pin 165   to the adapter's RX
+    RxD1   pin 166   to the adapter's TX
+
+**PB15 has to keep toggling.** The external watchdog expects to see it change every
+6.6 ms or it resets the part, which is why the published procedures drive it from a
+555 or a microcontroller at about 125 Hz.
+
+**PD8 is not connected by any procedure.** It appears in the schematic because the
+CPU drives the FWE net through it; forcing the FWE pad high overrides it.
+
+**Voltages, from Table 27.2.** MD0-MD2 and FWE (pins 50, 55, 56, 59) are rated to
+5.8 V absolute and are 5 V-tolerant. PD8, PB15, TxD1 and RxD1 sit on PVCC2, which
+Table 27.4 gives as 5.0 V ±0.5 V, so 5 V TTL is right for the serial and watchdog
+lines. Note the core VCC is **3.3 V**, not 5 V - that does not constrain the mode
+pins, which are separately rated, but it is worth knowing before probing anything
+else. Published accounts also use a **separate 5 V supply** for FWE and the timer,
+not derived from the ECU's 12 V.
+
+### Boot mode erases the part first
+
+This is the part that matters most. Serial boot mode **erases the entire user MAT
+and the user boot MAT** before it will program anything. There is no read-out and
+no partial write: entering it destroys whatever is on the unit.
+
+So a boot-mode session is only ever a recovery path, and only when a complete,
+correct ROM for that exact unit is already in hand. It is not a way to read a unit
+you have not dumped.
+
+### Nobody has reported it working on a TCU
+
+Gmguy said he would report back once his interface arrived. He never did, and the
+thread has no account of a successful hardware-level recovery on a Denso TCU. Post
+368 also notes ECUflash will not open the TCU ROM.
+
+The pin numbers and the procedure are now verified against the manufacturer's
+manual. What remains unverified is that the sequence completes on this particular
+board.
 
 ### The conservative order
 
-1. **Read over CAN first, with FastECU.** It is supported, it is non-destructive,
-   and a dump in hand is what makes everything else recoverable.
-2. Keep that dump. A known-good image of the same part number is what turns a
-   brick into an afternoon.
-3. Only then consider boot mode, and only with the pads verified by continuity.
+1. **Read over CAN first, with FastECU.** `sub_tcu_denso_sh7058_can` supports read
+   and write, addressing the TCU at `0x7E1`/`0x7E9` rather than the engine ECU's
+   `0x7E0`/`0x7E8`. It is non-destructive, and a dump in hand is what makes anything
+   afterwards recoverable.
+2. Keep that dump somewhere safe. Boot mode without one is not a recovery.
+3. Only then consider boot mode, and only with the pads traced to the pins above.
 
 Post 361 reports a Denso 7058 CAN TCU reading fine but failing at the write step
 with `TCU operation failed`, so a successful read does not imply a successful
