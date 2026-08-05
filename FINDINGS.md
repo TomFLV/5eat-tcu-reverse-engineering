@@ -4024,3 +4024,33 @@ Getting the same result on Denso means resolving GBR at each access site, which 
 a real piece of work rather than a regex. The *naming*, which is what the logger
 definition needs, is complete for both families; only the second hop to the working
 variable is M32R-only.
+
+---
+
+## 43. rimwall's DRIVE MODES DO NOT MAP ONTO THE SELECTOR IN SECTION 33
+
+Section 40e recorded rimwall's drive mode enumerations from post 391 and noted that
+checking them against the schedule selector was the obvious next step. Checked, and
+they do not correspond - which is worth recording so nobody later assumes they do.
+
+His M32R list runs 0 to 13: Normal (Sport), Sport#, unused, unknown, Manual Mode,
+three unknown, ATF Temp Low, unknown, unused, I Mode, Slope, Kickdown.
+
+Section 33 found two variables in the selection, and neither has that range:
+
+    DAT_0080485A   holds 0 to 4     the operating condition, tested in ~189 places
+    DAT_00804858   holds 0x80-0x85 and 0x8C, seven values, selecting one of five groups
+
+Fourteen values will not fit either. Searching `ACD1A06000` - the image rimwall
+names for his M32R work - for any byte variable tested by equality against 11, 12 or
+13 finds nothing of the right shape: two isolated comparisons against 12, in
+unrelated code.
+
+So his enumeration describes something this project has not located. It may be a
+logical naming of modes rather than one variable's raw values, it may be reached as
+a table index or bit position rather than by equality, or it may come from a
+different part of the firmware entirely. Nothing here contradicts his list; it
+simply does not line up with the selector, and the two should not be conflated.
+
+Worth asking him directly which variable the values belong to - that would connect
+his work to section 33 immediately.
