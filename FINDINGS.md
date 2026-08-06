@@ -5027,3 +5027,150 @@ section 19 puts torque at the head of the line pressure chain, a drive built fro
 these logs cannot exercise that path however well the frames are delivered. That
 needs an ECU-side log from the same car, or a torque estimate derived from the
 engine speed and pedal that are present.
+
+## 57. THE ECU ON THE OTHER END
+
+Section 56 ended on a missing input: the logs are TCU-side and carry no torque
+column, so CAN 0x410 byte 0 was fed as zero, and section 19 puts torque at the head
+of the line pressure chain. The suggested remedies were an ECU-side log from the
+same car or an estimate derived from pedal and engine speed.
+
+Neither was necessary. The ECU does not measure torque either - it **looks it up**,
+from accelerator pedal angle and engine speed, in a calibration table. The logs
+carry both of those columns. So the torque figure was never missing; it was one
+table lookup away, and the table is in a ROM that can be read.
+
+### 57a. Which ECU
+
+The TCU image this project works against is `Impreza_STI_3.583_JDM2011`, unit
+A3DE207100, calibration WQDE2WB1 - a JDM STI A-Line, which is the 5EAT car. The
+ECU on the other end of its CAN bus is **AZ1G502L**: 2009 JDM Impreza STI,
+automatic, SH7058, 1 MB. The same processor as the Denso TCU, so the SH-2E
+language of section 44, the disassembly scripts and the emulation harness all
+apply unchanged.
+
+Verified on load rather than assumed: the string `AZ1G502L` sits at 0x2004 exactly
+where the RomRaider definition says its internal identifier lives, the reset vector
+is 0x00000C0C and the initial stack pointer 0xFFFFBFA0 - the same RAM ceiling as
+the TCU.
+
+Neither the ROM nor the RomRaider definition file is ours, so neither is committed.
+`tools/ecu/README.md` records where both come from and how to fetch them.
+
+### 57b. Reading the calibration
+
+Two things about these definitions have to be read rather than assumed, and both
+cost time before they were noticed.
+
+**The definition is split in half.** A base entry carries every table's shape -
+type, axes, scaling, units - and each calibration overrides only the addresses,
+because the same table lives somewhere different in every ROM. Read one half alone
+and you get either what a table means or where it is, never both. This is what made
+`AZ1G502L` look at first as though it defined no torque table at all: the search
+was for the plain name while this calibration uses the A/B naming. It overrides 297
+tables, six of them requested-torque maps.
+
+**The axis endianness in the definitions is wrong for these ROMs.** They tag the
+float axes little-endian while the ROM stores them big-endian like everything else
+on an SH7058. This is the dangerous kind of wrong: the table data comes out
+perfect and only the axes turn to denormals around 1e-41, so the result still
+prints and still looks like a table. Settled by reading the bytes - `44 48 00 00`
+is 800.0 big-endian, and read the other way round it is 0x00004844. The reader
+checks whether the values are ones a real axis could hold and flips if not.
+
+### 57c. What the map says
+
+`Requested Torque A (Accelerator Pedal) SI-DRIVE Intelligent` at 0xDDD54: a 15x16
+grid of big-endian uint16 scaled by 0.0078125, on axes of pedal angle 0-100 % and
+engine speed 800-6800 rpm in 400 rpm steps. The X axis, Y axis and data are
+contiguous - 0xDDCD8 + 60 = 0xDDD14 + 64 = 0xDDD54 - which is an independent check
+that the addresses are right.
+
+The three SI-DRIVE modes behave as the marketing says, which is the strongest
+evidence the reading is correct:
+
+    rpm      Intelligent    Sport    Sport Sharp     at full pedal, Nm
+    800            261.2    261.2          261.2
+    2000           350.0    350.0          350.0
+    3200           344.0    350.0          350.0
+    4800           280.0    350.0          350.0
+    6000           240.0    350.0          350.0
+    6800           212.0    330.0          330.0
+
+Intelligent tapers away above 2800 rpm; Sport and Sport Sharp hold a flat 350 Nm
+from 2000 to 6000. At part throttle the three separate as well - 30 % pedal and
+3000 rpm gives 155.0, 190.0 and 222.5 Nm.
+
+350 Nm divided by rimwall's 2.0 Nm per count for CAN 0x410 byte 0 is 175, inside a
+byte with room to spare. The calibration and the frame decode agree.
+
+### 57d. Applied to the drive
+
+Across the 568-row log, torque peaks at 350 Nm with 184 rows under load. At the
+wide-open-throttle row - 100 % pedal, 5598 rpm - the frame reads
+
+    byte 0  0x7E  126  x2.0  =  252 Nm      byte 4  0xFE  pedal 99.6 %
+    byte 1  0x9D  157  x1.6  =  251.2 Nm    byte 5,6  0xDE 0x15  =  5598 rpm
+
+Bytes 0 and 1 are the same torque on different scales, so they have to be converted
+rather than copied. An earlier version of the profile builder copied one into the
+other, which understates maximum torque by a fifth and does it silently.
+
+## 58. THE CAN RECEIVE MAP
+
+Section 56 located the HCAN mailboxes and section 56d recorded that writing them
+changed nothing. Two reasons, both now settled by reading the code rather than
+guessing at it.
+
+### 58a. The mailbox layout was wrong
+
+The generic mailbox accessor at `0x0000A8E6` lays the hardware out plainly. It takes
+a mailbox number, compares it against 0x20 to choose between the two channels,
+shifts left by five to get an offset of 32 bytes per mailbox, and adds it to a base:
+
+    0000A90C  shll2 r6        \
+    0000A90E  shll2 r6         >  offset = mailbox * 32
+    0000A910  shll r6         /
+    0000A912  mov.w ...,r2    ;  0xD108 -> RAM 0xFFFFD108
+    0000A916  add r6,r5       ;  data   = 0xFFFFD108 + N*32
+    0000A918  add -0x8,r2     ;  header = 0xFFFFD100 + N*32
+
+So `0xFFFFD100` is mailbox 0's **header**, not its data, and mailbox 1's data is at
+`0xFFFFD128` rather than `0xFFFFD108`. The profile builder had been writing frame
+0x410 into mailbox 0's header and frame 0x411 into mailbox 0's data.
+
+### 58b. Nothing reads a mailbox anyway
+
+The more important reason is that no consumer reads a mailbox at all. A receive task
+copies each frame into a fixed RAM buffer and every consumer reads the buffer.
+
+The configuration that drives the copy is a table of 36 sixteen-byte entries at
+**0x08600E**, found by its shape rather than its address so it can be located in the
+other firmwares too: a valid 11-bit identifier, the constant length word 0x0800, and
+0xFFFF as the high half of a destination.
+
+    CAN id   channel  mailbox   destination
+    0x420    0        1         0xFFFF30BC
+    0x421    0        2         0xFFFF30C4
+    0x422    0        3         0xFFFF30CC
+    0x410    1        4         0xFFFF300C
+    0x411    1        5         0xFFFF3014
+    0x412    1        6         0xFFFF301C
+    0x511    1        7         0xFFFF3024
+    ...
+    0x7DF    1        13        0xFFFF4011
+    0x7E1    1        14        0xFFFF4011
+    0x7E9    0        15        0xFFFF4019
+
+The destinations are eight bytes apart, one CAN payload each. The table holds two
+vehicle configurations - a second set covering 0x231, 0x232, 0x235, 0x331, 0x333,
+0x334, 0x351, 0x3B1, 0x451, 0x491, 0x520 and 0x521 follows the first.
+
+Two independent checks that this is read correctly. 0x7DF, 0x7E1 and 0x7E9 are the
+standard OBD-II identifiers - functional request, TCU physical request, TCU response
+- and they are the only entries that land outside the powertrain buffer region and
+the only ones with different flags. And the decode routine of section 59 loads
+0xFFFF300C as a literal, which is where this table says frame 0x410 is put.
+
+`tools/denso_can_map.py` recovers the table and can emit the profile writes that
+deliver a decoded frame where the firmware will look for it.

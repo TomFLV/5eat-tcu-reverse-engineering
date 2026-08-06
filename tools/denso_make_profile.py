@@ -51,16 +51,94 @@ INPUTS = [
 ]
 
 
-# HCAN0 mailbox data, from table 16.6 of the SH7058 hardware manual and confirmed
-# by the addresses the firmware's own literal pool carries. The TCU is told torque,
-# engine speed and pedal angle over CAN, so feeding these is the difference between
-# a firmware that thinks it is idling and one that thinks it is being driven
-# (FINDINGS 56).
-CAN_MB0 = 0xFFFFD100      # mailbox 0 data
-CAN_MB1 = 0xFFFFD108      # mailbox 1 data
+# Where the decoded CAN frames go, from the firmware's own receive table at
+# 0x08600E - see tools/denso_can_map.py.
+#
+# Writing the HCAN mailboxes was the obvious thing to do and it accomplished
+# nothing, twice. Two reasons, both now settled by reading rather than guessing.
+# The mailbox accessor at 0x0000A8E6 lays out the hardware as 32 bytes per
+# mailbox, header at 0xFFFFD100 + N*32 and data at 0xFFFFD108 + N*32, so the old
+# constants below were writing one frame into mailbox 0's header and the next into
+# its data. And more to the point, no consumer reads a mailbox at all: a receive
+# task copies each frame into a fixed buffer and every consumer reads the buffer.
+# So the frame has to be delivered where the firmware will look for it.
+CAN_RX = {
+    0x410: 0xFFFF300C,    # torque, pedal, engine speed from the ECU
+    0x411: 0xFFFF3014,    # throttle, inferred gear, cruise
+    0x412: 0xFFFF301C,
+}
+
+# Delivering the frame is still not enough on its own. The receive task at
+# 0x00012BA4 asks a gate at 0x0000A2E2 whether anything arrived; the gate reads the
+# receive-pending register, masks the bit for that mailbox, and reports nothing if
+# it is clear. On real hardware the CAN controller sets that bit. Nothing sets it
+# here, so the task skipped the decode every tick and the frame sat in its buffer
+# untouched - which is why writing the buffer alone changed as little as writing
+# the mailbox did.
+#
+# Which register, exactly, comes from the two helpers the gate calls rather than
+# from the channel offset - and guessing at the offset got it wrong once already.
+# The address helper at 0x0000AC96 takes the base 0xFFFFD040 and the mailbox number
+# and adjusts: below 16 it adds 2, 32 to 47 adds 0x802, 48 and up adds 0x800. So
+# the mailbox numbering is global - 0 to 31 is channel 0, 32 to 63 is channel 1 -
+# and byte 4 of the table entry is not a channel index at all. The mask helper at
+# 0x0000AD00 indexes a plain 1<<n table at 0x0000ADA4 by mailbox & 15.
+#
+# Frames 0x410 and 0x411 are mailboxes 4 and 5, both below 16, so the register is
+# 0xFFFFD040 + 2 and the bits are 0x0010 and 0x0020.
+CAN_RXPR = 0xFFFFD042
+CAN_RXPR_BITS = 0x0030
+
+#
+# It does not block the point of the exercise. The decode routine at 0x00012BD2 was
+# read instruction by instruction, so what it does to the frame is known exactly:
+#
+#   mov.b  @r4,r6          byte 0        -> 0xFFFF30F0   engine torque
+#   mov.b  @(0x4,r4),r0    byte 4        -> 0xFFFF30F1   pedal angle
+#   mov.b  @(0x6,r4),r0    byte 6 << 8   \
+#   mov.b  @(0x5,r4),r0    byte 5        -> 0xFFFF30F2   engine speed, u16
+#   mov.b  @(0x7,r4),r0    byte 7        -> 0xFFFF30F4   status bits
+#
+# Writing those four directly performs the transformation the firmware performs,
+# and everything downstream - the line pressure chain of section 19 among it - then
+# runs against a real torque figure. This is applying a routine we have read, not
+# guessing at one we have not: the addresses are referenced 6, 19, 15 and 31 times
+# in the image, so they are genuinely what the control code consumes.
+DECODED = {
+    "torque": (0xFFFF30F0, 1),
+    "pedal": (0xFFFF30F1, 1),
+    "rpm": (0xFFFF30F2, 2),
+    "status": (0xFFFF30F4, 1),
+}
 
 
-def can_410(row, get):
+def load_torque(path):
+    """Torque per tick, as CAN 0x410 byte 0, from the ECU calibration.
+
+    The logs are TCU-side and have no torque column, so byte 0 was fed as zero
+    for a long time - and since torque is at the head of the line pressure chain
+    (FINDINGS 19), that left the chain untouched no matter how well the frames
+    were delivered. It was never really missing: the ECU derives torque from
+    pedal angle and engine speed, and the logs carry both. Reading the
+    requested-torque map out of AZ1G502L - the ECU from the same car as this TCU -
+    turns those two columns into the torque the ECU would actually have sent.
+
+    Produced by ecu/torque.py --log --csv. Absent, the byte stays zero and the
+    chain stays cold, which is worth saying out loud rather than discovering later.
+    """
+    if not path or not os.path.exists(path):
+        return {}
+    out = {}
+    with open(path, encoding="utf-8") as fh:
+        for row in csv.DictReader(fh):
+            try:
+                out[int(row["tick"])] = int(row["can_byte0"])
+            except (KeyError, ValueError):
+                continue
+    return out
+
+
+def can_410(row, get, torque=0):
     """The eight bytes of CAN 0x410 as the ECU sends them.
 
     Layout is rimwall's, from forum topic 20850:
@@ -69,11 +147,15 @@ def can_410(row, get):
       7 status bits
     """
     rpm = int(get(row, "Engine Speed", 0))
-    torque = int(get(row, "Engine Torque", 0) / 2.0) if get(row, "Engine Torque", 0) else 0
     pedal = int(get(row, "Accelerator Pedal", 0) * 2.55)
+    # Bytes 0 and 1 are the same torque on different scales - 2.0 Nm per count
+    # against 1.6 - so the raw value has to be converted, not copied. Copying it
+    # understates max torque by a fifth, which is exactly the sort of quiet error
+    # that survives a run and shows up as a plausible wrong answer.
+    nm = torque * 2.0
     return [
         min(255, max(0, torque)),
-        min(255, max(0, torque)),          # max torque, absent from the log
+        min(255, max(0, int(nm / 1.6))),
         0xFF,                              # nothing limiting
         0,
         min(255, max(0, pedal)),
@@ -133,7 +215,22 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--synthetic", action="store_true")
     ap.add_argument("--ticks", type=int, default=0)
+    ap.add_argument("--torque", default=None,
+                    help="torque per tick from ecu/torque.py --log --csv")
     args = ap.parse_args()
+
+    # The work directory is outside the repo because the ECU ROM and the
+    # RomRaider definition file are other people's, and this project does not
+    # redistribute them. The tools are here; the inputs are fetched.
+    torque_csv = args.torque
+    if not torque_csv:
+        for cand in (os.path.join(REPO, "ecu", "torque_from_log.csv"),
+                     "/mnt/d/5eat-work/ecu/torque_from_log.csv",
+                     r"D:\5eat-work\ecu\torque_from_log.csv"):
+            if os.path.exists(cand):
+                torque_csv = cand
+                break
+    torque = load_torque(torque_csv)
 
     lines = ["# tick,addr:size=value,...  generated by denso_make_profile.py"]
 
@@ -175,16 +272,34 @@ def main():
                 parts.append("%08X:%d=0x%X" % (addr, size, val))
             # The CAN frames, written straight into the mailboxes the same way the
             # controller would deliver them.
-            for base, frame in ((CAN_MB0, can_410(row, get)),
-                                (CAN_MB1, can_411(row, get))):
+            for base, frame in ((CAN_RX[0x410], can_410(row, get, torque.get(t, 0))),
+                                (CAN_RX[0x411], can_411(row, get))):
                 for i, b in enumerate(frame):
                     parts.append("%08X:1=0x%X" % (base + i, b))
+            # Tell the receive task a frame arrived, the way the controller would.
+            parts.append("%08X:2=0x%X" % (CAN_RXPR, CAN_RXPR_BITS))
+            # And perform the decode the receive task would have performed.
+            frame410 = can_410(row, get, torque.get(t, 0))
+            for name, value in (("torque", frame410[0]),
+                                ("pedal", frame410[4]),
+                                ("rpm", frame410[5] | (frame410[6] << 8)),
+                                ("status", frame410[7])):
+                addr, size = DECODED[name]
+                parts.append("%08X:%d=0x%X" % (addr, size, value))
             lines.append(",".join(parts))
         source = "%d rows of %s" % (len(rows), "the vehicle log")
 
     with open(args.out, "w", encoding="utf-8", newline="\n") as fh:
         fh.write("\n".join(lines) + "\n")
     print("%d ticks from %s -> %s" % (len(lines) - 1, source, args.out))
+    if torque:
+        moving = sum(1 for v in torque.values() if v)
+        print("torque from %s: %d ticks, %d under load, peak %d (%.0f Nm)"
+              % (os.path.basename(torque_csv), len(torque), moving,
+                 max(torque.values()), max(torque.values()) * 2.0))
+    else:
+        print("no torque source found - CAN 0x410 byte 0 stays zero, so the "
+              "line pressure chain will not be exercised")
     return 0
 
 
