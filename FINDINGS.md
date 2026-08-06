@@ -4020,35 +4020,13 @@ working variable is M32R-only.
 
 ---
 
-## 43. rimwall's DRIVE MODES DO NOT MAP ONTO THE SELECTOR IN SECTION 33
+## 43. WITHDRAWN - see section 51
 
-Section 40e recorded rimwall's drive mode enumerations from post 391 and noted that
-checking them against the schedule selector was the obvious next step. Checked, and
-they do not correspond - which is worth recording so nobody later assumes they do.
-
-His M32R list runs 0 to 13: Normal (Sport), Sport#, unused, unknown, Manual Mode,
-three unknown, ATF Temp Low, unknown, unused, I Mode, Slope, Kickdown.
-
-Section 33 found two variables in the selection, and neither has that range:
-
-    DAT_0080485A   holds 0 to 4     the operating condition, tested in ~189 places
-    DAT_00804858   holds 0x80-0x85 and 0x8C, seven values, selecting one of five groups
-
-Fourteen values will not fit either. Searching `ACD1A06000` - the image rimwall
-names for his M32R work - for any byte variable tested by equality against 11, 12 or
-13 finds nothing of the right shape: two isolated comparisons against 12, in
-unrelated code.
-
-So his enumeration describes something this project has not located. It may be a
-logical naming of modes rather than one variable's raw values, it may be reached as
-a table index or bit position rather than by equality, or it may come from a
-different part of the firmware entirely. Nothing here contradicts his list; it
-simply does not line up with the selector, and the two should not be conflated.
-
-Worth asking him directly which variable the values belong to - that would connect
-his work to section 33 immediately.
-
----
+This section concluded that rimwall's drive mode enumeration did not map onto the
+schedule selector. It does. The comparison was made against two variables when
+there are three, and the drive mode is the one this project had not found.
+Superseded entirely by section 51, which verifies his mapping and formula against
+the code.
 
 ## 44. THE 32176 HARDWARE MANUAL, AND WHAT IT CONFIRMS
 
@@ -4557,3 +4535,92 @@ address is loaded, compared, and branched on. For `0xFFFF30FB`: twelve functions
 load it, none compares or branches on it - which is exactly the signature of a value
 being produced rather than consumed, and would have saved the sweeps had it been run
 first.
+
+---
+
+## 51. THE COMPLETE SHIFT TABLE INDEX, AND 194 TABLES THIS PROJECT WAS MISSING
+
+rimwall gave the whole of it in forum topic 13725 post 393, and every part of it
+checks out against `ACD1A06000`. Section 43 is withdrawn.
+
+### 51a. Section 43 was wrong
+
+Section 43 recorded that his drive mode enumeration did not fit the schedule
+selector, because the selector's variables hold 0 to 4 and seven high-bit codes,
+and his list runs 0 to 13. That was comparing his drive modes against the wrong two
+variables. There are **three** inputs, not two, and the drive mode is a third
+variable this project had never found.
+
+### 51b. The function, verified
+
+`FUN_0004bcd8` at `0x4bcd8` maps all three and computes the index:
+
+    DAT_00804b10 = sVar1 * 0x32 + sVar2 * 10 + (ushort)DAT_00804832 * 2;
+    DAT_0080498c = (&PTR_DAT_000180e8)[DAT_00804b10];
+    DAT_00804990 = (&PTR_DAT_000180ec)[DAT_00804b10];
+
+`0x32` is 50, so the index is
+
+    drive mode offset x 50  +  shift lever offset x 10  +  gear x 2
+
+which is rimwall's formula exactly. Section 33 had found the second and third terms
+and missed the first, which is why it could describe the selection without ever
+identifying what selected between schedules.
+
+The three variables:
+
+    DAT_00804814   drive mode        internal value, mapped below
+    DAT_00804817   shift lever mode  0x80-0x85 and 0x8C, mapped below
+    DAT_00804832   gear              0 to 4
+
+Drive mode mapping, read out of the function and matching his post value for value:
+
+    0x0 -> 0  Normal (Sport)      0x6 -> 5  unknown
+    0x1 -> 1  Sport#              0x8 -> 7  ATF Temp Low
+    0x3 -> 3  unknown             0x9 -> 8  unknown
+    0x4 -> 4 or 8  Manual Mode    0xB -> 9  I Mode
+    0x5 -> 1  unknown             0xC -> 2  Slope
+                                  0xD -> 6  Kickdown / hard acceleration
+
+`0x2`, `0x7` and `0xA` are unused. Manual Mode picks 4 or 8 depending on bit 7 of
+`0x8055FC`, which is the only conditional in the whole mapping.
+
+Shift lever mapping:
+
+    0x84, 0x80, 0x8C -> 0   P, N, D, or Manual 5
+    0x85 -> 1   Manual 4        0x82 -> 3   Manual 2
+    0x81 -> 2   Manual 3        0x83 -> 4   Manual 1
+
+### 51c. 194 tables are missing from the definition
+
+Walking the two pointer arrays over the full index range gives **202 distinct shift
+table addresses**. The definition for this image contains **eight**, named
+`Shift Map 1 of 8` through `8 of 8`.
+
+    pointer slots            1000
+    distinct table addresses  202
+    already in the definition   8
+    missing                   194
+
+The eight are not wrong - `0x01683C` is the first entry of the array and is
+correctly `Shift Map 1 of 8` - they are simply the small fraction that earlier
+pattern scanning happened to find. Everything reached through a drive mode other
+than the default was invisible.
+
+Many index slots share data, which is why 1,000 slots resolve to 202 tables. That
+sharing is what rimwall's naming convention captures: a table used for D and for
+Manual 5 through 2 is named once with all of them.
+
+### 51d. Naming
+
+His convention:
+
+    Table_[Drive Mode]_[Shift Lever Modes]_[Gear]_[Up or Down]
+
+so the first, for Normal drive mode with the lever in D, first gear, upshift, is
+`Table_Normal_D5432_1st_Up` - the `D5432` recording that the same data serves D and
+Manual 5, 4, 3 and 2.
+
+This is the single largest addition available to the M32R definition, and it comes
+from someone else's work. It is his mapping, his formula and his naming; what is
+verified here is that all three are correct against this image.

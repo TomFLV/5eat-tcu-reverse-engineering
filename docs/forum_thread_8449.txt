@@ -1,0 +1,242 @@
+RomRaider forum topic 8449
+https://www.romraider.com/forum/viewtopic.php?f=40&t=8449
+
+Archived for reference. These are other people's posts; they are
+credited in the project README and nothing here is my work.
+==============================================================================
+
+=== post 1 | &nbsp; | Fri May 18, 2012 10:09 pm | #p80403 ===
+Further to this "Getting Started" post. BTW: you'll need to understand what's going on in that post to be able to comprehend what I describe here.
+
+I've made reference to a number of scripts and tools that have been developed over time. That is mostly the reason why they are separate from each other.
+
+Here is my process to define a new 32bit ROM from a previously defined similar 32bit ROM. Once you understand what you are doing and the process, it is possible to complete this in about 4 hours time and have complete Editor and Logger definitions for the new ROM.
+
+So on with it,
+
+Defining a ROM in IDA
+
+1. General unpacking
+ Open IDA and select new.
+ Pick the Embedded tab and select the .hex option
+ Locate the ROM to open
+ Set Processor Type to: SH4B
+ Under Kernel 2 options: uncheck “Perform ‘no-return’ analysis”
+ Under Processor options select SH7058
+ Select OK to proceed
+ Create a RAM segment starting at 0xFFFF0000 length 0x0000C000
+ Select OK and confirm SH7058 processor
+ Once the ROM is unpacked go to the “Options” menu and select “General -> Analysis -> Kernel options1”. Check the “Make final analysis pass” and select OK.
+ Now select Reanalyze Program then OK. The status bar should update and code should appear.
+ Save your work as a base point.
+ 
+2. Locate SSM base ROM address
+ With analysis complete open the menu Search -> sequence of bytes.
+ Enter a210 and select OK.
+ If you have more than one hit you’ll need to examine each to locate the byte sequence A2 10 11.
+ The byte after this sequence is the first byte of the ECU ID.
+ Jump to the first DATA XREF: associated with ECU ID byte 1.
+ Again Jump to the first DATA XREF: associated with the reference to ECU ID byte 1.
+ During ROM analysis a subroutine immediately preceding the subroutine which calls for ECU ID byte one should have been identified, and with it a DATA XREF:. Jump to this reference location. This ROM location is the SSM base address for reading standard SSM parameters. You can use this address in the XmlToIdc application to create a file to mark all the known SSM parameters. Note: all parameters will be marked regardless of whether the ROM actually supports them or not. Many functions will call a subroutine that returns 0xFF. You can mark this subroutine ‘SSMUnsupported’.
+ Save your work once you have verified the marking is correct.
+Application: XmlToIdc.exe
+
+3. Locate the DTC tables
+ Perform a byte search for the sequence 0335.
+ If you get more than one result review each result until you find a byte sequence of 03 35 01 with a large section of 01 and 00 bytes about a page above (PageUp).
+ Four bytes before the sequence of 03 35 01 is the beginning of the CEL Routines.
+ The beginning of the 01 and 00 bytes sequences is the target for the P0335 DTC. This is the area that the ecu_defs.xml file points to for enabling/disabling DTCs.
+ The first byte can be marked as the CEL Switch table and it will run until it gets to the CEL Routines.
+ Run the IDA script (MakeCELPointers.idc) to format and mark the DTC tables. The script will also dump the data to an XML file (pcode_def.xml) that can be pasted into a RomRaider ECU def file.
+ Save your work once you have verified the marking is correct.
+IDA Script: MakeCELPointers.idc
+
+4. Locate the Table Structures which point to the Map data
+ The map data is referenced by table structures that define the axis used and how the data is to be interpreted.
+ There are single and dual axis tables with various types of data, signed and unsigned byte, word and double word integers as well as IEEE 754 32bit float.
+ The table structures contain the data type in most cases as well as a multiplier and additive to convert the data from the storage units to the real values they represent.
+ The map data is stored in the ROM above the 0xC0000 area. The CAL ID is usually found at this address.
+ To find the table structures search down from 0xC0000 until you find blocks of data entries with only the occasional cross-reference associated with them. This is an indication of an axis and data.
+ If you jump to an associated DATA XREF: reference you should be taken to the area of the table structures. This area will have many similar repeating sequences of bytes.
+ Find the first such sequence and mark it the Start of the Tables.
+ Find the end of the sequences and mark it the End of the Tables.
+ Run the IDA script (MakeTablePointers.idc) to format the Table Structures. This script also dumps the associated map data to a RomRaider compatible ECU def file (rom_def.xml).
+ Save your work once you have verified the marking is correct.
+NOTE: This script works best when you run it three times consecutively.
+IDA Script: MakeTablePointers.idc
+
+5. Mark the known Tables of an Existing ROM
+ If you are using a ROM as a reference to assist in defining a new ROM then you can use the existing ECU def to mark all the known tables.
+ Follow the instructions for the XmlToIdc to create IDA scripts to mark the existing tables, and Extended parameters.
+ Run the two scripts from the XmlToIdc to mark the ROM.
+ Save your work once you have verified the marking is correct.
+
+6. Marking the Tables of a new Unknown ROM using an existing ROM as a reference
+ Follow all the steps above to get the ROM open, formatted and marked with the standard SSM routines.
+ Now with the two ROMs open in IDA, (yes you can launch two copies of IDA side-by-side) work through the Table Structures (not the map data area) of the known ROM and locate then in the new ROM. Verify the logic as you go as this will also help to locate and mark the single value ECU editor entries. As you locate each item copy the name verbatim from the known ROM to the new ROM. This is important later for dumping these names and importing them into an Editor def template.
+ Also mark the Logger parameters as you find them, again copy the name verbatim and paste it into the new ROM.
+ Save your work once you have verified the marking is correct.
+
+7. Creating the ECU Editor def for your new ROM
+ Now that everything you found is marked, run the IDA script (WalkTheRom.idc) to mark the actual map data areas. These are the names and addresses that will be used to import to the editor def.
+IDA Script: WalkTheRom.idc
+
+ The script will also dump a text file called ‘address.txt’ to the ROM directory. This file is the import data.
+ For this next step you will need a ‘template.xml’ file (ex attached). To build your template file locate the 32BITBASE from the latest published def as it should have the most recent map base information in it. Copy everything from the start <rom> to the </rom> tag for the 32BITBASE into a new file.Attachment:
+template_WRX.zip
+
+ Now do the same thing for the ECU def that you used for your know ROM. Paste it into the template file above the 32BITBASE information. Make sure the template has the required start <roms> tag and ending </roms> tag. Save it where the ‘address.txt’ file is.
+ Next run the MakeXmlDef.exe it will give you help for the three command line args. Run it again with the supplied files, the template you made, the address.txt from the IDA export and the name of the def file you would like the output saved to. The screen will indicate the tables found and how there where modified. If you wish you can redirect that to a file with the redirect symbol: > <filename>
+Application: MakeXmlDef.exe
+
+ Next ‘Compare’ the template and output XML files. The changes should be the addresses and the axis size. Anything missed needs to be corrected in IDA of the New ROM and then start at the beginning of this section again to re-mark the ROM and export the address info. (BTW: Notepad++ has a nice visual compare plugin)
+ Repeat the two steps above until all discrepancies have been identified and corrected. Including any missing tables and single entry values (ignoring the DTC info for now).
+ When you are happy with the table data of the new def you can copy in the DTC info from the ‘pcode_def.xml’ file which contains all the DTC info for the new ROM.
+ You are now ready to add this new ECU def to your RomRaider def manager and attempt to open the new ROM in RomRaider Editor.
+ Check all the table and single entry values to make sure they represent the map data accurately. If you’ve follow this process it should be near 100% upon this first viewing. If you find things amiss, go back to the ROM in IDA and fix it there. Re-mark the ROM, re-import the ‘address.txt’ to your template to create a corrected ECU def file.
+ Make sure your new def file property identifies the CAL ID, ECU ID and make, model etc of the new ROM.
+ If it all checks out you can publish the ECU def for review.
+
+8. Creating the Logger Def update
+ In IDA close and re-open the Names window. Click on the Name column to sort them alphabetically A-Z
+ Right-click the list and copy all the data.
+ Paste this into a text file.
+ Locate all the Extended parameters you marked. They will start with E_
+ Delete all lines before and after the E_ lines keeping only the E_ name and RAM addresses lines (about 55 if you found them all).
+ Save the file using the ECU ID as the name of the text file <ecuid>.txt
+ PM that file to dschultz on the forum and it can be imported into the Logger def for updating.
+
+9. How to Convert any RomRaider Editor def to a EcuFlash def
+ Use the RR2EcuFlash.exe to convert any RR def to an EcuFlash def.
+ Conversion of 16 bit ECU defs may require some manual updates to make them 100% usable.
+ Copy the file created by the converter to your EcuFlash rommetadata directory and startup EcuFlash, then open the ROM for editing.
+Application: RR2EcuFlash.exe
+
+*Source of all attachments
+
+=== post 2 | &nbsp; | Fri May 18, 2012 11:14 pm | #p80408 ===
+Thanks for putting all the effort into documenting that - very much looking forward to trying these scripts out (other than the def generation scripts, it's basically the way I have worked).
+
+=== post 3 | Merp | Sat May 19, 2012 2:23 am | #p80410 ===
+Great work! Looking forward to trying these out!
+
+Also, +1 for NotePad++. If you're on a windows machine there is no substitute! The compare, hex-editor, and file explorer plugins turn it into a very powerful tool. They are all available at sourceforge: http://sourceforge.net/projects/notepad-plus/ and http://sourceforge.net/projects/npp-plugins/
+
+=== post 4 | &nbsp; | Thu May 24, 2012 2:19 pm | #p80662 ===
+Hex-Rays confirmed there is a bug in floating point conversion handling and suggested a workaround. The IDA scripts in the first post have been updated to use the workaround.
+
+=== post 5 | &nbsp; | Fri May 25, 2012 8:24 am | #p80702 ===
+Good work, man. This is really great stuff.
+
+=== post 6 | Easty | Sun Jul 22, 2012 7:56 am | #p82285 ===
+Is there a way to confirm if i do in fact have the SSM address right?
+
+=== post 7 | &nbsp; | Tue Jul 24, 2012 10:40 am | #p82337 ===
+Have you read through this? 
+
+viewtopic.php?t=6295
+
+=== post 8 | Easty | Wed Jul 25, 2012 7:50 am | #p82365 ===
+Yes I have! I think I've got it now, at first my code didn't seem to be the same as the example in the thread it was missing some of the loc_XXXX statements.
+
+I undefined some of the code and re analysed it and the loc_XXXX statements appeared 
+
+I'm about 98% sure my ssm adress is 5958C my cal id is AZ1G400W.
+
+=== post 9 | RAGETuning | Fri Oct 24, 2014 2:36 pm | #p105061 ===
+Every time I try to run a script that you listed I get the following errors:
+
+IDA 6.4
+
+I just ran the "MakeCELPointers.idc" script and I got the following error:
+
+'MakeCELPointers.idc,5:Function Declaration is expected'
+
+=== post 10 | &nbsp; | Fri Oct 24, 2014 9:36 pm | #p105071 ===
+Can you send me the exact .idc script you are using? It works for me with version 6.6.
+
+=== post 11 | SubieScavenger | Fri Dec 28, 2018 2:05 am | #p140263 ===
+No wonder there arent many people defining new ROMS anymore.
+Its frustrating to learn this stuff and tedious.
+So im trying to make definitions for one of the ROMS that i assume is lacking fine knock correction. 
+Its E2UG001H. Same internal ID as E2UG001I
+I cannot find the ECU byte 1 starting point for finding the ECU ID and SSM after searching for the A210 because this does not exist like it does for all the turbo 2.5's.
+I am going to lose my freaking mind!
+Anyone that could be of help I would certainly appreciate it.
+
+=== post 12 | &nbsp; | Fri Dec 28, 2018 3:17 pm | #p140267 ===
+The hex value A210 exists in non-turbo ROMs too. It's followed by 02, the engine type in this case (a21002).
+
+=== post 13 | zamundanet | Fri Aug 16, 2019 3:04 am | #p145726 ===
+Thanks for this ! Hey guys , how to use this RR2EcuFlash.exe . When i open the application it gives me some kind of error ...
+
+=== post 14 | The Lorax | Mon Aug 19, 2019 10:48 am | #p145788 ===
+zamundanet wrote:
+Thanks for this ! Hey guys , how to use this RR2EcuFlash.exe . When i open the application it gives me some kind of error ...
+
+You need to run this as command line.
+
+Find the location of your RR2EcuFlash exec, type the commands as suggested in the graphic and then IIRC; >'name of new file'.xml to create your ECU flash definition.
+
+=== post 15 | pomkamotorola | Tue Nov 19, 2019 12:43 pm | #p147729 ===
+@dschultz
+Hey. My name is Roman. I am from Russia and communicate through google translator.
+I ask for your help.
+I have a desire to create an xml file for the ROM that I copied from the ECU Subaru impreza Ej204. I have a desire to figure out everything myself and make an xml file myself. I managed to copy a 512 kb rom.
+At the moment, I have downloaded and installed on windows 7 IDA Pro.
+Completed paragraph number 1, and then I'm completely at a loss what should I do?
+Please help with advice.
+Photos of what I have achieved below.
+
+=== post 16 | &nbsp; | Tue Nov 19, 2019 1:32 pm | #p147732 ===
+Unfortunately, this process does not work well on Hitachi ROMs.
+
+=== post 17 | SergArb | Wed Nov 20, 2019 6:00 am | #p147746 ===
+I tried find some maps in Hitachi ROMs with wols Demo. Only "Statistical" maps and no X&Y axis...
+
+=== post 18 | pomkamotorola | Wed Nov 20, 2019 8:01 am | #p147750 ===
+dschultz wrote:
+Unfortunately, this process does not work well on Hitachi ROMs.
+
+Really nobody could make xml for Hitachi?
+
+=== post 19 | pomkamotorola | Wed Nov 20, 2019 8:03 am | #p147751 ===
+MMC Flash can open Hitachi ROM, maybe you should try to understand how it works?
+
+=== post 20 | SergArb | Thu Nov 21, 2019 3:38 am | #p147777 ===
+pomkamotorola wrote:
+MMC Flash can open Hitachi ROM, maybe you should try to understand how it works?
+
+It's for reading&writing, not for editing...
+
+=== post 21 | pomkamotorola | Thu Nov 21, 2019 11:58 am | #p147793 ===
+Perhaps it’s hard for me to believe that no one can make Xml for Rom Hitachi.
+
+We in Russia have someone who knows how to do this, but it's all just for the money. No one does for free.
+
+=== post 22 | SergArb | Thu Nov 21, 2019 12:24 pm | #p147794 ===
+pomkamotorola wrote:
+Perhaps it’s hard for me to believe that no one can make Xml for Rom Hitachi.
+We in Russia have someone who knows how to do this, but it's all just for the money. No one does for free.
+
+Because it's very hard work, man spend months with debugging and disassembling, wrote his own software. Will you work for free?
+
+=== post 23 | &nbsp; | Mon May 09, 2022 12:42 am | #p165251 ===
+SergArb wrote:
+pomkamotorola wrote:
+Perhaps it’s hard for me to believe that no one can make Xml for Rom Hitachi.
+We in Russia have someone who knows how to do this, but it's all just for the money. No one does for free.
+
+Because it's very hard work, man spend months with debugging and disassembling, wrote his own software. Will you work for free?
+
+That's kind of a funny question considering that we're all here using software that people created for free. RomRaider, the definitions, even the forum software, it's all open source.
+
+I don't blame people for want to be paid for their efforts, though. It does take a lot of hours.
+
+=== post 24 | jaybirde247 | Thu Jul 02, 2026 2:25 pm | #p177441 ===
+Mr Schultz,
+
+ Thank's Eh bout a moosehead together wit som cherrystones or poutines & brown shugar
+
+JAy
+

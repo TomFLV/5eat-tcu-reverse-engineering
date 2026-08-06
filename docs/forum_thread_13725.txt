@@ -4165,3 +4165,59 @@ I also have some reference material in an Excel spreadsheet that I kept as I wor
 === post 392 | SCAR17s | Tue Aug 04, 2026 9:13 pm | #p177752 ===
 feel free to share what you have, ill keep pushing updates! have you tried the modified romraider in the repo?
 
+I can swap romraider for your software at any time, feed you updates and findings in real time to a dev branch if you want.
+
+=== post 393 | rimwall | Thu Aug 06, 2026 7:06 am | #p177783 ===
+Some more info on the Drive Modes.
+
+The values I quoted are the values that the ROM uses internally for Drive Mode. The Drive Mode value is then mapped to a different offset in order to select the Shift Maps. I suspect this is because the software starts as generic (for any manufacturer), and then each manufacturer has it's own mapping from the internal generic Drive Mode to the manufacturer-specific Drive Mode.
+
+The Hitachi Mapping is as follows (the mapping is done in Function at 0x4bcd8 from ACD1A06000)...
+
+Internal Drive Mode value, Mapped offset used for shift tables, Real world name for Drive Mode
+0x0, 0x0, Normal (Sport)
+0x1, 0x1, Sport#
+0x2, none, Unused
+0x3, 0x3, Unknown
+0x4, 0x4 or 0x8, Manual Mode
+0x5, 0x1, Unknown
+0x6, 0x5, Unknown
+0x7, none, Unused
+0x8, 0x7, ATF Temp Low
+0x9, 0x8, Unknown
+0xA, none, Unused
+0xB, 0x9, I Mode
+0xC, 0x2, Slope
+0xD, 0x6, Kickdown / hard acceleration
+
+The offset to a particular shift table is calculated from:
+(Mapped Drive Mode offset x 50) + (Shift Lever Mode x 10) + (Gear x 2)
+
+2 because there are 2 consecutive tables - shift up, shift down 
+10 because there are 5 Gears x 2 up/down
+50 because there are 5 Shift Lever Modes x 5 Gears x 2 up/down
+
+Shift Lever Modes map as follows.
+
+Internal code, Mapped offset used for Shift Tables, Real world state
+0x84 or 0x80 or 0x8C, 0x0, Lever in P, N, D or Manual 5
+0x85, 0x1, Lever in Manual 4
+0x81, 0x2, Lever in Manual 3
+0x82, 0x3, Lever in Manual 2
+0x83, 0x4, Lever in Manual 1
+
+The naming convention I used for the Shift Tables is:
+Table_[Drive Mode]_[Shift Lever Modes]_[Gear]_[Up/Down]
+
+Multiple tables end up mapping to the same data, so there may be multiples reflected in the table name.
+
+So, the first table, which is for Normal Drive Mode, Stick in D, in 1st gear and changing up, is labelled:
+Table_Normal_D5432_1st_Up. The 'D5432' reflects the same table being used when the stick is in D, Manual 5, Manual 4, Manual 3 or Manual 2.
+
+The above is all Hitachi related. Denso is different.
+
+=== post 394 | rimwall | Thu Aug 06, 2026 9:54 am | #p177788 ===
+Claude seems to be struggling to find the SSM parameters on Denso ROMs.
+
+Pass this info to Claude: viewtopic.php?f=40&t=8449
+
