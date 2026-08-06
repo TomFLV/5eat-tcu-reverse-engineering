@@ -46,7 +46,17 @@ public class DensoDriveLog extends GhidraScript {
             println("RESULT error=need <entry> <profile.csv> <out.csv>");
             return;
         }
-        long entry = Long.parseLong(a[0].replace("0x", ""), 16);
+        // One or more entry points, run in order every tick. A real controller
+        // services CAN, decodes it into working variables, and only then makes a
+        // shift decision - so writing the mailboxes and running the shift function
+        // alone changes nothing, because that function never reads a mailbox. The
+        // sequence is what makes the CAN data reach the logic that uses it.
+        String[] entryList = a[0].split("\\+");
+        long[] entries = new long[entryList.length];
+        for (int i = 0; i < entryList.length; i++) {
+            entries[i] = Long.parseLong(entryList[i].replace("0x", "").trim(), 16);
+        }
+        long entry = entries[0];
         long maxSteps = a.length > 3 ? Long.parseLong(a[3]) : 200000L;
 
         List<String[]> profile = new ArrayList<>();
@@ -93,27 +103,31 @@ public class DensoDriveLog extends GhidraScript {
                     emu.writeMemory(toAddr(where), bytes);
                 }
 
-                // One tick of the control function. Registers are reset each tick
-                // but MEMORY IS NOT - that is the whole point.
-                emu.writeRegister(emu.getPCRegister(), entry);
-                emu.writeRegister("r15", 0xFFFFBF00L);
-                emu.writeRegister("pr", SENTINEL);
+                // One tick is the whole task list, in order. Registers are reset
+                // before each task but MEMORY IS NOT, so a task sees what the one
+                // before it left - which is how the CAN decode reaches the shift
+                // logic, and how state carries between ticks.
+                for (long fn : entries) {
+                    emu.writeRegister(emu.getPCRegister(), fn);
+                    emu.writeRegister("r15", 0xFFFFBF00L);
+                    emu.writeRegister("pr", SENTINEL);
 
-                long steps = 0;
-                while (steps++ < maxSteps) {
-                    Address pc = emu.getExecutionAddress();
-                    if (pc == null) {
-                        break;
+                    long steps = 0;
+                    while (steps++ < maxSteps) {
+                        Address pc = emu.getExecutionAddress();
+                        if (pc == null) {
+                            break;
+                        }
+                        long off = pc.getOffset();
+                        if (off == SENTINEL || off == 0 || off > 0x000FFFFFL) {
+                            break;
+                        }
+                        if (!emu.step(monitor)) {
+                            break;
+                        }
                     }
-                    long off = pc.getOffset();
-                    if (off == SENTINEL || off == 0 || off > 0x000FFFFFL) {
-                        break;
-                    }
-                    if (!emu.step(monitor)) {
-                        break;
-                    }
+                    totalInstr += steps;
                 }
-                totalInstr += steps;
 
                 byte[] now = emu.readMemory(toAddr(RAM_BASE), RAM_SIZE);
                 Map<Long, Integer> delta = new LinkedHashMap<>();

@@ -4991,7 +4991,39 @@ What it cannot claim is that the drive was representative. A run with torque,
 engine speed and pedal arriving over CAN is a different experiment, and the values
 the firmware computes in it should be expected to differ.
 
-The profile builder needs extending to emit CAN frames alongside the sensor writes,
-with the log's torque and engine speed columns packed into 0x410 and 0x411 as
-rimwall documents them. That is the next piece of work and it is the difference
-between a firmware that thinks it is idling and one that thinks it is being driven.
+The profile builder has been extended and the harness now runs a task list;
+56e records what that did and did not achieve.
+
+### 56e. Injecting the frames, and what it did not do
+
+`denso_make_profile.py` now writes both frames every tick, built from the log:
+0x410 into mailbox 0 at `0xFFFFD100` and 0x411 into mailbox 1 at `0xFFFFD108`, with
+engine speed packed low byte then high as the ECU sends it. At tick 200 the frame
+carries `0x04F9`, 1273 rpm, which is what the log says.
+
+`DensoDriveLog.java` now takes a task list rather than one function - entries
+separated by `+` are run in order every tick, sharing memory - because a controller
+services CAN, decodes it, and only then decides, and no single function does all
+three.
+
+Both are in place and neither changed the outcome. The drive with frames moved 68
+addresses against 64 without, and adding the CAN accessor at `0x19D2` to the
+sequence added 7,951 instructions and moved the same 68.
+
+The reason is that `0x19D2` is a **mailbox accessor**, not a periodic task: it takes
+a mailbox number in a register, bounds-checks it against 32, and computes an
+address. Called with the registers zeroed it fetches mailbox 0 and does nothing with
+it. The function that decodes 0x410 into working variables - the one that would turn
+byte 5 and 6 into an engine speed the shift logic reads - has not been identified.
+
+So the CAN path is located and the machinery to feed it exists, but the link from
+mailbox to working variable is still missing. Finding it means looking for a routine
+that calls an accessor like `0x19D2` and then stores below `0xFFFFC000`, which the
+literal map and the disassembly now make searchable.
+
+One limit worth stating: the logs are TCU-side. They carry engine speed and pedal
+but **no ECU torque column**, so byte 0 of 0x410 is fed as zero even now. Since
+section 19 puts torque at the head of the line pressure chain, a drive built from
+these logs cannot exercise that path however well the frames are delivered. That
+needs an ECU-side log from the same car, or a torque estimate derived from the
+engine speed and pedal that are present.

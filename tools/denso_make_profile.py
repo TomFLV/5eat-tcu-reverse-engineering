@@ -51,6 +51,48 @@ INPUTS = [
 ]
 
 
+# HCAN0 mailbox data, from table 16.6 of the SH7058 hardware manual and confirmed
+# by the addresses the firmware's own literal pool carries. The TCU is told torque,
+# engine speed and pedal angle over CAN, so feeding these is the difference between
+# a firmware that thinks it is idling and one that thinks it is being driven
+# (FINDINGS 56).
+CAN_MB0 = 0xFFFFD100      # mailbox 0 data
+CAN_MB1 = 0xFFFFD108      # mailbox 1 data
+
+
+def can_410(row, get):
+    """The eight bytes of CAN 0x410 as the ECU sends them.
+
+    Layout is rimwall's, from forum topic 20850:
+      0 torque out x2.0 Nm   1 max torque x1.6   2 max allowed x1.6
+      3 torque loss x1.6     4 pedal x100/255    5,6 engine rpm lo,hi
+      7 status bits
+    """
+    rpm = int(get(row, "Engine Speed", 0))
+    torque = int(get(row, "Engine Torque", 0) / 2.0) if get(row, "Engine Torque", 0) else 0
+    pedal = int(get(row, "Accelerator Pedal", 0) * 2.55)
+    return [
+        min(255, max(0, torque)),
+        min(255, max(0, torque)),          # max torque, absent from the log
+        0xFF,                              # nothing limiting
+        0,
+        min(255, max(0, pedal)),
+        rpm & 0xFF,
+        (rpm >> 8) & 0xFF,
+        0x01,
+    ]
+
+
+def can_411(row, get):
+    """CAN 0x411: throttle, the gear the ECU infers, cruise speed."""
+    return [
+        0, 0, 0,
+        min(255, max(0, int(get(row, "Throttle", 0) * 2.55))),
+        int(get(row, "Gear", 0)),
+        0, 0, 0,
+    ]
+
+
 def read_log():
     """Rows from the richest log, with the comma decimal separator handled."""
     path = None
@@ -116,6 +158,12 @@ def main():
             rows = rows[:args.ticks]
         sample = rows[0]
         cols = {addr: column_for(c, sample) for addr, _s, c, _sc in INPUTS}
+        def get(r, want, default=0.0):
+            for k in r:
+                if want.lower() in k.lower():
+                    return r[k]
+            return default
+
         for t, row in enumerate(rows):
             parts = ["%d" % t]
             for addr, size, _c, scale in INPUTS:
@@ -125,6 +173,12 @@ def main():
                 else:
                     val = 0
                 parts.append("%08X:%d=0x%X" % (addr, size, val))
+            # The CAN frames, written straight into the mailboxes the same way the
+            # controller would deliver them.
+            for base, frame in ((CAN_MB0, can_410(row, get)),
+                                (CAN_MB1, can_411(row, get))):
+                for i, b in enumerate(frame):
+                    parts.append("%08X:1=0x%X" % (base + i, b))
             lines.append(",".join(parts))
         source = "%d rows of %s" % (len(rows), "the vehicle log")
 
