@@ -4924,3 +4924,74 @@ has been wrong at least once - sections 42e, 45, 48a, 50, and the `0xB20000` tha
 was nearly written up as a table pointer in 54c. A drive log is a different kind of
 evidence: it says what the firmware did, over time, from a starting state that
 actually occurred.
+
+---
+
+## 56. THE CAN INPUT PATH, AND WHY THE SIMULATED DRIVE WAS INCOMPLETE
+
+Section 55 fed the firmware sensor-like values and logged what moved. The results
+were real but the drive was not: **a 5EAT TCU gets most of what it needs over CAN,
+not from its own sensors**, and every CAN input was being fed as zero.
+
+That is why the working buffer in section 55 held values matching no table in the
+ROM. The firmware was computing from an engine that, as far as it could tell, was
+reporting nothing.
+
+### 56a. What the TCU is told
+
+From rimwall's decode in forum topic 20850, archived as
+`docs/forum_thread_20850.txt`. CAN 0x410 from the ECU, eight bytes:
+
+    0  x2.0     Nm    Engine torque output
+    1  x1.6     Nm    Max engine torque
+    2  x1.6     Nm    Max torque allowed by ABS/VDC
+    3  x1.6     Nm    Torque loss
+    4  x100/255  %    Accelerator pedal angle
+    5,6           rpm Engine speed, low then high byte
+    7  bits          torque permission, AC, power steering, ECT low, idle switch
+
+and 0x411 carries throttle position, the gear the ECU infers from its own speed
+ratio, and cruise speed.
+
+Torque is the important one. Section 19 traced line pressure from CAN 0x412 through
+a slip factor and an ATF temperature factor to the pressure target, so with torque
+at zero the whole pressure chain is running against an idling engine no matter what
+road speed is fed in.
+
+### 56b. Where it lands
+
+The SH7058 has two HCAN channels and the TCU uses both. From the hardware manual,
+table 16.6, the mailbox registers begin at `H'D020`, and the firmware's own literal
+pool confirms the layout - 60 distinct addresses in that range:
+
+    0xFFFFD000 - 0xFFFFD05A    HCAN0 control
+    0xFFFFD100 - 0xFFFFD128    HCAN0 mailbox data
+    0xFFFFD800 - 0xFFFFD928    HCAN1, the second channel
+
+So the frames are memory mapped, and an emulated drive can deliver them by writing
+those addresses - the same mechanism the hardware uses.
+
+### 56c. A setup error this exposed
+
+`DensoAddRam.java` created RAM over `0xFFFF0000`-`0xFFFFFFFF`, the whole 64 KB.
+Thread 8449 specifies `0xFFFF0000` length `0xC000`, which ends at `0xFFFFBFFF`;
+everything above that is peripheral registers, not RAM.
+
+The oversized block is harmless for reading - unmapped peripheral reads return zero
+either way - and it is what makes writing the mailboxes possible at all. But it
+means the region is being treated as plain memory when parts of it are registers
+with side effects on read, and nothing in the emulation models that. Worth knowing
+before trusting a result that depends on peripheral behaviour rather than on
+values.
+
+### 56d. What this changes about section 55
+
+The dependency graph stands: those addresses really do respond to those inputs.
+What it cannot claim is that the drive was representative. A run with torque,
+engine speed and pedal arriving over CAN is a different experiment, and the values
+the firmware computes in it should be expected to differ.
+
+The profile builder needs extending to emit CAN frames alongside the sensor writes,
+with the log's torque and engine speed columns packed into 0x410 and 0x411 as
+rimwall documents them. That is the next piece of work and it is the difference
+between a firmware that thinks it is idling and one that thinks it is being driven.

@@ -1,0 +1,102 @@
+{
+ "FFFF32D0": {
+  "moved": 0,
+  "responders": {},
+  "result": "ticks=256 instructions=2002176 changed=1 -> /home/rust/campaign/log_FFFF32D0.csv"
+ },
+ "FFFF3332": {
+  "moved": 0,
+  "responders": {},
+  "result": "ticks=256 instructions=2002176 changed=1 -> /home/rust/campaign/log_FFFF3332.csv"
+ },
+ "FFFF33AC": {
+  "moved": 0,
+  "responders": {},
+  "result": "ticks=256 instructions=2002176 changed=1 -> /home/rust/campaign/log_FFFF33AC.csv"
+ },
+ "FFFF34A8": {
+  "moved": 0,
+  "responders": {},
+  "result": "ticks=256 instructions=2002176 changed=1 -> /home/rust/campaign/log_FFFF34A8.csv"
+ },
+ "FFFF357A": {
+  "moved": 0,
+  "responders": {},
+  "result": "ticks=256 instructions=2002176 changed=1 -> /home/rust/campaign/log_FFFF357A.csv"
+ },
+ "FFFF357C": {
+  "moved": 0,
+  "responders": {},
+  "result": "ticks=256 instructions=2002176 changed=1 -> /home/rust/campaign/log_FFFF357C.csv"
+ },
+ "FFFF35E1": {
+  "moved": 0,
+  "responders": {},
+  "result": "ticks=256 instructions=2002176 changed=1 -> /home/rust/campaign/log_FFFF35E1.csv"
+ },
+ "FFFF86D7": {
+  "moved": 3,
+  "responders": {},
+  "result": "ticks=256 instructions=2002182 changed=4 -> /home/rust/campaign/log_FFFF86D7.csv"
+ },
+ "FFFF86ED": {
+  "moved": 28,
+  "responders": {},
+  "result": "ticks=256 instructions=2029268 changed=29 -> /home/rust/campaign/log_FFFF86ED.csv"
+ },
+ "FFFF8A88": {
+  "moved": 0,
+  "responders": {},
+  "result": "ticks=256 instructions=2002176 changed=1 -> /home/rust/campaign/log_FFFF8A88.csv"
+ },
+ "FFFF8A89": {
+  "moved": 50,
+  "responders": {},
+  "result": "ticks=256 instructions=2049132 changed=51 -> /home/rust/campaign/log_FFFF8A89.csv"
+ },
+ "FFFF8A8A": {
+  "moved": 21,
+  "responders": {},
+  "result": "ticks=256 instructions=1969239 changed=22 -> /home/rust/campaign/log_FFFF8A8A.csv"
+ },
+ "FFFF8E60": {
+  "moved": 0,
+  "responders": {},
+  "result": "ticks=256 instructions=2002176 changed=1 -> /home/rust/campaign/log_FFFF8E60.csv"
+ },
+ "FFFF8E62": {
+  "moved": 0,
+  "responders": {},
+  "result": "ticks=256 instructions=2002176 changed=1 -> /home/rust/campaign/log_FFFF8E62.csv"
+ },
+ "FFFF8E64": {
+  "moved": 0,
+  "responders": {},
+  "result": "ticks=256 instructions=2002176 changed=1 -> /home/rust/campaign/log_FFFF8E64.csv"
+ },
+ "FFFF8EA0": {
+  "moved": 0,
+  "responders": {},
+  "result": "ticks=256 instructions=2002176 changed=1 -> /home/rust/campaign/log_FFFF8EA0.csv"
+ },
+ "FFFF9152": {
+  "moved": 0,
+  "responders": {},
+  "result": "ticks=256 instructions=2002176 changed=1 -> /home/rust/campaign/log_FFFF9152.csv"
+ },
+ "FFFF99C9": {
+  "moved": 0,
+  "responders": {},
+  "result": "ticks=256 instructions=2002176 changed=1 -> /home/rust/campaign/log_FFFF99C9.csv"
+ },
+ "FFFF99CF": {
+  "moved": 0,
+  "responders": {},
+  "result": "ticks=256 instructions=2002172 changed=1 -> /home/rust/campaign/log_FFFF99CF.csv"
+ },
+ "FFFF9F55": {
+  "moved": 46,
+  "responders": {},
+  "result": "ticks=256 instructions=2055607 changed=47 -> /home/rust/campaign/log_FFFF9F55.csv"
+ }
+}
