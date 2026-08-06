@@ -129,6 +129,37 @@ not for views.
     gh api repos/:owner/:repo/traffic/clones
     gh api repos/:owner/:repo/releases --jq '.[] | .tag_name, ([.assets[].download_count] | add)'
 
+## Running the code
+
+Ghidra ships a p-code emulator, and it works against the SH-2E language this project
+added - so the Denso firmware can be executed rather than only read.
+
+    python tools/denso_emulate.py 0x0002C3DA --regs r4=0x40
+    #   155 instructions, 11 table loads, 4 distinct tables
+
+    python tools/denso_emulate.py 0x0002C3DA --sweep r4=0,192,64
+
+The sweep runs a function once per input value and reports which calibration tables
+each run reaches, which is how an axis shows itself from the outside. Which tables a
+run touches is read off the executed path: every calibration access on this core
+goes through a PC-relative literal, so the path and the literal map together are
+equivalent to instrumenting the reads.
+
+Needs a listing from `DensoDisasmAll.java` and the output of `denso_literals.py`.
+See FINDINGS section 49.
+
+## What the code reads
+
+`denso_literals.py` resolves every PC-relative literal load out of the ROM image -
+all of them, not the 63% Ghidra annotates - and classifies each as a RAM variable, a
+calibration table, code, or a constant.
+
+    python tools/denso_literals.py disasm-denso/Impreza_STI_3.583_JDM2011.asm --tables
+
+`denso_ram_xref.py` inverts it: for any RAM address, every instruction that touches
+it, joined against the Select Monitor names. `denso_trace_ssm.py` names the working
+variables behind the Select Monitor staging buffer (FINDINGS section 47).
+
 ## Naming the RAM
 
 `map_ssm_parameters.py` joins the SSM parameter table in the ROM to FreeSSM's list

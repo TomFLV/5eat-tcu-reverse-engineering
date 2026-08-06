@@ -4430,3 +4430,67 @@ function that also reads pedal is pedal-indexed, and that is how a real table ge
 a name rather than a shape.
 
 That is the path to naming the Denso family, and it now has the data under it.
+
+---
+
+## 49. RUNNING THE CODE
+
+Every technique in this file up to here reads the firmware. This one executes it.
+
+Ghidra ships a p-code emulator that works against whatever language a program was
+loaded with, which means it runs on the SH-2E definition of section 46 rather than
+on an approximation of the core. There is no need for external tooling: it was
+already installed.
+
+### 49a. It works
+
+`tools/ghidra/DensoEmuTable.java` sets the argument registers, points the program
+counter at a function, and single-steps until it returns. Running `0x0002C3DA`
+with `r4 = 0x40` executes **155 instructions**, including a call into `0x255A` and
+back, and returns cleanly.
+
+Which tables a run touches is read off the executed path. The emulator does not
+expose a memory-read hook, but on this core every calibration access goes through a
+PC-relative literal (section 46), so intersecting the path with the literal map of
+section 48 is equivalent and needs no instrumentation. For that run:
+
+    155 instructions, 11 table loads, 4 distinct tables
+       0x0C17BE  x4      0x0C17C2  x1
+       0x0C17C6  x1      0x0C17E4  x5
+
+So `0x0002C3DA` reads a cluster of four related tables at `0x0C17BE`-`0x0C17E4`.
+That is established by running the routine, not by inferring it from proximity.
+
+### 49b. Sweeping an input
+
+`tools/denso_emulate.py --sweep r4=0,192,64` runs the function once per value and
+reports which tables each run reaches. If an input selects between tables, or moves
+which rows are read, that is what an axis looks like from the outside.
+
+On this function the answer was negative and worth recording: all four tables are
+reached on every value of `r4`, so `r4` is not what selects between them. A negative
+result from an experiment is worth more than a plausible guess, and this is the
+first experiment this project has been able to run at all.
+
+### 49c. Why this matters more than the tooling before it
+
+Naming a table by static analysis means arguing from shape, from what it sits next
+to, and from what a nearby function seems to do. Every one of those arguments has
+been wrong at least once in this file - sections 42e, 45, 48a.
+
+Emulation replaces the argument with an observation. Set pedal to 40%, run the
+shift decision, see which table is read and what comes out; set it to 80% and do it
+again. That is the same method the vehicle logs provide, except it costs seconds
+instead of a drive, and it works on all nine Denso images rather than the one car
+that was available.
+
+It does not name anything by itself. What it does is make a claim testable, which
+is what this project has been short of.
+
+### 49d. Also available, not used
+
+GDB carries CGEN instruction-set simulators for both families - `sim/m32r` and
+`sim/sh` - which would run the code outside Ghidra entirely. They need GDB built
+from source, and the Ghidra emulator is already here and already speaks SH-2E, so
+they are noted rather than pursued. QEMU has no SH-2 target; its SuperH support is
+SH-4 only and is not applicable.
