@@ -111,8 +111,58 @@ def scan_tables(d):
         if abs(scale) > 1e6 or abs(offset) > 1e6:
             continue
         out.append({"hdr": a, "rows": rows, "cols": cols,
-                    "x": xp, "y": yp, "data": dp})
+                    "x": xp, "y": yp, "data": dp,
+                    "scale": scale, "offset": offset})
     return out
+
+
+def scaling_expr(scale, offset):
+    """(expression, to_byte) for a header's scale and offset.
+
+    The header carries the conversion from stored counts to the real quantity, and
+    it was being read only to validate the header and then discarded - so every
+    Denso table shipped as raw counts while the firmware itself knew better. It
+    matters for about half of them: of 196 headers in one image, 98 are scale 1
+    offset 0 and the rest are not, with forms like 1/256 fixed point, 0.01, and
+    0.001 with a -30 offset.
+    """
+    # A denormal scale is not a conversion, it is three bytes of something else that
+    # happened to sit where the header keeps one. Treat anything below a millionth
+    # as unscaled rather than multiplying the table into nothing.
+    if (not scale or scale != scale or offset != offset
+            or abs(scale) < 1e-6 or abs(offset) >= 1e6):
+        return "x", "x"
+
+    def trim(v):
+        """Shortest decimal that still round-trips through the stored float32.
+
+        The header holds IEEE-754 single precision, and 0.01 is not exactly
+        representable there, so printing the full value gives 0.009999999776 in
+        the definition. That is correct and unreadable. Taking the shortest form
+        that reads back as the same float32 gives 0.01 while keeping exact values
+        like 1/256 intact as 0.00390625.
+        """
+        for digits in range(1, 10):
+            s = "%.*g" % (digits, v)
+            if struct.unpack(">f", struct.pack(">f", float(s)))[0] == v:
+                break
+        else:
+            s = "%.10g" % v
+        # RomRaider parses these expressions itself, so keep them to plain decimal
+        # rather than handing it 1e+04 and hoping.
+        if "e" in s or "E" in s:
+            s = ("%.10f" % v).rstrip("0").rstrip(".")
+        return s
+
+    expr = "x" if scale == 1.0 else "x*%s" % trim(scale)
+    if offset:
+        expr += ("+" if offset > 0 else "-") + trim(abs(offset))
+
+    inv = "x" if not offset else "(x%s%s)" % ("-" if offset > 0 else "+",
+                                              trim(abs(offset)))
+    if scale != 1.0:
+        inv += "/%s" % trim(scale)
+    return expr, inv
 
 
 def shift_block(tables):
@@ -191,15 +241,22 @@ def table_xml(t, name, category, desc, value_units, value_fmt, level):
                  t["y"], t["cols"],
                  "0=unused, 1=1-2, 2=2-3, 3=3-4, 4=4-5" if value_units else "raw",
                  "x", "0")
+    # The header's own conversion, so the table reads in whatever quantity the
+    # firmware works in rather than in stored counts.
+    expr, to_byte = scaling_expr(t.get("scale", 1.0), t.get("offset", 0.0))
+    fmt = value_fmt
+    if expr != "x" and fmt == "0":
+        fmt = "0.000"          # a scaled value needs somewhere to put the decimals
+    units = value_units or ("raw" if expr == "x" else "scaled")
     return (
         '  <table type="3D" name="%s" category="%s" storageaddress="0x%06X"\n'
         '         storagetype="uint16" endian="big" sizex="%d" sizey="%d"\n'
         '         userlevel="%d">\n'
-        '   <scaling units="%s" expression="x" to_byte="x" format="%s"\n'
+        '   <scaling units="%s" expression="%s" to_byte="%s" format="%s"\n'
         '            fineincrement="1" coarseincrement="5" />\n'
         '%s\n%s\n   <description>%s</description>\n  </table>'
         % (esc(name), esc(category), t["data"], t["rows"], t["cols"], level,
-           esc(value_units or "raw"), value_fmt, x, y, esc(desc)))
+           esc(units), expr, to_byte, fmt, x, y, esc(desc)))
 
 
 def build_rom(path, d):

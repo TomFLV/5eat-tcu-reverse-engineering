@@ -1,0 +1,157 @@
+{
+ "0x0000B5D0": {
+  "all_high_r1": "0",
+  "baseline_r1": "0",
+  "carriers": [],
+  "entry": "0x0000B5D0",
+  "inputs": 4,
+  "status": "responds",
+  "steps": 795
+ },
+ "0x00027A40": {
+  "all_high_r1": "ffff8d20",
+  "baseline_r1": "ffff8d20",
+  "carriers": [],
+  "entry": "0x00027A40",
+  "inputs": 14,
+  "status": "responds",
+  "steps": 15605
+ },
+ "0x00036E8E": {
+  "all_high_r1": "4",
+  "baseline_r1": "80000002",
+  "carriers": [
+   "FFFF33AC",
+   "FFFF32D0",
+   "FFFF8E62"
+  ],
+  "entry": "0x00036E8E",
+  "inputs": 15,
+  "status": "responds",
+  "steps": 610,
+  "sweep": {
+   "address": "FFFF33AC",
+   "r1_by_value": {
+    "0": "80000002",
+    "1": "b2e60002",
+    "2": "e5e60002",
+    "3": "18e60003",
+    "4": "4be60003",
+    "5": "7ee60003",
+    "6": "b1e60003",
+    "7": "e4e60003",
+    "8": "17e60004"
+   }
+  }
+ },
+ "0x00039062": {
+  "all_high_r1": "e6590003",
+  "baseline_r1": "ffffed00",
+  "carriers": [
+   "FFFF8E60"
+  ],
+  "entry": "0x00039062",
+  "inputs": 13,
+  "status": "responds",
+  "steps": 761,
+  "sweep": {
+   "address": "FFFF8E60",
+   "r1_by_value": {
+    "0": "ffffed00",
+    "1": "ffffed00",
+    "2": "ffffed00",
+    "3": "ffffed00",
+    "4": "ffffed00",
+    "5": "ffffed00",
+    "6": "ffffed00",
+    "7": "ffffed00",
+    "8": "ffffed00"
+   }
+  }
+ },
+ "0x00042ED0": {
+  "all_high_r1": "100",
+  "baseline_r1": "100",
+  "carriers": [],
+  "entry": "0x00042ED0",
+  "inputs": 14,
+  "status": "responds",
+  "steps": 1175
+ },
+ "0x000437F2": {
+  "all_high_r1": "0",
+  "baseline_r1": "256a",
+  "carriers": [
+   "FFFF34A8"
+  ],
+  "entry": "0x000437F2",
+  "inputs": 16,
+  "status": "responds",
+  "steps": 1914,
+  "sweep": {
+   "address": "FFFF34A8",
+   "r1_by_value": {
+    "0": "256a",
+    "1": "256a",
+    "2": "256a",
+    "3": "256a",
+    "4": "256a",
+    "5": "256a",
+    "6": "256a",
+    "7": "256a",
+    "8": "256a"
+   }
+  }
+ },
+ "0x00057EC8": {
+  "all_high_r1": "ffff3618",
+  "baseline_r1": "ffff3618",
+  "carriers": [
+   "FFFF35E1"
+  ],
+  "entry": "0x00057EC8",
+  "inputs": 20,
+  "status": "responds",
+  "steps": 292,
+  "sweep": {
+   "address": "FFFF35E1",
+   "r1_by_value": {
+    "0": "ffff3618",
+    "1": "ffffdb00",
+    "2": "ffff3618",
+    "3": "ffff3618",
+    "4": "b20000",
+    "5": "b20000",
+    "6": "b20000",
+    "7": "b20000",
+    "8": "ffff3618"
+   }
+  }
+ },
+ "0x00058B24": {
+  "all_high_r1": "6c0000",
+  "baseline_r1": "0",
+  "carriers": [
+   "FFFF357C",
+   "FFFF357A"
+  ],
+  "entry": "0x00058B24",
+  "inputs": 24,
+  "status": "responds",
+  "steps": 903,
+  "sweep": {
+   "address": "FFFF357C",
+   "r1_by_value": {
+    "0": "0",
+    "1": "4c000",
+    "2": "98000",
+    "3": "e4000",
+    "4": "130000",
+    "5": "17c000",
+    "6": "1c8000",
+    "7": "214000",
+    "8": "260000"
+   }
+  }
+ }
+}
