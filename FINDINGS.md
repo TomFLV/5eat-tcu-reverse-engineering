@@ -4494,3 +4494,66 @@ GDB carries CGEN instruction-set simulators for both families - `sim/m32r` and
 from source, and the Ghidra emulator is already here and already speaks SH-2E, so
 they are noted rather than pursued. QEMU has no SH-2 target; its SuperH support is
 SH-4 only and is not applicable.
+
+---
+
+## 50. THE SELECT MONITOR ADDRESSES ARE OUTPUTS, NOT INPUTS
+
+Section 47 called the addresses behind the Select Monitor "working variables". That
+is the wrong word for most of them, and the emulator is what showed it.
+
+Setting `0xFFFF30FB` - the address the table names Accelerator Pedal Travel - to
+every value from 0 to 255 and running the functions that touch it produced an
+identical instruction path and an identical result every time. The write was
+verified as landing before that was believed: the emulator reads back `AA` after
+being told to write `AA`.
+
+The reason is visible once reads and writes are separated:
+
+    written at   0x12CC2, 0x131BC, 0x13E82, 0x13F30, 0x14724, 0x14BE8
+    read at      0x79F3A, 0x7A1E4, 0x7A254, 0x7A316, 0x2CF9E, 0x2D32E
+
+Everything in the first group is control code. Everything in the second is the
+Select Monitor reporting region identified in section 47. So `0xFFFF30FB` is
+**computed by the transmission logic and consumed by the diagnostic reply** - a
+published output. Writing to it changes nothing because nothing upstream reads it.
+
+That is why the sweeps in section 49 were flat. Not a broken harness: the wrong end
+of the pipe.
+
+### 50a. The first Denso table identified by reading the code
+
+Following one of the writers, at `0x14724`:
+
+    00014716  cmp/hi r5,r2                          compare against a limit
+    00014718  bf 0x0001471e
+    0001471A  bra 0x00014720
+    0001471C  _mov #-0x1,r2                         saturate to 0xFF
+    0001471E  mov.w @r7,r2   ; [000CE312] = 0x1C    otherwise take this
+    00014720  mov r2,r5
+    00014722  mov.l @(0x1493c,pc),r2   ; = 0xFFFF30FB
+    00014724  mov.b r5,@r2                          store the pedal byte
+
+So **`0x0CE312` is a constant in the accelerator pedal path** - a limit or default,
+holding `0x1C`, applied where the computed value is not saturated. It is the same
+table that `tools/denso_find_users.py` found being read alongside pedal in two
+independent functions, `0x143A2` and `0x7A214`, which is corroboration from a
+different direction.
+
+This is the first Denso calibration address in this project given a purpose by
+reading what the code does with it, rather than by its shape or its neighbours.
+
+### 50b. What actually finds the control inputs
+
+The method that works is the inverse of what was tried first:
+
+1. Take an address the Select Monitor names. It is probably an output.
+2. Split its sites into reads and writes. Writers are the control logic.
+3. Follow a writer back. What feeds it is the real variable, and the constants and
+   tables consumed on the way are calibration.
+
+`tools/denso_find_users.py` does step 2 and reports, per function, whether an
+address is loaded, compared, and branched on. For `0xFFFF30FB`: twelve functions
+load it, none compares or branches on it - which is exactly the signature of a value
+being produced rather than consumed, and would have saved the sweeps had it been run
+first.

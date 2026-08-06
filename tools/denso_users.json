@@ -1,0 +1,90 @@
+{
+ "address": "FFFF30FB",
+ "functions": [
+  {
+   "branches": 0,
+   "compares": 0,
+   "end": 78182,
+   "loads": 1,
+   "start": 76708
+  },
+  {
+   "branches": 0,
+   "compares": 0,
+   "end": 80210,
+   "loads": 1,
+   "start": 78184
+  },
+  {
+   "branches": 0,
+   "compares": 0,
+   "end": 81678,
+   "loads": 1,
+   "start": 81472
+  },
+  {
+   "branches": 0,
+   "compares": 0,
+   "end": 81918,
+   "loads": 1,
+   "start": 81680
+  },
+  {
+   "branches": 0,
+   "compares": 0,
+   "end": 85578,
+   "loads": 2,
+   "start": 82850
+  },
+  {
+   "branches": 0,
+   "compares": 0,
+   "end": 184738,
+   "loads": 1,
+   "start": 183930
+  },
+  {
+   "branches": 0,
+   "compares": 0,
+   "end": 185878,
+   "loads": 1,
+   "start": 185036
+  },
+  {
+   "branches": 0,
+   "compares": 0,
+   "end": 499522,
+   "loads": 1,
+   "start": 499512
+  },
+  {
+   "branches": 0,
+   "compares": 0,
+   "end": 500204,
+   "loads": 1,
+   "start": 500194
+  },
+  {
+   "branches": 0,
+   "compares": 0,
+   "end": 500474,
+   "loads": 1,
+   "start": 500244
+  },
+  {
+   "branches": 0,
+   "compares": 0,
+   "end": 500510,
+   "loads": 1,
+   "start": 500476
+  },
+  {
+   "branches": 0,
+   "compares": 0,
+   "end": 500684,
+   "loads": 1,
+   "start": 500658
+  }
+ ],
+ "listing": "Impreza_STI_3.583_JDM2011.asm"
+}
