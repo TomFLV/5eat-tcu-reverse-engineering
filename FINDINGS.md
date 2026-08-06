@@ -4296,3 +4296,68 @@ The same mistake recurred in a different costume. Decompiler output *is* source 
 a kind, so it felt like reading the code. It is not the code, and for questions
 about addressing modes, literal pools and how a constant reaches a register, it is
 the wrong document. Ask the disassembly.
+
+---
+
+## 47. DENSO WORKING VARIABLES, NAMED
+
+Section 42 named Select Monitor buffer slots on the Denso family. Section 46 got a
+real disassembly. Together those are enough to do for Denso what section 40 did for
+the M32R: put real-world meaning on the variables the transmission logic uses.
+
+The Select Monitor does not read control variables directly. A routine copies each
+into a contiguous staging buffer before the reply goes out, and on this family that
+copy is a run of very small functions, all the same shape:
+
+    mov.l  @(0x7fcf0,pc),r6    ; = 0xFFFF3B17     the working variable
+    mov.b  @r6,r2                                 read it
+    mov.l  @(0x7fcf4,pc),r6    ; = 0xFFFFA9F7     the buffer slot
+    rts
+    mov.b  r2,@r6                                 write it
+
+`tools/denso_trace_ssm.py` walks back from each buffer write to the nearest RAM
+literal that is not itself a buffer address. On `Impreza_STI_3.583_JDM2011` - the
+image the vehicle logs in `logs/` came from, unit `A3DE207100` - that names
+**13 working variables**:
+
+| parameter | working variable | scaling in the copy |
+|---|---|---|
+| Accelerator Pedal Travel | `0xFFFF301C` | none |
+| Gear Position | `0xFFFFA015` | none |
+| Front Wheel Speed | `0xFFFF3B16` | none |
+| Rear Wheel Speed | `0xFFFF3B17` | none |
+| ATF Temperature | `0xFFFF3B6C` | range-checked |
+| Battery Voltage | `0xFFFF8A38` | `shar` twice, so a division by 4 |
+| Lateral G Sensor Voltage | `0xFFFF8A3C` | `shar` twice, so a division by 4 |
+| six switch bytes | `0xFFFF3AA4`-`0xFFFF3AAC`, `0xFFFF91F5`-`0xFFFF91F6` | bit tests |
+
+Front and rear wheel speed landing on adjacent bytes is a good sign, and
+`0xFFFF3B17` was read out of the listing by hand before the tool existed - that is
+what the tool was checked against.
+
+### 47a. What is not traced, and why
+
+Twenty-seven slots resist it: the seven solenoid currents, the eight pressures, and
+the rest of the bitfields. Those are not simple copies. The values are assembled
+from several sources or computed in place, so walking back to "the" source finds
+nothing single. They need reading rather than a heuristic, and the disassembly is
+now there to read.
+
+### 47b. Why this matters more than the count suggests
+
+Two of these are anchors rather than curiosities.
+
+`0xFFFF301C` is pedal position, and section 36 established from the logs that
+**full-throttle shifts do not use the speed tables at all** - every curve flattens
+into a tail at a speed the car never reaches, so the shift fires on engine speed
+instead. Any table read by a function that also touches `0xFFFF301C` is
+pedal-indexed, which is exactly the axis those unnamed tables need identifying.
+
+`0xFFFFA6D8`, from the cross-reference rather than the trace, is **SI-Drive Mode**,
+touched four times. Section 43 recorded that rimwall's drive mode enumeration does
+not fit the M32R schedule selector; this is the Denso side of that question and a
+place to start looking.
+
+This is the first real-world meaning attached to any Denso RAM address in this
+project, and it is the anchor set the 950 unnamed tables in the Denso definition
+have to be named from.

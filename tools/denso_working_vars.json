@@ -1,0 +1,148 @@
+{
+ "listing": "Impreza_STI_3.583_JDM2011.asm",
+ "slots": 40,
+ "traced": 13,
+ "variables": {
+  "FFFF30FB": {
+   "at": 76992,
+   "name": "Accelerator Pedal Travel",
+   "ops": [
+    "mov.b @r5,r6"
+   ],
+   "working": 4294914076
+  },
+  "FFFFA9F3": {
+   "at": 523176,
+   "name": "Battery Voltage",
+   "ops": [
+    "mov.w @r6,r2",
+    "extu.w r2,r6",
+    "shar r6",
+    "shar r6"
+   ],
+   "working": 4294937144
+  },
+  "FFFFA9F4": {
+   "at": 523186,
+   "name": "Front Wheel Speed",
+   "ops": [
+    "mov.b @r6,r2"
+   ],
+   "working": 4294916886
+  },
+  "FFFFA9F5": {
+   "at": 523222,
+   "name": "Gear Position",
+   "ops": [
+    "mov.b @r6,r2"
+   ],
+   "working": 4294942741
+  },
+  "FFFFA9F7": {
+   "at": 523266,
+   "name": "Rear Wheel Speed",
+   "ops": [
+    "mov.b @r6,r2"
+   ],
+   "working": 4294916887
+  },
+  "FFFFA9F8": {
+   "at": 523282,
+   "name": "Lateral G Sensor Voltage",
+   "ops": [
+    "mov.w @r6,r2",
+    "extu.w r2,r6",
+    "shar r6",
+    "shar r6"
+   ],
+   "working": 4294937148
+  },
+  "FFFFA9F9": {
+   "at": 523212,
+   "name": "ATF Temperature",
+   "ops": [
+    "mov.w @r5,r2",
+    "mov #-0x1,r6",
+    "extu.b r6,r6",
+    "cmp/hi r6,r2",
+    "bf 0x0007fbc8",
+    "bra 0x0007fbca"
+   ],
+   "working": 4294916972
+  },
+  "FFFFAA0C": {
+   "at": 524576,
+   "name": "Air Conditioning Switch; Power Steering Switch; Ignition Switch; Intercooler Auto Washer Switch; Idle Switch; Neutral Position Switch",
+   "ops": [
+    "mov.b @r5,r0",
+    "tst 0x1,r0",
+    "bt/s 0x0008011c",
+    "mov #0x0,r2",
+    "mov #0x8,r2",
+    "mov r2,r0"
+   ],
+   "working": 4294916780
+  },
+  "FFFFAA0D": {
+   "at": 524602,
+   "name": "Front Wheel Drive (FWD) Switch; Kick Down Switch; Upshift Switch; Stop Light Switch; Downshift Switch; ABS Signal; Cruise Control Signal; Tiptronic Mode Switch",
+   "ops": [
+    "mov.b @r5,r0",
+    "tst 0x80,r0",
+    "mov r2,r0",
+    "bt/s 0x00080138",
+    "and 0xbf,r0",
+    "or 0x40,r0"
+   ],
+   "working": 4294916776
+  },
+  "FFFFAA11": {
+   "at": 524782,
+   "name": "N Range; Hold Lamp; Traction Control System (TCS) Switch; P/N Signal; Torque Control Cut Signal; P Range; Power Mode Lamp; Economy Switch",
+   "ops": [
+    "mov.b @r5,r0",
+    "tst 0x80,r0",
+    "bt 0x000801ea",
+    "mov r2,r0",
+    "or 0x80,r0",
+    "mov r0,r2"
+   ],
+   "working": 4294916772
+  },
+  "FFFFAA13": {
+   "at": 524928,
+   "name": "Signal of Identified Electronic Control Module (ECM); LC/B Fluid Pressure; I/C Fluid Pressure; F/B Fluid Pressure; D/C Fluid Pressure; H&LR/C Fluid Pressure",
+   "ops": [
+    "mov.b @r5,r0",
+    "cmp/eq 0x1,r0",
+    "bf 0x0008027c",
+    "mov r2,r0",
+    "or 0x80,r0",
+    "mov r0,r2"
+   ],
+   "working": 4294939125
+  },
+  "FFFFAA15": {
+   "at": 525096,
+   "name": "Automatic Transmission Learning Process; Fwd/B Hydraulic Pressure Switch; AUTO Mode Lamp; AUTO/MANUAL Mode Switch; Center Differential Relay; Parking Position Switch",
+   "ops": [
+    "mov.b @r5,r0",
+    "tst 0x8,r0",
+    "bt 0x00080324",
+    "mov #0x8,r0",
+    "or r0,r2",
+    "mov r2,r0"
+   ],
+   "working": 4294916775
+  },
+  "FFFFAA16": {
+   "at": 388792,
+   "name": "Cruise Control Cancel Switch; Distance Change Switch; Secondary Air Combi Valve Relay #1; Secondary Air Pump Relay; Secondary Air Combi Valve Relay #2; Body Integrated Unit Count; Body Integrated Unit Data",
+   "ops": [
+    "mov.b @r6,r0",
+    "cmp/eq 0x1,r0"
+   ],
+   "working": 4294939126
+  }
+ }
+}
