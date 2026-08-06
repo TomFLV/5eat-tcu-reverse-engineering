@@ -4700,3 +4700,89 @@ it. The anchor is engine-ECU specific and the equivalent for a TCU would be one 
 the P07xx codes, which is a different search that has not been worked out.
 
 Section 24's disputed DTC addresses therefore remain open.
+
+---
+
+## 53. THE DENSO SHIFT SCHEDULE SELECTOR, FOUND BY RUNNING THE CODE
+
+The M32R schedule selection was read out of the disassembly (section 51). The Denso
+equivalent was found the other way - by emulating the function and changing things
+until the answer changed.
+
+### 53a. Why single inputs looked inert
+
+Setting pedal, gear, or the most-read address one at a time produced an identical
+8,739-instruction path every time, which section 50 read as the addresses being
+outputs. That was true of pedal, but it was not the whole story.
+
+With RAM zeroed, **every comparison takes its default branch**, so the function
+walks one path regardless. Setting all eight addresses the function reads, all at
+once, moved it immediately:
+
+    all reads 0x00   8,739 steps   selects 0xB6CD4
+    all reads 0x01   8,515 steps   selects 0xB6CF2
+    all reads 0x40   7,820 steps   selects 0xB6D2E
+    all reads 0x80   8,539 steps   selects 0xB6CB6
+
+Bisecting one address at a time against that baseline isolated it: **`0xFFFF9F55`
+alone reproduces the full effect.** The other seven change the instruction count -
+they are read - but not which table is chosen.
+
+The lesson is worth keeping. A flat sweep does not prove an input is ignored; it
+can equally mean the state around it is not plausible enough for the branch to
+matter. One variable at a time is the wrong experiment on a controller.
+
+### 53b. What it selects
+
+    0xFFFF9F55 = 0   ->  0xB6CD4
+                 1   ->  0xB6CF2      +0x1E
+                 2   ->  0xB6D10      +0x1E
+                 3   ->  0xB6D2E      +0x1E
+                 4+  ->  0xB6D2E      clamped
+
+Four schedules, a 30-byte stride, saturating at 3. Each table is fifteen uint16
+values, which is the fifteen-point pedal axis section 36 measured from the vehicle
+logs.
+
+Reading them as road speed in km/h:
+
+    0:  25  25  25  25  29  40  92 105 ...
+    1:  35  35  35  35  35  51  92 105 ...
+    2:  44  47  49  52  54  64  92 105 ...
+    3:  56  57  58  60  70  90 105 114 ...
+
+**Monotonically later shift points from 0 to 3.** Schedule 0 upshifts at 25 km/h
+where schedule 3 holds to 56, and the ordering is preserved across the whole curve.
+That is economy through to aggressive, and it is the physical check that the
+selector was correctly identified: nothing about the emulation forced the numbers
+to come out ordered.
+
+The range and the clamp match rimwall's Denso drive mode list from post 391 -
+0 unused, 1 I-Mode, 2 Normal, 3 Sport# - though which internal value maps to which
+name is not established here, only that there are four and they run economy to
+aggressive.
+
+### 53c. It is not the Select Monitor's SI-Drive
+
+`0xFFFFA6D8`, which the Select Monitor table names **SI-Drive Mode**, changes
+nothing: every value from 0 to 4 selects `0xB6CD4`. So it is another published
+copy, exactly as section 50 describes, and `0xFFFF9F55` is the working value the
+control logic acts on. Twenty code sites read `0xFFFF9F55` and it appears in no
+Select Monitor table at all.
+
+Anyone logging SI-Drive is watching what the TCU reports, not what it decides on.
+
+### 53d. The method
+
+This is the first result in this project established by experiment rather than by
+reading. The procedure generalises:
+
+1. `denso_inputs.py` - emulate the function and record which RAM it reads on the
+   path actually taken.
+2. Set all of those at once. If nothing moves, the function is genuinely
+   input-independent; if something moves, there is leverage.
+3. Bisect one address at a time against that baseline to find which one carries it.
+4. Sweep the winner and read the mapping off the output.
+
+Four steps, minutes of machine time, and no argument about what a table's shape
+might mean.
