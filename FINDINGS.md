@@ -4012,18 +4012,11 @@ candidates stay restricted to the M32R units, since `0x804EB2` and `0x804EB6` ar
 M32R addresses and pointing a Denso unit at them would read an unrelated part of
 its address space and report a number that looks perfectly reasonable.
 
-Tracing Denso parameters back to their working variables is still not done, and
-it is not a matter of adjusting the tracer. The M32R trace works because the
-routine filling the staging buffer names its sources as absolute `DAT_` symbols.
-The Denso listings contain only 61 `DAT_ffff` references in total and none at all
-to the buffer addresses the table points at, because SH-2 reaches that RAM
-GBR-relative - the ~3,800 accesses counted in section 27 - so Ghidra never
-materialises a symbol to match against.
-
-Getting the same result on Denso means resolving GBR at each access site, which is
-a real piece of work rather than a regex. The *naming*, which is what the logger
-definition needs, is complete for both families; only the second hop to the working
-variable is M32R-only.
+Tracing Denso parameters back to their working variables is not done. The reason
+given here first - that SH-2 reaches the RAM GBR-relative, so no symbol exists to
+match - **was wrong**, and section 45 corrects it. The naming, which is what the
+logger definition needs, is complete for both families; only the second hop to the
+working variable is M32R-only.
 
 ---
 
@@ -4152,3 +4145,83 @@ class of question immediately.
 `jimihimi/TCURoms` on GitHub holds further stock TCU images across EDM, JDM and USDM
 markets. Worth checking against the 25 already here for variants this project does
 not have - particularly the early Tribeca calibration section 39 is missing.
+
+---
+
+## 45. HOW THE DENSO CODE ACTUALLY REACHES RAM, AND WHY 42e WAS WRONG
+
+Section 42e said Denso working variables could not be traced without resolving GBR
+at every access site. That is wrong. GBR is not involved at all, and the mistake
+was assuming a mechanism instead of reading one function.
+
+### 45a. Sign-extended 16-bit literals, not GBR
+
+SH-2 has no instruction that loads a 32-bit constant. The compiler puts constants
+in a literal pool beside the code and loads them PC-relative, and for RAM addresses
+it uses the 16-bit form, which **sign-extends**:
+
+    mov.w  @(disp,pc), Rn
+
+On-chip RAM starts at `0xFFFF0000`, so an address like `0xFFFF81C0` is stored as
+the two bytes `81 C0` and sign extension supplies the rest. Nothing anywhere in the
+image holds the full 32-bit address, which is exactly why scanning for `0xFFFFxxxx`
+found almost nothing and why section 40d concluded, wrongly, that there was no
+table.
+
+Ghidra labels the *literal*, not the address it denotes, so the decompiled body
+reads
+
+    pbVar4 = (byte *)(int)DAT_000099e0;
+
+where `DAT_000099e0` is the ROM address of the literal. Reading two bytes there
+gives `0x81C0`; sign-extended, `0xFFFF81C0`. Every one of the six literals in the
+Select Monitor handler resolves to a valid RAM address this way.
+
+### 45b. What that recovers
+
+`tools/resolve_denso_ram.py` does the resolution: for every `DAT_` symbol in a
+listing, read two bytes at that ROM address, sign-extend, and keep the result if it
+lands in RAM. On `Impreza_STI_3.583_JDM2011` that turns **401 of 12,397 symbols
+into concrete RAM addresses**, mechanically, with no judgement involved.
+
+### 45c. Why the names still do not attach, and it is not the same problem
+
+Joining those 401 against the 93 addresses the Select Monitor table names produces
+**zero matches**, and the reason is structural rather than a failure of the method.
+The two sets occupy different parts of RAM:
+
+    code touches          0xFFFF8100, 0xFFFFF700, 0xFFFF8000, 0xFFFFFF00 ...
+    SSM table points at   0xFFFFAA00, 0xFFFFA900 ...
+
+This is the same shape as the M32R: the Select Monitor names a **staging buffer**,
+and the control logic works on variables elsewhere. On the M32R the bridge is the
+routine that fills the buffer, which names its sources as absolute symbols, so one
+hop back gets the working variable.
+
+The Denso bridge exists too. The buffer addresses appear as 16-bit literals at
+`0x7FCAE`, `0x7FCC2`, `0x80032` and `0x80742`, in a region that is decompiled and
+carries 274 nearby symbols. But Ghidra did not create symbols at those four
+locations, so they are invisible to a listing-based tracer. Recovering them means
+working from the disassembly rather than the decompiled C, or forcing literal-pool
+symbols in that range.
+
+That is a bounded, identified piece of work with known coordinates - not the
+open-ended GBR problem 42e described.
+
+### 45d. And how rimwall named 2,800 functions
+
+Worth stating plainly, because it is the honest answer to why his listings are
+worth more than any tool here.
+
+He did not run a script. The method he described in post 391 - map Select Monitor
+parameters to RAM addresses, then trace those back through the logic - is a
+*bootstrapping* process. Naming one function makes its callers partly readable;
+naming those makes their callers readable; a value identified in one place
+constrains everything that touches it. It compounds, and it is human judgement at
+every step.
+
+Roughly 2,800 of 4,200 Denso functions and 1,000 of 1,300 M32R functions is years
+of that. No amount of tooling substitutes for it, which is why the offer in post
+391 is worth more to this project than anything else currently on the table. What
+tooling can do is exactly what section 45b does: hand the human the mechanical
+part, resolved and correct, so the judgement goes further.
