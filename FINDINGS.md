@@ -4850,3 +4850,77 @@ what the value is.
 Naming still needs either the Select Monitor mapping, which covers the published
 copies rather than these, or somebody who has read the code. That remains rimwall's
 listings, and nothing here changes that.
+
+---
+
+## 55. A SIMULATED DRIVE, LOGGED IN FULL
+
+Probing one function at a time with a fresh emulator costs about twenty seconds of
+JVM and project load per data point, so any real drive was impossible that way. It
+also discarded the state between runs, which is the wrong shape for the problem: a
+transmission controller is a state machine and what it does now depends on where it
+has been.
+
+`DensoDriveLog.java` keeps one emulator alive for a whole drive. Each tick writes
+that instant's inputs, runs the control function, and records every RAM byte that
+changed. **Memory carries forward between ticks** - integrators wind up, timers
+advance, and a shift decision sees the gear the previous tick left behind.
+
+### 55a. It runs, and it is fast
+
+568 ticks, **4,855,577 instructions, under a minute**. The whole 64 KB of RAM is
+compared each tick and 64 addresses moved across the drive.
+
+The profile is not invented. `denso_make_profile.py` builds it from the vehicle
+logs in `logs/` - 568 rows from a car running this exact firmware, unit
+`A3DE207100`, idle to 173 km/h through all five gears - so the simulated drive
+follows something that actually happened. Tick 0 comes out as idle: engine 736 rpm,
+first gear, ATF 88 °C, which is what the log says.
+
+At this rate a 30-minute drive at 1 Hz is about three minutes of machine time.
+
+### 55b. What the firmware computed
+
+Of the 64 addresses that moved, 58 were never written by the profile - the firmware
+produced them. Correlating each against the inputs that drove the drive:
+
+    0xFFFFBE8D   r=0.878  tracks 0xFFFF32D0
+    0xFFFFBE8C   r=0.815  tracks 0xFFFF8A8A
+    0xFFFF8A70   r=0.883  tracks 0xFFFF33AC
+    0xFFFF8A85   r=0.883  tracks 0xFFFF33AC
+    0xFFFF8A81   r=0.883  tracks 0xFFFF33AC
+    0xFFFF8A75   r=0.883  tracks 0xFFFF33AC
+    0xFFFF8A71   r=0.855  tracks 0xFFFF33AC
+    0xFFFFBEC3   r=0.645  tracks 0xFFFF33AC
+
+So `0xFFFFBE8C` and `0xFFFFBE8D` are each derived from a different one of the two
+wheel-speed inputs, and a block at `0xFFFF8A70`-`0xFFFF8A85` is derived from a
+single input together.
+
+**That dependency structure is established.** It comes from watching the firmware
+run, not from reading anything.
+
+### 55c. What is not established, and the difference matters
+
+The *names* are not. `denso_make_profile.py` maps log columns onto input addresses,
+and that mapping is an assumption - it was chosen because those addresses are the
+ones probing showed the control code reads, not because anything proved
+`0xFFFF33AC` holds ATF temperature.
+
+So the honest statement is "`0xFFFFBEC3` tracks whatever `0xFFFF33AC` is", not
+"`0xFFFFBEC3` is temperature-derived". If the input mapping is wrong every name
+inherited from it is wrong, while the dependency graph stays correct either way.
+
+Two things would fix that. Feeding one input at a time through its full range and
+watching which computed address responds gives the graph without needing names at
+all. And the Select Monitor copies, which *are* named, can be compared against
+these computed values tick by tick - if a computed address matches a published
+parameter across a whole drive, that is the name, established rather than assumed.
+
+### 55d. Why this is the right instrument
+
+Every naming argument in this file that rested on a table's shape or its neighbours
+has been wrong at least once - sections 42e, 45, 48a, 50, and the `0xB20000` that
+was nearly written up as a table pointer in 54c. A drive log is a different kind of
+evidence: it says what the firmware did, over time, from a starting state that
+actually occurred.
