@@ -18,6 +18,10 @@ subaru_5eat_service_manual_extract.txt
 *_edited.bin
 *_modified.bin
 
+# Full disassembly listings: ~38 MB per image, 340 MB for the family. Regenerate
+# with tools/ghidra/DensoDisasmAll.java; the script is what is worth keeping.
+disasm-denso/
+
 # Build output
 build/
 

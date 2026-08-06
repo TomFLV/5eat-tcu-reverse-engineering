@@ -4225,3 +4225,74 @@ of that. No amount of tooling substitutes for it, which is why the offer in post
 391 is worth more to this project than anything else currently on the table. What
 tooling can do is exactly what section 45b does: hand the human the mechanical
 part, resolved and correct, so the judgement goes further.
+
+---
+
+## 46. THIS PROJECT HAD NO DISASSEMBLY
+
+Everything in sections 26 to 45 that describes Denso *code* was read out of Ghidra's
+decompiler output. There was never a disassembly listing in this repository -
+`decompiled-denso/` holds pseudocode C and nothing else - and several conclusions
+were drawn about the instruction stream from an artifact that does not contain one.
+
+That is the root cause of the GBR error in section 42e, and of section 40d's
+conclusion that the Denso images had no parameter table.
+
+### 46a. What the decompiler removes
+
+By design, and correctly for its purpose:
+
+  * **Literal pools disappear.** The constants a PC-relative load reads are folded
+    into expressions or dropped.
+  * **Unreferenced constants get no symbol**, so they cannot be found by searching
+    the C at all.
+  * **PC-relative loads become bare symbol names.** `DAT_000099e0` gives no hint
+    that the interesting value is the *contents* of ROM 0x99E0 rather than the
+    address itself.
+
+Concretely: the Select Monitor staging buffer addresses sit in literal pools at
+`0x7FCAE`, `0x7FCC2`, `0x80032` and `0x80742`. Ghidra created no symbols there, so
+nothing in the decompiled C mentions them, and searching that C concluded they were
+unreachable. They are perfectly visible in a disassembly listing.
+
+### 46b. The listing
+
+`tools/ghidra/DensoDisasmAll.java` exports every code unit in address order with
+raw bytes, mnemonic, and - the part that matters - the **resolved target of every
+PC-relative load**:
+
+    00000200  93 80    mov.w @(0x304,pc),r3   ; [00000304] = 0xD052 -> RAM 0xFFFFD052
+
+On one image that is **228,509 instructions, 523,444 data items, and 28,182
+resolved RAM literals**, covering **2,848 distinct RAM addresses**.
+
+For comparison, the same question asked of the decompiled C recovered 401 addresses
+(section 45b). Not because that method was wrong, but because it was asking an
+artifact that had already discarded the answer.
+
+### 46c. What this makes possible
+
+A RAM cross-reference for the Denso family: for any address, every instruction that
+touches it. That is the thing section 45c said was needed to bridge the staging
+buffer to the working variables, and it is the foundation naming has to be built
+on. It does not by itself name anything.
+
+Also worth noting from the listing: there are **no 4-byte RAM literals anywhere**.
+All on-chip RAM sits in `0xFFFFxxxx`, so the compiler always uses the 16-bit form
+and lets `mov.w` sign-extend. That is a property of the family, and it is why a
+scan for full 32-bit RAM addresses finds nothing.
+
+Listings run about 38 MB per image, so `disasm-denso/` is regenerated rather than
+committed. The exporter is what is worth keeping.
+
+### 46d. The lesson, which is not a new one here
+
+Section 15 of this file already records that reading the source beats guessing at
+structure, and the memory of the checksum episode says the same thing: two
+confidently wrong answers came from statistical scanning, and the firmware settled
+both in minutes.
+
+The same mistake recurred in a different costume. Decompiler output *is* source of
+a kind, so it felt like reading the code. It is not the code, and for questions
+about addressing modes, literal pools and how a constant reaches a register, it is
+the wrong document. Ask the disassembly.
