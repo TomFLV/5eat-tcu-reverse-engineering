@@ -559,6 +559,11 @@ def build_scalar_xml(scalar):
 # Row counts genuinely differ per firmware: that is the calibration.
 SHIFT_CURVES_BY_ROM = json.load(open(os.path.join(here, "shift_curves.json")))
 
+# The full schedule set, walked out of the firmware index (FINDINGS 51). Keyed by
+# unit id, then by "drive-mode lever", then by curve name.
+_st = os.path.join(here, "shift_tables.json")
+SHIFT_SCHEDULES = json.load(open(_st)) if os.path.exists(_st) else {}
+
 SHIFT_DESC = (
     "Shift point curve, mode 0 (the fully-populated operating mode). The curve is a "
     "polyline in vehicle-speed / accelerator-angle space: the TCU shifts when the "
@@ -766,7 +771,7 @@ SHIFT_MAP_DESC = (
 )
 
 
-def build_shift_map_xml(curves, u16_at, suffix=None, total=1):
+def build_shift_map_xml(curves, u16_at, suffix=None, total=1, label=None):
     """All eight shift curves as ONE sparse 3D table.
 
     X axis is the pedal positions this firmware actually uses: the union of every
@@ -809,18 +814,39 @@ def build_shift_map_xml(curves, u16_at, suffix=None, total=1):
             + '   <table type="Static Y Axis" name="Shift" sizey="%d">%s%s%s   </table>'
             % (len(present), nl, ys, nl))
 
-    name = "Shift Map" if suffix is None else "Shift Map %d of %d" % (suffix, total)
-    extra = "" if suffix is None else (
-        "\n\nThis is schedule %d of %d in this ROM. The transmission carries several "
-        "complete shift schedules and switches between them by operating condition - "
-        "the thread that this work builds on lists cold and warm engine, cold and warm "
-        "ATF, catalyst preheat, quick shift and hill assist as the likely candidates, "
-        "but WHICH condition selects WHICH schedule has not been established, so they "
-        "are numbered rather than named. Schedule 1 is the one this definition shipped "
-        "on its own before the others were found.\n\nEach schedule also has four "
-        "gear-limited variants for manual mode, which reuse these same curves with the "
-        "upper upshifts disabled, so they are not listed separately."
-        % (suffix, total))
+    if label is not None:
+        # A real schedule name - drive mode and lever position, taken from the index
+        # the firmware itself computes. Numbered schedules were a placeholder for
+        # not knowing which condition selected which map; that is now known.
+        drive, _, lever = label.partition(" ")
+        lever_text = {
+            "D5": "lever in P, N, D or Manual 5", "4": "lever in Manual 4",
+            "3": "lever in Manual 3", "2": "lever in Manual 2",
+            "1": "lever in Manual 1",
+        }.get(lever.rstrip("'"), "lever position %s" % lever)
+        name = "Shift Map - %s, %s" % (drive.rstrip("'"), lever)
+        extra = (
+            "\n\nThe schedule used in %s drive mode with the %s.\n\n"
+            "The firmware picks a schedule by index:\n\n"
+            "    drive mode x 50  +  shift lever x 10  +  gear x 2\n\n"
+            "Drive modes are Normal, Sport#, Slope, Manual, Kickdown, ATF Temp Low, "
+            "I-Mode and three not yet identified. Lever positions are D and Manual 5 "
+            "together, then Manual 4, 3, 2 and 1.\n\n"
+            "Schedules share curves - a table used in D is often the same object used "
+            "in Manual 5 - so editing one map can change another. Check the addresses "
+            "if that matters.\n\n"
+            "The formula, the drive mode mapping and this naming are rimwall's, from "
+            "the RomRaider forum thread; FINDINGS section 51 verifies them against the "
+            "code."
+            % (drive.rstrip("'"), lever_text))
+    elif suffix is None:
+        name, extra = "Shift Map", ""
+    else:
+        name = "Shift Map %d of %d" % (suffix, total)
+        extra = (
+            "\n\nSchedule %d of %d in this ROM. Schedule 1 is the one this definition "
+            "shipped on its own before the others were found."
+            % (suffix, total))
     return (
         '  <table type="3D" name="%s" category="Transmission - Shift Schedule"'
         ' storageaddress="0x%06X" storagetype="uint16" endian="big" sizex="%d"'
@@ -1891,9 +1917,21 @@ def build_rom_block(profile, rom_bytes, is_base):
             # One table, not one per curve. Eight strips of numbers was the single
             # most-reported problem with this definition; the shift schedule is one
             # thing and belongs in one table.
+            # Prefer the real schedules, walked out of the firmware's own index:
+            # drive mode and lever position, every combination, rather than the
+            # eight curves of the default mode that pattern scanning reached.
+            schedules = SHIFT_SCHEDULES.get(profile["id"], {})
             modes = SHIFT_MODES.get(profile["id"])
             groups = modes["groups"] if modes else []
-            if groups:
+            if schedules:
+                for label in sorted(schedules):
+                    m = build_shift_map_xml(schedules[label], u16, label=label)
+                    if m is None:
+                        continue
+                    parts.append(m)
+                    parts.append("")
+                    total += 1
+            elif groups:
                 # One complete schedule per operating condition. Condition 1 is the
                 # one this definition used to ship on its own.
                 for n, g in enumerate(groups, 1):

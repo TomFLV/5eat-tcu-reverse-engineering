@@ -125,9 +125,15 @@ def extract(path, known):
     if up is None:
         return cid, None, {}
 
-    tables = {}
+    # One schedule per drive mode and lever position, which is how the firmware is
+    # organised: each holds five gears in each direction. Grouping by the *set* of
+    # levers that share a table instead splits a schedule across several groups,
+    # because a curve shared by D and Manual 5 in one gear may not be shared in the
+    # next.
+    schedules = {}
     for dm_off, dm_name in DRIVE:
         for lev in range(5):
+            curves = {}
             for gear in range(5):
                 index = dm_off * 50 + lev * 10 + gear * 2
                 for array, direction in ((up, "Up"), (down, "Down")):
@@ -137,21 +143,29 @@ def extract(path, known):
                     addr = struct.unpack_from(">I", data, at)[0] & 0xFFFFFF
                     if not (0x10000 <= addr < len(data)):
                         continue
-                    e = tables.setdefault(addr, {"drive": set(), "levers": set(),
-                                                 "gear": gear, "dir": direction})
-                    e["drive"].add(dm_name)
-                    e["levers"].add(LEVER[lev])
-
-    out = {}
-    for addr, e in tables.items():
-        rows = rows_at(data, addr)
-        if rows < 2:
-            continue
-        levers = "".join(c for c in LEVER_ORDER if c in "".join(e["levers"]))
-        name = "Shift %s %s %s %s" % ("+".join(sorted(e["drive"])),
-                                      levers or "?", GEARS[e["gear"]], e["dir"])
-        out[name] = {"addr": addr, "rows": rows}
-    return cid, up, out
+                    rows = rows_at(data, addr)
+                    if rows < 2:
+                        continue
+                    # Name each curve the way the generator already expects, so a
+                    # schedule drops straight into build_shift_map_xml. Gear N
+                    # upshift is the N to N+1 shift; gear N downshift is N to N-1.
+                    if direction == "Up":
+                        if gear >= 4:
+                            continue          # nothing above fifth
+                        cname = "Shift %d-%d Upshift Curve" % (gear + 1, gear + 2)
+                    else:
+                        if gear == 0:
+                            continue          # nothing below first
+                        cname = "Shift %d-%d Downshift Curve" % (gear + 1, gear)
+                    curves[cname] = {"addr": addr, "rows": rows}
+            if len(curves) >= 4:
+                key = "%s %s" % (dm_name, LEVER[lev])
+                # Manual Mode occupies two drive-mode offsets; keep both rather
+                # than letting the second overwrite the first.
+                while key in schedules:
+                    key += "'"
+                schedules[key] = curves
+    return cid, up, schedules
 
 
 def main():
@@ -177,7 +191,7 @@ def main():
 
     with open(OUT, "w", encoding="utf-8", newline="\n") as fh:
         json.dump(result, fh, indent=1, sort_keys=True)
-    total = sum(len(v) for v in result.values())
+    total = sum(len(c) for v in result.values() for c in v.values())
     print("\n%d tables across %d firmwares -> %s" % (total, len(result), OUT))
     return 0
 
