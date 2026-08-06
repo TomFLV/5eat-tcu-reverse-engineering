@@ -51,9 +51,31 @@ public class DensoEmuTable extends GhidraScript {
             // not use much, and anything they push is discarded with the emulator.
             emu.writeRegister("r15", 0xFFFFBF00L);
 
+            // Arguments are either registers (r4=0x40) or memory, which is what the
+            // interesting inputs are: the transmission logic reads pedal position,
+            // gear and speed out of RAM, not off the stack. Memory is written as
+            // @address:size=value, e.g. @FFFF30FB:1=0x80 for pedal at half travel.
             for (int i = 2; i < a.length; i++) {
                 String[] kv = a[i].split("=", 2);
                 if (kv.length != 2) {
+                    continue;
+                }
+                long value = Long.decode(kv[1]);
+                if (kv[0].startsWith("@")) {
+                    String[] spec = kv[0].substring(1).split(":", 2);
+                    long where = Long.parseLong(spec[0], 16);
+                    int size = spec.length > 1 ? Integer.parseInt(spec[1]) : 1;
+                    byte[] bytes = new byte[size];
+                    for (int b = 0; b < size; b++) {
+                        bytes[size - 1 - b] = (byte) ((value >> (8 * b)) & 0xFF);
+                    }
+                    emu.writeMemory(toAddr(where), bytes);
+                    byte[] back = emu.readMemory(toAddr(where), size);
+                    StringBuilder rb = new StringBuilder();
+                    for (byte x : back) {
+                        rb.append(String.format("%02X", x));
+                    }
+                    println("SET " + kv[0] + " readback=" + rb);
                     continue;
                 }
                 Register r = currentProgram.getLanguage().getRegister(kv[0]);
@@ -61,7 +83,7 @@ public class DensoEmuTable extends GhidraScript {
                     println("unknown register: " + kv[0]);
                     continue;
                 }
-                emu.writeRegister(r, Long.decode(kv[1]));
+                emu.writeRegister(r, value);
             }
 
             // Returning to this address is the signal that the function finished.

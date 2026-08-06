@@ -73,6 +73,13 @@ for rom in "$REPO"/rom-denso/*.bin; do
         -processor "SuperH:BE:32:SH-2E" -loader BinaryLoader -loader-baseAddr 0x0 \
         >/dev/null 2>&1
 
+    # Give the image its on-chip RAM before analysis. Imported as a flat binary
+    # there is no block at 0xFFFF0000, so Ghidra creates no symbols for RAM
+    # addresses - which is why the decompiled C never mentions them, and why the
+    # emulator had nowhere to keep variables. See FINDINGS sections 46 and 49.
+    "$GH" "$WORK" p -process t.bin -noanalysis \
+        -scriptPath "$SCRIPTS" -postScript DensoAddRam.java >/dev/null 2>&1
+
     "$GH" "$WORK" p -process t.bin -analysisTimeoutPerFile 3000 >/dev/null 2>&1
 
     "$GH" "$WORK" p -process t.bin -noanalysis \
