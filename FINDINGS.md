@@ -4624,3 +4624,79 @@ Manual 5, 4, 3 and 2.
 This is the single largest addition available to the M32R definition, and it comes
 from someone else's work. It is his mapping, his formula and his naming; what is
 verified here is that all three are correct against this image.
+
+---
+
+## 52. THE PUBLISHED METHOD FOR DEFINING A SUBARU 32-BIT ROM
+
+rimwall pointed at forum topic 8449 in post 394. It is dschultz's step-by-step
+process for defining a new 32-bit Subaru ROM from a known one, written in 2012 and
+still the reference. It is archived as `docs/forum_thread_8449.txt`.
+
+Most of it is about engine ECUs, but three claims are testable against the TCU
+images here and all three hold.
+
+### 52a. What it confirms
+
+**The RAM segment.** Step 1 says to create one "starting at 0xFFFF0000 length
+0x0000C000". That is what `DensoAddRam.java` does, added a day earlier here after
+the emulator showed there was no RAM in the program at all (section 49). Arrived at
+from opposite directions.
+
+**Where the table structures live.** Step 4 says "the map data is stored in the ROM
+above the 0xC0000 area" and that the structures carry the data type, a multiplier
+and an additive. For `Impreza_STI_3.583_JDM2011`:
+
+    table headers   0xE5208 to 0xEC868      196 of 196 above 0xC0000
+    map data        0xA16A8 to 0xD2358
+
+Every header is above the line. The 28-byte structure of section 30 - rows, columns,
+axis pointers, data pointer, flags, float scale and offset - is the same object
+step 4 describes.
+
+**The unsupported-parameter convention.** Step 2 notes that the Select Monitor
+table names every parameter whether or not the unit supports it, and that
+unsupported ones reach "a subroutine that returns 0xFF". This project found the
+same structure with a different implementation: the Denso TCU points unsupported
+slots at a fixed data byte rather than at a routine, which is why the filler in
+section 42 is an address in ROM.
+
+### 52b. What it does not solve, and that is the interesting part
+
+Post 16, from dschultz himself: *"Unfortunately, this process does not work well on
+Hitachi ROMs."* Post 17, SergArb, having tried: *"Only 'Statistical' maps and no X&Y
+axis."*
+
+That is the whole method failing on the M32R, and it fails for a reason already
+recorded here: Hitachi tables carry **no header**. There is no structure holding a
+type, a multiplier or axis pointers, only a pointer to data. Everything step 4
+depends on is absent.
+
+So the community position, unchanged since 2019, is that Denso and Hitachi ECUs are
+definable by this process and Hitachi ones are not. The thread ends with people
+being told the work takes months and that the only people who can do it charge for
+it.
+
+That is worth stating plainly because it sets what this project's M32R side is
+against: 296 named tables in the Hitachi definition, arrived at without headers,
+plus the shift table index of section 51. The Denso side is the easier half by the
+community's own account, and it is the half still mostly unnamed here.
+
+### 52c. Not adopted
+
+The process depends on IDA Pro and a set of tools distributed as forum attachments -
+`XmlToIdc`, `MakeCELPointers.idc`, `MakeTablePointers.idc`, `WalkTheRom.idc`,
+`MakeXmlDef.exe`, `RR2EcuFlash.exe`. This project uses Ghidra and its own
+generators, which reach the same objects by different means: `generate_denso_def.py`
+already walks the table structures step 4 describes, and the pointer index it
+filters on is a stronger test than the structural match that step relies on.
+
+The DTC location trick in step 3 - search for the byte sequence `03 35 01` and read
+the switch table above it - **does not transfer**. Tried on both families: the
+sequence appears nowhere in `Impreza_STI_3.583_JDM2011` and nowhere in
+`ACD1A06000`. The reason is in the number itself. `0335` is P0335, crankshaft
+position sensor, an *engine* code; a transmission controller has no reason to carry
+it. The anchor is engine-ECU specific and the equivalent for a TCU would be one of
+the P07xx codes, which is a different search that has not been worked out.
+
+Section 24's disputed DTC addresses therefore remain open.
