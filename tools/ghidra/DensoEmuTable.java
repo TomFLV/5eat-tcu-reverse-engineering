@@ -126,6 +126,29 @@ public class DensoEmuTable extends GhidraScript {
             }
             println("PATH " + path.toString().trim());
 
+            // Dump the RAM the run left behind. Without this the only observable is
+            // the path, which cannot show a table index changing - and an index is
+            // exactly what an input like pedal position produces. Ranges are given
+            // as @start-end and printed as hex so two runs can be diffed.
+            for (int i = 2; i < a.length; i++) {
+                if (!a[i].startsWith("dump@")) {
+                    continue;
+                }
+                String[] range = a[i].substring(5).split("-", 2);
+                long from = Long.parseLong(range[0], 16);
+                long to = range.length > 1 ? Long.parseLong(range[1], 16) : from + 16;
+                int len = (int) Math.min(to - from + 1, 4096);
+                if (len <= 0) {
+                    continue;
+                }
+                byte[] mem = emu.readMemory(toAddr(from), len);
+                StringBuilder hex = new StringBuilder();
+                for (byte x : mem) {
+                    hex.append(String.format("%02X", x));
+                }
+                println(String.format("DUMP %08X %s", from, hex));
+            }
+
             // The emulator records what it faulted on rather than every access, so
             // report the calibration reads by replaying the instruction stream's
             // resolved literals instead: anything the run loaded that lands in the

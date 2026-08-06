@@ -18,7 +18,7 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd "$HERE/.." && pwd)"
 OUT="${1:-$REPO/build/app-input}"
 WORK="${TMPDIR:-/tmp}/rr5eat-build"
-APP_VERSION="${APP_VERSION:-1.1.5}"
+APP_VERSION="${APP_VERSION:-1.1.6}"
 
 # Pinned so the patch applies cleanly. Upstream moves and the patch touches
 # build.xml, ECUExec.java, LookAndFeelManager.java and RomCellRenderer.java -
