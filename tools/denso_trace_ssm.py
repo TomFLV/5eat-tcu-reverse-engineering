@@ -101,16 +101,40 @@ def main():
         return 1
 
     rows = load(args.listing)
-    # Slots written exactly once are the staging buffer; an address the control
-    # logic also uses would appear far more often.
     hits = {}
     for i, r in enumerate(rows):
         if r["ram"] in buffer_addrs:
             hits.setdefault(r["ram"], []).append(i)
 
+    # Not every address the table names is a staging slot. Some parameters are
+    # pointed straight at the working variable - pedal travel is one - and those
+    # must not be traced: there is nothing behind them, so walking back just picks
+    # up whatever literal happens to be near and invents a wrong answer. The first
+    # version of this did exactly that and reported pedal travel as 0xFFFF301C,
+    # which is a different variable entirely.
+    #
+    # The staging buffer is the long contiguous run of named addresses, each
+    # touched exactly once. Anything outside that run, or used more than once, is
+    # already the working variable.
+    single = sorted(a for a in hits if a in names and len(hits[a]) == 1)
+    buffer_run = set()
+    if single:
+        run = [single[0]]
+        for a in single[1:]:
+            if a - run[-1] <= 2:
+                run.append(a)
+            else:
+                if len(run) > len(buffer_run):
+                    buffer_run = set(run)
+                run = [a]
+        if len(run) > len(buffer_run):
+            buffer_run = set(run)
+
+    direct = {a: names[a] for a in hits if a in names and a not in buffer_run}
+
     traced = {}
     for addr, idxs in hits.items():
-        if addr not in names:
+        if addr not in names or addr not in buffer_run:
             continue
         for i in idxs:
             source, ops = None, []
@@ -130,8 +154,15 @@ def main():
                 }
                 break
 
-    print("%d buffer slots named by the Select Monitor table" % len(names))
-    print("%d traced to a working variable\n" % len(traced))
+    print("%d addresses named by the Select Monitor table" % len(names))
+    print("%d are staging slots; %d traced back to a working variable"
+          % (len(buffer_run), len(traced)))
+    if direct:
+        print("\n%d point straight at the working variable, no trace needed:"
+              % len(direct))
+        for a in sorted(direct):
+            print("   0x%08X  %s" % (a, direct[a][:58]))
+    print()
     print("%-42s %-12s %s" % ("parameter", "working var", "scaling seen"))
     print("-" * 92)
     for addr in sorted(traced, key=lambda a: traced[a]["name"]):
@@ -144,7 +175,8 @@ def main():
     with open(OUT, "w", encoding="utf-8", newline="\n") as fh:
         json.dump({
             "listing": os.path.basename(args.listing),
-            "slots": len(names),
+            "slots": len(buffer_run),
+            "direct": {("%08X" % a): direct[a] for a in direct},
             "traced": len(traced),
             "variables": {("%08X" % a): traced[a] for a in traced},
         }, fh, indent=1, sort_keys=True)

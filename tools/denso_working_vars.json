@@ -1,16 +1,13 @@
 {
+ "direct": {
+  "FFFF30FB": "Accelerator Pedal Travel",
+  "FFFFA6D8": "SI-Drive Mode",
+  "FFFFAA16": "Cruise Control Cancel Switch; Distance Change Switch; Secondary Air Combi Valve Relay #1; Secondary Air Pump Relay; Secondary Air Combi Valve Relay #2; Body Integrated Unit Count; Body Integrated Unit Data"
+ },
  "listing": "Impreza_STI_3.583_JDM2011.asm",
- "slots": 40,
- "traced": 13,
+ "slots": 37,
+ "traced": 11,
  "variables": {
-  "FFFF30FB": {
-   "at": 76992,
-   "name": "Accelerator Pedal Travel",
-   "ops": [
-    "mov.b @r5,r6"
-   ],
-   "working": 4294914076
-  },
   "FFFFA9F3": {
    "at": 523176,
    "name": "Battery Voltage",
@@ -134,15 +131,6 @@
     "mov r2,r0"
    ],
    "working": 4294916775
-  },
-  "FFFFAA16": {
-   "at": 388792,
-   "name": "Cruise Control Cancel Switch; Distance Change Switch; Secondary Air Combi Valve Relay #1; Secondary Air Pump Relay; Secondary Air Combi Valve Relay #2; Body Integrated Unit Count; Body Integrated Unit Data",
-   "ops": [
-    "mov.b @r6,r0",
-    "cmp/eq 0x1,r0"
-   ],
-   "working": 4294939126
   }
  }
 }

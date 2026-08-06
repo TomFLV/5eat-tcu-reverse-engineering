@@ -4361,3 +4361,74 @@ place to start looking.
 This is the first real-world meaning attached to any Denso RAM address in this
 project, and it is the anchor set the 950 unnamed tables in the Denso definition
 have to be named from.
+
+---
+
+## 48. WHAT THE FIRMWARE ACTUALLY READS, AND A PROBLEM WITH THE DENSO DEFINITION
+
+With a real disassembly, every address the code uses can be recovered rather than
+inferred. SH-2 cannot build a 32-bit constant in an instruction, so every RAM
+variable, table base and jump target is fetched from a literal pool. Reading those
+pools is a complete account of what the firmware touches.
+
+`tools/denso_literals.py` resolves them from the ROM image rather than relying on
+Ghidra having typed the pool entry - the listing already carries the absolute pool
+address in the operand, so all of them resolve, not the 63% Ghidra annotates.
+
+On `Impreza_STI_3.583_JDM2011`, **37,106 literal loads**:
+
+    ram    21,895     table   7,711     code   6,308     const  1,192
+
+The 7,711 table loads reach **5,156 distinct calibration addresses**. That set is
+ground truth for what this firmware reads.
+
+### 48a. It does not match the definition
+
+The Denso definition describes **985 tables** for this image. Cross-referencing:
+
+    referenced directly by a literal load                     11  (1%)
+    with a referenced address within 1 KB before them         97  (10%)
+
+Nine tables in ten have no code reference anywhere near them.
+
+Three explanations were checked and none holds. They are not reached through
+headers: decoding the busiest referenced addresses as the 28-byte header of
+section 30 produces nonsense - `rows=1 cols=256` with pointer fields reading
+`0x044C044C`. They are not reached through pointer arrays either: those addresses
+hold raw data, with 0 to 2 of the first eight words pointing anywhere into the
+calibration region. And they are not a base-plus-offset scheme, or the 1 KB window
+would have caught far more than 10%.
+
+What the busiest addresses actually are is plain data blocks read with a runtime
+index. `0x0BFC60` is read from 196 sites and holds `04 4C 04 4C` repeating;
+`0x0D1104` is read from 17 and sits next to the unit identifier, `A3DE2071`.
+
+### 48b. What that means
+
+This is consistent with something already recorded here. Section 30 noted that
+header-pattern scanning produced roughly 1,770 candidates against 140 to 186 real
+tables, and the generator filters by a pointer index. The 985 tables in this image's
+definition are largely the *unfiltered* population: structures that match the shape
+of a table and are never read.
+
+So the Denso definition is not 985 tables of which 950 are unnamed. It is more
+likely a few hundred real tables plus several hundred artefacts, all presented
+identically. That is worse than an unnamed table, because an artefact looks
+editable and writing to it does nothing - or corrupts something that is not a
+table at all.
+
+**Nothing has been changed in the definition on the strength of this.** The
+inference is strong but it is one image, and "no literal load points at it" is not
+the same as "the firmware never reads it" - a table reached only through a computed
+address would look identical. Confirming it means picking a handful of the
+unreferenced tables and following the code, which the disassembly now supports.
+
+### 48c. The useful inversion
+
+The map runs both ways. For any calibration address, every site that reads it; for
+any code site, every table it touches. Combined with the working variables of
+section 47 - pedal at `0xFFFF30FB`, gear at `0xFFFFA015` - a table read by a
+function that also reads pedal is pedal-indexed, and that is how a real table gets
+a name rather than a shape.
+
+That is the path to naming the Denso family, and it now has the data under it.
