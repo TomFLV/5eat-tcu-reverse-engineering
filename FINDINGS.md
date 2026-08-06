@@ -4786,3 +4786,67 @@ reading. The procedure generalises:
 
 Four steps, minutes of machine time, and no argument about what a table's shape
 might mean.
+
+---
+
+## 54. PROBING TWELVE FUNCTIONS BY EXPERIMENT
+
+`tools/denso_probe.py` automates the procedure of section 53: emulate, record what
+the taken path reads, set all of it at once, and if the answer moves, bisect to the
+address that carries it and sweep that. Run against the twelve functions that
+consume the most calibration tables.
+
+**All twelve respond to their inputs.** None is the inert kind that flat single-
+variable sweeps made several functions look like earlier.
+
+### 54a. Control inputs found
+
+Five addresses that decide something, none of which appears in any Select Monitor
+table:
+
+    0xFFFF357C, 0xFFFF357A    0x00058B24    nine distinct results
+    0xFFFF33AC, 0xFFFF32D0    0x00036E8E    nine distinct results
+    0xFFFF35E1                0x00057EC8    three
+    0xFFFF8E62, 0xFFFF8E64    0x00035D14    two
+    0xFFFF9152                0x000526C6    two
+
+`0xFFFF8E60`, `0xFFFF8E62` and `0xFFFF8E64` are the three busiest addresses in the
+whole cross-reference - 452, 342 and 418 code sites - and they now have a role
+rather than just a reference count.
+
+### 54b. Two of them are arithmetic, with exact constants
+
+`0x00058B24` returns `input x 0x4C000`, exactly linear across the sweep. Read as
+16.16 fixed point that is **a multiply by 4.75**.
+
+`0x00036E8E` steps by `0x32E60000` per unit of input, which as a fraction of 2^32
+is **0.198822**. The low half advances separately, so this is a wider-than-32-bit
+accumulation rather than a single product.
+
+Neither is a table lookup. They are scaling routines, and knowing that is worth as
+much as finding a table: it says the constants they carry are conversion factors,
+not calibration to be tuned.
+
+### 54c. One is a selector, and one number in it is not what it looks like
+
+`0x00057EC8` returns different things by input:
+
+    0, 2, 3, 8  ->  0xFFFF3618      a RAM address
+    1           ->  0xFFFFDB00      a RAM address
+    4, 5, 6, 7  ->  0x00B20000      not an address
+
+`0x00B20000` is past the end of a 1 MB image, so it is a computed value rather than
+a pointer, and this was nearly written up as a calibration table selector on the
+strength of the number looking plausible. Checking whether the address exists is
+the whole of the difference. What the function does for inputs 4 to 7 is not
+established.
+
+### 54d. What the method is and is not good for
+
+It finds inputs and shows what they select, quickly and without argument. It does
+not name anything: knowing that `0xFFFF357C` scales a value by 4.75 does not say
+what the value is.
+
+Naming still needs either the Select Monitor mapping, which covers the published
+copies rather than these, or somebody who has read the code. That remains rimwall's
+listings, and nothing here changes that.
