@@ -236,6 +236,249 @@
     <conversion units="kPa" expr="x*10" format="0" />
    </conversions>
   </ecuparam>
+  <switch id="S001" name="Air Conditioning Switch" desc="Select Monitor address 0x062 bit 1. States: Off/On" byte="0x000062" bit="1" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S002" name="Power Steering Switch" desc="Select Monitor address 0x062 bit 2. States: Off/On" byte="0x000062" bit="2" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S003" name="Ignition Switch" desc="Select Monitor address 0x062 bit 3. States: Off/On" byte="0x000062" bit="3" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S004" name="Intercooler Auto Washer Switch" desc="Select Monitor address 0x062 bit 4. States: Off/On" byte="0x000062" bit="4" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S005" name="Idle Switch" desc="Select Monitor address 0x062 bit 6. States: Off/On" byte="0x000062" bit="6" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S006" name="Neutral Position Switch" desc="Select Monitor address 0x062 bit 7. States: Off/On" byte="0x000062" bit="7" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S007" name="Front Wheel Drive (FWD) Switch" desc="Select Monitor address 0x06A bit 0. States: Off/On" byte="0x00006A" bit="0" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S008" name="Kick Down Switch" desc="Select Monitor address 0x06A bit 1. States: Off/On" byte="0x00006A" bit="1" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S009" name="Upshift Switch" desc="Select Monitor address 0x06A bit 2. States: Off/On" byte="0x00006A" bit="2" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S010" name="Stop Light Switch" desc="Select Monitor address 0x06A bit 3. States: Off/On" byte="0x00006A" bit="3" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S011" name="Downshift Switch" desc="Select Monitor address 0x06A bit 4. States: Off/On" byte="0x00006A" bit="4" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S012" name="ABS Signal" desc="Select Monitor address 0x06A bit 5. States: Off/On" byte="0x00006A" bit="5" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S013" name="Cruise Control Signal" desc="Select Monitor address 0x06A bit 6. States: Off/On" byte="0x00006A" bit="6" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S014" name="Tiptronic Mode Switch" desc="Select Monitor address 0x06A bit 7. States: Off/On" byte="0x00006A" bit="7" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S015" name="N/P Range Signal" desc="Select Monitor address 0x06B bit 0. States: Off/On" byte="0x00006B" bit="0" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S016" name="R Range Signal" desc="Select Monitor address 0x06B bit 1. States: Off/On" byte="0x00006B" bit="1" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S017" name="D Range Signal" desc="Select Monitor address 0x06B bit 2. States: Off/On" byte="0x00006B" bit="2" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S018" name="3rd Range Signal" desc="Select Monitor address 0x06B bit 3. States: Off/On" byte="0x00006B" bit="3" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S019" name="2nd Range Signal" desc="Select Monitor address 0x06B bit 4. States: Off/On" byte="0x00006B" bit="4" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S020" name="1st Range Signal" desc="Select Monitor address 0x06B bit 5. States: Off/On" byte="0x00006B" bit="5" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S021" name="Hold Mode Switch" desc="Select Monitor address 0x06B bit 6. States: Off/On" byte="0x00006B" bit="6" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S022" name="Power Mode Switch" desc="Select Monitor address 0x06B bit 7. States: Off/On" byte="0x00006B" bit="7" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S023" name="Shift Solenoid #1" desc="Select Monitor address 0x06C bit 0. States: Off/On" byte="0x00006C" bit="0" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S024" name="Shift Solenoid #2" desc="Select Monitor address 0x06C bit 1. States: Off/On" byte="0x00006C" bit="1" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S025" name="Low Clutch Timing Solenoid" desc="Select Monitor address 0x06C bit 2. States: Off/On" byte="0x00006C" bit="2" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S026" name="2-4 Brake Timing Solenoid" desc="Select Monitor address 0x06C bit 3. States: Off/On" byte="0x00006C" bit="3" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S027" name="Torque Control Signal #2" desc="Select Monitor address 0x06C bit 4. States: Off/On" byte="0x00006C" bit="4" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S028" name="Torque Control Signal #1" desc="Select Monitor address 0x06C bit 5. States: Off/On" byte="0x00006C" bit="5" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S029" name="Tiptronic Solenoid" desc="Select Monitor address 0x06C bit 6. States: Off/On" byte="0x00006C" bit="6" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S030" name="4th Range Signal" desc="Select Monitor address 0x06C bit 7. States: Off/On" byte="0x00006C" bit="7" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S031" name="Shift Lock Solenoid" desc="Select Monitor address 0x06D bit 0. States: Off/On" byte="0x00006D" bit="0" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S032" name="ATF Temperature Lamp" desc="Select Monitor address 0x06D bit 1. States: Off/On" byte="0x00006D" bit="1" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S033" name="Rear Differential Oil Temperature Switch" desc="Select Monitor address 0x06D bit 2. States: Off/On" byte="0x00006D" bit="2" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S034" name="Diagnosis Lamp" desc="Select Monitor address 0x06D bit 3. States: Off/On" byte="0x00006D" bit="3" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S035" name="Shift Output 1" desc="Select Monitor address 0x06D bit 4. States: Off/On" byte="0x00006D" bit="4" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S036" name="Shift Output 2" desc="Select Monitor address 0x06D bit 5. States: Off/On" byte="0x00006D" bit="5" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S037" name="Shift Output 3" desc="Select Monitor address 0x06D bit 6. States: Off/On" byte="0x00006D" bit="6" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S038" name="Shift Output 4" desc="Select Monitor address 0x06D bit 7. States: Off/On" byte="0x00006D" bit="7" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S039" name="N Range" desc="Select Monitor address 0x06E bit 0. States: Off/On" byte="0x00006E" bit="0" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S040" name="Hold Lamp" desc="Select Monitor address 0x06E bit 1. States: Off/On" byte="0x00006E" bit="1" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S041" name="Traction Control System (TCS) Switch" desc="Select Monitor address 0x06E bit 2. States: Off/On" byte="0x00006E" bit="2" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S042" name="P/N Signal" desc="Select Monitor address 0x06E bit 3. States: Off/On" byte="0x00006E" bit="3" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S043" name="Torque Control Cut Signal" desc="Select Monitor address 0x06E bit 4. States: Off/On" byte="0x00006E" bit="4" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S044" name="P Range" desc="Select Monitor address 0x06E bit 5. States: Off/On" byte="0x00006E" bit="5" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S045" name="Power Mode Lamp" desc="Select Monitor address 0x06E bit 6. States: Off/On" byte="0x00006E" bit="6" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S046" name="Economy Switch" desc="Select Monitor address 0x06E bit 7. States: Off/On" byte="0x00006E" bit="7" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S047" name="AT Power Relay" desc="Select Monitor address 0x0D4 bit 0. States: Off/On" byte="0x0000D4" bit="0" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S048" name="Back Lamp Relay" desc="Select Monitor address 0x0D4 bit 1. States: Off/On" byte="0x0000D4" bit="1" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S049" name="Inhibitor Switch #3 Monitor" desc="Select Monitor address 0x0D4 bit 2. States: Low/High" byte="0x0000D4" bit="2" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S050" name="Inhibitor Switch #4" desc="Select Monitor address 0x0D4 bit 3. States: Low/High" byte="0x0000D4" bit="3" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S051" name="Inhibitor Switch #3" desc="Select Monitor address 0x0D4 bit 4. States: Low/High" byte="0x0000D4" bit="4" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S052" name="Inhibitor Switch #2" desc="Select Monitor address 0x0D4 bit 5. States: Low/High" byte="0x0000D4" bit="5" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S053" name="Inhibitor Switch #1" desc="Select Monitor address 0x0D4 bit 6. States: Low/High" byte="0x0000D4" bit="6" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S054" name="Judgement of All Wheel Drive (AWD)" desc="Select Monitor address 0x0D4 bit 7. States: Off/On" byte="0x0000D4" bit="7" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S055" name="Signal of Identified Electronic Control Module (ECM)" desc="Select Monitor address 0x0D5 bit 0. States: Off/On" byte="0x0000D5" bit="0" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S056" name="LC/B Fluid Pressure" desc="Select Monitor address 0x0D5 bit 1. States: Off/On" byte="0x0000D5" bit="1" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S057" name="I/C Fluid Pressure" desc="Select Monitor address 0x0D5 bit 2. States: Off/On" byte="0x0000D5" bit="2" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S058" name="F/B Fluid Pressure" desc="Select Monitor address 0x0D5 bit 3. States: Off/On" byte="0x0000D5" bit="3" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S059" name="D/C Fluid Pressure" desc="Select Monitor address 0x0D5 bit 4. States: Off/On" byte="0x0000D5" bit="4" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S060" name="H&amp;LR/C Fluid Pressure" desc="Select Monitor address 0x0D5 bit 5. States: Off/On" byte="0x0000D5" bit="5" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S061" name="Automatic Transmission Learning Process" desc="Select Monitor address 0x0D6 bit 2. States: Not Completed/Completed" byte="0x0000D6" bit="2" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S062" name="Fwd/B Hydraulic Pressure Switch" desc="Select Monitor address 0x0D6 bit 3. States: Off/On" byte="0x0000D6" bit="3" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S063" name="AUTO Mode Lamp" desc="Select Monitor address 0x0D6 bit 4. States: Off/On" byte="0x0000D6" bit="4" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S064" name="AUTO/MANUAL Mode Switch" desc="Select Monitor address 0x0D6 bit 5. States: Off/On" byte="0x0000D6" bit="5" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S065" name="Center Differential Relay" desc="Select Monitor address 0x0D6 bit 6. States: Off/On" byte="0x0000D6" bit="6" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S066" name="Parking Position Switch" desc="Select Monitor address 0x0D6 bit 7. States: Off/On" byte="0x0000D6" bit="7" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S067" name="Cruise Control Cancel Switch" desc="Select Monitor address 0x0D7 bit 0. States: Off/On" byte="0x0000D7" bit="0" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S068" name="Distance Change Switch" desc="Select Monitor address 0x0D7 bit 1. States: Off/On" byte="0x0000D7" bit="1" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S069" name="Secondary Air Combi Valve Relay #1" desc="Select Monitor address 0x0D7 bit 2. States: Off/On" byte="0x0000D7" bit="2" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S070" name="Secondary Air Pump Relay" desc="Select Monitor address 0x0D7 bit 3. States: Off/On" byte="0x0000D7" bit="3" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S071" name="Secondary Air Combi Valve Relay #2" desc="Select Monitor address 0x0D7 bit 4. States: Off/On" byte="0x0000D7" bit="4" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S072" name="Body Integrated Unit Count" desc="Select Monitor address 0x0D7 bit 6. States: On\\Off" byte="0x0000D7" bit="6" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S073" name="Body Integrated Unit Data" desc="Select Monitor address 0x0D7 bit 7. States: On\\Off" byte="0x0000D7" bit="7" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S074" name="Center Differential Lamp 6" desc="Select Monitor address 0x122 bit 0. States: Off/On" byte="0x000122" bit="0" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S075" name="Center Differential Lamp 5" desc="Select Monitor address 0x122 bit 1. States: Off/On" byte="0x000122" bit="1" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S076" name="Center Differential Lamp 4" desc="Select Monitor address 0x122 bit 2. States: Off/On" byte="0x000122" bit="2" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S077" name="Center Differential Lamp 3" desc="Select Monitor address 0x122 bit 3. States: Off/On" byte="0x000122" bit="3" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S078" name="Center Differential Lamp 2" desc="Select Monitor address 0x122 bit 4. States: Off/On" byte="0x000122" bit="4" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S079" name="Center Differential Lamp 1" desc="Select Monitor address 0x122 bit 5. States: Off/On" byte="0x000122" bit="5" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S080" name="LU&amp;FWD/B Solenoid Valve" desc="Select Monitor address 0x122 bit 6. States: Off/On" byte="0x000122" bit="6" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
+  <switch id="S081" name="LC/B Solenoid Valve" desc="Select Monitor address 0x122 bit 7. States: Off/On" byte="0x000122" bit="7" target="2" storagetype="uint8">
+   <conversions />
+  </switch>
   <ecuparam id="LU1" name="TIO5 duty (lock-up candidate A)" desc="Raw read of RAM 0x804EB2. The torque converter clutch is driven by one of two timer channels whose code paths are identical (FINDINGS section 29); logging both against gear identifies which. Addresses at or above 0x200 are read directly by the firmware rather than through the Select Monitor translation table." target="2">
    <ecu id="91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000">
     <address>0x804EB2</address>

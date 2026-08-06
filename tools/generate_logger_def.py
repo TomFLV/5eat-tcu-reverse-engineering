@@ -107,6 +107,35 @@ def unit_ids(data):
     return out, m32r
 
 
+def collect_switches(data, ids):
+    """(ssm, bit, name, states) -> the unit ids whose table answers that address.
+
+    A switch byte carries up to eight named signals, one per bit - range signals,
+    solenoid states, kickdown, ABS, the lamps. Eleven such bytes per Denso image
+    hold 81 switches between them, and the first version of this generator dropped
+    all of them because they do not fit the measuring-block shape.
+
+    RomRaider models a switch as its own element with a byte and a bit rather than
+    as a parameter with a conversion, which is why they need emitting separately.
+    """
+    out = {}
+    for rom, info in data.items():
+        uid = ids.get(rom)
+        if not uid:
+            continue
+        for r in info["rows"]:
+            for s in r.get("switches") or []:
+                # FreeSSM numbers flagbits 1 to 8; RomRaider wants 0 to 7 and
+                # rejects the whole file with "Bit must be between 0 and 7
+                # inclusive" if given an 8. Convert rather than clamp.
+                bit = s["bit"] - 1
+                if not 0 <= bit <= 7:
+                    continue
+                key = (r["ssm"], bit, s["name"], s.get("states") or "Off/On")
+                out.setdefault(key, set()).add(uid)
+    return out
+
+
 def collect(data, ids):
     """(ssm, name, unit, conv, length) -> sorted list of unit ids supporting it."""
     params = {}
@@ -176,6 +205,20 @@ def main():
         ET.SubElement(convs, "conversion", units=(unit or "raw"), expr=expr,
                       format="0.00" if "/" in expr else "0")
 
+    # Switches. RomRaider takes these as their own element with a byte and a bit,
+    # not as parameters with a conversion, so they cannot go through the loop above.
+    # They are worth having: range signals, solenoid states, kickdown, ABS and the
+    # lamps are all here, and none of it was being logged.
+    switches = collect_switches(data, ids)
+    for n, (key, uids) in enumerate(sorted(switches.items()), 1):
+        ssm, bit, name, states = key
+        sw = ET.SubElement(proto, "switch", id="S%03d" % n, name=name,
+                           desc="Select Monitor address 0x%03X bit %d. States: %s"
+                                % (ssm, bit, states),
+                           byte="0x%06X" % ssm, bit=str(bit),
+                           target="2", storagetype="uint8")
+        ET.SubElement(sw, "conversions")
+
     # Raw RAM reads: the two lock-up candidates. These are M32R addresses, so they
     # are offered only to M32R units - pointing a Denso unit at them would read an
     # unrelated part of its address space and report a plausible-looking number.
@@ -208,8 +251,8 @@ def main():
                  "  address table rather than inferred from the init response.\n-->\n")
         fh.write(xml + "\n")
 
-    print("%d parameters across %d firmwares -> %s"
-          % (len(params), len(known), OUT))
+    print("%d parameters, %d switches, across %d firmwares -> %s"
+          % (len(params), len(switches), len(known), OUT))
     if untranslated:
         print("%d shipped as raw values: FreeSSM's conversion was not a simple form"
               % untranslated)
