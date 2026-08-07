@@ -5335,3 +5335,80 @@ Finding the copy engine is a job for the emulator rather than the listing. The
 question - what writes `0xFFFF8A88` - is answerable by running code and watching
 the address, which is how the schedule selector was found in section 53 after
 static analysis had failed at it too.
+
+## 61. THE LINK, FOUND AND WALKED END TO END
+
+Section 60 concluded that values reach the control region by a route no static
+register tracking would see, and suggested the emulator as the way to find it. It
+turned out to be cheaper than that. If a copy is driven by pointers, the addresses
+have to exist somewhere as data - so searching the ROM for the control addresses as
+32-bit big-endian values was the first thing to try.
+
+At `0x0002D1A8` they appear in pairs:
+
+    FFFF3AAF  FFFF8E46
+    FFFF30FB  FFFF8E47      <- pedal, decoded from CAN 0x412 byte 0
+    FFFF30F1  FFFF8E48      <- pedal, decoded from CAN 0x410 byte 4
+    FFFF3B5E  FFFF8E4A
+
+Thirty-six pairs, sources scattered across RAM and destinations running almost
+contiguously from `0xFFFF8E44` to `0xFFFF8E8C`.
+
+This is not a table walked by a loop, which is what the pairing suggests at first
+glance. It is the **literal pool of the function at `0x0002CF80`**, and that
+function is an unrolled gather - load from a source, store to its slot, one pair at
+a time:
+
+    0002CF9C  mov.l ...,r6     ; 0xFFFF30FB
+    0002CF9E  mov.b @r6,r2
+    0002CFA0  mov.l ...,r6     ; 0xFFFF8E47
+    0002CFA2  mov.b r2,@r6
+
+The same function turned up in section 60 as one of the two that read
+`0xFFFF30FB`, and was set aside as part of a reporting path. It was the link.
+
+### 61a. Walked
+
+With `0x0002CF80` in the task list ahead of the shift function, and CAN 0x412
+carrying the pedal column from the vehicle log, one address moves that this project
+did not write: **`0xFFFF8E47`**. Against a control identical in every respect except
+the pedal byte, it tracks the source on **568 of 568 ticks**, exactly, with no lag -
+254 at the wide-open-throttle row, which is 99.6 %.
+
+So the whole path now runs under the firmware's own code:
+
+    CAN 0x412 frame
+      -> receive buffer 0xFFFF301C        (receive table, 0x08600E)
+      -> decode at 0x00012CBE
+      -> 0xFFFF30FB, Accelerator Pedal Travel
+      -> gather at 0x0002CF80
+      -> 0xFFFF8E47, in the control block
+
+Every hop was read out of the firmware rather than assumed, and each one was found
+by a failure that ruled out the alternative.
+
+### 61b. What it does not yet do
+
+The instruction count is still identical between the two runs, so nothing branches
+differently: the shift decision function does not act on `0xFFFF8E47` at the values
+this drive reaches. One value crossing is the mechanism proven, not the behaviour
+explained.
+
+### 61c. The real input surface
+
+The cross-reference gives a better answer to what the harness should be feeding.
+119 RAM addresses are read four or more times and never written by any code it can
+follow, accounting for 1,293 read sites. Grouped into runs:
+
+    0xFFFF9077 - 0xFFFF90B3    36 addresses    476 reads
+    0xFFFF9053 - 0xFFFF905A     4 addresses    140 reads
+    0xFFFF3AA8 - 0xFFFF3AAC     3 addresses    120 reads
+    0xFFFF99CF - 0xFFFF99D4     5 addresses     54 reads
+    0xFFFFAA3A - 0xFFFFAA41     8 addresses     48 reads
+
+The first is the hottest block in the firmware and nothing writes it. Whatever
+populates it - the A/D converter, an interrupt, a copy through a pointer - is not
+in the code the harness runs, so the harness has to supply it. That is a far better
+input set than the twelve addresses probing had assembled, and
+`denso_campaign.py --from-xref` now derives it from the image instead of from
+guesswork.

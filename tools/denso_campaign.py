@@ -52,11 +52,40 @@ INPUTS = [
 HOLD = 0x40
 
 
-def write_profile(path, sweep_addr, ticks=256):
+def xref_inputs(path, min_reads=4):
+    """Addresses with many readers and no writer at all - FINDINGS 60.
+
+    The list above was assembled by probing and guesswork, and it is thin. This
+    derives the input surface from the firmware instead: a register-aware
+    cross-reference of the whole image finds 119 RAM addresses that are read four
+    times or more and never written by any code it can follow. The largest run,
+    0xFFFF9077 to 0xFFFF90B3, is 36 consecutive bytes carrying 476 read sites and
+    no writer whatsoever.
+
+    Something populates those - the A/D converter, an interrupt, a copy through a
+    pointer this analysis cannot see. Whatever it is, it is not in the code the
+    harness runs, so the harness has to stand in for it. Writing these directly is
+    not a way around the firmware; it is supplying what the firmware is sitting
+    there waiting for.
+    """
+    import json
+    with open(path, encoding="utf-8") as fh:
+        x = json.load(fh)
+    reads = {int(k, 16): v for k, v in x["reads"].items()}
+    writes = {int(k, 16) for k in x["writes"]}
+    # Real RAM only. Above 0xFFFFBFFF is peripheral registers (FINDINGS 56c), and
+    # small values are artefacts of a register holding a constant that was then
+    # dereferenced - neither is an input.
+    return sorted(a for a, sites in reads.items()
+                  if a not in writes and 0xFFFF2000 <= a <= 0xFFFFBFFF
+                  and len(sites) >= min_reads)
+
+
+def write_profile(path, sweep_addr, inputs, ticks=256):
     lines = ["# isolation sweep of %08X" % sweep_addr]
     for t in range(ticks):
         parts = ["%d" % t]
-        for a in sorted(set(INPUTS)):
+        for a in inputs:
             v = (t % 256) if a == sweep_addr else HOLD
             parts.append("%08X:1=0x%X" % (a, v))
         lines.append(",".join(parts))
@@ -125,7 +154,23 @@ def main():
     ap.add_argument("--run", action="store_true")
     ap.add_argument("--analyse", action="store_true")
     ap.add_argument("--ticks", type=int, default=256)
+    ap.add_argument("--from-xref", metavar="XREF_JSON",
+                    help="derive the input set from denso_xref.py output")
+    ap.add_argument("--min-reads", type=int, default=4)
+    ap.add_argument("--limit", type=int, default=0,
+                    help="probe only the N most-read addresses")
     args = ap.parse_args()
+
+    inputs = sorted(set(INPUTS))
+    if args.from_xref:
+        derived = xref_inputs(args.from_xref, args.min_reads)
+        if args.limit:
+            import json as _j
+            _x = _j.load(open(args.from_xref, encoding='utf-8'))['reads']
+            derived.sort(key=lambda a: -len(_x['%08X' % a]))
+            derived = sorted(derived[:args.limit])
+        inputs = derived
+        print('%d inputs derived from the cross-reference' % len(inputs))
 
     os.makedirs(WORK, exist_ok=True)
     results = {}
@@ -133,7 +178,7 @@ def main():
         results = json.load(open(OUT, encoding="utf-8"))
 
     if args.run:
-        for addr in sorted(set(INPUTS)):
+        for addr in inputs:
             key = "%08X" % addr
             if key in results:
                 print("%s  already done (%d responders)"
@@ -141,7 +186,7 @@ def main():
                 continue
             prof = os.path.join(WORK, "prof_%s.csv" % key)
             log = os.path.join(WORK, "log_%s.csv" % key)
-            write_profile(prof, addr, args.ticks)
+            write_profile(prof, addr, inputs, args.ticks)
             res = run_drive(prof, log)
             if res is None:
                 print("%s  FAILED or timed out" % key)
