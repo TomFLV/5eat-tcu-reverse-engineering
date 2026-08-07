@@ -95,12 +95,19 @@ static inline uint32_t rd32(uint32_t a) {
  * answers it in one run. */
 static uint32_t watch_addr;
 static uint32_t watch_pc;
+/* SH2_WRITESET=<file> records every distinct address the firmware writes.
+ * Needed because the tick-to-tick diff cannot see a routine that writes the same
+ * value every time - which is exactly what a RAM self test does, and why one ran
+ * unnoticed on every tick of every drive. */
+static uint8_t  wrote[RAM_SIZE];
+static int      track_writes;
 
 static inline void wr8(uint32_t a, uint32_t v) {
     if (a - RAM_BASE < RAM_SIZE) {
         if (a == watch_addr)
             fprintf(stderr, "WRITE %08X = %02X  by pc %08X\n",
                     a, (uint8_t)v, watch_pc);
+        if (track_writes) wrote[a - RAM_BASE] = 1;
         ram[a - RAM_BASE] = (uint8_t)v;
     }
 }
@@ -169,7 +176,14 @@ static void step_one(void) {
             else goto unimplemented;
             break;
         case 0x3:
-            if ((op & 0xF0FF) == 0x0023) { branch(R[n]); }        /* braf */
+            /* braf Rn is PC + 4 + Rn, not Rn. Branching to the register absolutely
+             * sent every switch statement in the firmware to a garbage address:
+             * the compiler emits mov.w @(r0,r2),r0 to fetch a 16-bit offset from a
+             * jump table and then braf r0, so the value in the register is a small
+             * displacement - 0x2E here - and jumping to it lands in the interrupt
+             * vector table. That is where the "executing data" of section 67b came
+             * from, and it was a bug in this core rather than a harness artefact. */
+            if ((op & 0xF0FF) == 0x0023) { branch(pc + 4 + R[n]); }   /* braf */
             else if ((op & 0xF0FF) == 0x0003) { cpu.pr = pc + 4; branch(pc + 4 + R[n]); }
             else goto unimplemented;
             break;
@@ -207,7 +221,12 @@ static void step_one(void) {
             uint32_t t = R[n] ^ R[m];
             SET_T(!(t & 0xFF000000) || !(t & 0xFF0000) || !(t & 0xFF00) || !(t & 0xFF));
             break; }
-        case 0xD: R[n] = (R[n] & 0xFFFF0000) | (R[m] >> 16); break;   /* xtrct-ish */
+        /* xtrct Rm,Rn takes the low half of Rm and the high half of Rn and joins
+         * them: Rn = (Rm << 16) | (Rn >> 16). The version this replaces kept the
+         * high half of Rn in place instead of shifting it down, which is not the
+         * instruction at all. It appears in 64-bit shifts and byte-order work, so
+         * getting it wrong corrupts values without disturbing control flow. */
+        case 0xD: R[n] = ((R[m] & 0xFFFF) << 16) | ((R[n] >> 16) & 0xFFFF); break;
         case 0xE: cpu.macl = (uint32_t)((uint16_t)R[n] * (uint16_t)R[m]); break;
         case 0xF: cpu.macl = (uint32_t)((int32_t)(int16_t)R[n] * (int32_t)(int16_t)R[m]); break;
         default: goto unimplemented;
@@ -541,15 +560,33 @@ int main(int argc, char **argv) {
     { const char *t = getenv("SH2_TRACE"); if (t) trace_left = atoll(t); }
     { const char *w = getenv("SH2_WATCH"); if (w) watch_addr = (uint32_t)strtoul(w, 0, 16); }
     { const char *f = getenv("SH2_TRACE_FROM"); if (f) trace_from = (uint32_t)strtoul(f, 0, 16); }
+    const char *wsfile = getenv("SH2_WRITESET");
+    if (wsfile) track_writes = 1;
 
     FILE *f = fopen(argv[1], "rb");
     if (!f) { perror(argv[1]); return 1; }
     fread(rom, 1, ROM_SIZE, f);
     fclose(f);
 
+    /* The entry list can be a file. Four hundred tasks is about 4,400 characters
+     * and passing that as one argument through wsl silently failed - the process
+     * did not start and nothing was written, which looked like every input driving
+     * nothing rather than like an error. */
+    static char entrybuf[1 << 16];
+    char *entryspec = argv[4];
+    if (entryspec[0] == '@') {
+        FILE *ef = fopen(entryspec + 1, "r");
+        if (!ef) { perror(entryspec + 1); return 1; }
+        size_t got = fread(entrybuf, 1, sizeof entrybuf - 1, ef);
+        fclose(ef);
+        entrybuf[got] = 0;
+        for (char *q = entrybuf; *q; q++) if (*q == '\n' || *q == '\r') *q = 0;
+        entryspec = entrybuf;
+    }
+
     static uint32_t entries[MAX_ENTRIES];
     int nentries = 0;
-    for (char *p = argv[4]; *p && nentries < MAX_ENTRIES; ) {
+    for (char *p = entryspec; *p && nentries < MAX_ENTRIES; ) {
         entries[nentries++] = (uint32_t)strtoul(p, &p, 16);
         while (*p == '+' || *p == 'x' || *p == '0') { if (*p == '+') { p++; break; } p++; }
     }
@@ -608,6 +645,18 @@ int main(int argc, char **argv) {
     }
     fclose(of);
     fclose(pf);
+
+    if (wsfile) {
+        FILE *wf = fopen(wsfile, "w");
+        if (wf) {
+            int n = 0;
+            for (uint32_t i = 0; i < RAM_SIZE; i++) if (wrote[i]) n++;
+            fprintf(wf, "%d\n", n);
+            for (uint32_t i = 0; i < RAM_SIZE; i++)
+                if (wrote[i]) fprintf(wf, "%08X\n", RAM_BASE + i);
+            fclose(wf);
+        }
+    }
 
     int changed = 0;
     for (uint32_t i = 0; i < RAM_SIZE; i++) changed += seen[i];

@@ -6063,3 +6063,54 @@ A general point this project keeps re-learning, now from a new direction: a metr
 computed over a population you do not control will be dominated by whatever is most
 numerous in it. Percentage agreement over "all cells that changed" was never
 measuring what it appeared to measure.
+
+## 72. braf WAS BRANCHING TO THE WRONG PLACE, AND EVERY SWITCH STATEMENT WITH IT
+
+Section 71 left the native core at 79 percent on control state with no explanation.
+The way to find out was to stop comparing whole drives, where one bad task poisons
+shared state for 394 others, and compare each task on its own against the p-code
+emulator. 395 single-task runs under p-code across fourteen workers, the same 395
+natively in under two minutes.
+
+**140 of the first 151 tasks were byte for byte identical.** The core was right
+almost everywhere, and eleven tasks were carrying the whole difference - which is a
+much better problem than a diffuse seven percent.
+
+The worst was `0x0002CD9C`, the gather this project depends on. Native reached the
+gather and ran it correctly - the trace shows `0xFFFF30FB` copied to `0xFFFF8E47`
+exactly as it should - and then diverged afterwards, ending up executing the
+interrupt vector table at `0x0000002E`.
+
+Tracing back three instructions found it:
+
+    0004B812  mov.w @(r0,r2),r0    fetch a 16-bit offset from a jump table
+    0004B814  braf r0              branch relative
+    0004B816  nop                  delay slot
+
+`braf Rn` is **PC + 4 + Rn**. This core branched to `Rn` absolutely. The value in
+the register is a small displacement - 0x2E in this case - so every switch
+statement in the firmware jumped into the interrupt vector table instead of its
+case body.
+
+That also retires an excuse. Section 67b attributed the "executing data at odd
+addresses" to tasks entered with zeroed registers wandering, and treated it as a
+harness artefact both emulators shared. It was not. It was this bug, in this core,
+and calling it an artefact of the experiment delayed finding it.
+
+### 72a. Two metrics that disagree, and which one to believe
+
+After the fix, of 293 tasks compared: **278 identical, 15 differing**. The gather
+is no longer among them.
+
+The whole-drive figure barely moved - 79.45 percent to 78.20. That is not a
+contradiction. The fix means the core now executes the real case bodies rather than
+falling into the vector table, so it touches 897 addresses where it touched 818,
+and the fifteen tasks that still diverge have more state to diverge in. Over sixty
+ticks with 395 tasks sharing memory, one wrong task is enough to move a great deal.
+
+So per-task comparison is the instrument, and whole-drive percentage is not. The
+same lesson as section 71 from the other direction: a metric aggregated over a
+population you do not control tells you about the population, not the thing you are
+trying to measure.
+
+Fifteen tasks left, `0x0006B6A0` the largest at 31 conflicting cells.
