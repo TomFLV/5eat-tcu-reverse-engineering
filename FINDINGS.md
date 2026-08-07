@@ -6291,3 +6291,24 @@ So the same fix applies: run them inside a drive, with the profile that section 
 built and the tasks section 70 filtered, and record write sets per function. The
 machinery for that already exists - it is the drive harness with the write-set
 recorder attached - and it is the next thing to do rather than a new idea.
+
+### 75c. Warm, but measured wrong
+
+Running the readers inside a drive rather than cold was the right correction and
+the measurement around it was wrong, so it returned zero where cold returned five.
+
+The drive baseline writes 9,318 addresses, which includes every address the Select
+Monitor names - the controller writes them, that is what they are for. Attributing
+to a function only what it wrote *beyond* the baseline therefore subtracts away the
+entire signal. Cold runs found five names precisely because there was no baseline
+to subtract.
+
+The instrument needed is per-task write sets: one warm run, with each write
+attributed to whichever task was executing at the time. That gives what every task
+writes, in a state the firmware recognises, without a subtraction to destroy it -
+and it answers the same question for all 395 tasks at once rather than 20.
+
+That is a contained change to the core - a current-task index and a write set per
+task - and it is the next thing to build. Recorded rather than done, because a
+measurement that returns zero for a reason you understand is a better place to stop
+than one that returns five for a reason you do not.

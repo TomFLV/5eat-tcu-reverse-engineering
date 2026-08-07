@@ -71,19 +71,54 @@ def shipped_headers():
     return out
 
 
-def write_set(entry):
-    """Every RAM address the function writes, observed rather than inferred."""
-    ws = "%s/w_%08X.txt" % (WIN, entry)
+# The controller's own task list, run before the function under test so it starts
+# from a state the firmware would recognise rather than from zeroed RAM.
+TASKS = "/mnt/d/5eat-work/tasks_ctl.txt"
+PROFILE = "/mnt/d/5eat-work/drive_short.csv"
+
+
+def write_set(entry, warm=True):
+    """Every RAM address the function writes.
+
+    Cold - entered with zeroed registers and no vehicle state - a function that
+    begins by checking whether the engine is running takes its early exit and
+    writes nothing, which is how the first version of this named five tables out
+    of 185. Warm, the controller's tasks run first over a real drive profile, so
+    the state the function tests is the state a driven car would have produced.
+
+    The baseline is the same drive without the function appended, so what is
+    attributed to it is what it added rather than everything the drive touched.
+    """
+    tag = "%08X" % entry
+    ws = "%s/w_%s.txt" % (WIN, tag)
+    entries = open("D:/5eat-work/tasks_ctl.txt").read().strip() if warm else ""
+    spec = (entries + "+0x%08X" % entry) if warm else "0x%08X" % entry
+    with open("%s/e_%s.txt" % (WIN, tag), "w", newline="\n") as fh:
+        fh.write(spec)
     env = dict(os.environ)
     env["WSLENV"] = "SH2_WRITESET/u"
-    env["SH2_WRITESET"] = "%s/w_%08X.txt" % (LIN, entry)
-    subprocess.run(["wsl", SH2, ROM_L, LIN + "/empty.csv",
-                    LIN + "/out.csv", "0x%08X" % entry, "20000"],
+    env["SH2_WRITESET"] = "%s/w_%s.txt" % (LIN, tag)
+    subprocess.run(["wsl", SH2, ROM_L,
+                    PROFILE if warm else LIN + "/empty.csv",
+                    LIN + "/out.csv", "@%s/e_%s.txt" % (LIN, tag), "5000"],
                    capture_output=True, env=env)
     if not os.path.exists(ws) or not os.path.getsize(ws):
         return set()
     lines = open(ws).read().split()
     return {int(x, 16) for x in lines[1:]}
+
+
+def baseline_set():
+    """What the drive writes with no extra function, so it can be subtracted."""
+    ws = "%s/w_base.txt" % WIN
+    env = dict(os.environ)
+    env["WSLENV"] = "SH2_WRITESET/u"
+    env["SH2_WRITESET"] = "%s/w_base.txt" % LIN
+    subprocess.run(["wsl", SH2, ROM_L, PROFILE, LIN + "/out.csv",
+                    "@" + TASKS, "5000"], capture_output=True, env=env)
+    if not os.path.exists(ws) or not os.path.getsize(ws):
+        return set()
+    return {int(x, 16) for x in open(ws).read().split()[1:]}
 
 
 def main():
@@ -115,9 +150,11 @@ def main():
     sys.stderr.write("%d shipped tables, %d distinct reading functions\n"
                      % (len(headers), len(fn_tables)))
 
+    base = baseline_set()
+    sys.stderr.write("drive baseline writes %d addresses\n" % len(base))
     result, done = {}, 0
     for f, tabs in sorted(fn_tables.items()):
-        ws = write_set(f)
+        ws = write_set(f) - base
         known = sorted({names[a] for a in ws if a in names})
         done += 1
         if done % 25 == 0:
