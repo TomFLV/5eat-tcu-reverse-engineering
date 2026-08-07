@@ -1,0 +1,145 @@
+﻿python : 24 of 31 frames have a reader in the cross-reference
+At line:1 char:358
++ ... gineering"; python tools/denso_can_sim.py --map --ticks 6 --json tool ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (24 of 31 frames...cross-reference:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  1/248  231 byte 0 -> 22 addresses  Engine Speed
+  2/248  231 byte 1 -> 15 addresses
+  3/248  231 byte 2 -> 19 addresses
+  4/248  231 byte 3 -> 2 addresses
+  5/248  231 byte 4 -> 7 addresses  Accelerator Pedal Travel
+  6/248  231 byte 5 -> 2 addresses
+  7/248  231 byte 6 -> 2 addresses
+  8/248  231 byte 7 -> 1 addresses
+  9/248  232 byte 0 -> 2 addresses
+  10/248  232 byte 1 -> 2 addresses
+  11/248  232 byte 2 -> 2 addresses
+  12/248  232 byte 3 -> 2 addresses
+  13/248  232 byte 4 -> 4 addresses
+  14/248  232 byte 5 -> 2 addresses
+  15/248  232 byte 6 -> 1 addresses
+  16/248  232 byte 7 -> 1 addresses
+  17/248  235 byte 0 -> 1 addresses
+  18/248  235 byte 1 -> 1 addresses
+  19/248  235 byte 2 -> 1 addresses
+  20/248  235 byte 3 -> 3 addresses
+  21/248  235 byte 4 -> 3 addresses
+  22/248  235 byte 5 -> 1 addresses
+  23/248  235 byte 6 -> 1 addresses
+  24/248  235 byte 7 -> 1 addresses
+  49/248  331 byte 0 -> 1 addresses
+  50/248  331 byte 1 -> 1 addresses
+  51/248  331 byte 2 -> 2 addresses
+  52/248  331 byte 3 -> 2 addresses
+  55/248  331 byte 6 -> 1 addresses
+  57/248  333 byte 0 -> 4 addresses
+  58/248  333 byte 1 -> 3 addresses
+  59/248  333 byte 2 -> 22 addresses
+  60/248  333 byte 3 -> 4 addresses
+  62/248  333 byte 5 -> 1 addresses
+  63/248  333 byte 6 -> 1 addresses
+  64/248  333 byte 7 -> 2 addresses
+  65/248  334 byte 0 -> 2 addresses
+  66/248  334 byte 1 -> 4 addresses
+  67/248  334 byte 2 -> 2 addresses
+  68/248  334 byte 3 -> 4 addresses
+  69/248  334 byte 4 -> 2 addresses
+  70/248  334 byte 5 -> 4 addresses
+  71/248  334 byte 6 -> 2 addresses
+  72/248  334 byte 7 -> 4 addresses
+  78/248  351 byte 5 -> 1 addresses
+  81/248  3B1 byte 0 -> 2 addresses
+  82/248  3B1 byte 1 -> 2 addresses
+  83/248  3B1 byte 2 -> 2 addresses
+  85/248  3B1 byte 4 -> 1 addresses
+  89/248  410 byte 0 -> 1 addresses
+  93/248  410 byte 4 -> 19 addresses
+  94/248  410 byte 5 -> 22 addresses  Engine Speed
+  95/248  410 byte 6 -> 15 addresses
+  96/248  410 byte 7 -> 2 addresses
+  97/248  411 byte 0 -> 1 addresses
+  100/248  411 byte 3 -> 2 addresses
+  102/248  411 byte 5 -> 3 addresses
+  103/248  411 byte 6 -> 1 addresses
+  104/248  411 byte 7 -> 2 addresses
+  105/248  412 byte 0 -> 7 addresses  Accelerator Pedal Travel
+  106/248  412 byte 1 -> 1 addresses
+  107/248  412 byte 2 -> 1 addresses
+  108/248  412 byte 3 -> 73 addresses
+  109/248  412 byte 4 -> 59 addresses
+  110/248  412 byte 5 -> 1 addresses
+  111/248  412 byte 6 -> 3 addresses
+  112/248  412 byte 7 -> 3 addresses
+  140/248  451 byte 3 -> 2 addresses
+  142/248  451 byte 5 -> 1 addresses
+  143/248  451 byte 6 -> 1 addresses
+  144/248  451 byte 7 -> 3 addresses
+  145/248  491 byte 0 -> 2 addresses
+  147/248  491 byte 2 -> 4 addresses  Gear Position
+  148/248  491 byte 3 -> 1 addresses
+  153/248  511 byte 0 -> 1 addresses
+  154/248  511 byte 1 -> 1 addresses
+  155/248  511 byte 2 -> 2 addresses
+  156/248  511 byte 3 -> 2 addresses
+  157/248  511 byte 4 -> 22 addresses
+  158/248  511 byte 5 -> 1 addresses
+  159/248  511 byte 6 -> 4 addresses
+  160/248  511 byte 7 -> 1 addresses
+  162/248  512 byte 1 -> 3 addresses
+  163/248  512 byte 2 -> 4 addresses
+  164/248  512 byte 3 -> 3 addresses
+  165/248  512 byte 4 -> 2 addresses
+  166/248  512 byte 5 -> 3 addresses
+  169/248  513 byte 0 -> 2 addresses
+  170/248  513 byte 1 -> 4 addresses
+  171/248  513 byte 2 -> 2 addresses
+  172/248  513 byte 3 -> 4 addresses
+  173/248  513 byte 4 -> 2 addresses
+  174/248  513 byte 5 -> 4 addresses
+  175/248  513 byte 6 -> 2 addresses
+  176/248  513 byte 7 -> 4 addresses
+  177/248  514 byte 0 -> 2 addresses
+  178/248  514 byte 1 -> 1 addresses
+  179/248  514 byte 2 -> 2 addresses
+  188/248  520 byte 3 -> 1 addresses
+  197/248  521 byte 4 -> 1 addresses
+  201/248  550 byte 0 -> 1 addresses
+  203/248  550 byte 2 -> 1 addresses
+  208/248  550 byte 7 -> 3 addresses  Engine Speed
+  212/248  600 byte 3 -> 2 addresses
+  213/248  600 byte 4 -> 3 addresses
+  215/248  600 byte 6 -> 1 addresses
+  216/248  600 byte 7 -> 2 addresses
+  217/248  601 byte 0 -> 1 addresses
+  221/248  601 byte 4 -> 2 addresses
+  222/248  601 byte 5 -> 4 addresses
+  226/248  7DF byte 1 -> 1 addresses
+  234/248  7E1 byte 1 -> 1 addresses
+
+112 of 248 frame bytes reach something downstream
+
+6 reach an address the Select Monitor table names:
+
+  frame 0x231 byte 0  ->  Engine Speed
+  frame 0x231 byte 4  ->  Accelerator Pedal Travel
+  frame 0x410 byte 5  ->  Engine Speed
+  frame 0x412 byte 0  ->  Accelerator Pedal Travel
+  frame 0x491 byte 2  ->  Gear Position
+  frame 0x550 byte 7  ->  Engine Speed
+
+10 reach the control block at 0xFFFF8E44-8E8C:
+
+  frame 0x231 byte 0  ->  FFFF8E53
+  frame 0x231 byte 1  ->  FFFF8E52
+  frame 0x231 byte 2  ->  FFFF8E48
+  frame 0x231 byte 4  ->  FFFF8E47, FFFF8E4B
+  frame 0x410 byte 4  ->  FFFF8E48
+  frame 0x410 byte 5  ->  FFFF8E53
+  frame 0x410 byte 6  ->  FFFF8E52
+  frame 0x412 byte 0  ->  FFFF8E47, FFFF8E4B
+  frame 0x412 byte 3  ->  FFFF8E57, FFFF8E59, FFFF8E5B, FFFF8E5F
+  frame 0x412 byte 4  ->  FFFF8E56, FFFF8E57, FFFF8E58, FFFF8E59, FFFF8E5A, FFFF8E5B, FFFF8E5E, FFFF8E5F
+
+-> tools/denso_can_signal_map.json

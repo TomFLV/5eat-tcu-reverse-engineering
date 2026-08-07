@@ -74,12 +74,51 @@ static uint32_t  unimpl_first_pc[0x10000];
  * (FINDINGS 56c). Where that matters it matters in both, so the differential
  * check still holds. */
 
+/* ---- peripherals -------------------------------------------------------
+ * Enough hardware to let the firmware boot rather than a model of the SH7058.
+ *
+ * Booting from the reset vector stops almost immediately in a four-instruction
+ * loop polling 0xFFFFED18 for bit 15 - a hardware ready flag. Nothing sets it, so
+ * the firmware waits forever, which is the correct behaviour for a chip whose
+ * peripherals do not exist.
+ *
+ * Each entry here is a register the boot demonstrably waits on, added when the
+ * trace shows the firmware stuck on it. Returning "ready" for a status bit is a
+ * decision about the simulated car - it says the hardware works - and is recorded
+ * as such rather than hidden in a default.
+ */
+/* Status bits the firmware polls for, keyed by address.
+ *
+ * These registers live inside the address range this core treats as RAM, so a
+ * write sticks and the read returns exactly what was written - which means a
+ * completion bit the hardware would have set never sets, and the firmware waits
+ * for it forever. Each entry says "this operation finished", which is a statement
+ * about the simulated hardware and belongs in one visible place rather than in a
+ * default that silently makes every wait succeed.
+ */
+static uint32_t periph_or(uint32_t a) {
+    switch (a) {
+    case 0xFFFFED18: return 0x8000;   /* polled at 0x00000C2E, bit 15 */
+    case 0xFFFFECCC: return 0x0002;   /* polled at 0x000081D8, bit 1  */
+    /* 0xFFFFF818 sits in the SH7058 serial block and bit 7 of a status byte
+     * there is the transmitter-empty flag. The peripheral identity is inferred
+     * from the address range rather than read out of a datasheet; what is
+     * directly observed is that the firmware waits on this bit and proceeds
+     * once it is set. */
+    case 0xFFFFF818: return 0x0080;   /* polled at 0x00003126, bit 7  */
+    case 0xFFFFF838: return 0x0080;   /* polled at 0x00003162 */
+    case 0xFFFFF858: return 0x0080;   /* polled at 0x0000319A */
+    default:         return 0;
+    }
+}
+
 static inline uint32_t rd8(uint32_t a) {
     if (a < ROM_SIZE) return rom[a];
-    if (a - RAM_BASE < RAM_SIZE) return ram[a - RAM_BASE];
+    if (a - RAM_BASE < RAM_SIZE)
+        return ram[a - RAM_BASE] | (a >= 0xFFFFC000u ? periph_or(a) & 0xFFu : 0);
     return 0;
 }
-static inline uint32_t rd16(uint32_t a) {
+static inline uint32_t rd16_raw(uint32_t a) {
     if (a < ROM_SIZE - 1) return ((uint32_t)rom[a] << 8) | rom[a + 1];
     if (a - RAM_BASE < RAM_SIZE - 1) {
         uint32_t o = a - RAM_BASE;
@@ -87,8 +126,18 @@ static inline uint32_t rd16(uint32_t a) {
     }
     return 0;
 }
+/* The status bit is applied once, at the width the instruction actually used.
+ * Folding it into rd16 and then building rd32 out of two rd16 calls puts a low
+ * half's bit into the high half of the word, so the thirty-two bit wait sees a
+ * bit nobody polls while the sixteen bit wait sees nothing at all - both stall,
+ * for opposite reasons. rd32 therefore composes raw halves. */
+static inline uint32_t rd16(uint32_t a) {
+    uint32_t v = rd16_raw(a);
+    return a >= 0xFFFFC000u ? v | (periph_or(a) & 0xFFFFu) : v;
+}
 static inline uint32_t rd32(uint32_t a) {
-    return (rd16(a) << 16) | rd16(a + 2);
+    uint32_t v = (rd16_raw(a) << 16) | rd16_raw(a + 2);
+    return a >= 0xFFFFC000u ? v | periph_or(a) : v;
 }
 /* SH2_WATCH=<hex address> reports every write to it with the instruction that
  * did it. Guessing at which of four hundred tasks wrote a byte is hopeless; this
@@ -101,6 +150,72 @@ static uint32_t watch_pc;
  * unnoticed on every tick of every drive. */
 static uint8_t  wrote[RAM_SIZE];
 static int      track_writes;
+/* SH2_TASKSETS=<file> records the write set of each entry separately.
+ *
+ * A single combined write set answers "did the drive touch this address", which
+ * cannot name a table: 185 tables share 395 tasks and the combined set makes them
+ * all look identical. Per task, a table's reader is the task whose writes include
+ * the addresses the Select Monitor names - and that is a name with evidence
+ * behind it rather than a guess from the table's shape.
+ *
+ * One bit per address per task: 395 x 65536 bits is about three megabytes, which
+ * is nothing, and it means one warm run replaces 395. */
+static uint8_t *taskset;        /* nentries * RAM_SIZE, one byte per address */
+static int      cur_task = -1;
+static int      track_tasksets;
+/* SH2_TASKPCS=<file> records which ROM addresses each task executes.
+ *
+ * The static call graph resolves 1,322 functions' callees and cannot follow
+ * indirect dispatch, which is how the twenty functions that read the shipped
+ * tables came out unreachable from all 395 tasks - an overlap of exactly zero,
+ * which is a statement about the graph rather than about the firmware. Execution
+ * has no such blind spot: a task either runs an instruction or it does not. */
+static uint8_t *taskpcs;        /* nentries * ROM_SIZE/2, one byte per halfword */
+static int      track_taskpcs;
+/* SH2_FNSETS=<file> attributes each write to the innermost function running.
+ *
+ * Per task was too coarse to name anything: 76 tables came back sharing one
+ * task's write set, so all 76 carried identical evidence. That places them in a
+ * subsystem, which is worth having and is not a name. A function is the unit the
+ * evidence needs to be keyed on, and the call stack gives it - push on jsr and
+ * bsr, pop on rts, attribute to the top.
+ *
+ * The stack is approximate. Tail calls, longjmp-style returns and any function
+ * that manipulates pr directly will misattribute, so a wrong entry is possible
+ * where a missing one would be safer. Depth is capped and underflow is clamped
+ * rather than wrapped, so the failure is a wrong attribution and never a crash. */
+#define FN_STACK_MAX 64
+static uint32_t fn_stack[FN_STACK_MAX];
+static int      fn_depth;
+static int      track_fnsets;
+/* Open-addressed, because a function may write anywhere in RAM and most write
+ * almost nothing: a dense array would be 5,464 x 65,536. */
+#define FN_MAP_BITS 20
+#define FN_MAP_SIZE (1u << FN_MAP_BITS)
+static uint64_t *fn_map;        /* (fn << 20) | ram offset, 0 = empty */
+static uint32_t  fn_map_used;
+/* SH2_HOT=1 counts executions per address. A long run that ends at the step limit
+ * says nothing about why; a histogram says whether it is looping in four
+ * instructions or working through a hundred thousand. Tracing would answer the
+ * same question and produce forty million lines to do it. */
+static uint32_t *hot;
+static int       track_hot;
+/* SH2_CANFEED=<file> writes CAN frame payloads into the receive buffers at the
+ * start of every tick. Lines are "<ram address> <hex bytes>".
+ *
+ * The alternative was booting the engine controller alongside this one and
+ * letting it transmit. That is the more faithful arrangement and also the slower
+ * one - it needs a second bring-up, an interrupt model, and a CAN controller,
+ * to deliver bytes this project already knows the layout of. The receive table
+ * at 0x08600E gives each frame's fixed buffer, so writing the payload there puts
+ * the firmware in exactly the state the hardware would have left it in.
+ *
+ * What this does not simulate is the delivery itself: no mailbox flags, no
+ * interrupt, no timeout logic. Firmware that checks whether a frame is stale
+ * will not see staleness here. */
+#define CAN_FEED_MAX 64
+static struct { uint32_t addr; uint8_t len; uint8_t data[8]; } can_feed[CAN_FEED_MAX];
+static int can_feed_n;
 
 static inline void wr8(uint32_t a, uint32_t v) {
     if (a - RAM_BASE < RAM_SIZE) {
@@ -108,6 +223,30 @@ static inline void wr8(uint32_t a, uint32_t v) {
             fprintf(stderr, "WRITE %08X = %02X  by pc %08X\n",
                     a, (uint8_t)v, watch_pc);
         if (track_writes) wrote[a - RAM_BASE] = 1;
+        if (track_tasksets && cur_task >= 0)
+            taskset[(size_t)cur_task * RAM_SIZE + (a - RAM_BASE)] = 1;
+        /* Every frame on the stack, not just the innermost.
+         *
+         * Innermost alone recorded zero writes for all twenty functions that read
+         * the shipped tables, while 250 of their 274 reference sites demonstrably
+         * executed. They read a table and hand the work to a helper, so the helper
+         * gets the credit and the reader looks inert. Crediting the whole stack
+         * answers "this function, or something it called, wrote here", which is
+         * the question naming actually asks.
+         *
+         * The cost is that a deep generic caller accumulates everything beneath
+         * it, so evidence gets weaker the further up it comes from. */
+        if (track_fnsets && fn_map_used < FN_MAP_SIZE / 2) {
+            for (int f = 0; f < fn_depth; f++) {
+                uint64_t key = ((uint64_t)fn_stack[f] << 20)
+                             | (uint64_t)(a - RAM_BASE);
+                uint32_t h = (uint32_t)((key * 0x9E3779B97F4A7C15ull) >> 44)
+                           & (FN_MAP_SIZE - 1);
+                while (fn_map[h] && fn_map[h] != key + 1)
+                    h = (h + 1) & (FN_MAP_SIZE - 1);
+                if (!fn_map[h]) { fn_map[h] = key + 1; fn_map_used++; }
+            }
+        }
         ram[a - RAM_BASE] = (uint8_t)v;
     }
 }
@@ -165,7 +304,10 @@ static void step_one(void) {
             else goto unimplemented;
             break;
         case 0xB:
-            if (op == 0x000B) { branch(cpu.pr); }                 /* rts */
+            if (op == 0x000B) {                                  /* rts */
+                if (track_fnsets && fn_depth > 0) fn_depth--;
+                branch(cpu.pr);
+            }
             else if (op == 0x002B) { branch(cpu.vbr); }           /* rte, approximated */
             else goto unimplemented;
             break;
@@ -318,7 +460,9 @@ static void step_one(void) {
         case 0x10: R[n] -= 1; SET_T(R[n] == 0); break;           /* dt */
         case 0x11: SET_T((int32_t)R[n] >= 0); break;             /* cmp/pz */
         case 0x15: SET_T((int32_t)R[n] > 0); break;              /* cmp/pl */
-        case 0x0B: cpu.pr = pc + 4; branch(R[n]); break;         /* jsr */
+        case 0x0B:                                               /* jsr */
+            if (track_fnsets && fn_depth < FN_STACK_MAX) fn_stack[fn_depth++] = R[n];
+            cpu.pr = pc + 4; branch(R[n]); break;
         case 0x2B: branch(R[n]); break;                          /* jmp */
         case 0x0E: cpu.sr = R[n]; break;                         /* ldc SR */
         case 0x1E: cpu.gbr = R[n]; break;
@@ -420,7 +564,9 @@ static void step_one(void) {
     case 0xA: { int32_t disp = (op & 0x800) ? (int32_t)(op | 0xFFFFF000) : (op & 0xFFF);
                 branch(pc + 4 + (disp << 1)); break; }           /* bra */
     case 0xB: { int32_t disp = (op & 0x800) ? (int32_t)(op | 0xFFFFF000) : (op & 0xFFF);
-                cpu.pr = pc + 4; branch(pc + 4 + (disp << 1)); break; }  /* bsr */
+                uint32_t tgt = pc + 4 + (disp << 1);
+                if (track_fnsets && fn_depth < FN_STACK_MAX) fn_stack[fn_depth++] = tgt;
+                cpu.pr = pc + 4; branch(tgt); break; }  /* bsr */
 
     case 0xC:
         switch ((op >> 8) & 0xF) {
@@ -523,6 +669,11 @@ static uint32_t  trace_from;   /* SH2_TRACE_FROM=pc arms the trace at that pc */
 static int       trace_armed;
 
 static long long run_entry(uint32_t entry, long long maxsteps) {
+    /* The entry is itself a function, and the stack starts empty for each one:
+     * a task that returns fewer times than it calls would otherwise leak its
+     * depth into the next task and attribute that task's writes to this one. */
+    fn_depth = 0;
+    if (track_fnsets) fn_stack[fn_depth++] = entry;
     cpu.pc = entry;
     cpu.r[15] = STACK_TOP;
     cpu.pr = SENTINEL;
@@ -533,6 +684,9 @@ static long long run_entry(uint32_t entry, long long maxsteps) {
         uint32_t pc = cpu.pc;
         if (pc == SENTINEL || pc == 0 || pc >= ROM_SIZE) break;
         if (cpu.halted) break;
+        if (track_hot && pc < ROM_SIZE) hot[pc >> 1]++;
+        if (track_taskpcs && cur_task >= 0 && pc < ROM_SIZE)
+            taskpcs[(size_t)cur_task * (ROM_SIZE / 2) + (pc >> 1)] = 1;
         if (trace_from && pc == trace_from) trace_armed = 1;
         if (trace_left > 0 && (!trace_from || trace_armed)) {
             /* Label every register this prints, and print exactly what the labels
@@ -540,11 +694,13 @@ static long long run_entry(uint32_t entry, long long maxsteps) {
              * the arguments were changed, so "r1" showed r2 and "r15" showed r4.
              * Half an hour went into diagnosing a register that was never wrong.
              * A debugging instrument that lies is worse than none. */
-            fprintf(stderr, "%08X %04X  r0=%08X r1=%08X r2=%08X r3=%08X "
-                            "r4=%08X r5=%08X r6=%08X r15=%08X T=%u\n",
-                    pc, (uint16_t)rd16(pc), cpu.r[0], cpu.r[1], cpu.r[2],
-                    cpu.r[3], cpu.r[4], cpu.r[5], cpu.r[6], cpu.r[15],
-                    (unsigned)GET_T);
+            /* All sixteen, from the loop, so the set printed cannot drift out of
+             * step with the set named again. Chasing a wait held in r14 with a
+             * seven-register trace is the same bug wearing a different hat. */
+            fprintf(stderr, "%08X %04X ", pc, (uint16_t)rd16(pc));
+            for (int i = 0; i < 16; i++)
+                fprintf(stderr, " r%d=%08X", i, cpu.r[i]);
+            fprintf(stderr, " T=%u\n", (unsigned)GET_T);
             trace_left--;
         }
         step_one();
@@ -567,6 +723,36 @@ int main(int argc, char **argv) {
     { const char *t = getenv("SH2_TRACE"); if (t) trace_left = atoll(t); }
     { const char *w = getenv("SH2_WATCH"); if (w) watch_addr = (uint32_t)strtoul(w, 0, 16); }
     { const char *f = getenv("SH2_TRACE_FROM"); if (f) trace_from = (uint32_t)strtoul(f, 0, 16); }
+    if (getenv("SH2_HOT")) {
+        hot = calloc(ROM_SIZE / 2, sizeof *hot);
+        track_hot = hot != NULL;
+    }
+    const char *tsfile = getenv("SH2_TASKSETS");
+    const char *tpfile = getenv("SH2_TASKPCS");
+    const char *fnfile = getenv("SH2_FNSETS");
+    { const char *cf = getenv("SH2_CANFEED");
+      if (cf) {
+          FILE *f = fopen(cf, "r");
+          if (!f) { fprintf(stderr, "cannot open SH2_CANFEED %s\n", cf); return 1; }
+          char ln[256];
+          while (fgets(ln, sizeof ln, f) && can_feed_n < CAN_FEED_MAX) {
+              if (ln[0] == '#' || ln[0] == '\n') continue;
+              char hex[64];
+              uint32_t a;
+              if (sscanf(ln, "%x %63s", &a, hex) != 2) continue;
+              int L = 0;
+              for (int i = 0; hex[i] && hex[i + 1] && L < 8; i += 2) {
+                  unsigned b;
+                  if (sscanf(hex + i, "%2x", &b) != 1) break;
+                  can_feed[can_feed_n].data[L++] = (uint8_t)b;
+              }
+              can_feed[can_feed_n].addr = a;
+              can_feed[can_feed_n].len = (uint8_t)L;
+              can_feed_n++;
+          }
+          fclose(f);
+          fprintf(stderr, "CAN feed: %d frames\n", can_feed_n);
+      } }
     const char *wsfile = getenv("SH2_WRITESET");
     if (wsfile) track_writes = 1;
 
@@ -598,6 +784,25 @@ int main(int argc, char **argv) {
         while (*p == '+' || *p == 'x' || *p == '0') { if (*p == '+') { p++; break; } p++; }
     }
 
+    if (fnfile) {
+        fn_map = calloc(FN_MAP_SIZE, sizeof *fn_map);
+        track_fnsets = fn_map != NULL;
+    }
+    if (tpfile) {
+        taskpcs = calloc((size_t)nentries * (ROM_SIZE / 2), 1);
+        track_taskpcs = taskpcs != NULL;
+        if (!track_taskpcs)
+            fprintf(stderr, "cannot allocate per-task pc sets for %d entries\n",
+                    nentries);
+    }
+    if (tsfile) {
+        taskset = calloc((size_t)nentries * RAM_SIZE, 1);
+        track_tasksets = taskset != NULL;
+        if (!track_tasksets)
+            fprintf(stderr, "cannot allocate per-task write sets for %d entries\n",
+                    nentries);
+    }
+
     FILE *pf = fopen(argv[2], "r");
     if (!pf) { perror(argv[2]); return 1; }
     FILE *of = fopen(argv[3], "w");
@@ -626,7 +831,17 @@ int main(int argc, char **argv) {
             }
             p = strchr(p, ',');
         }
-        for (int i = 0; i < nentries; i++) total += run_entry(entries[i], maxsteps);
+        /* Frames land before the tasks run, so a task that reads a receive
+         * buffer sees this tick's frame rather than the previous one's. */
+        for (int i = 0; i < can_feed_n; i++)
+            for (int b = 0; b < can_feed[i].len; b++)
+                wr8(can_feed[i].addr + b, can_feed[i].data[b]);
+
+        for (int i = 0; i < nentries; i++) {
+            cur_task = i;
+            total += run_entry(entries[i], maxsteps);
+        }
+        cur_task = -1;
 
         memcpy(cur, ram, RAM_SIZE);
         uint8_t *snap = malloc(RAM_SIZE);
@@ -653,6 +868,72 @@ int main(int argc, char **argv) {
     fclose(of);
     fclose(pf);
 
+    /* SH2_DUMP=<file> writes the whole RAM image at the end of the run.
+     * The CSV records only addresses that change from tick to tick, which is the
+     * right filter for a drive and precisely the wrong one for comparing two
+     * steady states: hold an input at two values and every response is constant
+     * within each run, so the thing being measured is the thing being discarded.
+     * Comparing final images has neither problem. */
+    { const char *df = getenv("SH2_DUMP");
+      if (df) {
+          FILE *dfp = fopen(df, "wb");
+          if (dfp) { fwrite(ram, 1, RAM_SIZE, dfp); fclose(dfp); }
+      } }
+
+    if (track_fnsets) {
+        /* "<function> <address>" per line. Sorting and grouping is the reader's
+         * job; emitting pairs keeps this end simple and the format obvious. */
+        FILE *ff = fopen(fnfile, "w");
+        if (ff) {
+            uint32_t n = 0;
+            for (uint32_t i = 0; i < FN_MAP_SIZE; i++) {
+                if (!fn_map[i]) continue;
+                uint64_t key = fn_map[i] - 1;
+                fprintf(ff, "%08X %08X\n", (uint32_t)(key >> 20),
+                        (uint32_t)(RAM_BASE + (key & 0xFFFFF)));
+                n++;
+            }
+            fclose(ff);
+            fprintf(stderr, "%u function/address pairs -> %s\n", n, fnfile);
+        }
+    }
+
+    if (track_taskpcs) {
+        FILE *pf2 = fopen(tpfile, "w");
+        if (pf2) {
+            for (int i = 0; i < nentries; i++) {
+                size_t b = (size_t)i * (ROM_SIZE / 2);
+                int n = 0;
+                for (uint32_t a = 0; a < ROM_SIZE / 2; a++) if (taskpcs[b + a]) n++;
+                fprintf(pf2, "%08X %d", entries[i], n);
+                for (uint32_t a = 0; a < ROM_SIZE / 2; a++)
+                    if (taskpcs[b + a]) fprintf(pf2, " %06X", a << 1);
+                fprintf(pf2, "\n");
+            }
+            fclose(pf2);
+            fprintf(stderr, "per-task executed addresses -> %s\n", tpfile);
+        }
+    }
+
+    if (track_tasksets) {
+        FILE *tf = fopen(tsfile, "w");
+        if (tf) {
+            for (int i = 0; i < nentries; i++) {
+                int n = 0;
+                for (uint32_t a = 0; a < RAM_SIZE; a++)
+                    if (taskset[(size_t)i * RAM_SIZE + a]) n++;
+                fprintf(tf, "%08X %d", entries[i], n);
+                for (uint32_t a = 0; a < RAM_SIZE; a++)
+                    if (taskset[(size_t)i * RAM_SIZE + a])
+                        fprintf(tf, " %08X", RAM_BASE + a);
+                fprintf(tf, "\n");
+            }
+            fclose(tf);
+            fprintf(stderr, "per-task write sets for %d entries -> %s\n",
+                    nentries, tsfile);
+        }
+    }
+
     if (wsfile) {
         FILE *wf = fopen(wsfile, "w");
         if (wf) {
@@ -662,6 +943,18 @@ int main(int argc, char **argv) {
             for (uint32_t i = 0; i < RAM_SIZE; i++)
                 if (wrote[i]) fprintf(wf, "%08X\n", RAM_BASE + i);
             fclose(wf);
+        }
+    }
+
+    if (track_hot) {
+        fprintf(stderr, "hottest addresses:\n");
+        for (int pass = 0; pass < 8; pass++) {
+            uint32_t best = 0, bi = 0;
+            for (uint32_t i = 0; i < ROM_SIZE / 2; i++)
+                if (hot[i] > best) { best = hot[i]; bi = i; }
+            if (!best) break;
+            fprintf(stderr, "  %08X  %u\n", bi << 1, best);
+            hot[bi] = 0;
         }
     }
 

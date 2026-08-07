@@ -1,1114 +1,2996 @@
 {
- "0A2280": {
+ "0E5208": {
+  "evidence": "task",
   "functions": [
-   "00011C0A",
-   "00033858"
+   "000671FE"
   ],
-  "named": [],
-  "responds_to": [
-   "FFFFA01A"
-  ]
- },
- "0A2282": {
-  "functions": [
-   "00011C0A",
-   "00033858"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA01A"
-  ]
- },
- "0A2284": {
-  "functions": [
-   "00011C0A"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA01A"
-  ]
- },
- "0A228F": {
-  "functions": [
-   "000121AE"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA01A"
-  ]
- },
- "0A22A2": {
-  "functions": [
-   "000121AE"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA01A"
-  ]
- },
- "0A22A3": {
-  "functions": [
-   "000121AE"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA01A"
-  ]
- },
- "0A22A4": {
-  "functions": [
-   "000121AE"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA01A"
-  ]
- },
- "0A22A5": {
-  "functions": [
-   "000121AE"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA01A"
-  ]
- },
- "0A240C": {
-  "functions": [
-   "000121AE"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA01A"
-  ]
- },
- "0A2428": {
-  "functions": [
-   "000143A6"
-  ],
-  "named": [
-   "Accelerator Pedal Travel"
-  ],
-  "responds_to": []
- },
- "0B207C": {
-  "functions": [
-   "00017EF8"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B207D": {
-  "functions": [
-   "00017EF8"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B207E": {
-  "functions": [
-   "00017EF8"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B2080": {
-  "functions": [
-   "00017EF8"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B2082": {
-  "functions": [
-   "00017EF8"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B2084": {
-  "functions": [
-   "00017EF8"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B2086": {
-  "functions": [
-   "00017EF8"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B2088": {
-  "functions": [
-   "00017EF8"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B208A": {
-  "functions": [
-   "00017EF8"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B2322": {
-  "functions": [
-   "00019A4C",
-   "00019AAE"
-  ],
-  "named": [
-   "Battery Voltage (working copy)",
-   "Lateral G Sensor Voltage (working copy)"
-  ],
-  "responds_to": []
- },
- "0B2338": {
-  "functions": [
-   "0001B362"
-  ],
-  "named": [
-   "SI-Drive Mode"
-  ],
-  "responds_to": []
- },
- "0B2A46": {
-  "functions": [
-   "0005D6E0"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B353C": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B353E": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B3574": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B3578": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B357C": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B3580": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B3584": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B3588": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B358C": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B3590": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B3594": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B3598": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B359C": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B35A0": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B35C0": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B35C4": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B35C8": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B35CC": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B369C": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B36A0": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B36A4": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B36A8": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B36AC": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B36B0": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B3740": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B3744": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0B3748": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C27D8": {
-  "functions": [
-   "0005DED6",
-   "0005E362",
-   "0005E7E8"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C27DA": {
-  "functions": [
-   "0005E7E8"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C27EC": {
-  "functions": [
-   "0005DA52"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C27ED": {
-  "functions": [
-   "0005DA52"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C27EE": {
-  "functions": [
-   "0005DA52"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C27F0": {
-  "functions": [
-   "0005DA52"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C27F2": {
-  "functions": [
-   "0005DA52"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C27F4": {
-  "functions": [
-   "0005DA52"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C27F6": {
-  "functions": [
-   "0005DA52"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C27F8": {
-  "functions": [
-   "0005DA52"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C27FA": {
-  "functions": [
-   "0005DA52"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C27FC": {
-  "functions": [
-   "0005DA52"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C27FD": {
-  "functions": [
-   "0005DA52"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C27FE": {
-  "functions": [
-   "0005D6E0",
-   "0005DD56"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C2800": {
-  "functions": [
-   "0005D6E0",
-   "0005DD56"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C2802": {
-  "functions": [
-   "0005D6E0",
-   "0005DD56"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C2804": {
-  "functions": [
-   "0005D6E0",
-   "0005DD56"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C2810": {
-  "functions": [
-   "0005DA52"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0C2812": {
-  "functions": [
-   "0005DA52"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0CE22A": {
-  "functions": [
-   "0007986C"
-  ],
-  "named": [
-   "Automatic Transmission Learning Process; Fwd/B Hydraulic Pressure Switch; AUTO Mode Lamp; AUTO/MANUAL Mode Switch; Center Differential Relay; Parking Position Switch (working copy)",
-   "N Range; Hold Lamp; Traction Control System (TCS) Switch; P/N Signal; Torque Control Cut Signal; P Range; Power Mode Lamp; Economy Switch (working copy)"
-  ],
-  "responds_to": []
- },
- "0CE270": {
-  "functions": [
-   "00078CBE"
-  ],
-  "named": [
-   "ATF Temperature (working copy)"
-  ],
-  "responds_to": []
- },
- "0CE280": {
-  "functions": [
-   "00078CBE"
-  ],
-  "named": [
-   "ATF Temperature (working copy)"
-  ],
-  "responds_to": []
- },
- "0CE312": {
-  "functions": [
-   "000143A6",
-   "00079EC6",
-   "0007A160",
-   "0007A214",
-   "0007A336"
-  ],
-  "named": [
-   "Accelerator Pedal Travel"
-  ],
-  "responds_to": []
- },
- "0CE332": {
-  "functions": [
-   "00016BA4",
-   "00019A4C",
-   "00019AAE",
-   "000791EC"
-  ],
-  "named": [
-   "Battery Voltage (working copy)",
-   "Lateral G Sensor Voltage (working copy)",
-   "P/L Solenoid Valve Current"
-  ],
-  "responds_to": []
- },
- "0CE42C": {
-  "functions": [
-   "0007D2DA"
-  ],
-  "named": [
-   "D/C Solenoid Valve Current",
-   "F/B Solenoid Valve Current"
-  ],
-  "responds_to": []
- },
- "0CE42E": {
-  "functions": [
-   "0007D2DA"
-  ],
-  "named": [
-   "D/C Solenoid Valve Current",
-   "F/B Solenoid Valve Current"
-  ],
-  "responds_to": []
- },
- "0CE430": {
-  "functions": [
-   "0007D2DA"
-  ],
-  "named": [
-   "D/C Solenoid Valve Current",
-   "F/B Solenoid Valve Current"
-  ],
-  "responds_to": []
- },
- "0CE43C": {
-  "functions": [
-   "0007B4F6"
-  ],
-  "named": [
-   "Engine Speed",
-   "SI-Drive Mode"
-  ],
-  "responds_to": []
- },
- "0CE43D": {
-  "functions": [
-   "0007B4F6"
-  ],
-  "named": [
-   "Engine Speed",
-   "SI-Drive Mode"
-  ],
-  "responds_to": []
- },
- "0CE43E": {
-  "functions": [
-   "0007C288"
-  ],
-  "named": [
-   "P/L Solenoid Valve Current"
-  ],
-  "responds_to": []
- },
- "0CE440": {
-  "functions": [
-   "0007C288"
-  ],
-  "named": [
-   "P/L Solenoid Valve Current"
-  ],
-  "responds_to": []
- },
- "0CE442": {
-  "functions": [
-   "0007C4D0"
-  ],
-  "named": [
-   "AWD Solenoid Valve Current",
-   "H&LR/C Solenoid Valve Pressure"
-  ],
-  "responds_to": []
- },
- "0CE444": {
-  "functions": [
-   "0007C4D0"
-  ],
-  "named": [
-   "AWD Solenoid Valve Current",
-   "H&LR/C Solenoid Valve Pressure"
-  ],
-  "responds_to": []
- },
- "0CE446": {
-  "functions": [
-   "0007C4D0"
-  ],
-  "named": [
-   "AWD Solenoid Valve Current",
-   "H&LR/C Solenoid Valve Pressure"
-  ],
-  "responds_to": []
- },
- "0CE478": {
-  "functions": [
-   "0007C67C"
-  ],
-  "named": [
-   "F/B Solenoid Valve Pressure",
-   "H&LR/C Solenoid Valve Pressure",
-   "P/L Solenoid Valve Pressure"
-  ],
-  "responds_to": []
- },
- "0CE4B8": {
-  "functions": [
-   "0007C67C"
-  ],
-  "named": [
-   "F/B Solenoid Valve Pressure",
-   "H&LR/C Solenoid Valve Pressure",
-   "P/L Solenoid Valve Pressure"
-  ],
-  "responds_to": []
- },
- "0CE4C8": {
-  "functions": [
-   "0007C810"
-  ],
-  "named": [
-   "Fwd/B Solenoid Valve Target Pressure"
-  ],
-  "responds_to": []
- },
- "0CE4CA": {
-  "functions": [
-   "0007C810"
-  ],
-  "named": [
-   "Fwd/B Solenoid Valve Target Pressure"
-  ],
-  "responds_to": []
- },
- "0CE4CC": {
-  "functions": [
-   "0007C810"
-  ],
-  "named": [
-   "Fwd/B Solenoid Valve Target Pressure"
-  ],
-  "responds_to": []
- },
- "0CE4CD": {
-  "functions": [
-   "0007C810"
-  ],
-  "named": [
-   "Fwd/B Solenoid Valve Target Pressure"
-  ],
-  "responds_to": []
- },
- "0CE4D4": {
-  "functions": [
-   "0007CB46"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA442",
-   "FFFFA448"
-  ]
- },
- "0CE4D5": {
-  "functions": [
-   "0007CB46"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA442",
-   "FFFFA448"
-  ]
- },
- "0CE4D6": {
-  "functions": [
-   "0007CB46"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA442",
-   "FFFFA448"
-  ]
- },
- "0CE4D8": {
-  "functions": [
-   "0007CB46"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA442",
-   "FFFFA448"
-  ]
- },
- "0CE4DA": {
-  "functions": [
-   "0007CB46"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA442",
-   "FFFFA448"
-  ]
- },
- "0CE599": {
-  "functions": [
-   "0007B4F6"
-  ],
-  "named": [
-   "Engine Speed",
-   "SI-Drive Mode"
-  ],
-  "responds_to": []
- },
- "0CE59A": {
-  "functions": [
-   "0007B4F6"
-  ],
-  "named": [
-   "Engine Speed",
-   "SI-Drive Mode"
-  ],
-  "responds_to": []
- },
- "0CE5AE": {
-  "functions": [
-   "0007BC14",
-   "0007BC64"
+  "tasks": [
+   "000709F0",
+   "000709FE"
   ],
-  "named": [
+  "writes": [
    "AT Turbine Speed 1",
-   "Lateral G Sensor Voltage",
-   "Turbine Revolution Speed"
-  ],
-  "responds_to": []
- },
- "0CE5B7": {
-  "functions": [
-   "00023C4E",
-   "00025350",
-   "000258CC",
-   "000265D8",
-   "000269B8",
-   "000270B0",
-   "000275C8",
-   "00027884",
-   "00027A4C",
-   "0002AAA8",
-   "0006B6C4",
-   "00076704",
-   "00076BA8",
-   "0007CF2A"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0CE5C0": {
-  "functions": [
-   "0001247C",
-   "000124F0",
-   "00012558",
-   "00013C5E",
-   "00013F10",
-   "000143A6",
-   "000799CC",
-   "0007A5D4",
-   "0007A716",
-   "0007A84E",
-   "0007A936",
-   "0007AAFA",
-   "0007AFF0",
-   "0007B13C",
-   "0007B4F6",
-   "0007B70C",
-   "0007B886",
-   "0007CE1A",
-   "0007D102",
-   "0007D14A",
-   "00088E0C"
-  ],
-  "named": [
-   "Accelerator Pedal Travel",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
    "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
    "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
    "Gear Position",
    "H&LR/C Solenoid Valve Current",
-   "SI-Drive Mode"
-  ],
-  "responds_to": []
- },
- "0CE6FC": {
-  "functions": [
-   "0005DED6",
-   "0005E362",
-   "0005E7E8"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0CE720": {
-  "functions": [
-   "0005DED6",
-   "0005E362",
-   "0005E7E8"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0CE744": {
-  "functions": [
-   "0005DED6",
-   "0005E362",
-   "0005E7E8"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0CEE60": {
-  "functions": [
-   "0005DED6",
-   "0005E362",
-   "0005E7E8"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
-  ]
- },
- "0D1104": {
-  "functions": [
-   "0005EEF0",
-   "00079668",
-   "0007986C",
-   "0007C01A",
-   "0007C288",
-   "0007CB46",
-   "00080078",
-   "00080784",
-   "00087158",
-   "00088E0C",
-   "0008ABA8"
-  ],
-  "named": [
-   "AWD Solenoid Valve Pressure",
-   "Air Conditioning Switch; Power Steering Switch; Ignition Switch; Intercooler Auto Washer Switch; Idle Switch; Neutral Position Switch",
-   "Automatic Transmission Learning Process; Fwd/B Hydraulic Pressure Switch; AUTO Mode Lamp; AUTO/MANUAL Mode Switch; Center Differential Relay; Parking Position Switch",
-   "Automatic Transmission Learning Process; Fwd/B Hydraulic Pressure Switch; AUTO Mode Lamp; AUTO/MANUAL Mode Switch; Center Differential Relay; Parking Position Switch (working copy)",
-   "Cruise Control Cancel Switch; Distance Change Switch; Secondary Air Combi Valve Relay #1; Secondary Air Pump Relay; Secondary Air Combi Valve Relay #2; Body Integrated Unit Count; Body Integrated Unit Data",
-   "Front Wheel Drive (FWD) Switch; Kick Down Switch; Upshift Switch; Stop Light Switch; Downshift Switch; ABS Signal; Cruise Control Signal; Tiptronic Mode Switch",
-   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
    "L/U Solenoid Valve Pressure",
-   "N Range; Hold Lamp; Traction Control System (TCS) Switch; P/N Signal; Torque Control Cut Signal; P Range; Power Mode Lamp; Economy Switch",
-   "N Range; Hold Lamp; Traction Control System (TCS) Switch; P/N Signal; Torque Control Cut Signal; P Range; Power Mode Lamp; Economy Switch (working copy)",
+   "Lateral G Sensor Voltage",
    "P/L Solenoid Valve Current",
-   "Signal of Identified Electronic Control Module (ECM); LC/B Fluid Pressure; I/C Fluid Pressure; F/B Fluid Pressure; D/C Fluid Pressure; H&LR/C Fluid Pressure"
-  ],
-  "responds_to": [
-   "FFFFA442",
-   "FFFFA448"
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
   ]
  },
- "0D1106": {
+ "0E5224": {
+  "evidence": "task",
   "functions": [
-   "000122E0",
-   "000799CC",
-   "0007C9C6",
-   "0007D14A",
-   "0008B394"
+   "000671FE"
   ],
-  "named": [
-   "H&LR/C Solenoid Valve Current"
+  "tasks": [
+   "000709F0",
+   "000709FE"
   ],
-  "responds_to": []
- },
- "0D1107": {
-  "functions": [
-   "00014FC0",
-   "000804EE",
-   "0008E070",
-   "0008E604",
-   "0008E966",
-   "0008EACC"
-  ],
-  "named": [
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
    "Engine Speed",
-   "Front Wheel Speed"
-  ],
-  "responds_to": []
- },
- "0E8C50": {
-  "functions": [
-   "00025350"
-  ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
   ]
  },
- "0E8C64": {
+ "0E5240": {
+  "evidence": "task",
   "functions": [
-   "00025350"
+   "000671FE"
   ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
+  "tasks": [
+   "000709F0",
+   "000709FE"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
   ]
  },
- "0E8C78": {
+ "0E525C": {
+  "evidence": "task",
   "functions": [
-   "00025350"
+   "000671FE"
   ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
+  "tasks": [
+   "000709F0",
+   "000709FE"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
   ]
  },
- "0E8C8C": {
+ "0E5278": {
+  "evidence": "task",
   "functions": [
-   "00025350"
+   "000671FE"
   ],
-  "named": [],
-  "responds_to": [
-   "FFFFA6A2"
+  "tasks": [
+   "000709F0",
+   "000709FE"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB394": {
+  "evidence": "task",
+  "functions": [
+   "00073E2A"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00073CE6"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB3B0": {
+  "evidence": "task",
+  "functions": [
+   "00073E2A"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00073CE6"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB3CC": {
+  "evidence": "task",
+  "functions": [
+   "00073E2A"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00073CE6"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB3E8": {
+  "evidence": "task",
+  "functions": [
+   "00073E2A"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00073CE6"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB404": {
+  "evidence": "task",
+  "functions": [
+   "00073E2A"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00073CE6"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB420": {
+  "evidence": "task",
+  "functions": [
+   "00073E2A"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00073CE6"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB43C": {
+  "evidence": "task",
+  "functions": [
+   "00073E2A"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00073CE6"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB458": {
+  "evidence": "task",
+  "functions": [
+   "00073E2A"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00073CE6"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB474": {
+  "evidence": "task",
+  "functions": [
+   "00073E2A"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00073CE6"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB490": {
+  "evidence": "task",
+  "functions": [
+   "00073E2A"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00073CE6"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB554": {
+  "evidence": "task",
+  "functions": [
+   "00072A8C"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00073658"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB768": {
+  "evidence": "task",
+  "functions": [
+   "000751A6"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "000759CE"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB784": {
+  "evidence": "task",
+  "functions": [
+   "000751A6"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "000759CE"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB7A0": {
+  "evidence": "task",
+  "functions": [
+   "000751A6"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "000759CE"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB7BC": {
+  "evidence": "task",
+  "functions": [
+   "000751A6"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "000759CE"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB848": {
+  "evidence": "task",
+  "functions": [
+   "00076056",
+   "00077448"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB864": {
+  "evidence": "task",
+  "functions": [
+   "00076056",
+   "00077448"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB880": {
+  "evidence": "task",
+  "functions": [
+   "00076056",
+   "00077448"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB89C": {
+  "evidence": "task",
+  "functions": [
+   "00076056",
+   "00077448"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB8B8": {
+  "evidence": "task",
+  "functions": [
+   "00076056",
+   "00077448"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB8D4": {
+  "evidence": "task",
+  "functions": [
+   "00076056",
+   "00077448"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB8F0": {
+  "evidence": "task",
+  "functions": [
+   "00076056",
+   "00077448"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB90C": {
+  "evidence": "task",
+  "functions": [
+   "00076056",
+   "00077448"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB928": {
+  "evidence": "task",
+  "functions": [
+   "00076056",
+   "00077448"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB97C": {
+  "evidence": "task",
+  "functions": [
+   "00076056"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB998": {
+  "evidence": "task",
+  "functions": [
+   "00076056"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB9B4": {
+  "evidence": "task",
+  "functions": [
+   "00076056"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB9D0": {
+  "evidence": "task",
+  "functions": [
+   "00076056"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EB9EC": {
+  "evidence": "task",
+  "functions": [
+   "00076056"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBA24": {
+  "evidence": "task",
+  "functions": [
+   "00076B9C"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBA40": {
+  "evidence": "task",
+  "functions": [
+   "00076B9C"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBA5C": {
+  "evidence": "task",
+  "functions": [
+   "00076B9C"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBA78": {
+  "evidence": "task",
+  "functions": [
+   "00076B9C"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBA94": {
+  "evidence": "task",
+  "functions": [
+   "00076B9C"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBAB0": {
+  "evidence": "task",
+  "functions": [
+   "00076B9C"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBAE8": {
+  "evidence": "task",
+  "functions": [
+   "00076B9C"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBB04": {
+  "evidence": "task",
+  "functions": [
+   "00076B9C"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBB74": {
+  "evidence": "task",
+  "functions": [
+   "000759EA"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "000759E0"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBB90": {
+  "evidence": "task",
+  "functions": [
+   "000759EA"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "000759E0"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBBAC": {
+  "evidence": "task",
+  "functions": [
+   "000759EA"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "000759E0"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBC1C": {
+  "evidence": "task",
+  "functions": [
+   "000759EA"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "000759E0"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBC38": {
+  "evidence": "task",
+  "functions": [
+   "000759EA"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "000759E0"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBC70": {
+  "evidence": "task",
+  "functions": [
+   "000759EA"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "000759E0"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBC8C": {
+  "evidence": "task",
+  "functions": [
+   "000751A6"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00074E74"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBCA8": {
+  "evidence": "task",
+  "functions": [
+   "000751A6"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00074E74"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBCC4": {
+  "evidence": "task",
+  "functions": [
+   "000751A6"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00074E74"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBD34": {
+  "evidence": "task",
+  "functions": [
+   "000751A6"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00074E74"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBD50": {
+  "evidence": "task",
+  "functions": [
+   "000751A6"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00074E74"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBD88": {
+  "evidence": "task",
+  "functions": [
+   "000751A6"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00074E74"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBDDC": {
+  "evidence": "function",
+  "functions": [
+   "00070F9A"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00070F90"
+  ],
+  "writes": [
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "F/B Solenoid Valve Current",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "I/C Solenoid Valve Current",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure"
+  ]
+ },
+ "0EBDF8": {
+  "evidence": "function",
+  "functions": [
+   "00070F9A"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00070F90"
+  ],
+  "writes": [
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "F/B Solenoid Valve Current",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "I/C Solenoid Valve Current",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure"
+  ]
+ },
+ "0EBE14": {
+  "evidence": "function",
+  "functions": [
+   "00070F9A"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00070F90"
+  ],
+  "writes": [
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "F/B Solenoid Valve Current",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "I/C Solenoid Valve Current",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure"
+  ]
+ },
+ "0EBE4C": {
+  "evidence": "function",
+  "functions": [
+   "00070F9A"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00070F90"
+  ],
+  "writes": [
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "F/B Solenoid Valve Current",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "I/C Solenoid Valve Current",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure"
+  ]
+ },
+ "0EBE68": {
+  "evidence": "function",
+  "functions": [
+   "00070F9A"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00070F90"
+  ],
+  "writes": [
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "F/B Solenoid Valve Current",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "I/C Solenoid Valve Current",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure"
+  ]
+ },
+ "0EBF10": {
+  "evidence": "task",
+  "functions": [
+   "000759EA"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "000759E0"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBF2C": {
+  "evidence": "task",
+  "functions": [
+   "000751A6"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00074E74"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBF64": {
+  "evidence": "task",
+  "functions": [
+   "000766F8"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBF80": {
+  "evidence": "task",
+  "functions": [
+   "000766F8"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBFB8": {
+  "evidence": "task",
+  "functions": [
+   "000766F8"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBFD4": {
+  "evidence": "task",
+  "functions": [
+   "000766F8"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EBFF0": {
+  "evidence": "task",
+  "functions": [
+   "000766F8"
+  ],
+  "tasks": [
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EC238": {
+  "evidence": "task",
+  "functions": [
+   "0006B6B8",
+   "00076056"
+  ],
+  "tasks": [
+   "0006B6A0",
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EC254": {
+  "evidence": "task",
+  "functions": [
+   "0006B6B8",
+   "00076056"
+  ],
+  "tasks": [
+   "0006B6A0",
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EC270": {
+  "evidence": "task",
+  "functions": [
+   "0006B6B8",
+   "00076056"
+  ],
+  "tasks": [
+   "0006B6A0",
+   "000709F0",
+   "000709FE",
+   "00077886"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EC2A8": {
+  "evidence": "task",
+  "functions": [
+   "00027A40",
+   "0006B6B8"
+  ],
+  "tasks": [
+   "0002B424",
+   "0002B432",
+   "0006B6A0",
+   "000709F0",
+   "000709FE"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EC2C4": {
+  "evidence": "task",
+  "functions": [
+   "00027A40",
+   "0006B6B8"
+  ],
+  "tasks": [
+   "0002B424",
+   "0002B432",
+   "0006B6A0",
+   "000709F0",
+   "000709FE"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EC2E0": {
+  "evidence": "task",
+  "functions": [
+   "00027A40",
+   "0006B6B8"
+  ],
+  "tasks": [
+   "0002B424",
+   "0002B432",
+   "0006B6A0",
+   "000709F0",
+   "000709FE"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EC318": {
+  "evidence": "task",
+  "functions": [
+   "0006B6B8"
+  ],
+  "tasks": [
+   "0006B6A0",
+   "000709F0",
+   "000709FE"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EC334": {
+  "evidence": "task",
+  "functions": [
+   "0006B6B8"
+  ],
+  "tasks": [
+   "0006B6A0",
+   "000709F0",
+   "000709FE"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EC350": {
+  "evidence": "task",
+  "functions": [
+   "0006B6B8"
+  ],
+  "tasks": [
+   "0006B6A0",
+   "000709F0",
+   "000709FE"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
+  ]
+ },
+ "0EC36C": {
+  "evidence": "task",
+  "functions": [
+   "0006B6B8"
+  ],
+  "tasks": [
+   "0006B6A0",
+   "000709F0",
+   "000709FE"
+  ],
+  "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Front Wheel Speed",
+   "Fwd/B Solenoid Valve Current",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "Gear Position",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
   ]
  }
 }

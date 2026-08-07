@@ -144,6 +144,8 @@ def main():
     ap.add_argument("--reaches")
     ap.add_argument("--roots", action="store_true")
     ap.add_argument("--json")
+    ap.add_argument("--dump", metavar="FILE",
+                    help="write the whole callee map as JSON")
     args = ap.parse_args()
 
     rows = parse(args.listing)
@@ -176,6 +178,16 @@ def main():
             with open(args.json, "w", encoding="utf-8", newline="\n") as fh:
                 json.dump(["0x%08X" % f for f in roots], fh, indent=1)
             print("\n-> %s" % args.json)
+
+    if args.dump:
+        # The whole callee map, so other tools can ask reachability questions
+        # without re-parsing a 300,000 line listing to do it.
+        with open(args.dump, "w", encoding="utf-8", newline="\n") as fh:
+            json.dump({"calls": {"%08X" % f: ["%08X" % c for c in sorted(cs)]
+                                 for f, cs in sorted(callees.items()) if cs}},
+                      fh, indent=1)
+        print("%d functions with callees -> %s"
+              % (sum(1 for cs in callees.values() if cs), args.dump))
 
     if args.reaches:
         t = int(args.reaches, 16)
