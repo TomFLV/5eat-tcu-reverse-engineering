@@ -233,14 +233,65 @@ def axis_xml(kind, name, addr, size, units, expr, fmt):
         '   </table>' % (kind, esc(name), addr, dim, esc(units), expr, expr, fmt))
 
 
-def table_xml(t, name, category, desc, value_units, value_fmt, level):
-    x = axis_xml("X Axis", "Accelerator pedal" if value_units else "X",
-                 t["x"], t["rows"],
-                 "% pedal" if value_units else "raw", "x", "0")
-    y = axis_xml("Y Axis", "Shift" if value_units else "Y",
-                 t["y"], t["cols"],
-                 "0=unused, 1=1-2, 2=2-3, 3=3-4, 4=4-5" if value_units else "raw",
-                 "x", "0")
+def read_axis(d, addr, n):
+    """An axis as the firmware stores it: n big-endian floats."""
+    try:
+        return list(struct.unpack(">%df" % n, d[addr:addr + n * 4]))
+    except (struct.error, TypeError):
+        return []
+
+
+def describe_axis(vals):
+    """What an axis is, from what is in it.
+
+    Naming a table's FUNCTION from its shape would be guessing, and this project
+    has been burned by that often enough to have a rule against it. Naming its
+    AXES is a different claim: the values are in the ROM, and a run from 800 to
+    6800 in even steps is an engine speed whatever the table does with it. So this
+    reports only what the numbers show and falls back to a plain range otherwise.
+
+    The point is navigability. "Table 0E5280 (8x8)" tells a tuner nothing.
+    "8x8, engine speed by pedal" tells them what moves along each edge, which is
+    enough to find the right table and see what it does to the car.
+    """
+    if not vals:
+        return "axis", "raw"
+    lo, hi = min(vals), max(vals)
+    n = len(vals)
+    rising = all(b >= a for a, b in zip(vals, vals[1:]))
+    ints = all(abs(v - round(v)) < 1e-3 for v in vals)
+    if not rising:
+        return "%g-%g" % (lo, hi), "raw"
+    if hi >= 2000 and lo >= 0:
+        return "Engine speed %g-%g" % (lo, hi), "RPM"
+    if ints and 0 <= lo and hi <= 8 and n <= 9:
+        return "Gear or mode %g-%g" % (lo, hi), "index"
+    if 90 <= hi <= 110 and lo >= 0:
+        return "Pedal or load %g-%g" % (lo, hi), "%"
+    if lo < 0 and hi <= 200:
+        return "Temperature %g-%g" % (lo, hi), "C"
+    if 8 < hi <= 260 and lo >= 0:
+        return "Speed %g-%g" % (lo, hi), "km/h"
+    return "%g-%g" % (lo, hi), "raw"
+
+
+def axis_kind(units):
+    """A short word for the category, so tables group by what indexes them."""
+    return {"RPM": "engine speed", "%": "pedal", "index": "gear",
+            "C": "temperature", "km/h": "speed"}.get(units, "")
+
+
+def table_xml(t, name, category, desc, value_units, value_fmt, level, rom=None):
+    if value_units:
+        xname, xunits = "Accelerator pedal", "% pedal"
+        yname, yunits = "Shift", "0=unused, 1=1-2, 2=2-3, 3=3-4, 4=4-5"
+    else:
+        # An unidentified table still has real axes. Reading them costs nothing and
+        # turns an undifferentiated heap into something a person can navigate.
+        xname, xunits = describe_axis(read_axis(rom, t["x"], t["rows"]))
+        yname, yunits = describe_axis(read_axis(rom, t["y"], t["cols"]))
+    x = axis_xml("X Axis", xname, t["x"], t["rows"], xunits, "x", "0")
+    y = axis_xml("Y Axis", yname, t["y"], t["cols"], yunits, "x", "0")
     # The header's own conversion, so the table reads in whatever quantity the
     # firmware works in rather than in stored counts.
     expr, to_byte = scaling_expr(t.get("scale", 1.0), t.get("offset", 0.0))
@@ -314,11 +365,26 @@ def build_rom(path, d):
     others = [t for t in tables if t["hdr"] not in shift_hdrs
               and (keep is None or t["hdr"] in keep)]
     for t in others:
+        # Group and name by what the axes are. The function is still unknown - the
+        # description says so - but "engine speed by pedal" is a fact read out of
+        # the ROM, and it is the difference between 185 identical entries and a
+        # dozen groups a person can work through.
+        _xn, xu = describe_axis(read_axis(d, t["x"], t["rows"]))
+        _yn, yu = describe_axis(read_axis(d, t["y"], t["cols"]))
+        kx, ky = axis_kind(xu), axis_kind(yu)
+        if kx and ky:
+            cat = "Transmission - Unidentified (%s by %s)" % (kx, ky)
+            label = "%dx%d %s by %s" % (t["rows"], t["cols"], kx, ky)
+        elif kx or ky:
+            cat = "Transmission - Unidentified (%s)" % (kx or ky)
+            label = "%dx%d %s" % (t["rows"], t["cols"], kx or ky)
+        else:
+            cat = "Transmission - Unidentified (unclassified axes)"
+            label = "%dx%d" % (t["rows"], t["cols"])
         parts.append(table_xml(
-            t, "Table %06X (%dx%d)" % (t["hdr"], t["rows"], t["cols"]),
-            "Transmission - Unidentified",
+            t, "Table %06X - %s" % (t["hdr"], label), cat,
             RAW_DESC.format(rows=t["rows"], cols=t["cols"], hdr=t["hdr"]),
-            None, "0", 4))
+            None, "0", 4, rom=d))
 
     parts.append(" </rom>")
     return "\n".join(parts), calid, len(shifts), len(others)
