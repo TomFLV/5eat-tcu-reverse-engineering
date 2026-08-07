@@ -5529,3 +5529,57 @@ output said nothing at all, which reads exactly like a failed run.
 Truncating diagnostic output to keep it tidy is how a result gets thrown away
 without anyone noticing. The wrapper now keeps the full log, reports RESULT and the
 failed entries, and counts decode errors separately.
+
+## 64. RUNNING THE CONTROLLER RATHER THAN ONE FUNCTION
+
+Section 63 concluded that the task set is approximately the 402 call-graph roots
+that call at least one function, and that the scheduler need not be found to run
+them. Running all 402 as a task list, one pass per tick, against sixty ticks of the
+vehicle log spanning the wide-open-throttle row:
+
+    entry list        instructions    addresses moved    fatal failures
+    one function         4,855,577              76               -
+    402 roots           30,390,470           2,249               0
+
+**Thirty times the work and thirty times the coverage.** Where the shift function
+alone touched 76 addresses, the task list touches 2,249. This is the first run in
+this project that exercises the controller rather than a piece of it.
+
+The zero fatal failures matter as much as the count. The list contains guesses -
+44 of the 69 pointers examined in section 63 were not even function starts - and
+312 instruction-decode errors were raised and stepped over during the run. Before
+section 62c a single one of those ended the drive with nothing written.
+
+### 64a. And the input still does not propagate
+
+Against a control identical except for the pedal byte, **one address differs, and
+it is one the harness wrote**. Worse, `0xFFFF30FB` does not appear in the changed
+set at all - it was injected with values from 0x18 to 0xFE across the sixty ticks,
+so something is overwriting it before the snapshot.
+
+That is not a small detail. It means the broad run is not merely failing to
+propagate the input; it is destroying it.
+
+### 64b. Coverage and tracing want opposite things
+
+The two runs that have worked in this project want incompatible task lists.
+
+Section 61 traced a CAN value into the control block by running three functions:
+deliver, gather, consume. It propagated exactly, 568 ticks of 568. It exercised
+almost nothing else.
+
+This run exercises 2,249 addresses and traces nothing, because a task list large
+enough to be the controller also contains the routines whose job is to overwrite
+inputs - the failsafe that zeroes the CAN variables, the limp-home that substitutes
+350 Nm, the initialisers. Injecting a value and then running the code that exists
+to replace it measures nothing.
+
+There is also evidence that some tasks are being run wrongly rather than merely
+unhelpfully: the log carries reads of addresses like `ram:f18e0560`, far outside
+any mapped region, which is what happens when a function expecting arguments is
+entered with the registers zeroed. A root is a function nothing calls by name; that
+does not make it a task that takes no parameters.
+
+So the harness needs both modes and should not pretend one is the other. Broad task
+lists for coverage - what the firmware touches, which parameters exist. Curated
+pipelines for causation - what a given input actually drives.
