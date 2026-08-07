@@ -1797,7 +1797,7 @@ new file mode 100644
 index 0000000..d93c088
 --- /dev/null
 +++ b/src/main/java/com/romraider/swing/ShiftCurveEditor.java
-@@ -0,0 +1,403 @@
+@@ -0,0 +1,439 @@
 +/*
 + * RomRaider Open-Source Tuning, Logging and Reflashing
 + * Copyright (C) 2006-2012 RomRaider.com
@@ -2037,14 +2037,40 @@ index 0000000..d93c088
 +        }
 +    }
 +
++    /**
++     * The shift this row controls, as a tuner would name it.
++     *
++     * The Y axis stores 0 to 4, where row 0 is padding and rows 1 to 4 are the
++     * four shifts. Labelling the curves 1 to 5 - the row numbers - was accurate
++     * and told nobody anything; "2-3" is what the curve actually is.
++     */
 +    private String rowLabel(int row) {
++        if (row >= 1 && row <= 4) {
++            return row + "-" + (row + 1);
++        }
 +        try {
 +            final DataCell c = table.getYAxis().getData()[row];
 +            final String s = c.getStaticText();
-+            return s != null ? s : String.valueOf(row + 1);
++            return s != null ? s : String.valueOf(row);
 +        } catch (Exception e) {
-+            return String.valueOf(row + 1);
++            return String.valueOf(row);
 +        }
++    }
++
++    /**
++     * Is this row a real shift, or the padding the table carries?
++     *
++     * Row 0 of every schedule is 255 across the whole pedal range - not a shift
++     * point, just a filled slot. Drawing it put a vertical line at 255 km/h
++     * through the chart and a fifth entry in a legend that should have four.
++     */
++    private boolean liveRow(int row) {
++        for (Vertex v : vertices) {
++            if (v.row == row && v.speed < 250) {
++                return true;
++            }
++        }
++        return false;
 +    }
 +
 +    private void commit(Vertex v, double speed) {
@@ -2137,7 +2163,9 @@ index 0000000..d93c088
 +        g.drawString("Vehicle speed (km/h)", (PAD_L + w - PAD_R) / 2 - 56, h - 12);
 +        g.drawString("Pedal %", 12, PAD_T - 12);
 +        // Centred, and clear of the pedal label in the top-left corner.
-+        final String title = table.getName();
++        final String title = partner == null ? table.getName()
++                : table.getName().replace(" - Upshift", "").replace(" - Downshift", "")
++                  + "  -  upshift solid, downshift dashed";
 +        g.drawString(title, (PAD_L + w - PAD_R) / 2 - g.getFontMetrics().stringWidth(title) / 2, 20);
 +
 +        // curves, one per shift event
@@ -2145,19 +2173,27 @@ index 0000000..d93c088
 +                                            BasicStroke.JOIN_ROUND);
 +        final int rows = table.getSizeY();
 +        for (int row = 0; row < rows; row++) {
++          if (!liveRow(row)) {
++              continue;         // padding, not a shift
++          }
 +          for (int dir = 0; dir < 2; dir++) {
 +            final boolean down = dir == 1;
 +            if (down && partner == null) {
 +                continue;
 +            }
-+            // Same hue for both directions of one shift event, the downshift
-+            // darker. A pair belongs together visually; two unrelated colours
-+            // would make the hysteresis band harder to read, not easier.
-+            final Color base = SERIES[row % SERIES.length];
-+            final Color c = down
-+                    ? new Color(base.getRed() / 2 + 20, base.getGreen() / 2 + 20,
-+                                base.getBlue() / 2 + 40)
-+                    : base;
++            // Dashed for downshift. Shade alone was too subtle - a pair read as
++            // one curve drawn twice rather than as an up and a down.
++            final Stroke stroke = down
++                    ? new BasicStroke(2.0f, BasicStroke.CAP_BUTT,
++                                      BasicStroke.JOIN_ROUND, 1f,
++                                      new float[] {6f, 5f}, 0f)
++                    : line;
++            // Identical colour for both directions of one shift event; solid
++            // against dashed already says which is which. Darkening the downshift
++            // as well washed all four of them to the same grey-blue, so the pairs
++            // could not be told apart - the encoding was carrying the information
++            // twice and losing it both times.
++            final Color c = SERIES[row % SERIES.length];
 +            final List<Vertex> pts = new ArrayList<Vertex>();
 +            for (Vertex v : vertices) {
 +                if (v.row == row && v.down == down && visible(v)) {
@@ -2167,7 +2203,7 @@ index 0000000..d93c088
 +                }
 +            }
 +            g.setColor(c);
-+            g.setStroke(line);
++            g.setStroke(stroke);
 +            for (int i = 0; i < pts.size() - 1; i++) {
 +                g.drawLine(pts.get(i).px, pts.get(i).py,
 +                           pts.get(i + 1).px, pts.get(i + 1).py);
@@ -2188,7 +2224,7 @@ index 0000000..d93c088
 +                final int ly = PAD_T + 8 + row * 17;
 +                g.fillRect(w - PAD_R + 12, ly, 18, 3);
 +                g.setColor(TEXT);
-+                g.drawString(rowLabel(row), w - PAD_R + 36, ly + 6);
++                g.drawString(rowLabel(row) + " shift", w - PAD_R + 36, ly + 6);
 +            }
 +          }
 +        }
