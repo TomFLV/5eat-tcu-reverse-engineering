@@ -1,5 +1,8 @@
 # Running the tools
 
+*Written 2026-08-07. Every claim about what runs from a bare clone was verified by
+running it, not by reading the source.*
+
 Most of the analysis tools need more than a clone. This says exactly what, and
 what happens if you skip it, because the failure mode is usually a tool that
 runs, finds nothing, and reports that as a result.

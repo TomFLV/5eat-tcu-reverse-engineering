@@ -1,5 +1,7 @@
 # Technical notes
 
+*Re-checked 2026-08-07 against the current definitions and tools.*
+
 How the tables, the checksum, and the unit conversions in this project were worked
 out. This covers method as much as results, so the same approach can be applied to
 firmwares not yet included.

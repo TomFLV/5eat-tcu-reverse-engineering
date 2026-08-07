@@ -26,6 +26,12 @@ Already using RomRaider? Point it at [`definitions/`](definitions/) instead. Req
 > ROM with the current release or run `python tools/checksum.py --fix edited.bin`
 > before flashing. Those builds have been withdrawn.
 
+**Last verified 2026-08-07** — `bash tools/verify-all.sh`, 12 checks, all passing:
+every table address in both definitions against the firmware it belongs to (11,023
+checks across 25 images), both checksum families on every M32R image, and the
+definitions regenerating byte-identically from their generators. Run it yourself;
+it exits non-zero if anything fails. Most of it also runs in CI on every push.
+
 ---
 
 ## Tunable tables

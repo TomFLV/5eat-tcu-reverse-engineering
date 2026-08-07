@@ -1,5 +1,8 @@
 # Getting this working in RomRaider
 
+*Re-checked 2026-08-07 against release 1.1.6. The Definitions dialog error box
+described in older builds is fixed in this release.*
+
 Tested against RomRaider 1.0.0 (DEC01 2023) on Windows. Nothing here is
 version-specific in a way that should break on other builds, but that's the one it
 was developed against.

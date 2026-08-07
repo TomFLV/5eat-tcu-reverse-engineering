@@ -1,5 +1,11 @@
 # The ROMs
 
+*Addresses re-checked 2026-08-07: `tools/validate_xml_defs.py` and
+`tools/validate_denso_defs.py`, 11,023 table addresses across 25 firmwares, all
+matching the image they belong to. The DTC section was corrected the same day -
+it had said the stored table was never located, and the memory map above it still
+listed the `0x4090` address the page itself refutes.*
+
 Sixteen M32R 5EAT firmwares are held in [`rom/`](../rom/), all with verified
 checksums and all mapped. The collection table is at the bottom.
 

@@ -1,5 +1,8 @@
 # Bench rig for a 5EAT TCM
 
+*Re-checked 2026-08-07. The addresses in the diagnostics section at the end were
+read back out of the reference ROM and the disassembly before publishing.*
+
 Notes toward running a TCM on a bench with simulated inputs, so shift behaviour,
 solenoid output and logging can be exercised without a car.
 
@@ -251,3 +254,83 @@ proves it, and risks nothing.
 6. Load the solenoid outputs and measure them.
 
 Steps 1–3 need almost no hardware and answer whether the unit is alive.
+
+---
+
+## What the simulator now needs a bench to answer (2026-08-07)
+
+Three things were worked out under emulation this week and each stops at the same
+place: the model has no hardware, so anything the firmware decides by reading
+hardware cannot be reached. All three are cheap to settle with a Tactrix OpenPort
+2.0 and a CANtact Pro, and none of them needs the transmission.
+
+### 1. Does a fault actually latch, and which code
+
+**The blocker.** The Denso diagnostic chain is mapped end to end — 44 codes at a
+per-firmware address, one 5-byte record each, both flag arrays, the routine that
+sets a bit, and a debounce threshold of 1000 counts held in ROM. No simulated fault
+sets anything, because the monitors gate on hardware feedback the emulator returns
+zero for. So the definition can enable and disable codes and cannot say what causes
+one. See FINDINGS §81.
+
+**Why a bench answers it immediately.** Select Monitor reads arbitrary RAM. On the
+reference Denso firmware:
+
+| Address | What it holds |
+|---|---|
+| `0xFFFF8876` | live fault flags, one byte per group |
+| `0xFFFF21D6` | confirmed fault flags, same layout |
+| `0x0008624C` | the 44 codes, P-number in hex, masked `0x3FFF` |
+| `0x000864A8` | 5 bytes per code: `[enable, group, mask, kind, enable]` |
+
+A code is set when `ram[0xFFFF8876 + record.group] & record.mask`. Read fourteen
+bytes from each array on a controller powered up with nothing connected and the
+answer is a list, not an inference.
+
+**Both addresses matter.** Watching only `0xFFFF21D6` produces zeros
+indistinguishable from "no fault" — every write to it in the whole firmware comes
+from a clear-to-zero routine, and the aggregation copies forward only what
+`0xFFFF8876` already holds. That mistake cost a day under emulation.
+
+**Note the family.** Those are Denso addresses. A 2006 Tribeca TCU is very likely
+Hitachi M32R, whose diagnostics are already settled — it will not exercise this.
+Read the part number first.
+
+### 2. Is the CAN signal map right
+
+Holding each frame byte at two values and diffing whole RAM images produced this,
+and a CANtact Pro can transmit the same frames at a real controller and watch the
+published parameters move:
+
+    frame 0x231 byte 0  ->  Engine Speed              control block FFFF8E53
+    frame 0x231 byte 4  ->  Accelerator Pedal Travel  control block FFFF8E47, 4B
+    frame 0x410 byte 5  ->  Engine Speed              control block FFFF8E53
+    frame 0x412 byte 0  ->  Accelerator Pedal Travel  control block FFFF8E47, 4B
+    frame 0x491 byte 2  ->  Gear Position
+
+0x231 and 0x410 carry the same signals into the same slots, which is what a
+controller built for more than one bus layout looks like. Nothing in the method
+arranges that agreement — it either survives contact with hardware or it does not.
+
+### 3. Is gear really in the high nibble
+
+Byte 2 of frame 0x491 held at `0x40` against `0x80` moves Gear Position from 4 to
+8, so gear appears to occupy the high nibble; sending a plain 1 or 5 selects gear 0
+and nothing downstream moves. Transmitting `0x10` through `0x50` and reading Gear
+Position back settles it in one pass.
+
+### The order that wastes least
+
+1. Read the part number. M32R or Denso decides everything below.
+2. Power, ground, ignition. Nothing else.
+3. Read `0xFFFF8876` and `0xFFFF21D6` before touching anything. A controller wired
+   to nothing has every reason to complain, and that is the cleanest fault state
+   available.
+4. Then transmit frames and watch parameters, which needs the controller happy
+   enough to be running its normal loop.
+
+**One warning from the emulation work.** Expecting a positive result is exactly the
+condition under which something resembling one gets believed. A bench boot left
+`0xFFFF8876` holding `5a a5 a5 5a...`, which decodes to twenty plausible DTCs and is
+the RAM self-test pattern. If the array reads as alternating `0x5A`/`0xA5`, that is
+not a fault list.
