@@ -358,6 +358,15 @@ def build_rom(path, d):
             "km/h", "0", 1))
     parts.append("")
 
+    dtc_at = dtc_table(d)
+    if dtc_at is not None:
+        parts.append("  <!-- ============ Diagnostic Codes ============ -->")
+        for i in range(DTC_COUNT):
+            code = struct.unpack_from(">H", d, dtc_at + i * 2)[0] & 0x3FFF
+            if code:
+                parts.append(dtc_xml(dtc_at + i * 2, "P%04X" % code))
+        parts.append("")
+
     parts.append("  <!-- ============ Unidentified ============ -->")
     # Everything else IS filtered by the index: an unidentified table is only worth
     # shipping if the firmware demonstrably reaches it.
@@ -406,6 +415,60 @@ def build_rom(path, d):
 
     parts.append(" </rom>")
     return "\n".join(parts), calid, len(shifts), len(others)
+
+
+"""Diagnostic trouble codes.
+
+The table is 44 uint16 slots, each the P-number in hex; the firmware masks the
+value with 0x3FFF when it reports it. Its address differs per firmware, so it is
+located by searching for the code sequence rather than hardcoded - and the
+sequence is identical in all nine images, with the Impreza's base landing on
+0x0008624C exactly where the instruction at 0x0007D51C indexes it.
+
+Zeroing a slot is what the switch does, and it is worth being precise about what
+that achieves: the fault bit still sets, the controller still behaves however it
+behaves, and only the code number goes away. That is the same mechanism the M32R
+definition offers and the same caveat applies.
+
+What is NOT offered here is any claim about which fault sets which code. The
+monitors were located - 0x00087654, 0x000882DC and 0x0008DA0A, debounced to a
+thousand counts against a threshold at 0x000A2DF0 - but no simulated fault has
+been made to latch one, so the mapping from condition to code is unverified.
+"""
+DTC_COUNT = 44
+# The first eight codes, used as the search key. Eight uint16 in a fixed order is
+# sixteen bytes of very specific data; a false match is not a realistic worry.
+DTC_SEQUENCE = (0x0720, 0x0705, 0x0741, 0x0753, 0x0758, 0x1706, 0x0748, 0x0743)
+
+DTC_DESC = """{code} - enable or disable this diagnostic trouble code.
+
+DISABLED writes zero to this code's slot, which makes it identical to the slots \
+the factory already leaves empty. The fault bit still sets internally, but no \
+code number is attached to it, so nothing is reported.
+
+Know what that does and does not do. It suppresses the CODE, not the FAULT - \
+whatever limp-home, pressure or shift behaviour the TCU applies when that bit \
+sets will still happen. You have only stopped it telling you why.
+
+Which condition sets this code is not established for this controller family."""
+
+
+def dtc_table(d):
+    """Where the code table starts in this image, or None."""
+    key = struct.pack(">" + "H" * len(DTC_SEQUENCE), *DTC_SEQUENCE)
+    i = d.find(key)
+    return i if i >= 0 else None
+
+
+def dtc_xml(addr, code):
+    return (
+        '  <table type="Switch" name="%s" category="Transmission - Diagnostic Codes"\n'
+        '         storageaddress="0x%06X" sizey="2" userlevel="4">\n'
+        '   <description>%s</description>\n'
+        '   <state name="ENABLED"  data="%02X%02X" />\n'
+        '   <state name="DISABLED" data="0000" />\n'
+        '  </table>' % (code, addr, esc(DTC_DESC.format(code=code)),
+                        int(code[1:], 16) >> 8, int(code[1:], 16) & 0xFF))
 
 
 def main():
