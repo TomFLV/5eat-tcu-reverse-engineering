@@ -157,9 +157,10 @@ cannot happen here. From Windows, with a JDK 21+ on PATH:
       --java-options -Dawt.useSystemAAFontSettings=lcd \\
       --java-options -Dswing.aatext=true \\
       --java-options -Dromraider.theme=dark \\
+      --java-options -Dsun.java2d.d3d=false \\
       --java-options -Dsun.java2d.uiScale.enabled=true \\
       --java-options -Dflatlaf.useWindowDecorations=true \\
-      --java-options -Dflatlaf.menuBarEmbedded=true \\
+      --java-options -Dflatlaf.menuBarEmbedded=false \\
       --java-options -Dlog4j.configuration=file:'\$APPDIR'/log4j.properties
 
 Then archive it:
