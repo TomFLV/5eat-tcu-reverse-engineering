@@ -96,6 +96,23 @@ cp -r "$WORK/src/lib/common" "$OUT/lib/common"
 # "Can't find bundle for base name com.romraider.ECUExec" at startup and nothing
 # else useful. Merging also survives `ant clean`, which rebuilds the jar without
 # them; the check below fails the build rather than shipping one that is missing.
+# The interface came from an engine tool and says ECU on every screen: "ECU
+# Revision", "ECU Definition Error", "Please check ECU definition file". This build
+# edits transmission controllers, so the noun is simply wrong wherever it refers to
+# the controller being edited.
+#
+# Done as a build step rather than as patch hunks because it is sixty strings
+# across twenty bundles, including translations - a diff that size would need
+# rebasing on every upstream change and would tell a reader nothing the rule below
+# does not.
+#
+# Two things are deliberately NOT renamed. The resource KEYS (LBLECU, ECUDEF) are
+# internal and referenced from Java. And the strings about the engine controller
+# itself - global timing adjustment, the ATM sensor - stay as they are, because
+# there the word is correct and renaming it would make a true sentence false.
+say "renaming the interface from ECU to TCU"
+python3 "$HERE/rename-ecu-to-tcu.py" "$WORK/src/i18n"
+
 ( cd "$WORK/src/i18n" && jar uf "$OUT/RomRaider.jar" . )
 
 BUNDLES=$(unzip -l "$OUT/RomRaider.jar" | grep -c '\.properties$' || true)
