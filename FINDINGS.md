@@ -5899,3 +5899,66 @@ Two things follow. `0x000A2678` is a calibratable diagnostic threshold and belon
 in the definition. And naming any one of the eight channels names all eight, along
 with the forty addresses they drive - which is the largest single naming
 opportunity the dependency map offers.
+
+## 69. THE LARGEST DRIVER IS A FILTERED STATE, NOT A RAW INPUT
+
+`0xFFFFA6A2` is the biggest single driver in the dependency map of section 68 - 85
+addresses - and had no name. Following it settled what it is, though not yet what
+it measures.
+
+### 69a. It is written, through a pointer
+
+The cross-reference reports no writer. It has one. At `0x0007A90A`:
+
+    0007A8FC  mov.l ...,r6      ; 0x000CE404, a calibration byte = 0x33
+    0007A8FE  mov.b @r6,r2
+    0007A902  mov #0x1,r2
+    0007A904  shll8 r2          ; 0x100
+    0007A906  sub r6,r2         ; 256 - 51 = 205
+    0007A908  extu.w r2,r5      ; the gain
+    0007A90A  mov.l ...,r4      ; 0xFFFFA6A2 - the DESTINATION
+    0007A90E  jsr @r2           ; 0x0000289C
+
+and `0x0000289C` is a shared slew-rate filter:
+
+    0000289C  mov r4,r1         ; r1 = destination pointer
+    000028A4  mov.w @r1,r2      ; current value
+    000028A6  cmp/ge r5,r2      ; against the target
+    000028AC  sub r5,r2         ; move toward it by gain/256
+    000028AE  mul.l r2,r4
+    000028B2  shlr8 r6
+    000028C6  mov.w r6,@r1      ; and write it back
+
+So `0xFFFFA6A2` is not a raw input at all. It is a **slew-limited state variable**,
+its rate of change set by the calibration byte at `0x000CE404`, and the write is
+invisible to any cross-reference that stops at a call boundary because the
+destination arrives in a register. A byte-width version of the same filter sits at
+`0x000028CC`.
+
+`0x000CE404` is therefore a calibratable filter constant and belongs in the
+definition.
+
+### 69b. What it does not explain
+
+The obvious next thought was that this is the mechanism behind section 60's
+central puzzle - 119 addresses read often and written by nothing. It is not.
+Counting every call site whose `r4` was just loaded with a RAM address: 93 distinct
+addresses are handed to a callee as a pointer, 13 of those have no writer the
+cross-reference can see, and **exactly one of them is in the list of 119**.
+
+So pointer-passing accounts for `0xFFFFA6A2` and twelve others, and the other 118
+remain unexplained. Worth saying plainly, because the pattern was compelling enough
+to look like a general answer after one example.
+
+### 69c. What it measures is still open
+
+A 16-bit quantity, scaled by 0.1 into a float at `0xFFFF8D8C` by the unit
+conversion block at `0x0002B510`, alongside `0xFFFFA6CF` scaled by 0.01. It lives
+two dozen bytes from `0xFFFFA6D8`, which the Select Monitor table names SI-Drive
+Mode, so the block is vehicle-level state. Sweeping it moves two floats in the
+control block at `0xFFFF8E6C` and `0xFFFF8E78`.
+
+Tenths, sixteen bits, slew limited, and it reaches more of the firmware than any
+other single value. Road speed would fit all of that. So would several other
+things, and this file has enough entries about plausible answers that turned out
+wrong, so it stays unnamed until something decides it.
