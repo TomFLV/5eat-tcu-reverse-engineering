@@ -5174,3 +5174,90 @@ the only ones with different flags. And the decode routine of section 59 loads
 
 `tools/denso_can_map.py` recovers the table and can emit the profile writes that
 deliver a decoded frame where the firmware will look for it.
+
+## 59. THE FRAME ARRIVES, AND STILL NOTHING MOVES
+
+With torque computed from the ECU calibration and the receive map of section 58 in
+hand, the drive was run four times against a zero-torque control identical in every
+other respect. The result each time: **no propagation whatsoever**.
+
+    delivery                          instructions   moved   control   downstream
+    HCAN mailbox                       4,855,577      70       68          0
+    receive buffer 0xFFFF300C          4,855,577      70       68          0
+    buffer + receive task              5,188,425      70       68          0
+    decoded variables written direct   4,855,577      74       71          0
+
+The instruction counts are identical to the digit between the torque run and its
+control in every case, which is the strongest possible statement that no branch
+anywhere depends on torque. Every address that differed was one this project had
+written itself.
+
+### 59a. The receive gate, fully traced
+
+The receive task at `0x00012BA4` asks a gate at `0x0000A2E2` whether a frame
+arrived, and skips the decode when the answer is no. The gate reads a
+receive-pending register and masks the bit for the mailbox. Two helpers do the
+work, and reading them settled a question that guessing had got wrong:
+
+    0x0000AC96   base 0xFFFFD040, adjusted by mailbox number:
+                   below 16   add 2        32 to 47   add 0x802
+                   16 to 31   unchanged    48 and up  add 0x800
+    0x0000AD00   mask = table[mailbox & 15] at 0x0000ADA4, a plain 1<<n
+
+So **the mailbox numbering is global** - 0 to 31 is channel 0, 32 to 63 is channel
+1 - and byte 4 of a receive table entry is not a channel index. Frames 0x410 and
+0x411 are mailboxes 4 and 5, both below 16, so the register is `0xFFFFD042` and the
+bits are `0x0030`.
+
+This corrects a derivation made here earlier. Channel 1 registers do sit 0x800
+above channel 0, and the firmware does reference `0xFFFFD840`, so `0xFFFFD040 +
+0x800` looked well founded. It was still wrong, because the mailbox in question is
+not on channel 1 at all. An offset that is real does not make the address it
+produces right.
+
+### 59b. Three writers, no reader
+
+The reason nothing moves is not the delivery. It is that **`0xFFFF30F0` is written
+three times in this image and read nowhere that can be found**:
+
+    0x00012BD2   the decode - unpacks the frame into it
+    0x00013E00   a failsafe - writes zero to it and its neighbours
+    0x000143A2   limp-home - writes 0xAF, which at 2.0 Nm per count is 350 Nm,
+                 with pedal from a ROM constant and engine speed from 0xFFFF3AFC
+
+The last is worth noting on its own: when the ECU goes quiet the TCU does not
+assume no torque, it assumes **maximum** torque. That is the conservative choice
+for line pressure - hold the clutches hard rather than slip them - and it is a
+useful piece of behaviour to have found.
+
+This is the pattern of section 50 again. The decoded values are published copies,
+and whatever the control path actually reads is reached another way.
+
+### 59c. A trap in cross-referencing, and a wrong turn recorded
+
+The obvious next step was to look for reads of the structure by displacement off a
+base, since `0xFFFF30EC` carries 57 references against six for `0xFFFF30F0`. A
+script that found base loads and then displacement reads off the same register
+reported two torque reads.
+
+Both were false. The register is reassigned in between - at `0x00012BBA` r4 holds
+`0xFFFF30EC` but is reloaded with the receive buffer `0xFFFF300C` before the reads,
+and at `0x00012F58` r5 holds `0xFFFF30EC` only long enough to set one flag bit
+before being reloaded with `0xFFFF3044`. **A cross-reference tool that does not
+track register reassignment produces confident nonsense**, and it produced it here
+before the listing was read.
+
+`0xFFFF30EC` is not a structure base at all. It is a flag byte, manipulated almost
+entirely by bit operations.
+
+### 59d. Where this leaves it
+
+Settled and verifiable: the ECU is identified and its torque calibration read; the
+receive map is recovered; the frame decode is confirmed byte for byte against
+rimwall's; the gate chain is traced to the register and bit.
+
+Not settled: what reads engine torque. It is not the shift decision function, which
+does not branch on it at any value. The candidates left are access through a
+pointer held in RAM rather than a literal, which none of the static methods used
+here would catch, and code reached only from interrupt or task-scheduler context
+that the harness has never entered.
