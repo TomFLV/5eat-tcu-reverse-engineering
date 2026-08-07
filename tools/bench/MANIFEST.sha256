@@ -1,0 +1,12 @@
+# tools/bench
+#
+# SHA-256 of every tracked file in this directory, 3 files, 0.0 MB.
+# Recorded 2026-08-07. Verify with:  python tools/write-manifests.py --check
+#
+# These exist because this repository ships ROM images, decompiler output
+# and generated definitions - files where a truncated copy still loads and
+# is quietly wrong.
+
+bf64e623a44c70f1ef4765361a27acbb2e7c4ee0cd21b7062f7c5b84a723198e  attach-cantact.ps1
+403e877fe6a48e539662b55435ecf95ea380140e7082a1d001db8ef78c0b618b  can_bench.py
+8d9640bbb68c62b5dd0420bcf69a22809dda0c7eaa94ef36b0a9245bec5622d4  setup-wsl-can.sh
