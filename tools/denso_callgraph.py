@@ -27,7 +27,10 @@ import json
 import re
 import sys
 
-ROW = re.compile(r"^([0-9A-F]{8})\s+(?:[0-9A-F]{2} )+\s+(_?)([a-z][a-z0-9./]*)\s*([^;]*?)\s*(?:;.*)?$")
+ROW = re.compile(r"^([0-9A-F]{8})\s+(?:[0-9A-F]{2} )+\s+(_?)([.a-z][a-z0-9./]*)\s*([^;]*?)\s*(?:;.*)?$")
+# A literal pool entry the listing has already identified as a code address.
+POINTER = re.compile(r"^([0-9a-fA-F]{6,8})$")
+PC_LOAD = re.compile(r"^@\(0x([0-9a-f]+),pc\),(r\d+)$")
 PROLOGUE = re.compile(r"^(r\d+|pr),@-r15$")
 CALL_TARGET = re.compile(r"0x([0-9a-f]{6,8})")
 
@@ -51,15 +54,52 @@ def build(rows):
     """
     starts = set()
     calls = []
+    # SH-2 cannot build a 32-bit constant inline, so an indirect call is a
+    # pc-relative load into a register followed by jsr through it. Matching only
+    # the address printed in the operand therefore misses every one of them, and
+    # it misses them silently: the callee looks like a function nothing calls.
+    # That is how 0x000124F0 came to be treated as unrelated to 0x00013C5E when it
+    # calls it directly, and why a first count of "402 roots" was too high.
+    pool = {}
+    for addr, mnem, ops in rows:
+        if mnem == ".pointer":
+            m = POINTER.match(ops.strip())
+            if m:
+                pool[addr] = int(m.group(1), 16)
+
+    held = {}
     for addr, mnem, ops in rows:
         if mnem in ("mov.l", "sts.l") and PROLOGUE.match(ops):
             starts.add(addr)
-        if mnem in ("bsr", "jsr", "bsrf"):
+
+        if mnem in ("bsr", "jsr", "bsrf", "jmp", "braf"):
             m = CALL_TARGET.search(ops)
             if m:
                 t = int(m.group(1), 16)
                 calls.append((addr, t))
                 starts.add(t)
+            else:
+                m = re.match(r"^@(r\d+)$", ops)
+                if m and m.group(1) in held:
+                    t = held[m.group(1)]
+                    calls.append((addr, t))
+                    starts.add(t)
+
+        # Track what a pc-relative load put in a register so the jsr that follows
+        # can be resolved. The load itself carries no value in the listing; the
+        # pool entry does, as a .pointer line, so the two are joined by address.
+        if mnem == "mov.l":
+            m = PC_LOAD.match(ops)
+            if m:
+                v = pool.get(int(m.group(1), 16))
+                if v is not None:
+                    held[m.group(2)] = v
+                else:
+                    held.pop(m.group(2), None)
+                continue
+        d = re.search(r"(r\d+)$", ops)
+        if d and mnem not in ("bsr", "jsr", "bsrf", "jmp", "braf"):
+            held.pop(d.group(1), None)
 
     ordered = sorted(starts)
 

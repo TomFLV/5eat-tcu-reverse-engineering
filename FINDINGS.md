@@ -5631,3 +5631,44 @@ that fills it runs first in the list.
 The first 33 tasks move only 27 addresses between them; almost all the coverage
 arrives in the next 34. Whatever the scheduler's real order is, the task list is
 not uniformly interesting.
+
+### 65c. Both culprits, named
+
+Two more parallel rounds narrowed 401 tasks to two functions:
+
+    0x000124F0   overwrites the injected pedal at 0xFFFF30FB
+    0x0002CE7A   stops 0xFFFF8E47 changing at all
+
+The second was predicted before it was measured, which is worth recording because
+so little else in this work has been. `0x0002CE7A` sits beside the gather caller
+`0x0002CD9C` and its first act is `bsr 0x0002d2cc` - the function that section 60
+found reading more of the control block than any other, and the consumer of the
+second gather pool at `0x02D4F4`. Both gathers write `0xFFFF8E47`. Running the
+second one after the first replaces the pedal-derived value with whatever its own
+source holds, and if that source is constant across the drive the address stops
+changing and drops out of the log entirely.
+
+### 65d. The call graph was missing every indirect call
+
+`0x000124F0` calls `0x00013C5E`, which is the one root already identified as
+reaching code that clobbers injected inputs and already excluded from the task
+list. Excluding it achieved nothing because a different root calls it - and the
+call graph did not show that, which is why the exclusion looked sound.
+
+The cause is the same SH-2 property that has shaped most of this work. A 32-bit
+constant cannot be built inline, so an indirect call is a pc-relative load into a
+register followed by `jsr` through it:
+
+    000124F2  mov.l @(0x1269c,pc),r3     ; pool holds 0x00013C5E
+    000124F4  jsr @r3
+
+Matching the address printed in the operand catches `bsr` and misses every one of
+these, and misses them silently: the callee simply appears to be a function that
+nothing calls. `tools/denso_callgraph.py` now joins the load to its pool entry -
+the listing marks those as `.pointer` lines - and resolves the target. Called
+functions go from 1,225 to 2,162, and `0x00013C5E` is now correctly attributed.
+
+Two lessons, both already paid for elsewhere in this file. An analysis that cannot
+see a construct does not report uncertainty about it; it reports a confident wrong
+answer. And "nothing calls this function" is a statement about the tool before it
+is a statement about the firmware.
