@@ -1,7 +1,7 @@
 # Subaru 5EAT TCU
 
 [![Latest release](https://img.shields.io/github/v/release/TomFLV/5eat-tcu-reverse-engineering?label=release)](../../releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/TomFLV/5eat-tcu-reverse-engineering/total?label=downloads)](../../releases)
+[![Downloads](https://img.shields.io/github/downloads/TomFLV/5eat-tcu-reverse-engineering/latest/total?label=downloads%20(latest%20release))](../../releases)
 [![verify](https://github.com/TomFLV/5eat-tcu-reverse-engineering/actions/workflows/verify.yml/badge.svg)](../../actions/workflows/verify.yml)
 
 RomRaider tuning definitions for the Subaru 5EAT transmission control unit, with the
