@@ -5871,3 +5871,31 @@ changes what the code computes - but the addresses it appears at here are
 temporaries, and naming them would be naming stack slots. The single-function sweep
 of section 62 saw the same selector move 48 addresses, so the two agree that it
 matters while disagreeing about where its effect is visible.
+
+### 68e. What the eight channels are
+
+Each of the eight begins the same way: read the channel, compare it against a
+threshold, and if it is at or above the threshold check a chain of flags before
+doing anything.
+
+    00089A64  mov.w @r2,r6      ; [000A2678] = 0x170     the threshold
+    00089A66  mov.l ...,r5      ; 0xFFFF3808             the channel
+    00089A68  mov.w @r5,r2
+    00089A6A  cmp/ge r6,r2
+    00089A6C  bf 0x00089ad6                              below it, do nothing
+    00089A6E  mov.l ...,r6      ; 0xFFFF8921             a flag
+    00089A70  mov.b @r6,r2
+    00089A72  tst r2,r2
+    00089A74  bf 0x00089ad6                              set, do nothing
+    ... three more flag checks in the same shape
+
+**All eight read their threshold from the same ROM location, 0x000A2678.** Eight
+channels, one shared calibration constant, identical code, and a chain of enabling
+conditions before acting: that is eight instances of the same diagnostic monitor,
+not eight different measurements. The five addresses each channel drives are its
+counter, timer and flags.
+
+Two things follow. `0x000A2678` is a calibratable diagnostic threshold and belongs
+in the definition. And naming any one of the eight channels names all eight, along
+with the forty addresses they drive - which is the largest single naming
+opportunity the dependency map offers.
