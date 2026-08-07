@@ -1,0 +1,14 @@
+# romraider-5eat
+#
+# SHA-256 of every tracked file in this directory, 5 files, 0.0 MB.
+# Recorded 2026-08-07. Verify with:  python tools/write-manifests.py --check
+#
+# These exist because this repository ships ROM images, decompiler output
+# and generated definitions - files where a truncated copy still loads and
+# is quietly wrong.
+
+bbdf37963a2bea0d4a0c3eee12e42e4a3002afe7c0d26ebb600d349b0f869e87  LICENSE
+d73de02d9927f3f478c7d39ea078206b458257418f9d0e102fab2b558266964c  README.md
+2fcb26e5c68179471229b02123426cb77a880b3cf87f97021df18c68830595e8  build-standalone.sh
+00ad502c4dcba7026f28a365c99a507c40b795c6c0ab4917a3d012795d32bf1c  log4j.properties
+9390be9b0bba97d82c9e98bd85bae3f86c4f53f1a269dab9e5e27aa4d9956502  tcu-cli.properties

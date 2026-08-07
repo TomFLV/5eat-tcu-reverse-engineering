@@ -1,0 +1,20 @@
+# docs
+#
+# SHA-256 of every tracked file in this directory, 11 files, 0.4 MB.
+# Recorded 2026-08-07. Verify with:  python tools/write-manifests.py --check
+#
+# These exist because this repository ships ROM images, decompiler output
+# and generated definitions - files where a truncated copy still loads and
+# is quietly wrong.
+
+69da893656346297d5004de53a3d6bed15333515b601fd7cf6aa4e78632b1e18  BENCH-RIG.md
+c04ca734fd987f03b851f3b87b931d2dae0655e4c1bb8a5748b273617577a146  ROM-DETAILS.md
+25303a11f430c8a5e85e357d00f6c085e52baf6bbded9df972ba7d0c9c08a445  ROMRAIDER-SETUP.md
+0edd54b64aa00a231f60764644dba6d2a991e1a4f6f65edbe0a00170705b2fc5  RUNNING-THE-TOOLS.md
+fea34a35cfe73a32ca674c1d364ab7b790be6233185ddee94b905224c33c73df  TECHNICAL-NOTES.md
+6e235e9696d697477d7eaa0b2d1ec56686d347e27ffc21e449da4cb47980bb8f  denso_can_signal_map.txt
+5c498d0540310684fac61420095be1f54396e4b48ef71a14ae01487445e1757e  forum_thread_13725.txt
+63fd6bb992322c2925385ad68afd9194b88742c499ce25407c8efb0dce49febf  forum_thread_20850.txt
+31958ba16dab5f06a5d6051d334861bf485cb5a7cc984d642044381cefc69c12  forum_thread_8449.txt
+4a94581b55c29805ee5bf5b6a68cea7560c7cab0df1355c8166955e7896864ef  shift-curves-reference.png
+d03b5462161497775706f0d3688ec2e9d8080daae316ec1626f87557c52465e1  shift-map-91D1206000.png

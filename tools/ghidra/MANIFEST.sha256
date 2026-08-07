@@ -1,0 +1,20 @@
+# tools/ghidra
+#
+# SHA-256 of every tracked file in this directory, 11 files, 0.0 MB.
+# Recorded 2026-08-07. Verify with:  python tools/write-manifests.py --check
+#
+# These exist because this repository ships ROM images, decompiler output
+# and generated definitions - files where a truncated copy still loads and
+# is quietly wrong.
+
+e1b414e928e81764179909287905440683ebe40c880bb78ab605f9975b560463  DecompileAll.java
+d306a75c033ca41f131c8ebb84e331b53745a77589b487d091b6c2ea81418245  DensoAddRam.java
+0682ceae2bfce3e523189c5a6ca9ebae176caf21e8fa9e9dacf0fafe541de5cc  DensoDisasmAll.java
+025cb4386d8088deca313d027c17095fafd48412fac1e00832a4afb8dfeb942e  DensoDriveLog.java
+bec66e97c092935d957512533ee62a3c6874265bac166e52c5f59cac0eb7e697  DensoEmuTable.java
+074a769e12b020fc64c431d240783c9496835188268ed9c07e52dc407385c470  README-sh2e.md
+0d96454632c1db4795260fbcfdceb7c1594530e6271ee0baccf2c07afcf6f696  SeedAuto.java
+1f3449120abca328ff6c64e95fbcb63498ad32bdc163a11d688f034e5015ebf4  decompile_all_denso.sh
+55ba8849bbeed32d0f3cc0e90ce6a602204e81c67706db96691a66dedcd68df3  decompile_all_roms.sh
+1a0f57020d44ad2f6d76965fa9702916b67094b79ad8540a8bac7adf76b1b620  sh-2e.slaspec
+7c49ed6afb76c9479c017bb7e2b0945a642239ebcf7ba7184e572c52d99fb827  superh-sh2e.patch

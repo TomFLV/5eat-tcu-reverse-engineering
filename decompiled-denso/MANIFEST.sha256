@@ -1,0 +1,19 @@
+# decompiled-denso
+#
+# SHA-256 of every tracked file in this directory, 10 files, 22.6 MB.
+# Recorded 2026-08-07. Verify with:  python tools/write-manifests.py --check
+#
+# These exist because this repository ships ROM images, decompiler output
+# and generated definitions - files where a truncated copy still loads and
+# is quietly wrong.
+
+961d1459f6999606d2632801cce2c68f9c8cc88251c53de15c2dcb8ede286ef5  5AT_3.272_LEGAS_EJDM2008.c
+ac9f7ee31b129b8c6d9bd900812876f91106dbd43782987e3cf30d703fd2a6da  5AT_3.583_LEGASE_JDM2008.c
+63040641ca916a38989beafc767ed1b28da9ded4c7b9c8373ddfbd4cd10fa8e3  8EFB206000_08FB2WA0_14_tribeca_usdm.c
+ab0c4d78a732a373f6b36213ec5f2960732734812f6837df7006e5472fc59640  B1AE207100_EZAE2WB1_2010_LGT_EDM.c
+fb06bfbc21690674ca69020ed49cabe0f5212620f7badc0481c96e93d1b40825  Forester_SH9_STI_3.283_JDM2010.c
+1e04d79f437eb7611f64a5f7372145f1db22afb7dc442bf6fc5b34532fd79337  Impreza_STI_3.583_JDM2011.c
+bfac5e3e0f83a5f94bbc41be2dce927adba0eeae27ac3ab6fe11ded8a37da339  SH7058S-3171121010_STI.c
+b6487d6c62cc517c8349d1c7d046bfffa8103a084cfdd134602cf6d776a4bfd7  SH7058S_TG5_3.083.c
+4ed3e3a68434df00d783ea08a8d2e5dfe88fde7d5b344bdafcc84233cceb9055  Tribeca_3.583_EDM_2009.c
+58ceced2708dd5a5e9be9e60cec3a2b81719ba946d23fdcf6239f611790b8032  coverage.log

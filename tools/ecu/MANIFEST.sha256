@@ -1,0 +1,15 @@
+# tools/ecu
+#
+# SHA-256 of every tracked file in this directory, 6 files, 0.0 MB.
+# Recorded 2026-08-07. Verify with:  python tools/write-manifests.py --check
+#
+# These exist because this repository ships ROM images, decompiler output
+# and generated definitions - files where a truncated copy still loads and
+# is quietly wrong.
+
+4ff488a6f5d6baef7d49f6097a24a4626622b13fa652b7a6ee768bcc0f6f1016  README.md
+b1f82dda656d317d65cd6f1797795695abdb57ed67cbffdb508f7c66988473fc  ecu_def.py
+b5d7a409e0778fa813e4088f9369a41fefcda86f4910fb9c51dfbde096482498  find_table.py
+01a6d2f469ee019c0a2fd13aba48f15846028fcaff36e658e7bb0c2c5ea7aa7d  list_ecus.py
+4dfc2db0263e04c29d285b01fffcc0edbacfcd9de9efb4c142476bac4b3f94ad  read_table.py
+47d6804b7b6b5e03e34842173cc33c9e5d7b47b80c180dd4c29d204f933babed  torque.py

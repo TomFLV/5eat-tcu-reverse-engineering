@@ -1,0 +1,18 @@
+# rom-denso
+#
+# SHA-256 of every tracked file in this directory, 9 files, 9.0 MB.
+# Recorded 2026-08-07. Verify with:  python tools/write-manifests.py --check
+#
+# These exist because this repository ships ROM images, decompiler output
+# and generated definitions - files where a truncated copy still loads and
+# is quietly wrong.
+
+49e861819d88c09e694f7125a1d45b27b386bcedbed2b34908a4317b61d577e8  5AT_3.272_LEGAS_EJDM2008.bin
+a07df25f69de1e040c45a2821e899e890f4036d0cc2865d5b253f24c41c521df  5AT_3.583_LEGASE_JDM2008.bin
+2511711aa897d4eab99a9179bc81869a87f0ed40ae5fa951a3df4cf80a7deb3e  8EFB206000_08FB2WA0_14_tribeca_usdm.bin
+53a311521be77115535b5a9e8aec1a09e3fffe79aeafb88304fe4baa52ad439a  B1AE207100_EZAE2WB1_2010_LGT_EDM.bin
+7ba2580bc49d7c76f1b36f2a0dd72c6eeaf650b5e34339230ce05d0fa8e6af13  Forester_SH9_STI_3.283_JDM2010.bin
+59ee219c0ea01a3466d0fb5d4c4d44ec0ce61288b5e1c020851d42c8089c6931  Impreza_STI_3.583_JDM2011.bin
+8e4b9ddee29d7031cd1c3673332556bf4ed0ce7697bb3b8948f8deeace60190f  SH7058S-3171121010_STI.bin
+75395ed04c11275fbcc58aa40f810c35671695ffb9a6a594b38cde2535eec5a8  SH7058S_TG5_3.083.bin
+8580c505907351f842391579ab6c5cf9e98ca2f2b563ad621737753668ea2b59  Tribeca_3.583_EDM_2009.bin

@@ -1,0 +1,10 @@
+# .github/workflows
+#
+# SHA-256 of every tracked file in this directory, 1 files, 0.0 MB.
+# Recorded 2026-08-07. Verify with:  python tools/write-manifests.py --check
+#
+# These exist because this repository ships ROM images, decompiler output
+# and generated definitions - files where a truncated copy still loads and
+# is quietly wrong.
+
+e7de5c68ddd7a4d8d1b770c14268a9ca640e425c14fb36057366d67a2282eb1d  verify.yml

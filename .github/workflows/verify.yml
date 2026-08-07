@@ -92,6 +92,13 @@ jobs:
       - name: Checksum implementation agrees with itself across all images
         run: python tools/test_checksum.py
 
+      # Every directory records the SHA-256 of its own files. This repository
+      # ships ROM images and decompiler output, where a truncated copy still
+      # loads and is quietly wrong, so the manifests are worth enforcing rather
+      # than merely writing.
+      - name: Every tracked file matches its directory manifest
+        run: python tools/write-manifests.py --check
+
       # The Select Monitor parameter table is what the logger definition is built
       # from, so its detection has to keep working. Run offline: naming the
       # parameters needs FreeSSM, but finding the tables is this project's own

@@ -1,0 +1,16 @@
+# tools/romraider-cli
+#
+# SHA-256 of every tracked file in this directory, 7 files, 0.0 MB.
+# Recorded 2026-08-07. Verify with:  python tools/write-manifests.py --check
+#
+# These exist because this repository ships ROM images, decompiler output
+# and generated definitions - files where a truncated copy still loads and
+# is quietly wrong.
+
+9a64ecb9298d80ff579b1a0ab1818e0e5d6f9d9be9de12bd1824ff9785370d24  EndToEndChecksum.java
+9c7ab5c4bde1b2d926816288aab7b3575f05838808b999c6be957a16e0f0adc4  README.md
+e3ae3b34afece801392b94106add5e9e5e7d957e12e1cd50f3a1d157160594a2  RenderCurveEditor.java
+0b99cf71832a7ce72676b85f4868a10799f719ecf450be0bf6bed96ea0e38a06  RenderShiftPair.java
+8f19194d11c2895185adef25ff5d60732fb25f33416b02eb005dd9b74f64de5a  RenderTable.java
+e32683d277483aad636dbe9984387743c83b1f6736fb1bc37a1808f0c1b07784  UiSmokeTest.java
+6c6a51b59cb88fc42f6308ddc9a75122fc55630027c6a6acf5c897921d4e6744  Verify3D.java

@@ -1,0 +1,13 @@
+# logs
+#
+# SHA-256 of every tracked file in this directory, 4 files, 0.0 MB.
+# Recorded 2026-08-07. Verify with:  python tools/write-manifests.py --check
+#
+# These exist because this repository ships ROM images, decompiler output
+# and generated definitions - files where a truncated copy still loads and
+# is quietly wrong.
+
+a284234d3b415905f4b1745bc7313c59127790bd246fd5637342f3c7d3476706  README.md
+0224a385448d83f121692d60359339e7e23971400d106fe9cb793c49d0d7b01d  romraiderlog_20241016_113910_TCU5.csv
+32882cd47371ac1334bb5652008dfa01cc9aa130264c014281e7ee221472d365  romraiderlog_20241016_133733.csv
+8685e0136710494e7d9e9f838b5c773a38211598b7a93103dc5463c93d105e44  romraiderlog_20241016_133923.csv

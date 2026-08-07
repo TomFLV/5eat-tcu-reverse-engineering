@@ -1,0 +1,12 @@
+# romraider-5eat/patches
+#
+# SHA-256 of every tracked file in this directory, 3 files, 0.1 MB.
+# Recorded 2026-08-07. Verify with:  python tools/write-manifests.py --check
+#
+# These exist because this repository ships ROM images, decompiler output
+# and generated definitions - files where a truncated copy still loads and
+# is quietly wrong.
+
+bd8f861f37310441b723f1746b514fd19fc728ebb3346f2410d737b6d74e0966  README.md
+14b2af8eb41216cc46b970098bf5498516ae051ba6f29bdde34372da7b6c10be  jdk21-build.patch
+45e855c2226033f6a92262f5c6e9747aabd1e70469992c9c0b285cb1f9679104  romraider-5eat.patch

@@ -61,6 +61,9 @@ run "table offset derivation self-test"  "$PY" tools/find_rom_offsets.py --self-
 run "nothing left unscaled"              "$PY" tools/detect_fixed_point.py
 run "DTC table found in all 9 Denso"     "$PY" tools/denso_find_dtc.py --min 10
 
+echo "=== file integrity"
+run "every tracked file matches its manifest"  "$PY" tools/write-manifests.py --check
+
 echo "=== hygiene"
 printf "  %-44s " "every tracked python parses"
 bad=0
@@ -74,8 +77,11 @@ if git ls-files "*.md" | xargs grep -l "Users.Tom\|/home/rust" >/dev/null 2>&1; 
     echo "FAIL"; fail=$((fail+1))
 else echo "ok"; pass=$((pass+1)); fi
 
+# This script names the patterns it searches for, so scanning every tracked file
+# includes scanning this one, and it matches itself. Exclude it, and the manifests,
+# which record hashes rather than content.
 printf "  %-44s " "no secrets in tracked files"
-if git ls-files | xargs grep -ilE "headwater|password *=|api[_-]?key" >/dev/null 2>&1; then
+if git ls-files | grep -v "verify-all.sh" | grep -v "MANIFEST.sha256"    | xargs grep -ilE "headwater|password *=|api[_-]?key" >/dev/null 2>&1; then
     echo "FAIL"; fail=$((fail+1))
 else echo "ok"; pass=$((pass+1)); fi
 

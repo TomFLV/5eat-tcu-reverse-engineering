@@ -1,0 +1,11 @@
+# tools/sh2
+#
+# SHA-256 of every tracked file in this directory, 2 files, 0.0 MB.
+# Recorded 2026-08-07. Verify with:  python tools/write-manifests.py --check
+#
+# These exist because this repository ships ROM images, decompiler output
+# and generated definitions - files where a truncated copy still loads and
+# is quietly wrong.
+
+a84d74a95ef7d3d40b39af27d093c457d7e7336cfeb194a361a355eab4bc9e82  build.sh
+6da2b92c5d4103ae0f78b8400d1dd03b2b339aca57f741ee0ec10c4a97faaf1d  sh2.c
