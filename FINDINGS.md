@@ -5583,3 +5583,51 @@ does not make it a task that takes no parameters.
 So the harness needs both modes and should not pretend one is the other. Broad task
 lists for coverage - what the firmware touches, which parameters exist. Curated
 pipelines for causation - what a given input actually drives.
+
+## 65. TWELVE EMULATORS, AND FINDING THE CULPRIT BY EXPERIMENT
+
+### 65a. The machine was doing an sixteenth of what it could
+
+A drive pinned one core at 102 % while fifteen sat idle. The suggestion was CUDA,
+and it is worth recording why that is the wrong tool rather than just declining it.
+The p-code emulator interprets one instruction at a time, with a data dependency
+between every step and a branch in most of them. CUDA wants thousands of threads
+running identical arithmetic over independent data; this is the opposite shape, and
+there is no CUDA backend for p-code, so it would mean reimplementing SH-2E
+emulation to run a workload that could not use the hardware anyway.
+
+The parallelism that does exist is across whole drives. Each drive is independent,
+so twelve of them can run at once. Measured: twelve JVMs at about 100 % each
+against one before. The only obstacle is that Ghidra locks a project while it is
+open, so each worker gets a 39 MB copy, made once and reused.
+
+`tools/denso_parallel.py`. It turns a question that would have taken two hours of
+sequential runs into ten minutes.
+
+### 65b. Bisecting the task list
+
+Section 64a left a specific question: with 402 tasks running, `0xFFFF30FB` does not
+appear in the changed set at all, so something overwrites the injected pedal.
+Excluding every function the cross-reference says writes that address changed
+nothing, which means the writer list is incomplete - unsurprising when 33,165
+accesses have a base the tracker cannot follow.
+
+That is a question for experiment, and twelve cores make it cheap. Twelve prefixes
+of the task list, run at once, over a twenty-tick window where the pedal moves:
+
+    tasks run    pedal survives    0xFFFF8E47 filled    addresses moved
+       33            yes                 yes                   27
+       67            yes                 yes                2,009
+      100            yes                 yes                2,005
+      134            no                  yes                1,833
+      167            no                  no                 1,881
+      401            no                  no                 2,232
+
+Two distinct culprits, cleanly separated. Something in tasks 100 to 134 overwrites
+the pedal at `0xFFFF30FB`. Something further on, between 134 and 167, stops
+`0xFFFF8E47` being written at all - which is a different failure, since the gather
+that fills it runs first in the list.
+
+The first 33 tasks move only 27 addresses between them; almost all the coverage
+arrives in the next 34. Whatever the scheduler's real order is, the task list is
+not uniformly interesting.
