@@ -6031,3 +6031,35 @@ inputs:
 dependency structure survived almost unchanged, which is the reassuring part: the
 map of section 68 was measuring something real, and was not an artefact of the
 noise it was measured through.
+
+## 71. THE 92.7 PERCENT WAS FLATTERED BY THE THING THAT WAS WRONG
+
+Removing the RAM self test of section 70 should have improved agreement between the
+native core and the p-code emulator, since a destructive routine running on every
+tick was an obvious candidate for the divergence. It did the opposite:
+
+    task list                        agreement
+    with the RAM self test running      92.70 %
+    with it removed                     79.45 %
+
+The explanation is uncomfortable and worth stating plainly. The self test writes
+4,096 bytes of a fixed pattern every tick. Both emulators reproduce that perfectly
+- it is a block copy and a constant fill, with nothing to get wrong - so those
+cells counted as agreement and made up the bulk of the comparison. Take them away
+and what is left is the control state, which is where the two actually differ.
+
+**So the native core agrees with the p-code emulator on about 79 percent of control
+values, not 93.** The earlier figure was measuring how well both tools copy a
+memory test.
+
+This does not change the decision recorded in section 67b, it sharpens it. Findings
+come from the p-code emulator. The native core is for search - bisection, sweeps,
+the dependency map - where the question is which addresses respond rather than what
+value they hold, and where an A/B of two native runs cancels whatever the core gets
+wrong. It is 180 times faster and that is worth having, but it is not yet an
+oracle, and it is further from being one than the previous number suggested.
+
+A general point this project keeps re-learning, now from a new direction: a metric
+computed over a population you do not control will be dominated by whatever is most
+numerous in it. Percentage agreement over "all cells that changed" was never
+measuring what it appeared to measure.
