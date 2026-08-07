@@ -94,7 +94,15 @@ def send_for(b, msgs, seconds, period=0.02):
     return n
 
 
-def main():
+def _main(opened):
+    # python-can warns "SocketcanBus was not properly shut down" if the interface
+    # is left open. Harmless, but a warning nobody can act on is noise on a bench
+    # where a real warning matters.
+    def opened_bus(channel, bitrate):
+        b = bus(channel, bitrate)
+        opened.append(b)
+        return b
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--channel", default="can0")
     ap.add_argument("--bitrate", type=int, default=500000)
@@ -107,7 +115,7 @@ def main():
     args = ap.parse_args()
 
     if args.listen:
-        b = bus(args.channel, args.bitrate)
+        b = opened_bus(args.channel, args.bitrate)
         print("listening on %s for %.0fs - anything the TCU transmits\n"
               % (args.channel, args.seconds))
         seen = {}
@@ -130,7 +138,7 @@ def main():
                   % (cid, seen[cid]["n"], seen[cid]["last"].hex(" ")))
         return 0
 
-    b = bus(args.channel, args.bitrate)
+    b = opened_bus(args.channel, args.bitrate)
 
     if args.idle:
         print("holding a standing-still state for %.0fs" % args.seconds)
@@ -162,6 +170,24 @@ def main():
 
     ap.print_help()
     return 1
+
+
+def main():
+    """Run, and close whatever was opened however this ends.
+
+    python-can warns "SocketcanBus was not properly shut down" if an interface is
+    left open. Harmless in itself, but a warning nobody can act on is noise on a
+    bench where a real warning matters.
+    """
+    opened = []
+    try:
+        return _main(opened)
+    finally:
+        for b in opened:
+            try:
+                b.shutdown()
+            except Exception:
+                pass
 
 
 if __name__ == "__main__":

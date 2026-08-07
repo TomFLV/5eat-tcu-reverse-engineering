@@ -8,5 +8,5 @@
 # is quietly wrong.
 
 bf64e623a44c70f1ef4765361a27acbb2e7c4ee0cd21b7062f7c5b84a723198e  attach-cantact.ps1
-403e877fe6a48e539662b55435ecf95ea380140e7082a1d001db8ef78c0b618b  can_bench.py
+4a12966b274cf7aebc60ed55f4e436cf61cecf5e06ef8e7ab69ef211f45b3c64  can_bench.py
 8d9640bbb68c62b5dd0420bcf69a22809dda0c7eaa94ef36b0a9245bec5622d4  setup-wsl-can.sh
