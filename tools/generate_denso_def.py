@@ -372,6 +372,24 @@ def build_rom(path, d):
         _xn, xu = describe_axis(read_axis(d, t["x"], t["rows"]))
         _yn, yu = describe_axis(read_axis(d, t["y"], t["cols"]))
         kx, ky = axis_kind(xu), axis_kind(yu)
+        # A table whose cells are all the same value has nothing to tune. Of 185
+        # unidentified tables in one image, 64 are like this. They are real tables
+        # and worth keeping - a constant is a fact about the calibration - but
+        # mixing them in with the rest is most of what makes the list feel like
+        # noise, so they go in their own category and stay out of the way.
+        n = t["rows"] * t["cols"]
+        try:
+            vals = struct.unpack(">%dH" % n, d[t["data"]:t["data"] + n * 2])
+        except struct.error:
+            vals = ()
+        if vals and len(set(vals)) == 1:
+            parts.append(table_xml(
+                t, "Table %06X - %dx%d constant %d"
+                   % (t["hdr"], t["rows"], t["cols"], vals[0]),
+                "Transmission - Constant (nothing to tune)",
+                RAW_DESC.format(rows=t["rows"], cols=t["cols"], hdr=t["hdr"]),
+                None, "0", 4, rom=d))
+            continue
         if kx and ky:
             cat = "Transmission - Unidentified (%s by %s)" % (kx, ky)
             label = "%dx%d %s by %s" % (t["rows"], t["cols"], kx, ky)

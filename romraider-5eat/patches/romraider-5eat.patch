@@ -1797,7 +1797,7 @@ new file mode 100644
 index 0000000..d93c088
 --- /dev/null
 +++ b/src/main/java/com/romraider/swing/ShiftCurveEditor.java
-@@ -0,0 +1,342 @@
+@@ -0,0 +1,403 @@
 +/*
 + * RomRaider Open-Source Tuning, Logging and Reflashing
 + * Copyright (C) 2006-2012 RomRaider.com
@@ -1888,13 +1888,19 @@ index 0000000..d93c088
 +        new Color(168, 128, 255), new Color(226, 120, 226),
 +    };
 +
-+    private final Table3D table;
++    private final Table3D table;        // the upshift schedule
++    private final Table3D partner;      // its downshift, or null if not found
++    // -1 shows every shift event at once; 0..n isolates one of them, which is what
++    // makes a single condition its own map rather than one chart of eight curves.
++    private int onlyRow = -1;
 +    private double speedMax = 140.0;
 +
 +    /** A draggable vertex: which cell it is, and where it sits on the chart. */
 +    private static final class Vertex {
 +        int col;                // index along the table's X axis (pedal position)
 +        int row;                // shift event
++        boolean down;           // false = upshift curve, true = downshift
++        Table3D owner;          // which of the pair this point edits
 +        double pedal;           // %
 +        double speed;           // km/h
 +        int px, py;
@@ -1905,7 +1911,22 @@ index 0000000..d93c088
 +    private Vertex hover;
 +
 +    public ShiftCurveEditor(Table3D table) {
++        this(table, null);
++    }
++
++    /**
++     * An upshift schedule and its downshift partner on one chart.
++     *
++     * A shift schedule is only meaningful as a pair: the gap between the upshift
++     * speed and the downshift speed at a given pedal position is the hysteresis
++     * band, and a schedule with the two curves crossed will hunt between gears.
++     * Neither of those is visible when the two tables are opened separately, which
++     * is how they are stored - the 1-2 upshift curve and the 1-2 downshift curve
++     * are one row each in two different tables.
++     */
++    public ShiftCurveEditor(Table3D table, Table3D partner) {
 +        this.table = table;
++        this.partner = partner;
 +        setBackground(BG);
 +        setPreferredSize(new Dimension(880, 560));
 +        ToolTipManager.sharedInstance().registerComponent(this);
@@ -1959,11 +1980,20 @@ index 0000000..d93c088
 +    /** Re-read every vertex from the table, so the chart always shows live data. */
 +    private void rebuild() {
 +        vertices.clear();
-+        final DataCell[][] data = table.get3dData();
-+        final int cols = table.getSizeX();
-+        final int rows = table.getSizeY();
 +        double max = 60.0;
++        max = addCurves(table, false, max);
++        if (partner != null) {
++            max = addCurves(partner, true, max);
++        }
++        // Round the axis up so the busiest curve is not jammed against the edge.
++        speedMax = Math.ceil((max * 1.08) / 20.0) * 20.0;
++    }
 +
++    /** Every live cell of one schedule, tagged with the direction it came from. */
++    private double addCurves(Table3D t, boolean down, double max) {
++        final DataCell[][] data = t.get3dData();
++        final int cols = t.getSizeX();
++        final int rows = t.getSizeY();
 +        for (int row = 0; row < rows; row++) {
 +            for (int col = 0; col < cols; col++) {
 +                final DataCell cell = data[col][row];
@@ -1973,6 +2003,8 @@ index 0000000..d93c088
 +                final Vertex v = new Vertex();
 +                v.col = col;
 +                v.row = row;
++                v.down = down;
++                v.owner = t;
 +                v.speed = cell.getRealValue();
 +                v.pedal = axisValue(col);
 +                vertices.add(v);
@@ -1981,8 +2013,17 @@ index 0000000..d93c088
 +                }
 +            }
 +        }
-+        // Round the axis up so the busiest curve is not jammed against the edge.
-+        speedMax = Math.ceil((max * 1.08) / 20.0) * 20.0;
++        return max;
++    }
++
++    /** Show one shift event on its own, or -1 for all of them. */
++    public void setOnlyRow(int row) {
++        this.onlyRow = row;
++        repaint();
++    }
++
++    private boolean visible(Vertex v) {
++        return onlyRow < 0 || v.row == onlyRow;
 +    }
 +
 +    /** The X axis holds the pedal position as static label text. */
@@ -2007,7 +2048,11 @@ index 0000000..d93c088
 +    }
 +
 +    private void commit(Vertex v, double speed) {
-+        final DataCell cell = table.get3dData()[v.col][v.row];
++        // The vertex knows which of the pair it came from. Writing to the upshift
++        // table unconditionally would silently edit the wrong schedule as soon as
++        // a downshift point is dragged.
++        final Table3D t = v.owner != null ? v.owner : table;
++        final DataCell cell = t.get3dData()[v.col][v.row];
 +        try {
 +            // Through setRealValue so scaling, user level and locking all apply,
 +            // and the change joins the normal undo/save path.
@@ -2100,10 +2145,22 @@ index 0000000..d93c088
 +                                            BasicStroke.JOIN_ROUND);
 +        final int rows = table.getSizeY();
 +        for (int row = 0; row < rows; row++) {
-+            final Color c = SERIES[row % SERIES.length];
++          for (int dir = 0; dir < 2; dir++) {
++            final boolean down = dir == 1;
++            if (down && partner == null) {
++                continue;
++            }
++            // Same hue for both directions of one shift event, the downshift
++            // darker. A pair belongs together visually; two unrelated colours
++            // would make the hysteresis band harder to read, not easier.
++            final Color base = SERIES[row % SERIES.length];
++            final Color c = down
++                    ? new Color(base.getRed() / 2 + 20, base.getGreen() / 2 + 20,
++                                base.getBlue() / 2 + 40)
++                    : base;
 +            final List<Vertex> pts = new ArrayList<Vertex>();
 +            for (Vertex v : vertices) {
-+                if (v.row == row) {
++                if (v.row == row && v.down == down && visible(v)) {
 +                    v.px = speedToX(v.speed);
 +                    v.py = pedalToY(v.pedal);
 +                    pts.add(v);
@@ -2125,11 +2182,15 @@ index 0000000..d93c088
 +                    g.setColor(c);
 +                }
 +            }
-+            // legend
-+            final int ly = PAD_T + 8 + row * 17;
-+            g.fillRect(w - PAD_R + 12, ly, 18, 3);
-+            g.setColor(TEXT);
-+            g.drawString(rowLabel(row), w - PAD_R + 36, ly + 6);
++            // One legend entry per shift event, drawn on the upshift pass only so
++            // a pair does not get two lines saying the same thing.
++            if (!down) {
++                final int ly = PAD_T + 8 + row * 17;
++                g.fillRect(w - PAD_R + 12, ly, 18, 3);
++                g.setColor(TEXT);
++                g.drawString(rowLabel(row), w - PAD_R + 36, ly + 6);
++            }
++          }
 +        }
 +
 +        if (dragging != null) {
@@ -2223,7 +2284,7 @@ index e507955..11990d7 100644
              } else if (e.getSource() == incrementFine) {
                  incrementFine(curTable);
              } else if (e.getSource() == decrementFine) {
-@@ -614,6 +625,32 @@ public class TableToolBar extends JToolBar implements MouseListener, ItemListene
+@@ -614,6 +625,67 @@ public class TableToolBar extends JToolBar implements MouseListener, ItemListene
      /**
       * Method launches a 3d Frame.
       */
@@ -2239,12 +2300,47 @@ index e507955..11990d7 100644
 +                && t.getCategory().contains("Shift Schedule");
 +    }
 +
++    /**
++     * The other half of a shift schedule: the downshift table that goes with an
++     * upshift one, or the reverse.
++     *
++     * They are stored as separate tables whose names differ only in that word, and
++     * a schedule is only meaningful as a pair - the gap between the two curves at a
++     * given pedal position is the hysteresis band, and curves that cross will make
++     * the transmission hunt. Neither is visible with one table on screen.
++     */
++    private Table findShiftPartner(Table t) {
++        if (t == null || t.getName() == null) {
++            return null;
++        }
++        final String name = t.getName();
++        final String want = name.contains("Upshift")
++                ? name.replace("Upshift", "Downshift")
++                : name.replace("Downshift", "Upshift");
++        if (want.equals(name)) {
++            return null;
++        }
++        try {
++            for (Table other : t.getRom().getTables()) {
++                if (want.equals(other.getName())
++                        && other.getType() == Table.TableType.TABLE_3D) {
++                    return other;
++                }
++            }
++        } catch (Exception e) {
++            // No rom context, or a table list that cannot be walked. Showing the
++            // one curve is a worse chart, not a broken one.
++        }
++        return null;
++    }
++
 +    private void openShiftCurveEditor(Table currentTable) {
 +        if (!isShiftSchedule(currentTable)) {
 +            return;
 +        }
-+        final ShiftCurveEditor editor =
-+                new ShiftCurveEditor((com.romraider.maps.Table3D) currentTable);
++        final ShiftCurveEditor editor = new ShiftCurveEditor(
++                (com.romraider.maps.Table3D) currentTable,
++                (com.romraider.maps.Table3D) findShiftPartner(currentTable));
 +        final JFrame frame = new JFrame(currentTable.getName() + " - curve editor");
 +        frame.setContentPane(editor);
 +        frame.pack();
