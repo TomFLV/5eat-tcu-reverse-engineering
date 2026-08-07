@@ -6179,3 +6179,59 @@ twenty tasks have to be told apart by what they write instead. Several of them -
 `0x0003F9D8`, `0x000404FA`, `0x00041004` - show no conflicting values at all, only
 addresses present in one run and not the other, which is a weaker kind of
 difference than it first appeared.
+
+## 74. THE SELECT MONITOR NAMES WERE THERE ALL ALONG, UNDER THE WRONG KEY
+
+Naming the Denso tables needs named RAM addresses to name them against. The count
+this project had been working from was 25, taken from `denso_working_vars.json`.
+
+`ssm_parameters.json` has 141. They were never used because the address is stored
+under `ram` and every query for them had asked for `address`, which is absent, so
+the rows looked like names with nothing attached. Reading the right key gives:
+
+    0xFFFFA028   H&LR/C Solenoid Valve Current
+    0xFFFFA029   D/C Solenoid Valve Current
+    0xFFFFA02A   F/B Solenoid Valve Current
+    0xFFFFA02B   I/C Solenoid Valve Current
+    0xFFFFA02C   P/L Solenoid Valve Current
+    0xFFFFA02D   L/U Solenoid Valve Current
+    0xFFFFA02E   AWD Solenoid Valve Current
+    0xFFFFA02F   Fwd/B Solenoid Valve Current
+
+Every actuator the transmission has, named. One of them, `0xFFFF30FB` for
+Accelerator Pedal Travel, independently matches what section 58 derived by reading
+the CAN decode by hand, which is a useful check on both.
+
+Extracted to `tools/denso_ssm_addresses.json`.
+
+### 74a. Naming tables from what their readers write
+
+`tools/denso_name_tables.py` follows the chain that can name a table without
+guessing from its shape: a table is read by a function, that function writes RAM,
+and some of that RAM now has a name.
+
+With 141 names instead of 25 it identifies 110 tables, and the useful ones are the
+ones a tuner would want:
+
+    0x0CE478, 0x0CE4B8   read by 0x0007C67C, which writes
+                         F/B, H&LR/C and P/L Solenoid Valve Pressure
+    0x0CE42C/42E/430     read by 0x0007D2DA, which writes
+                         D/C and F/B Solenoid Valve Current
+
+### 74b. And none of them are the tables the definition ships
+
+The overlap between those 110 and the 185 unidentified tables in the definition is
+zero. Not a bug in the join - a fact about the firmware, and one worth stating
+plainly before building anything on top of it.
+
+The two sets are found different ways. `denso_literals.json` collects ROM addresses
+that appear as **literals in code**, which is how a function reaches a table it
+uses directly. The definition's tables are found by **header structure** and then
+filtered to those the firmware reaches **through its pointer index**. A table
+reached through the index never appears as a literal, so the populations barely
+intersect - one accidental hit out of 346.
+
+So the chain works and is pointed at the wrong tables. Naming the shipped ones
+needs the other route: table header, to its entry in the pointer index, to the code
+that reads that index entry, to the function. That is the next piece of work, and
+it is a different query rather than a harder one.
