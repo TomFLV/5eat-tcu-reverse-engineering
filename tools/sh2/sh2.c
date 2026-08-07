@@ -48,6 +48,7 @@ typedef struct {
     float    fr[16];
     uint32_t fpul, fpscr;
     int      delay;           /* a delayed branch is pending */
+    int      halted;          /* this task hit something undecodable */
     uint32_t delay_pc;
 } CPU;
 
@@ -89,8 +90,19 @@ static inline uint32_t rd16(uint32_t a) {
 static inline uint32_t rd32(uint32_t a) {
     return (rd16(a) << 16) | rd16(a + 2);
 }
+/* SH2_WATCH=<hex address> reports every write to it with the instruction that
+ * did it. Guessing at which of four hundred tasks wrote a byte is hopeless; this
+ * answers it in one run. */
+static uint32_t watch_addr;
+static uint32_t watch_pc;
+
 static inline void wr8(uint32_t a, uint32_t v) {
-    if (a - RAM_BASE < RAM_SIZE) ram[a - RAM_BASE] = (uint8_t)v;
+    if (a - RAM_BASE < RAM_SIZE) {
+        if (a == watch_addr)
+            fprintf(stderr, "WRITE %08X = %02X  by pc %08X\n",
+                    a, (uint8_t)v, watch_pc);
+        ram[a - RAM_BASE] = (uint8_t)v;
+    }
 }
 static inline void wr16(uint32_t a, uint32_t v) {
     wr8(a, v >> 8); wr8(a + 1, v & 0xFF);
@@ -105,6 +117,7 @@ static void branch(uint32_t target) { cpu.delay = 1; cpu.delay_pc = target; }
 
 static void step_one(void) {
     uint32_t pc = cpu.pc;
+    watch_pc = pc;
     uint16_t op = (uint16_t)rd16(pc);
     uint32_t next = pc + 2;
     int was_delay = cpu.delay;
@@ -132,7 +145,7 @@ static void step_one(void) {
             break;
         case 0x9:
             if (op == 0x0009) { }                                /* nop */
-            else if (op == 0x0019) { }                           /* div0u */
+            else if (op == 0x0019) { cpu.sr &= ~0x301u; }        /* div0u: clears M, Q, T */
             else if ((op & 0xF0FF) == 0x0029) R[n] = GET_T;       /* movt */
             else goto unimplemented;
             break;
@@ -185,6 +198,7 @@ static void step_one(void) {
             uint32_t q = (R[n] >> 31) & 1, mm = (R[m] >> 31) & 1;
             cpu.sr = (cpu.sr & ~0x300u) | (q << 8) | (mm << 9);
             SET_T(q != mm); break; }
+        case 0x3: goto unimplemented;   /* not an SH-2 encoding in this slot */
         case 0x8: SET_T((R[n] & R[m]) == 0); break;              /* tst */
         case 0x9: R[n] &= R[m]; break;
         case 0xA: R[n] ^= R[m]; break;
@@ -209,12 +223,40 @@ static void step_one(void) {
         case 0x7: SET_T((int32_t)R[n] > (int32_t)R[m]); break;   /* cmp/gt */
         case 0x8: R[n] -= R[m]; break;
         case 0xC: R[n] += R[m]; break;
-        case 0x4: {                                              /* div1, simplified */
-            uint32_t old = R[n];
+        /* div1, in full. The simplified version this replaces was the single
+         * biggest source of divergence from the reference: the compiler emits a
+         * div0s/div1 chain for every division, so getting the M and Q bookkeeping
+         * wrong corrupts arithmetic across the image while control flow mostly
+         * survives - which shows up as a scatter of wrong values rather than a
+         * crash, and is therefore easy to mistake for a working emulator. */
+        case 0x4: {
+            uint32_t old_q = (cpu.sr >> 8) & 1;
+            uint32_t mbit  = (cpu.sr >> 9) & 1;
+            uint32_t q     = (R[n] >> 31) & 1;
+            uint32_t tmp2  = R[m];
+            uint32_t tmp0, tmp1;
+
             R[n] = (R[n] << 1) | GET_T;
-            uint32_t q = (old >> 31) & 1;
-            if (q) R[n] += R[m]; else R[n] -= R[m];
-            SET_T(((R[n] >> 31) & 1) == q);
+
+            if (old_q == 0) {
+                if (mbit == 0) {
+                    tmp0 = R[n]; R[n] -= tmp2; tmp1 = (R[n] > tmp0);
+                    q = q ? (tmp1 == 0) : tmp1;
+                } else {
+                    tmp0 = R[n]; R[n] += tmp2; tmp1 = (R[n] < tmp0);
+                    q = q ? tmp1 : (tmp1 == 0);
+                }
+            } else {
+                if (mbit == 0) {
+                    tmp0 = R[n]; R[n] += tmp2; tmp1 = (R[n] < tmp0);
+                    q = q ? tmp1 : (tmp1 == 0);
+                } else {
+                    tmp0 = R[n]; R[n] -= tmp2; tmp1 = (R[n] > tmp0);
+                    q = q ? (tmp1 == 0) : tmp1;
+                }
+            }
+            cpu.sr = (cpu.sr & ~0x100u) | (q << 8);
+            SET_T(q == mbit);
             break; }
         case 0x5: {                                              /* dmulu.l */
             uint64_t p = (uint64_t)R[n] * (uint64_t)R[m];
@@ -437,8 +479,17 @@ static void step_one(void) {
     return;
 
 unimplemented:
-    /* Never silently. An emulator that skips what it does not know produces a
-     * plausible wrong answer, which costs far more than stopping does. */
+    /* Never silently, and never onward. An emulator that skips what it does not
+     * know produces a plausible wrong answer, which costs far more than stopping.
+     *
+     * Stopping is also what the reference does, and that turned out to be the
+     * whole difference. Ghidra's EmulatorHelper.step returns false when an
+     * instruction will not decode, and DensoDriveLog breaks out of that task. This
+     * core counted the miss and carried on, so once a task entered with zeroed
+     * registers computed a null jump into the vector table, the two emulators
+     * executed different garbage from there and their RAM diverged. Matching the
+     * reference means halting the task, not the drive. */
+    cpu.halted = 1;
     if (!unimpl_count) { unimpl_pc = pc; unimpl_op = op; }
     unimpl_count++;
     if (!unimpl_seen[op]) unimpl_first_pc[op] = pc;
@@ -449,19 +500,24 @@ unimplemented:
 /* ---- harness ---------------------------------------------------------- */
 
 static long long trace_left;   /* SH2_TRACE=N prints the first N instructions */
+static uint32_t  trace_from;   /* SH2_TRACE_FROM=pc arms the trace at that pc */
+static int       trace_armed;
 
 static long long run_entry(uint32_t entry, long long maxsteps) {
     cpu.pc = entry;
     cpu.r[15] = STACK_TOP;
     cpu.pr = SENTINEL;
     cpu.delay = 0;
+    cpu.halted = 0;
     long long steps = 0;
     while (steps < maxsteps) {
         uint32_t pc = cpu.pc;
         if (pc == SENTINEL || pc == 0 || pc >= ROM_SIZE) break;
-        if (trace_left > 0) {
+        if (cpu.halted) break;
+        if (trace_from && pc == trace_from) trace_armed = 1;
+        if (trace_left > 0 && (!trace_from || trace_armed)) {
             fprintf(stderr, "%08X %04X  r0=%08X r1=%08X r2=%08X r4=%08X r15=%08X T=%u\n",
-                    pc, (uint16_t)rd16(pc), cpu.r[0], cpu.r[1], cpu.r[2],
+                    pc, (uint16_t)rd16(pc), cpu.r[0], cpu.r[2], cpu.r[6],
                     cpu.r[4], cpu.r[15], (unsigned)GET_T);
             trace_left--;
         }
@@ -483,6 +539,8 @@ int main(int argc, char **argv) {
     }
     long long maxsteps = argc > 5 ? atoll(argv[5]) : 200000;
     { const char *t = getenv("SH2_TRACE"); if (t) trace_left = atoll(t); }
+    { const char *w = getenv("SH2_WATCH"); if (w) watch_addr = (uint32_t)strtoul(w, 0, 16); }
+    { const char *f = getenv("SH2_TRACE_FROM"); if (f) trace_from = (uint32_t)strtoul(f, 0, 16); }
 
     FILE *f = fopen(argv[1], "rb");
     if (!f) { perror(argv[1]); return 1; }
