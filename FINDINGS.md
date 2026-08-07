@@ -5412,3 +5412,56 @@ in the code the harness runs, so the harness has to supply it. That is a far bet
 input set than the twelve addresses probing had assembled, and
 `denso_campaign.py --from-xref` now derives it from the image instead of from
 guesswork.
+
+## 62. THE CAMPAIGN SAYS ONE INPUT MATTERS, AND WHY THAT IS THE WRONG READING
+
+Section 61c derived the firmware's real input surface from the cross-reference:
+119 RAM addresses read four or more times with no writer any static analysis can
+find. An isolation campaign over the top 40 of them - each swept across its full
+range with the rest held mid-scale, 256 ticks per run - gives an unusually clean
+result.
+
+**Thirty-nine of the forty do nothing at all.** Identical instruction counts,
+2,117,888 every time, and `changed=1`, which means the only address that moved in
+the whole of RAM was the one being swept. That includes every byte of
+`0xFFFF9077`-`0xFFFF90B3`, the block carrying 476 read sites.
+
+One responded. `0xFFFF9F55`, the shift schedule selector of section 53: 48
+addresses moved and the instruction count changed to 2,171,319.
+
+### 62a. What that actually means
+
+Not that the other 39 are inert. The campaign runs a single entry point,
+`0x00023E72`, picked early in this work because it was the shift decision function
+and never revisited. Those 476 reads are real; they are in code that has never been
+executed here.
+
+This project has been probing one function and calling it the firmware. Every
+result in sections 53 to 61 is conditioned on that entry point, and the honest
+reading of them is narrower than it looked: they describe what one function does,
+not what the controller does.
+
+`0xFFFF9F55` responds because the shift function reads it 36 times. Everything else
+belongs to code the harness never enters.
+
+### 62b. A table of tasks
+
+If the goal is to run the controller rather than one function, the thing to find is
+whatever calls the rest. A scan for runs of consecutive ROM values that point at
+instruction boundaries turns up several tables. Most have sequential targets a few
+dozen bytes apart, which is the shape of a switch statement's jump table.
+
+One does not. At **0x00D98C** there are 69 pointers, all but one distinct, aimed
+all over the image - 0x014FC0, 0x090AAC, 0x019A94, 0x077A14, 0x02CEA6 and so on.
+Forty-four of the 69 begin with a register-save prologue. Scattered targets and no
+repeats is the shape of a dispatch or task list rather than a jump table, and one
+of its entries sits just before the gather of section 61.
+
+### 62c. A harness that survives a bad guess
+
+Running a table of candidate tasks is only worth doing if a wrong entry does not
+destroy the run. Until now one did: an address that is not an instruction boundary
+throws out of the emulator step and the drive ends having written nothing, which is
+what happened when a function start was guessed wrongly in section 59.
+`DensoDriveLog.java` now catches per-task failures, counts them, and reports which
+entries failed, so a list of 69 guesses yields results from the ones that work.
