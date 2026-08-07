@@ -5261,3 +5261,77 @@ does not branch on it at any value. The candidates left are access through a
 pointer held in RAM rather than a literal, which none of the static methods used
 here would catch, and code reached only from interrupt or task-scheduler context
 that the harness has never entered.
+
+## 60. TWO RAM REGIONS, AND THE LINK BETWEEN THEM IS NOT STATIC
+
+Sections 56 to 59 record five attempts to make a CAN input reach the control code,
+each one fixing a real defect found by reading the firmware, and each one moving
+nothing. A register-aware cross-reference of the whole image explains why, and the
+explanation is structural rather than a sixth thing to fix.
+
+`tools/denso_xref.py` walks the listing tracking what each register holds, and
+attributes an access only when the base register provably holds that address at
+that instruction. It drops state at every branch target and on any instruction
+whose effect it does not model, so it under-reports rather than inventing links -
+which matters, because the naive version reported two reads of engine torque that
+were both false. Across 297,557 instructions it resolves 2,902 addresses read and
+2,936 written, dropping 33,165 accesses whose base it could not follow.
+
+### 60a. What the two regions look like
+
+    address        reads  writes   what it is
+    0xFFFF300C..     1       0     CAN 0x410 buffer, read once by its own decode
+    0xFFFF301C..     1       0     CAN 0x412 buffer, likewise
+    0xFFFF30F0       0       3     engine torque, decoded - never read
+    0xFFFF30F1       4       6     pedal from 0x410
+    0xFFFF30F2       3       6     engine speed from 0x410
+    0xFFFF30FB       7       6     pedal from 0x412 - Accelerator Pedal Travel
+
+    0xFFFF9F55      36       0     shift schedule selector
+    0xFFFF8A88       8       0     engine speed, control input
+    0xFFFF357C       3       2     pedal, control input - both writes are init
+    0xFFFF33AC       8       8     ATF temperature
+
+The first group is written by the CAN decode routines and read, where it is read at
+all, by a dispatch table of small stubs that each publish one value to a staging
+word at `0xFFFF3B4E`. That is a reporting path, not a control path.
+
+The second group is what the shift logic actually reads - these are the addresses
+probing found in sections 53 and 54. Several of them have **many readers and no
+writer this analysis can find**. `0xFFFF9F55` is read 36 times and never written.
+`0xFFFF8A88` is read 8 times and never written. `0xFFFF357C` is written twice and
+both writes are in an initialisation routine that fills a long list of variables
+with the same value.
+
+### 60b. What that means
+
+Values do not travel from the CAN region to the control region by code that names
+either address. Something copies them, driven by pointers held in RAM or in a
+table, and no amount of static register tracking will see it - the addresses never
+appear as literals at the point of the copy.
+
+This accounts for every failure in sections 56 to 59 at once, including the ones
+that looked like separate problems. The mailbox layout really was wrong, the
+receive buffer really is the right destination, the gate really does need its
+pending bit, and the decode really does write those four variables. All true, and
+none of it sufficient, because the last hop was never in the code being run.
+
+### 60c. Engine torque, settled
+
+One question this does close. `0xFFFF30F0` is written three times - by the decode,
+by a failsafe that zeroes it, and by a limp-home routine that writes 350 Nm - and
+read nowhere in the image. Its neighbours are read using the same addressing that
+the tool handles perfectly well, so this is not a gap in the method.
+
+**Engine torque as sent on CAN 0x410 byte 0 is a published copy in this firmware,
+not a control input.** Section 19's line pressure chain hangs off 0x412, and 0x412
+byte 0 decodes to `0xFFFF30FB`, which the Select Monitor table names Accelerator
+Pedal Travel. The pedal figure the TCU works from arrives over CAN from the ECU
+rather than from a sensor of its own.
+
+### 60d. The next move
+
+Finding the copy engine is a job for the emulator rather than the listing. The
+question - what writes `0xFFFF8A88` - is answerable by running code and watching
+the address, which is how the schedule selector was found in section 53 after
+static analysis had failed at it too.

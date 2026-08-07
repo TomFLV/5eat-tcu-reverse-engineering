@@ -89,9 +89,8 @@ CAN_RX = {
 CAN_RXPR = 0xFFFFD042
 CAN_RXPR_BITS = 0x0030
 
-#
-# It does not block the point of the exercise. The decode routine at 0x00012BD2 was
-# read instruction by instruction, so what it does to the frame is known exactly:
+# The decode routine at 0x00012BD2 was read instruction by instruction, so what it
+# does to frame 0x410 is known exactly:
 #
 #   mov.b  @r4,r6          byte 0        -> 0xFFFF30F0   engine torque
 #   mov.b  @(0x4,r4),r0    byte 4        -> 0xFFFF30F1   pedal angle
@@ -99,17 +98,23 @@ CAN_RXPR_BITS = 0x0030
 #   mov.b  @(0x5,r4),r0    byte 5        -> 0xFFFF30F2   engine speed, u16
 #   mov.b  @(0x7,r4),r0    byte 7        -> 0xFFFF30F4   status bits
 #
-# Writing those four directly performs the transformation the firmware performs,
-# and everything downstream - the line pressure chain of section 19 among it - then
-# runs against a real torque figure. This is applying a routine we have read, not
-# guessing at one we have not: the addresses are referenced 6, 19, 15 and 31 times
-# in the image, so they are genuinely what the control code consumes.
+# Writing those four directly performs the transformation the firmware performs.
+# It still moves nothing, and the reason is worth stating plainly rather than
+# working around: a register-aware cross-reference of the whole image finds
+# 0xFFFF30F0 written three times and read nowhere. Engine torque from 0x410 is a
+# published copy, not a control input - the pattern of FINDINGS 50 again.
 DECODED = {
     "torque": (0xFFFF30F0, 1),
     "pedal": (0xFFFF30F1, 1),
     "rpm": (0xFFFF30F2, 2),
     "status": (0xFFFF30F4, 1),
 }
+
+# CAN 0x412 byte 0 is the one that is actually consumed: seven readers against
+# torque's zero, and the Select Monitor table names it Accelerator Pedal Travel.
+# See can_412 for why this is the frame section 19's line pressure chain hangs off.
+PEDAL_TRAVEL = 0xFFFF30FB
+
 
 
 def load_torque(path):
@@ -165,6 +170,25 @@ def can_410(row, get, torque=0):
     ]
 
 
+def can_412(row, get):
+    """CAN 0x412. Byte 0 is the pedal figure the control code actually uses.
+
+    This is the frame that matters, and it took a while to see. Section 19 traced
+    line pressure from 0x412, not 0x410, and the cross-reference bears it out: the
+    0x410 decode writes engine torque to 0xFFFF30F0, which nothing in the image
+    reads, while the 0x412 decode writes byte 0 to 0xFFFF30FB, which seven sites
+    read. 0xFFFF30FB is the address the Select Monitor table names Accelerator
+    Pedal Travel - so the pedal the control path uses arrives over CAN from the
+    ECU, not from a sensor of its own and not from byte 4 of 0x410.
+
+    The remaining fields decode to 0xFFFF30FC, 0xFFFF30FE, 0xFFFF3100 and
+    0xFFFF3101, none of them named yet, so they are left at zero rather than
+    filled with invented values.
+    """
+    pedal = int(get(row, "Accelerator Pedal", 0) * 2.55)
+    return [min(255, max(0, pedal)), 0, 0, 0, 0, 0, 0, 0]
+
+
 def can_411(row, get):
     """CAN 0x411: throttle, the gear the ECU infers, cruise speed."""
     return [
@@ -217,6 +241,8 @@ def main():
     ap.add_argument("--ticks", type=int, default=0)
     ap.add_argument("--torque", default=None,
                     help="torque per tick from ecu/torque.py --log --csv")
+    ap.add_argument("--zero-pedal", action="store_true",
+                    help="hold CAN 0x412 pedal at zero, as a control")
     args = ap.parse_args()
 
     # The work directory is outside the repo because the ECU ROM and the
@@ -270,22 +296,27 @@ def main():
                 else:
                     val = 0
                 parts.append("%08X:%d=0x%X" % (addr, size, val))
-            # The CAN frames, written straight into the mailboxes the same way the
-            # controller would deliver them.
-            for base, frame in ((CAN_RX[0x410], can_410(row, get, torque.get(t, 0))),
-                                (CAN_RX[0x411], can_411(row, get))):
+            frame410 = can_410(row, get, torque.get(t, 0))
+            frame412 = [0] * 8 if args.zero_pedal else can_412(row, get)
+
+            # The CAN frames, delivered to the buffers the receive table names.
+            for base, frame in ((CAN_RX[0x410], frame410),
+                                (CAN_RX[0x411], can_411(row, get)),
+                                (CAN_RX[0x412], frame412)):
                 for i, b in enumerate(frame):
                     parts.append("%08X:1=0x%X" % (base + i, b))
             # Tell the receive task a frame arrived, the way the controller would.
             parts.append("%08X:2=0x%X" % (CAN_RXPR, CAN_RXPR_BITS))
+
             # And perform the decode the receive task would have performed.
-            frame410 = can_410(row, get, torque.get(t, 0))
             for name, value in (("torque", frame410[0]),
                                 ("pedal", frame410[4]),
                                 ("rpm", frame410[5] | (frame410[6] << 8)),
                                 ("status", frame410[7])):
                 addr, size = DECODED[name]
                 parts.append("%08X:%d=0x%X" % (addr, size, value))
+            # And the one from 0x412 that the control code demonstrably reads.
+            parts.append("%08X:1=0x%X" % (PEDAL_TRAVEL, frame412[0]))
             lines.append(",".join(parts))
         source = "%d rows of %s" % (len(rows), "the vehicle log")
 
