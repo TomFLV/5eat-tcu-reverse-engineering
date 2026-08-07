@@ -693,7 +693,7 @@ index e145a21..7d316c1 100644
      private static final long serialVersionUID = -7826850987392016292L;
      protected static final ResourceBundle rb = new ResourceUtil().getBundle(
              ECUEditor.class.getName());
-@@ -241,7 +246,66 @@ public class ECUEditor extends AbstractFrame {
+@@ -241,7 +246,85 @@ public class ECUEditor extends AbstractFrame {
          });
      }
      
@@ -721,7 +721,11 @@ index e145a21..7d316c1 100644
 +                final File[] xml = dir.listFiles(new FilenameFilter() {
 +                    @Override
 +                    public boolean accept(File d, String name) {
-+                        return name.toLowerCase().endsWith(".xml");
++                        final String n = name.toLowerCase();
++                        // The logger definition lives in the same directory and is
++                        // a different kind of file. Registering it as an ECU
++                        // definition gives a parse failure on start-up.
++                        return n.endsWith(".xml") && !n.contains("logger");
 +                    }
 +                });
 +                if (xml != null && xml.length > 0) {
@@ -736,26 +740,41 @@ index e145a21..7d316c1 100644
 +    }
 +
      public void checkDefinitions() {
-+        if (settings.getEcuDefinitionFiles().isEmpty()) {
-+            // Before asking the user to go and find a definition, look for one
-+            // shipped alongside the application. A packaged build carries its own
-+            // definitions directory, and making the user browse to a file that is
-+            // already installed is the kind of setup step that makes a tool feel
-+            // broken. It also avoids baking an absolute path into settings.xml,
-+            // which is machine-specific and does not survive being copied.
-+            for (File f : findBundledDefinitions()) {
-+                settings.addEcuDefinitionFile(f);
-+                // Point the browse directory at the bundled definitions too. Setting
-+                // only the file leaves the directory at a default that may not exist,
-+                // and the Definitions dialog builds a JFileChooser from it - which is
-+                // how a missing folder turns into an error box on a menu click.
-+                settings.setLastDefinitionDir(f.getParentFile());
-+                LOGGER.info("Using bundled ECU definition " + f.getAbsolutePath());
++        // Reconcile what is configured against what ships with the application,
++        // on every start rather than only when nothing is configured. Running it
++        // only on an empty list is exactly the case a returning user is not in:
++        // their settings.xml names the previous install, so a build that adds a
++        // definition - the Denso family, say - never reaches them, and every Denso
++        // ROM reports no definition found. A packaged application knows where its
++        // own definitions are and must not depend on the user's stored state being
++        // right for them to be found.
++        final List<File> bundled = findBundledDefinitions();
++        if (!bundled.isEmpty()) {
++            boolean changed = false;
++            // Entries that no longer exist are almost always paths into an install
++            // that has since been replaced. Leaving them makes the list look
++            // populated while resolving nothing.
++            for (File configured : new ArrayList<File>(settings.getEcuDefinitionFiles())) {
++                if (!configured.exists()) {
++                    settings.getEcuDefinitionFiles().remove(configured);
++                    LOGGER.info("Dropping ECU definition that no longer exists: " + configured);
++                    changed = true;
++                }
 +            }
-+            if (!settings.getEcuDefinitionFiles().isEmpty()) {
-+                SettingsManager.save(settings);
-+                return;
++            for (File f : bundled) {
++                if (!settings.getEcuDefinitionFiles().contains(f)) {
++                    settings.addEcuDefinitionFile(f);
++                    LOGGER.info("Using bundled ECU definition " + f.getAbsolutePath());
++                    changed = true;
++                }
 +            }
++            // Point the browse directory at the bundled definitions too. Setting
++            // only the file leaves the directory at a default that may not exist,
++            // and the Definitions dialog builds a JFileChooser from it - which is
++            // how a missing folder turns into an error box on a menu click.
++            settings.setLastDefinitionDir(bundled.get(0).getParentFile());
++            if (changed) SettingsManager.save(settings);
++            if (!settings.getEcuDefinitionFiles().isEmpty()) return;
 +        }
          if (settings.getEcuDefinitionFiles().size() <= 0) {
              // no ECU definitions configured - let user choose to get latest or configure later
