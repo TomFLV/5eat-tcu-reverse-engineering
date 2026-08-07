@@ -35,7 +35,7 @@ ROM = os.environ.get("SH2_ROM",
 WORK = "/mnt/d/5eat-work/depmap"
 WIN = "D:/5eat-work/depmap"
 XREF = "D:/5eat-work/xref.json"
-TASKS = "D:/5eat-work/tasks_trace.txt"
+TASKS = "D:/5eat-work/tasks_ctl.txt"
 
 TICKS = 8
 HOLD = 0x40
@@ -58,6 +58,8 @@ def inputs_from_xref(path, min_reads=4):
     writes = {int(k, 16) for k in x["writes"]}
     return sorted(a for a, s in reads.items()
                   if a not in writes and 0xFFFF2000 <= a <= 0xFFFFBFFF
+                  and not (0xFFFF9000 <= a <= 0xFFFF97FF)
+                  and not (0xFFFF2000 <= a <= 0xFFFF27FF)
                   and len(s) >= min_reads)
 
 
@@ -113,7 +115,7 @@ def main():
 
     if args.run:
         addrs = inputs_from_xref(XREF, args.min_reads)
-        entry = "@/mnt/d/5eat-work/tasks_trace.txt"
+        entry = "@/mnt/d/5eat-work/tasks_ctl.txt"
         ntasks_txt = open(TASKS).read().strip()
         ntasks = ntasks_txt.count("+") + 1
         print("%d inputs, %d tasks per tick, %d ticks\n" % (len(addrs), ntasks, TICKS))

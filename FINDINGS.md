@@ -5962,3 +5962,72 @@ Tenths, sixteen bits, slew limited, and it reaches more of the firmware than any
 other single value. Road speed would fit all of that. So would several other
 things, and this file has enough entries about plausible answers that turned out
 wrong, so it stays unnamed until something decides it.
+
+## 70. THE HARNESS WAS RUNNING A RAM SELF TEST ON EVERY TICK
+
+Chasing what writes `0xFFFFA6A2` turned up something larger. Watching writes during
+a drive with nothing injected - so that any write seen is the firmware's own -
+showed `0xFFFF9077` and `0xFFFF9053` both written by a single instruction at
+`0x00008D9A`, with the same value, 0x5A.
+
+That instruction is inside a block copy:
+
+    00008D86  mov.l ...,r5      ; 0xFFFF2800   end
+    00008D88  mov.l ...,r14     ; 0xFFFF3000
+    00008D8C  mov.l ...,r4      ; 0xFFFF2000   source
+    00008D90  mov #-0x70,r1
+    00008D92  shll8 r1          ; 0xFFFF9000   destination
+    00008D98  mov.l @r4+,r2
+    00008D9A  mov.l r2,@r1      ; copy 2 KB
+    ...
+    00008DA6  mov.l ...,r4      ; 0x5AA5A55A
+    00008DA8  mov.l r4,@r2      ; fill the source with the test pattern
+
+`0x5AA5A55A` is the classic memory test pattern. This is a **RAM self test**: save
+`0xFFFF2000`-`0xFFFF27FF` into `0xFFFF9000`-`0xFFFF97FF`, write the pattern over
+the source, verify, restore. Run once at startup on the car.
+
+It is task `0x00008D58`, it is in the task list of section 63, and it has been
+running **on every tick of every drive** in sections 64 to 69.
+
+### 70a. What that explains
+
+Section 61c called `0xFFFF9077`-`0xFFFF90B3` "the hottest block in the firmware,
+476 read sites and no writer", made it the centrepiece of the input surface, and
+swept all of it. Nothing moved, in section 62a, and the conclusion drawn was that
+the harness ran only one function.
+
+The real reason is simpler. **That block is the RAM test's save area.** Its 476
+read sites are the test's own verify loop. It is not control state, it was never
+going to respond to anything, and neither was `0xFFFF2000`-`0xFFFF27FF`, the region
+being tested.
+
+### 70b. Finding the rest of them
+
+A tick-to-tick diff cannot see this: a routine that writes the same value every
+tick shows no change after the first. So the native core now records its write set
+- every distinct address written, whatever the value - and that makes block
+operations obvious. Run alone, task `0x00008D58` writes 4,108 bytes in two 2 KB
+contiguous runs.
+
+Total bytes is the wrong test, though. The gather of section 61, `0x0002CD9C`,
+writes 1,061 bytes and is entirely legitimate. What separates a block operation
+from control code is a long *contiguous* run: control code touches scattered bytes.
+Four tasks write a contiguous run of 512 bytes or more - `0x00008D58`,
+`0x00065C80`, `0x00065CFC` and `0x00065D0A` - and the gather is correctly kept.
+
+### 70c. What changed, and what did not
+
+With those four dropped and the two test regions excluded from the candidate
+inputs:
+
+                                    before    after
+    candidate inputs                   119       70
+    addresses moving on their own    2,265      727
+    inputs that drive anything          16       16
+    addresses driven by one input      153      145
+
+**Two thirds of the apparent activity in every drive was the memory test.** The
+dependency structure survived almost unchanged, which is the reassuring part: the
+map of section 68 was measuring something real, and was not an artefact of the
+noise it was measured through.
