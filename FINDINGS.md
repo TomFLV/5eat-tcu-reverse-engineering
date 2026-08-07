@@ -5672,3 +5672,56 @@ Two lessons, both already paid for elsewhere in this file. An analysis that cann
 see a construct does not report uncertainty about it; it reports a confident wrong
 answer. And "nothing calls this function" is a statement about the tool before it
 is a statement about the firmware.
+
+## 66. THE CONTROLLER RUNS AND THE INPUT PROPAGATES
+
+Dropping the two functions section 65c named - `0x000124F0`, which overwrites the
+injected pedal, and `0x0002CE7A`, which runs the competing gather - and running the
+remaining 399 tasks over sixty ticks of the vehicle log:
+
+    pedal run          2,437 addresses moved
+    zero-pedal control 2,359
+    difference           108, of which 105 the firmware computed
+
+**One hundred and five addresses respond to the accelerator pedal.** Not one
+address in a three-function pipeline, and not nothing in a task list large enough
+to be the controller, but the dependency graph of one input across the running
+firmware.
+
+Where they are:
+
+    0xFFFF33xx    41     the largest cluster by far
+    0xFFFF8Dxx    24
+    0xFFFF32xx    16
+    0xFFFF8Exx     9     includes the control block
+    0xFFFF34xx     7
+    0xFFFF3Bxx     4
+    0xFFFF36xx     3
+    0xFFFF84xx     1
+
+Six of them are in the control block the gather fills - `0xFFFF8E47`, `8E4B`,
+`8E4C`, `8E4D`, `8E60` and `8E61`. `0xFFFF8E47` is the slot section 61 walked by
+hand; the other five arrive with it now that the whole controller is running.
+
+None of the 105 carry names yet. The Select Monitor table names published copies,
+and these are working values - which is the same distinction as section 50, from
+the other side.
+
+### 66a. What made it work
+
+Nothing about the firmware changed between the run that traced nothing and this
+one. What changed was removing two tasks whose function is to overwrite what the
+harness injects, and both were found by experiment after static analysis had
+missed them - one because its writer used an addressing mode the tracker cannot
+follow, the other because the call that reaches it is indirect.
+
+The recipe, for the next input:
+
+  1. Inject at an address the firmware reads and does not itself recompute.
+  2. Run a task list large enough to be the controller.
+  3. Bisect it in parallel against a matched control to find what destroys the
+     injection, and drop those tasks.
+  4. Everything that then differs is what the input drives.
+
+Step three is the one that needs the machine. Thirty-seven drives at ten minutes
+each is six hours sequentially and about half an hour at twelve at a time.
