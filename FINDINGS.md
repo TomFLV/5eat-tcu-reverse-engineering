@@ -6235,3 +6235,59 @@ So the chain works and is pointed at the wrong tables. Naming the shipped ones
 needs the other route: table header, to its entry in the pointer index, to the code
 that reads that index entry, to the function. That is the next piece of work, and
 it is a different query rather than a harder one.
+
+## 75. FOUR ROUTES TO NAMING THE DENSO TABLES, AND WHERE EACH STOPS
+
+Naming the 185 unidentified tables was attempted four ways in one sitting. Each
+failed for a different, specific reason, and the reasons are worth more than the
+five names that came out.
+
+**By shape.** A 11x5 table indexed by pedal and gear looks like a shift or pressure
+map. This is guessing and the project has a rule against it; the axis grouping of
+section 68 goes as far as the evidence allows and no further.
+
+**By code literal.** `denso_literals.json` maps ROM addresses appearing as literals
+to the code that loads them. All 185 shipped tables are in it - reachability is not
+the problem. The chain then asks what the reading function writes, and dies there.
+
+**By pointer index.** The tables are reached through blocks of pointers, so the
+first attempt looked for code loading a block's base address. Nothing does. Each
+entry is loaded individually, pc-relative:
+
+    00027AE0  mov.l @(0x27d34,pc),r4
+    00027D34  .pointer 000e8ec0
+
+which is the literal route again, not a separate one.
+
+**By what the reader writes, statically.** This is where three of the four stop.
+Function `0x00027A4E` reads a table and writes, as far as the register-aware
+cross-reference can tell, nowhere at all. The functions write their results through
+computed pointers, and section 60 already established that no amount of literal
+tracking will see those.
+
+### 75a. By running it
+
+The emulator does not have that limitation: run the function and record every
+address it touches. `tools/denso_name_by_running.py` does this for all 20 functions
+that read the 185 tables, in about a minute.
+
+It names five. The reader of five tables demonstrably writes AWD and D/C solenoid
+current and pressure, so those five are part of the solenoid drive path - which is
+a real, evidence-backed statement about tables that had nothing at all.
+
+### 75b. Why only five, and what would fix it
+
+Two limits, both measurable rather than mysterious.
+
+Twenty functions read all 185 tables, so the answers are coarse by construction:
+one function's write set is the evidence for every table it reads.
+
+And the functions are being run cold - entered with zeroed registers, no vehicle
+state, nothing decoded from CAN. A function that starts by checking whether the
+engine is running takes its early exit and writes nothing, which is exactly what
+sections 62 and 64 found for the drive before the input surface was understood.
+
+So the same fix applies: run them inside a drive, with the profile that section 61
+built and the tasks section 70 filtered, and record write sets per function. The
+machinery for that already exists - it is the drive harness with the write-set
+recorder attached - and it is the next thing to do rather than a new idea.
