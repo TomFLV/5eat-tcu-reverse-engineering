@@ -22,6 +22,12 @@ and then touching two more files leaves those two reported as mismatched, which 
 the check working correctly and looking like a fault. The manifests exclude
 themselves, so regenerating is stable and can be repeated safely.
 
+STAGE BEFORE GENERATING. What is hashed is the content in git's index, which does
+not include edits you have not added yet. Editing this file, regenerating, and then
+staging both records the OLD hash for the file you just changed - which is how the
+first manifest commit failed CI on write-manifests.py itself. Run "git add -A"
+first, then regenerate, then add the manifests.
+
 WHAT IS HASHED is the content git stores, not the file on disk. Git normalises
 line endings on checkout, so a CSV committed with LF appears with CRLF in a
 Windows working tree and with LF on Linux - the same file, two different hashes,
