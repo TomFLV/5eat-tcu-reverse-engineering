@@ -25,20 +25,22 @@ Coarse and true beats precise and invented.
     python tools/denso_name_indexed.py --json out.json
 """
 
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from workdir import REPO, REPO_WSL, WORK, WORK_WSL, SH2_WSL  # noqa: E402
+
 import argparse
 import bisect
 import json
-import os
 import re
 import struct
-import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.dirname(HERE)
 ROM = os.path.join(REPO, "rom-denso", "Impreza_STI_3.583_JDM2011.bin")
 LISTING = os.path.join(REPO, "disasm-denso", "Impreza_STI_3.583_JDM2011.asm")
 INDEXED = os.path.join(HERE, "denso_indexed_tables.json")
-XREF = "D:/5eat-work/xref.json"
+XREF = WORK + "/xref.json"
 SSM = os.path.join(HERE, "denso_ssm_addresses.json")
 CALID = "WQDE2WB1"
 

@@ -18,18 +18,20 @@ honest answer and the one this project keeps having to relearn.
     python tools/denso_name_tables.py --json out.json
 """
 
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from workdir import REPO, REPO_WSL, WORK, WORK_WSL, SH2_WSL  # noqa: E402
+
 import argparse
 import bisect
 import json
-import os
 import re
-import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.dirname(HERE)
 LISTING = os.path.join(REPO, "disasm-denso", "Impreza_STI_3.583_JDM2011.asm")
 LITERALS = os.path.join(HERE, "denso_literals.json")
-XREF = "D:/5eat-work/xref.json"
+XREF = WORK + "/xref.json"
 DEPMAP = os.path.join(HERE, "denso_depmap.json")
 WORKING = os.path.join(HERE, "denso_working_vars.json")
 

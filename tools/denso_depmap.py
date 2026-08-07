@@ -19,23 +19,26 @@ firmware's dependency structure, not about absolute values.
     python tools/denso_depmap.py --report
 """
 
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from workdir import REPO, REPO_WSL, WORK, WORK_WSL, SH2_WSL  # noqa: E402
+
 import argparse
 import csv
 import json
-import os
 import subprocess
-import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "denso_depmap.json")
 
-SH2 = os.environ.get("SH2_BIN", "/mnt/d/5eat-work/sh2/sh2")
+SH2 = os.environ.get("SH2_BIN", SH2_WSL)
 ROM = os.environ.get("SH2_ROM",
-    "/mnt/c/Users/Tom/Desktop/5eat-tcu-reverse-engineering/rom-denso/Impreza_STI_3.583_JDM2011.bin")
-WORK = "/mnt/d/5eat-work/depmap"
-WIN = "D:/5eat-work/depmap"
-XREF = "D:/5eat-work/xref.json"
-TASKS = "D:/5eat-work/tasks_ctl.txt"
+    REPO_WSL + "/rom-denso/Impreza_STI_3.583_JDM2011.bin")
+WORK = WORK_WSL + "/depmap"
+WIN = WORK + "/depmap"
+XREF = WORK + "/xref.json"
+TASKS = WORK + "/tasks_ctl.txt"
 
 TICKS = 8
 HOLD = 0x40
@@ -96,8 +99,8 @@ def series(path):
 
 def run(prof_win, out_win, entry):
     subprocess.run(["wsl", SH2, ROM,
-                    prof_win.replace("D:/5eat-work", "/mnt/d/5eat-work"),
-                    out_win.replace("D:/5eat-work", "/mnt/d/5eat-work"),
+                    prof_win.replace(WORK , WORK_WSL ),
+                    out_win.replace(WORK , WORK_WSL ),
                     entry, "5000"],
                    capture_output=True, text=True)
     return series(out_win)
@@ -115,7 +118,7 @@ def main():
 
     if args.run:
         addrs = inputs_from_xref(XREF, args.min_reads)
-        entry = "@/mnt/d/5eat-work/tasks_ctl.txt"
+        entry = "@" + WORK_WSL + "/tasks_ctl.txt"
         ntasks_txt = open(TASKS).read().strip()
         ntasks = ntasks_txt.count("+") + 1
         print("%d inputs, %d tasks per tick, %d ticks\n" % (len(addrs), ntasks, TICKS))

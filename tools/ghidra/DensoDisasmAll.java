@@ -42,7 +42,7 @@ public class DensoDisasmAll extends GhidraScript {
     @Override
     public void run() throws Exception {
         String[] a = getScriptArgs();
-        String out = a.length > 0 ? a[0] : "/home/rust/denso/disasm.txt";
+        String out = a.length > 0 ? a[0] : System.getProperty("disasm.out", "disasm.txt");
 
         Listing listing = currentProgram.getListing();
         PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriter(out), 1 << 20));

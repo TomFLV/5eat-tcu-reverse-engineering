@@ -19,26 +19,28 @@ Each function is one native run of a few hundredths of a second, so the whole se
 takes about a minute - which is the only reason this is worth doing at all.
 """
 
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from workdir import REPO, REPO_WSL, WORK, WORK_WSL, SH2_WSL  # noqa: E402
+
 import argparse
 import bisect
 import json
-import os
 import re
 import subprocess
-import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.dirname(HERE)
 LISTING = os.path.join(REPO, "disasm-denso", "Impreza_STI_3.583_JDM2011.asm")
 LITERALS = os.path.join(HERE, "denso_literals.json")
 SSM = os.path.join(HERE, "denso_ssm_addresses.json")
 DEFS = os.path.join(REPO, "definitions", "5eat_tcu_denso_romraider_defs.xml")
 
-SH2 = "/mnt/d/5eat-work/sh2/sh2"
-ROM_L = ("/mnt/c/Users/Tom/Desktop/5eat-tcu-reverse-engineering/rom-denso/"
+SH2 = SH2_WSL
+ROM_L = (REPO_WSL + "/rom-denso/"
          "Impreza_STI_3.583_JDM2011.bin")
-WIN = "D:/5eat-work/naming"
-LIN = "/mnt/d/5eat-work/naming"
+WIN = WORK + "/naming"
+LIN = WORK_WSL + "/naming"
 
 ROW = re.compile(r"^([0-9A-F]{8})\s+(?:[0-9A-F]{2} )+\s+_?(\S+)\s*([^;]*)")
 PRO = re.compile(r"^(r\d+|pr),@-r15$")
@@ -73,8 +75,8 @@ def shipped_headers():
 
 # The controller's own task list, run before the function under test so it starts
 # from a state the firmware would recognise rather than from zeroed RAM.
-TASKS = "/mnt/d/5eat-work/tasks_ctl.txt"
-PROFILE = "/mnt/d/5eat-work/drive_short.csv"
+TASKS = WORK_WSL + "/tasks_ctl.txt"
+PROFILE = WORK_WSL + "/drive_short.csv"
 
 
 def write_set(entry, warm=True):
@@ -91,7 +93,7 @@ def write_set(entry, warm=True):
     """
     tag = "%08X" % entry
     ws = "%s/w_%s.txt" % (WIN, tag)
-    entries = open("D:/5eat-work/tasks_ctl.txt").read().strip() if warm else ""
+    entries = open(WORK + "/tasks_ctl.txt").read().strip() if warm else ""
     spec = (entries + "+0x%08X" % entry) if warm else "0x%08X" % entry
     with open("%s/e_%s.txt" % (WIN, tag), "w", newline="\n") as fh:
         fh.write(spec)

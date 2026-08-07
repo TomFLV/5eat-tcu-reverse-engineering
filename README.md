@@ -36,7 +36,7 @@ Already using RomRaider? Point it at [`definitions/`](definitions/) instead. Req
 | Shift Schedule Group Selector | Which of the five schedule groups applies |
 | Line Pressure | Nine target maps, engine torque (Nm) to line pressure (kPa), plus the slip and ATF-temperature multipliers feeding them |
 | Downshift Pressure | Per-downshift target pressure in kPa, with the ramp step and hold that set how harshly each applies |
-| Diagnostic Codes | All 53 trouble codes, individually enabled or disabled |
+| Diagnostic Codes | 53 trouble codes on the Hitachi family and 44 on the Denso family, individually enabled or disabled |
 | Sensor Calibration | ATF temperature sensor linearisation, ADC counts to °C; ATF blend window in °C |
 
 ![shift curves](docs/shift-curves-reference.png)
@@ -172,8 +172,15 @@ computed at runtime; a fully disassembled image still shows no references to the
 calibration arrays. See [FINDINGS.md](FINDINGS.md) §31.
 
 **Disabling a DTC is inferred, not tested.** Blanking an entry should stop the code
-being reported, which is what the firmware's 43 unused slots contain, but nobody has
+being reported, which is what the firmware's unused slots contain, but nobody has
 confirmed it on a car. It suppresses the code, not the fault.
+
+**Which fault sets which Denso code is not established.** The code table, the
+per-code records, both flag arrays and the routine that sets a bit have all been
+located and cross-checked, but no simulated fault has been made to latch one — the
+monitors test hardware feedback the emulator does not provide. So the Denso codes
+can be enabled and disabled; they cannot yet be attributed to a cause.
+[FINDINGS.md](FINDINGS.md) §81.
 
 Tables whose quantity has not been established are labelled `raw`.
 
@@ -207,7 +214,7 @@ written: the save runs against a copy held in memory.
 | [`decompiled-denso/`](decompiled-denso/) | Ghidra output, nine Denso images, with per-image coverage |
 | [`rom/`](rom/), [`rom-denso/`](rom-denso/) | ROM images |
 | [`logs/`](logs/) | RomRaider logs from a running 5EAT, the only real-vehicle data here |
-| [`docs/`](docs/) | [ROM details](docs/ROM-DETAILS.md) · [technical notes](docs/TECHNICAL-NOTES.md) · [manual setup](docs/ROMRAIDER-SETUP.md) · [bench rig](docs/BENCH-RIG.md) |
+| [`docs/`](docs/) | [ROM details](docs/ROM-DETAILS.md) · [technical notes](docs/TECHNICAL-NOTES.md) · [manual setup](docs/ROMRAIDER-SETUP.md) · [bench rig](docs/BENCH-RIG.md) · [running the tools](docs/RUNNING-THE-TOOLS.md) |
 | [`FINDINGS.md`](FINDINGS.md) | Full research log, in order, including wrong turns |
 
 ## Contributing

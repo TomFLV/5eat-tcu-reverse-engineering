@@ -26,9 +26,13 @@ import os
 import re
 import sys
 
-DEF_MANUAL = "/home/rust/cpudocs/m32r_isa.txt"
-DEF_SINC = ("/home/rust/ghidra_12.1.2_PUBLIC/Ghidra/Processors/M32R/"
-            "data/languages/m32r.sinc")
+DEF_MANUAL = os.environ.get("M32R_ISA_TXT", "m32r_isa.txt")
+# Wherever Ghidra is installed. Not part of this repository, so it comes from the
+# environment or --sinc rather than from one machine's install path.
+DEF_SINC = os.environ.get(
+    "M32R_SINC",
+    os.path.join(os.environ.get("GHIDRA_HOME", "/opt/ghidra"),
+                 "Ghidra/Processors/M32R/data/languages/m32r.sinc"))
 
 FIELD = (r"(?:[01]{4}|dest|src|imm8|imm16|imm24|disp8|disp16|disp24|cond|const|"
          r"R1|R2|src1|src2|imm|bitpos|SRC|DEST)")

@@ -48,7 +48,9 @@ def circuits(lines):
 
 
 def main():
-    paths = sys.argv[1:] or ["/home/rust/fsm/TRANSMISSION_SECTION.txt"]
+    paths = sys.argv[1:]
+    if not paths:
+        sys.exit("usage: extract_tcm_pinout.py <factory manual text file>...")
     hits = defaultdict(lambda: defaultdict(int))
 
     for p in paths:

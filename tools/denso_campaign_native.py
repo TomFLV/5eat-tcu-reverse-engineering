@@ -17,23 +17,25 @@ safe place to use the fast core and the full-controller drives are not.
     python tools/denso_campaign_native.py --analyse
 """
 
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from workdir import REPO, REPO_WSL, WORK, WORK_WSL, SH2_WSL  # noqa: E402
+
 import argparse
 import csv
 import json
-import os
 import subprocess
-import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.dirname(HERE)
 OUT = os.path.join(HERE, "denso_campaign_native.json")
 
-SH2 = os.environ.get("SH2_BIN", "/mnt/d/5eat-work/sh2/sh2")
+SH2 = os.environ.get("SH2_BIN", SH2_WSL)
 ROM = os.environ.get("SH2_ROM",
-    "/mnt/c/Users/Tom/Desktop/5eat-tcu-reverse-engineering/rom-denso/Impreza_STI_3.583_JDM2011.bin")
-WORK = os.environ.get("SH2_WORK", "/mnt/d/5eat-work/campaign")
-WIN_WORK = os.environ.get("SH2_WORK_WIN", "D:/5eat-work/campaign")
-XREF = os.environ.get("SH2_XREF", "D:/5eat-work/xref.json")
+    REPO_WSL + "/rom-denso/Impreza_STI_3.583_JDM2011.bin")
+WORK = os.environ.get("SH2_WORK", WORK_WSL + "/campaign")
+WIN_WORK = os.environ.get("SH2_WORK_WIN", WORK + "/campaign")
+XREF = os.environ.get("SH2_XREF", WORK + "/xref.json")
 ENTRY = os.environ.get("SH2_ENTRY", "0x00023E72")
 
 HOLD = 0x40

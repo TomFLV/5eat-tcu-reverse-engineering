@@ -10,8 +10,8 @@ Each row becomes one tick: the inputs for that instant, written to the RAM
 addresses the control code reads. The emulator keeps its state between ticks, so
 the run is a drive rather than 568 unrelated experiments.
 
-    python tools/denso_make_profile.py --out /home/rust/drive.csv
-    python tools/denso_make_profile.py --synthetic --ticks 1800 --out /home/rust/drive.csv
+    python tools/denso_make_profile.py --out $FIVEEAT_WORK/drive.csv
+    python tools/denso_make_profile.py --synthetic --ticks 1800 --out $FIVEEAT_WORK/drive.csv
 
 --synthetic generates a sweep instead: every input walked across its range, which
 covers states the logged drive never reached.
@@ -22,13 +22,15 @@ nothing. The addresses here are the ones probing showed the control code actuall
 reads (FINDINGS 53 and 54).
 """
 
-import argparse
-import csv
 import os
 import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from workdir import REPO, REPO_WSL, WORK, WORK_WSL, SH2_WSL  # noqa: E402
+
+import argparse
+import csv
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.dirname(HERE)
 LOGDIR = os.path.join(REPO, "logs")
 
 # Addresses the control code reads, from probing rather than from the Select
@@ -114,7 +116,6 @@ DECODED = {
 # torque's zero, and the Select Monitor table names it Accelerator Pedal Travel.
 # See can_412 for why this is the frame section 19's line pressure chain hangs off.
 PEDAL_TRAVEL = 0xFFFF30FB
-
 
 
 def load_torque(path):
@@ -251,8 +252,8 @@ def main():
     torque_csv = args.torque
     if not torque_csv:
         for cand in (os.path.join(REPO, "ecu", "torque_from_log.csv"),
-                     "/mnt/d/5eat-work/ecu/torque_from_log.csv",
-                     r"D:\5eat-work\ecu\torque_from_log.csv"):
+                     WORK_WSL + "/ecu/torque_from_log.csv",
+                     WORK + r"\ecu\torque_from_log.csv"):
             if os.path.exists(cand):
                 torque_csv = cand
                 break

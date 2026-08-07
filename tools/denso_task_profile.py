@@ -24,21 +24,24 @@ without needing to understand any of them.
     python tools/denso_task_profile.py --list-suspect
 """
 
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from workdir import REPO, REPO_WSL, WORK, WORK_WSL, SH2_WSL  # noqa: E402
+
 import argparse
 import csv
 import json
-import os
 import subprocess
-import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "denso_task_profile.json")
-SH2 = "/mnt/d/5eat-work/sh2/sh2"
-ROM = ("/mnt/c/Users/Tom/Desktop/5eat-tcu-reverse-engineering/rom-denso/"
+SH2 = SH2_WSL
+ROM = (REPO_WSL + "/rom-denso/"
        "Impreza_STI_3.583_JDM2011.bin")
-WIN = "D:/5eat-work/taskprof"
-LIN = "/mnt/d/5eat-work/taskprof"
-TASKS = "D:/5eat-work/tasks_trace.txt"
+WIN = WORK + "/taskprof"
+LIN = WORK_WSL + "/taskprof"
+TASKS = WORK + "/tasks_trace.txt"
 
 # More than this many bytes touched in two ticks and it is not a control task.
 SUSPECT_BYTES = 256
@@ -66,9 +69,9 @@ def main():
             ws = WIN + "/w_%s.txt" % t.replace("0x", "")
             env = dict(os.environ)
             env["WSLENV"] = "SH2_WRITESET/u"
-            env["SH2_WRITESET"] = ws.replace("D:/5eat-work", "/mnt/d/5eat-work")
+            env["SH2_WRITESET"] = ws.replace(WORK , WORK_WSL )
             subprocess.run(["wsl", SH2, ROM, LIN + "/empty.csv",
-                            out.replace("D:/5eat-work", "/mnt/d/5eat-work"),
+                            out.replace(WORK , WORK_WSL ),
                             t, "20000"], capture_output=True, env=env)
             # The write set, not the tick-to-tick diff. A routine that writes the
             # same value every tick is invisible to the diff, which is how a RAM
@@ -101,9 +104,9 @@ def main():
             print("  %-12s %5d bytes, span 0x%X"
                   % (k, results[k]["touched"], results[k]["span"]))
         keep = [k for k in results if k not in set(sus)]
-        with open("D:/5eat-work/tasks_control.txt", "w", newline="\n") as fh:
+        with open(WORK + "/tasks_control.txt", "w", newline="\n") as fh:
             fh.write("+".join(sorted(keep, key=lambda k: int(k, 16))))
-        print("\n%d control tasks -> D:/5eat-work/tasks_control.txt" % len(keep))
+        print("\n%d control tasks -> %s/tasks_control.txt" % (len(keep), WORK))
     return 0
 
 

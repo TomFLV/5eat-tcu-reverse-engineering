@@ -937,7 +937,13 @@ this working directory (`C:\Users\Tom\Desktop\5eat tcu reverse engineering`). Do
 **Deliberately excluded** (third-party copyright — cited, not redistributed):
 `forum_full_thread.txt`, `subaru_5eat_service_manual.pdf` and its text extract.
 Also excluded: `FINDINGS.md` itself — it's a working log; `docs/TECHNICAL-NOTES.md` is
-the cleaned public version. `table_catalog.txt` is gitignored (regenerable).
+the cleaned public version.
+
+`table_catalog.txt` was described here as "gitignored (regenerable)". Both halves
+are wrong: it is tracked, it is not in `.gitignore`, and §15f records that the
+script which produced it was removed, so it cannot be regenerated. It is a fixed
+artefact, kept deliberately because §14 and §15 quote addresses out of it. Found by
+checking the repository against this note rather than trusting the note.
 
 **Fixes made during publication that also matter here:**
 - Four tools had hardcoded `OneDrive\Desktop` paths (one pointed at a temp scratch dir)
@@ -6312,3 +6318,489 @@ That is a contained change to the core - a current-task index and a write set pe
 task - and it is the next thing to build. Recorded rather than done, because a
 measurement that returns zero for a reason you understand is a better place to stop
 than one that returns five for a reason you do not.
+
+## 76. The Denso firmware boots
+
+Everything before this ran the firmware the way a laboratory runs a tissue sample:
+enter a function, let it execute, read what it wrote. That works, and it produced
+most of what this project knows, but it always carried the same caveat - a function
+entered directly starts from a state no running controller would ever be in.
+
+Booting from the reset vector removes the caveat. `main()` at 0x00000650 is
+reached, and the address the firmware spends most of its time in afterwards is a
+twelve-iteration loop reading twelve channels from 0xFFFFF800 and storing them as
+words - the A/D converter, sampled periodically, which is what a transmission
+controller with nothing to do should be doing.
+
+Getting there took four peripheral registers, each found the same way: run, find the
+loop the boot cannot leave, read what it polls, decide whether the hardware it is
+waiting for should be called ready.
+
+    0xFFFFED18  bit 15   polled at 0x00000C2E
+    0xFFFFECCC  bit 1    polled at 0x000081D8
+    0xFFFFF818  bit 7    polled at 0x00003126
+    0xFFFFF838  bit 7    polled at 0x00003162
+    0xFFFFF858  bit 7    polled at 0x0000319A
+
+The last three are twenty bytes apart, which is the spacing of the serial channels,
+and bit 7 of a status byte there is the transmitter-empty flag. That reading is
+inferred from the address range, not read out of a datasheet. What is directly
+observed is only that the firmware waits on the bit and proceeds once it is set.
+
+Each entry is a claim that a piece of hardware works, so each one lives in the
+source next to the instruction that demanded it rather than in a default that
+quietly satisfies every wait. `tools/denso_bringup.py` performs the whole cycle -
+boot, locate the loop, resolve the register, apply it, repeat.
+
+### 76a. Two loops that were not waits
+
+The bring-up stopped twice at addresses that were not stalls at all.
+
+0x00008D28 sums thirty-two bit words from a moving pointer to a fixed end and
+accumulates into a register: a ROM checksum, seven hundred thousand instructions of
+honest work that looked exactly like a spin because the trace window ended before it
+did. 0x00009C3E looked worse - ten million executions - and is a twelve-iteration
+loop that returns, called constantly by a controller that is running normally.
+
+Both would have been "fixed" by a tool that assumes a hot loop is a wait. The bring-up
+helper therefore refuses to guess: it reports what it cannot read as a status poll
+and stops, because a long loop is sometimes just work.
+
+### 76b. Two bugs in the instruments, not the firmware
+
+The peripheral hook was first written only for sixteen bit reads. Moving it to
+thirty-two bit reads to catch 0xFFFFECCC made the sixteen bit wait at 0x00000C2E
+stall again, and building `rd32` out of two `rd16` calls put a low half's status bit
+into the high half of the word. The bit is now applied once, at the width the
+instruction actually used, with `rd32` composing raw halves.
+
+The trace printed seven registers. Hunting a wait held in r14 with a seven-register
+trace is the same bug that once made "r1" print r2, wearing a different hat, so the
+trace now prints all sixteen from a loop - the set printed cannot drift out of step
+with the set named.
+
+## 77. CAN traffic simulated straight into the receive buffers
+
+The faithful way to give the TCU engine data is to boot the engine controller beside
+it and let it transmit. That needs a second bring-up, an interrupt model and a CAN
+controller, all to deliver bytes whose layout is already known: the receive table at
+0x08600E gives every frame a fixed RAM buffer. Writing the payload there leaves the
+firmware in the state the hardware would have left it in, and the detour disappears.
+
+The table decodes cleanly - 31 distinct frames, each with a mailbox, a length and a
+buffer, and 0x410 -> 0xFFFF300C as previously confirmed against rimwall's decode.
+
+What this does not simulate is delivery. No mailbox flags, no interrupt, no
+stale-frame timeout. Firmware that only acts on a fresh frame will not act here, and
+that is a limit of the shortcut rather than a finding about the controller.
+
+### 77a. Sweeping proves nothing; two held values prove something
+
+A swept input made 1,118 of 1,118 recorded addresses look responsive, which is the
+same false positive as the dependency map that once reported one input driving all
+2,265 addresses. Anything counting per tick tracks a per-tick sweep.
+
+Two constant holds have identical tick structure, so every counter cancels. The first
+attempt at that returned zero differences - because the CSV records only addresses
+that change between ticks, and under a constant input every genuine response is
+constant. The measurement was discarding precisely what it was meant to find.
+Comparing whole RAM images at the end of the run has neither problem, and is what
+`SH2_DUMP` exists for.
+
+### 77b. A frame byte walked to the control block
+
+With the decode at 0x00012BD2 and the gather at 0x0002CF80 appended to the 394-entry
+control task list, byte 4 of frame 0x410 held at 0x40 against 0x80 differs in twenty
+RAM bytes, among them:
+
+    FFFF3010   the receive buffer
+    FFFF30F1   the decoded value
+    FFFF8E48   the control block
+
+which is exactly the path the disassembly states - 0x0002CFA4 reads 0xFFFF30F1 and
+0x0002CFAA writes 0xFFFF8E48. The chain is confirmed by running it, against code read
+independently.
+
+Neither routine is in the control task list, which is why the first attempt showed a
+frame landing in its buffer with nothing reading it. The gather reads 0xFFFF30FB, not
+the raw buffer; assuming otherwise cost a round of empty results.
+
+Byte 5 reaches 0xFFFFA9F1, which the Select Monitor table names Engine Speed, and
+0xFFFF34CE, which changes sign between the two runs (-21 against +43) and is
+therefore computed rather than copied.
+
+## 78. Attributing writes to the code that made them
+
+Naming the 185 shipped tables has now failed four ways, and each failure was
+informative enough to be worth recording rather than quietly retried.
+
+The combined write set of a warm drive touches 11,991 addresses, so every table
+looks identical against it. `SH2_TASKSETS` splits that by task - one warm run
+instead of 395 - and 76 tables attach to a task that writes something the Select
+Monitor names. All 76 share the same evidence, because they share a task. That
+places them in the turbine speed and ATF temperature path, which is a subsystem
+rather than a name, and is the same coarseness section 74b ran into from the other
+direction.
+
+Three separate defects sat behind the finer-grained attempt, and all three
+produced the same symptom - zero - for different reasons:
+
+**The static call graph cannot see indirect dispatch.** It resolves the callees of
+1,322 functions, and against it the twenty functions that read shipped tables were
+unreachable from all 395 tasks: an overlap of exactly zero. That is a fact about
+the graph. `SH2_TASKPCS` records which addresses each task actually executes, and
+250 of the 274 reference sites are among them - the readers do run.
+
+**Innermost-frame attribution credits the helper, not the reader.** With writes
+recorded against the top of the call stack, all twenty readers recorded zero
+writes: they read a table and hand the work to something else. Crediting every
+frame on the stack answers "this function, or something it called, wrote here",
+which is the question naming asks. The cost is that evidence weakens the further
+up the stack it comes from.
+
+**The listing and the emulator disagree about where a function starts.** The
+parser collapses a run of prologue saves and calls 0x00010C20 a function start; it
+is the `mov.l r14,@-r15` in the middle of one. The emulator pushes the address that
+was actually branched to. Looking one up in the other matched nothing at all. The
+observed call targets are the ground truth and the lookup now uses them.
+
+With all three fixed, five tables carry evidence from their own reading function -
+AWD Solenoid Valve Current and Pressure - and they are the same five that the
+earlier per-function route found. That agreement is worth more as a check on the
+method than as new information: two independent routes, one static and one
+observed, reaching the same five.
+
+The remaining 71 stay at task-level evidence and are reported as such. A table
+labelled "part of the turbine speed path" is honest; the same table labelled
+"Turbine Speed Correction" would not be.
+
+### 77c. The signal map, and what made it work
+
+Every byte of every received frame, held at 0x40 against 0x80, compared on the
+whole RAM image: 112 of 248 bytes reach something downstream, six reach an address
+the Select Monitor table names, and ten reach the control block.
+
+    frame 0x231 byte 0  ->  Engine Speed              FFFF8E53
+    frame 0x231 byte 1  ->                            FFFF8E52
+    frame 0x231 byte 2  ->                            FFFF8E48
+    frame 0x231 byte 4  ->  Accelerator Pedal Travel  FFFF8E47, FFFF8E4B
+    frame 0x410 byte 4  ->                            FFFF8E48
+    frame 0x410 byte 5  ->  Engine Speed              FFFF8E53
+    frame 0x410 byte 6  ->                            FFFF8E52
+    frame 0x412 byte 0  ->  Accelerator Pedal Travel  FFFF8E47, FFFF8E4B
+    frame 0x491 byte 2  ->  Gear Position
+    frame 0x550 byte 7  ->  Engine Speed
+
+The map checks itself. Frames 0x231 and 0x410 land on the same three control block
+slots in the same order - 0x231 bytes 0, 1, 2 and 0x410 bytes 5, 6, 4 both reach
+0xFFFF8E53, 0xFFFF8E52 and 0xFFFF8E48 - and both reach Engine Speed through the
+byte that lands on 0xFFFF8E53. 0x231 byte 4 and 0x412 byte 0 likewise both reach
+0xFFFF8E47 and 0xFFFF8E4B and are both Accelerator Pedal Travel. Two frames
+carrying the same signals into the same variables is what a controller built for
+more than one bus layout looks like, and nothing in the method arranges for that
+agreement - it either appears or it does not.
+
+The first two attempts produced 7 responsive bytes and then 14, both wrong, for one
+reason: which entry point runs the decode.
+
+Frame 0x410's reader is the function at 0x00012BA8. Entering there propagates
+nothing whatsoever - the function guards its top and a cold entry takes the early
+exit, which is the same failure that once named five tables out of 185. Entering at
+0x00012BD0, two instructions ahead of the read, propagates to twenty addresses.
+Entering at the read itself, 0x00012BD4, propagates to one: the instruction that
+loads the buffer address has already been skipped.
+
+So the entry is the first read site backed up by two and by four bytes. That skips
+whatever the guard was checking, which is a deliberate trade - it exercises the
+decode at the cost of running it in a state the firmware might have refused.
+
+## 79. Testing the definitions before shipping them
+
+The M32R definition has had a validator since it became standalone-per-firmware.
+The Denso definition has shipped 152 to 197 tables per firmware across nine
+firmwares with no equivalent, so nothing had ever confirmed that a Denso table's
+address and shape agree with the bytes in that image. `validate_denso_defs.py`
+now does: 4,716 checks across the nine, and they pass. With the M32R side that is
+10,627 checks across all 25 firmwares.
+
+Two things the new checks found, and one they got wrong.
+
+### 79a. Gear 4 and gear D5 are the same shift map
+
+The Hitachi shift maps are sparse - each declares a cellIndices list naming every
+cell's offset - which is why several tables legitimately share a storage address.
+The existing validator checks that no table aliases itself. Nothing checked
+aliasing BETWEEN tables, and there is a great deal of it.
+
+In MB431M, Shift Map - Mode3, 4 has 53 cells and Shift Map - Mode3, D5 has 72, and
+51 of gear 4's 53 are also D5's. The same holds for every mode - Slope, Kickdown,
+ATFTempLow, Sport# - and across the family.
+
+Editing gear 4 therefore moves almost all of D5 with it. Whether that is faithful
+to the firmware is a separate question from whether a tuner knows about it, and
+until now nobody could have. `check_table_aliasing.py` reports it, separating the
+128-per-firmware pairs that are one curve's breakpoints and values - which must
+overlap, because that is what a strided record array is - from the pairs that are
+genuinely distinct tables.
+
+### 79b. The curve editor is Denso-only, by naming
+
+All nine Denso firmwares pair cleanly: six Upshift tables, six Downshift, no
+orphans. No Hitachi firmware pairs at all, because the M32R family has no table
+named Upshift. Its schedules are "Shift Map - <mode>, <gear>" and its
+"Downshift N-M Pressure" tables are pressures, not schedules - pairing those would
+produce a chart of two unrelated quantities.
+
+So the shift curve editor works on 9 of 25 firmwares. That is a real limit of the
+feature and is stated rather than left for a user to discover.
+
+### 79c. A check that fired on correct behaviour
+
+The first version flagged 90 tables as "erased flash or padding, not calibration"
+because their contents are entirely zero. All 90 are already categorised
+"Transmission - Constant (nothing to tune)" - the generator had classified them
+correctly and the check was wrong to complain. It now fires only when an all-zero
+region is presented as something tunable, which is the case that would be a defect.
+
+A validator that fires on correct behaviour trains you to ignore it, which is worse
+than not having one.
+
+Separately, a mangled degree sign in a table name turned out to be the test harness
+reading UTF-8 as the platform default, not a corrupt definition. The definition was
+right. It was, though, the only one of the three shipping without an encoding
+declaration, so the generator now emits one - a file that states its encoding
+cannot be misread by a tool that guesses.
+
+## 80. Driving the controller, and provoking it
+
+Everything before this measured the controller one question at a time. This runs a
+scripted drive and reads the firmware's own instrument panel each tick, from the
+141 addresses the Select Monitor names.
+
+A coast-down produces the obvious right answer:
+
+    Gear Position    5 5 5 4 4 4 3 3 3 2 2 2 1 1 1
+
+and an acceleration shows line pressure rising with the pedal - P/L solenoid
+current climbing 64, 65, 66 as pedal travel goes 0 to 136 - which is what a
+transmission is supposed to do.
+
+Three things had to be right first, and each was wrong in a way that looked like
+the controller ignoring its inputs.
+
+**The 0xFFFFA0xx block is an output.** The first version injected there, because
+that is where the named addresses are. That block is what the controller publishes
+to a scan tool, so every value written was overwritten on the same tick. ATF
+temperature read 0, 1, 1, 1... and gear never moved. Inputs go into the CAN receive
+buffers, which is where a car puts them.
+
+**Every frame needs its own decoder.** Injecting into 0x412 and 0x491 while running
+only 0x410's decoder leaves those frames sitting unread. The decoders are now
+derived per frame from the cross-reference, so adding an input cannot silently
+forget one.
+
+**Gear is in the high nibble.** Byte 2 of frame 0x491 held at 0x40 against 0x80
+moves Gear Position from 4 to 8. Sending a plain 1 or 5 selects gear 0, and
+nothing downstream moves. This was found only because the signal map used 0x40 and
+0x80 - values that are out of range for a gear, and which therefore exercised the
+decode in a way a realistic-looking 1 would not have.
+
+### 80a. Faults, and what they point at
+
+Each fault runs beside the same drive unfaulted, so what is reported is the effect
+of the fault rather than the effect of driving. Against a cruise:
+
+    engine_stall     57 addresses differ, including Engine Speed
+    speed_mismatch   45 addresses differ
+    torque_max       19 addresses differ
+    gear_invalid      6 addresses differ, including Gear Position
+
+The invalid gear gives the cleanest signature, and it traces to code. Two bytes at
+0xFFFF9B5C fall to zero, and SH2_WATCH names the instruction that writes them:
+
+    0006AE98  FE 07     fmov.s fr0,@(r0,r14)
+
+An fmov, so the address holds a float rather than a flag - which the byte-level
+diff could not have told you. Driving each gear in turn and reading the float:
+
+    gear 1        0.0
+    gear 2, 3     1.0
+    gear 4, 5, 6  2.5
+    invalid       0.0
+
+A stepped value keyed to the gear range. What it means is not established and is
+not guessed at here; what is established is that it exists, which gear ranges it
+distinguishes, and the single instruction that produces it.
+
+That is the chain this simulator was built for: drive the car, provoke it, see
+which byte moves, and get back to the line of firmware that moved it.
+
+## 81. The Denso diagnostic chain, and why it does not light up yet
+
+The M32R family's diagnostics were worked out long ago and the definition ships 53
+codes per firmware. The Denso family shipped none, so a fault provoked in the
+simulator could be seen to perturb the controller but not named. This closes most
+of that gap, and is honest about the part still open.
+
+### 81a. The tables
+
+Searching for dense runs of uint16 values that all decode to plausible powertrain
+P-codes finds a table in all nine Denso firmwares, with an identical code list -
+P0720, P0705, P0741, P0753, P0758, P1706, P0748, P0743, P0731 to P0734, P1707,
+P0715, P0801 and the rest. Forty-four entries. The geometry was NOT assumed from
+the M32R side: that family's twelve-by-eight arrangement is a fact about that
+firmware, and looking for exactly 96 entries here would have found nothing.
+
+The listing then gives the rest, read from the instructions rather than inferred:
+
+    0x0008624C   44 uint16 codes, the P-number in hex, masked with 0x3FFF in use
+    0x000864A8   one 5-byte record per code: [enable, group, mask, kind, enable]
+    0xFFFF8876   the LIVE fault flags, one byte per group
+    0xFFFF21D6   the CONFIRMED flags, same layout
+
+The setter at 0x0008E16C-0x0008E17A is unambiguous - read the group byte, add the
+base, OR in the record's mask, store back - and it confirms the record layout
+independently of how the codes were found.
+
+### 81b. Two arrays, not one
+
+The first attempt watched 0xFFFF21D6, on the reasonable assumption that the array
+the reporting loop reads is the array faults are written to. It is not. Every
+write to 0xFFFF21D6 in the whole firmware comes from one of two clear-to-zero
+routines; the aggregation at 0x0008E0A8 gates on 0xFFFF8876 and copies forward only
+what is already set there. Watching the wrong end of a two-stage latch produces
+zeros indistinguishable from "no fault".
+
+### 81c. What still does not work, and a false positive avoided
+
+Running the aggregation routine alongside the control tasks, with each of five
+injected faults, latches nothing. The live array stays zero, so the monitors that
+write it are not among the tasks being run.
+
+Booting from reset with nothing connected - no sensors, no solenoids, which should
+give a transmission controller every reason to complain - leaves 0xFFFF8876 holding
+
+    5a a5 a5 5a 5a a5 a5 5a ...
+
+Decoded as fault flags that is twenty DTCs, including plausible ones like P0705 and
+P0715, and it would have been reported as the bench-power-up result it was being
+looked for. It is the RAM self-test pattern (FINDINGS 62), which this project has
+already had to filter once. An expectation that a test SHOULD produce a positive is
+exactly the condition under which a pattern that resembles one gets believed.
+
+So: the code table, the record layout, both flag arrays and the setter are
+established and cross-checked. What is not established is any path that sets a real
+fault, because the monitors have not been located. Until they are, the simulator can
+provoke the controller and trace what moved, but it cannot say "this sets P0722".
+
+### 81d. The monitors, the debounce, and where this stops
+
+Three functions set the live fault array, found by taking every instruction that
+loads 0xFFFF8876 and asking which of them go on to OR a value back into it:
+
+    00087654    00088 2DC    0008DA0A
+
+and one more, 0x0008E262, writes only zeros - it is the per-tick clear.
+
+The set is debounced. At 0x0008DBA6 the monitor reads a persistence counter out of
+its record, compares it against a threshold held in ROM at 0x000A2DF0, and only
+sets the bit when the counter has reached it. The threshold is 0x3E8 - one
+thousand. Every drive in this project so far has been twelve to sixty ticks, so a
+fault held for the whole drive advanced that counter to sixty and the monitor did
+exactly what it should: nothing.
+
+Holding a stalled engine for 1,100 ticks still sets nothing, and the reason is one
+level further out. The counter never advances either, because the monitor exits at
+0x0008DBA4 before reaching it. These functions take a record pointer in r14, and
+the harness enters every function with zeroed registers - so the monitor reads its
+record from address zero, finds nothing, and leaves. Running the caller at
+0x000875A8 instead, so the firmware supplies the argument, does not change it.
+
+So the diagnostic chain is now mapped end to end - codes, records, group and mask,
+the live array, the confirmed array, the setter, the clear, and the debounce
+threshold - and none of it has been shown to work, because no path has been found
+that satisfies a monitor's entry conditions. That is the open item. What it needs
+is the dispatcher that owns those records, not another guess at an entry point.
+
+The DTC code tables themselves are solid: forty-four codes in each of nine
+firmwares, identical lists, cross-checked against the instruction that indexes
+them. Those can ship. The claim "this fault sets this code" cannot.
+
+### 81e. The codes ship; the mapping does not
+
+The code table is located in each firmware by searching for the first eight codes
+as a sixteen-byte key rather than hardcoding an address. All nine images contain
+it, and the Impreza's base lands on 0x0008624C - exactly where the instruction at
+0x0007D51C indexes it. Two independent routes to the same address.
+
+The definition now offers 44 switches per firmware, 396 in total, on the same
+mechanism the M32R definition uses: zeroing a slot removes the code number while
+leaving the fault and its behaviour untouched. The description says so, and says
+that which condition sets a given code is not established for this family.
+
+Progress on the monitors, so the next attempt does not start over. The guards at
+the top of 0x0008DA0A are two flags:
+
+    0xFFFF88BC bit 5 must be CLEAR
+    0xFFFF88B9 bit 7 must be SET
+
+Injecting both lets the body run - confirmed by trace, it passes 0x0008DA20 and
+calls onward - but only if the monitor runs BEFORE the control tasks, because
+those rewrite 0xFFFF88B9 to 0x40 within the same tick. Even then, across 1,400
+ticks the only writes to the live array are 7,000 clears from 0x0008E298 and
+0x0008E314. The body runs and never reaches its OR, so the condition it tests
+depends on something the model does not provide - solenoid current feedback from
+an ADC that reads zero is the obvious candidate.
+
+### 81f. A checker that invented the fault it looks for
+
+Adding the switches took the alias count from 1,650 pairs to 2,037 - 387 new ones,
+which is almost exactly the number of switches added. A Switch table's sizey is a
+BYTE count and it carries no storagetype, so the rows-times-width rule gave each
+two-byte code four bytes and ran it into the next.
+
+Fixing it drops the count to 962, which means the earlier 1,650 was wrong the same
+way: the M32R definition's 53 switches per firmware across 16 firmwares had been
+inflating it all along. The corrected figure is 962, and the gear-4-against-D5
+overlap of section 79a is unaffected - those are 3D tables and were never mis-sized.
+
+## 82. The application, checked as an artifact
+
+Everything in section 79 checked the definitions against the ROM bytes. That is a
+different question from whether RomRaider accepts them, and the difference has
+bitten this project before: a fabricated Z Axis element once made tables vanish
+with every address correct. Adding 396 Switch tables is exactly the change that
+question exists for.
+
+Loaded through RomRaider's own parser, all 25 firmwares match their calibration ID
+and build every table with none rejected:
+
+    Denso    196, 241 or 220 tables per firmware, faulty=0
+    Hitachi  141 to 277 tables per firmware,      faulty=0
+
+and the Denso counts are the previous figures plus 44, so every DTC switch was
+accepted rather than silently dropped.
+
+One detour worth recording. The rrcli lib/ holds a stock RomRaider, which has no
+subarutcudenso checksum manager and throws before parsing a single table. Checking
+our definition against a build that cannot represent it proves nothing, so the
+classpath now points at the app image being shipped.
+
+### 82a. The fixes are in the artifact, not just the patch
+
+A patch that applies, a build that succeeds and a source tree that reads correctly
+are three things, and none of them is the jar reaching a user. The
+definition-discovery failure was reported against a build, so the check belongs on
+the built jar:
+
+    ECUEditor.findBundledDefinitions()      present
+    ECUEditor.checkDefinitions()            present
+    ShiftCurveEditor                        present, with its Vertex class
+    TableToolBar.findShiftPartner()         present
+
+The discovery logic looks for a definitions directory beside the jar and one level
+up, which matches the shipped layout - app/RomRaider.jar with app/definitions
+alongside it, so the first candidate hits.
+
+The app image was carrying the pre-DTC definitions; they have been refreshed and
+the app's own copy re-checked through the parser rather than assumed identical.
