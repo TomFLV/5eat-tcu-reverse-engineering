@@ -5725,3 +5725,70 @@ The recipe, for the next input:
 
 Step three is the one that needs the machine. Thirty-seven drives at ten minutes
 each is six hours sequentially and about half an hour at twelve at a time.
+
+## 67. A NATIVE SH-2E CORE, AND HOW FAR IT CAN BE TRUSTED
+
+The p-code emulator was measured at about twenty thousand instructions a second.
+The bisection of section 65 took thirty-seven drives at ten minutes each; running
+twelve at once brought six hours down to thirty minutes, but the tax being paid is
+interpretation of p-code inside a JVM and no number of cores removes it.
+
+The suggestion was CUDA. It is the wrong tool and worth saying why rather than
+just declining: the emulator interprets one instruction at a time with a data
+dependency between every step and a branch in most of them, which is the shape a
+GPU is worst at - it wants thousands of threads doing identical arithmetic over
+independent data - and no CUDA backend for p-code exists, so it would mean
+reimplementing SH-2E anyway. If SH-2E is going to be reimplemented, a plain C
+interpreter on one core beats a GPU port of p-code by an order of magnitude and
+takes a fraction of the effort.
+
+`tools/sh2/sh2.c`, about six hundred lines. Measured against the same workloads:
+
+    workload                        p-code        native
+    one function, 20 ticks          8,256 ms       23 ms
+    399 tasks, 60 ticks             ~10 min       345 ms
+    399 tasks, full 568-tick drive  not attempted  2.4 s
+
+That last is 292 million instructions in under three seconds, about 120 million a
+second against the p-code emulator's twenty thousand.
+
+### 67a. Two bugs it found in itself
+
+Unimplemented opcodes are reported by encoding and address rather than skipped,
+which caught both.
+
+`mov.w @(disp,PC),Rn` **sign-extends**, and not doing so turned the negative stack
+adjustment that opens most functions into a large positive one. The stack pointer
+walked out of RAM and the function returned after ninety instructions instead of
+eight thousand. This is the same sign extension that section 45 turned on - a
+16-bit literal is how this architecture names a 0xFFFF.... address at all.
+
+`rotcl` was ninety percent of the remaining misses on its own. The compiler uses it
+for every multi-word shift, so leaving it out corrupts arithmetic across the image
+while the emulator still appears to run perfectly.
+
+### 67b. How far it is validated - and it is not far enough
+
+Against the p-code emulator, comparing every cell where that emulator states a
+value:
+
+    one function, 20 ticks           358 of 358 cells      exact
+    101 tasks, 20 ticks           38,595 of 38,728 cells   99.66 %
+    134 tasks                     34,194 of 34,306         99.67 %
+    167 tasks                     34,564 of 34,659         99.73 %
+    399 tasks, 60 ticks          120,455 of 129,947        92.70 %
+
+Exact on a single function, and degrading as tasks are added. The correlation
+points at a cause that is not an opcode: the remaining unimplemented encodings all
+occur at addresses like 0x20, 0x38 and 0x7F - inside the interrupt vector table,
+several of them odd and therefore not instruction boundaries at all. A task entered
+with zeroed registers computes a null jump and executes the vector table as code.
+The p-code emulator does the same, as its reads of `ram:f18e0560` in section 64b
+show, but two emulators wandering through garbage do not wander identically.
+
+So the divergence is probably not a fault in the core. **Probably is not good
+enough.** Until it is exact on a task list, findings come from the p-code emulator
+and the native core is used for search - bisection, sweeps, anything where the
+answer will be confirmed by a slower run afterwards. A fast emulator that is subtly
+wrong is worse than a slow one, and this file has enough entries already about
+tools that produced confident wrong answers.
