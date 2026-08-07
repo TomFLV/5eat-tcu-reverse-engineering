@@ -175,8 +175,11 @@ variables - but the routine that fills it names its sources, so the tool follows
 that hop and reports the real variable and its scaling. Output goes to
 `tools/ssm_parameters.json`.
 
-Works on the sixteen M32R images. The Denso equivalent has not been located; see
-FINDINGS section 40.
+Works on the sixteen M32R images. The Denso equivalent was located later - 141
+named RAM addresses, in `tools/denso_ssm_addresses.json`, covering every solenoid
+current and pressure channel, both turbine speeds, gear position and ATF
+temperature. They are keyed under `ram`, not `address`; reading the wrong key is
+why they went unused for so long. See FINDINGS sections 40 and 74.
 
 FreeSSM is Comer352L's, GPLv3. It is downloaded when the tool runs and is not
 redistributed here. The approach is rimwall's, from forum topic 13725.

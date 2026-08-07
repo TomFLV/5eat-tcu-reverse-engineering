@@ -109,7 +109,7 @@ Derived from an entropy scan and confirmed against the boot code.
 |---|---|
 | `0x000000`–`0x0001FF` | Vector table |
 | `0x000200`–`0x003FFF` | Blank (`0xFF` fill) |
-| `0x004000`–`0x005AFF` | Early/fallback boot code — includes the DTC table at `0x4090` |
+| `0x004000`–`0x005AFF` | Early/fallback boot code — port and register initialisation, *not* a DTC table, see below |
 | `0x005B00`–`0x007FFF` | Blank |
 | `0x008000`–`0x01D200` | **Calibration data** — all tables live here |
 | `0x01D200`–`0x01FFFF` | Blank |
@@ -164,7 +164,7 @@ calibration ID block, so "fixing" a balance value there would corrupt real ID da
 
 ---
 
-## There is no known DTC table — a corrected error
+## The DTC table is not at `0x4090` — a corrected error
 
 An earlier version of this project claimed a DTC table at `0x4090` with 19
 records of `[flags:u16][code:u16][data:u32]`, decoding to `P0700`, `P0704`,
@@ -201,8 +201,23 @@ the **top 2 bits as a DTC index (0–3)** and the **remaining 14 bits as the DTC
 number**; successive messages cycle through up to four active codes. Source: the
 community [CAN decoding thread](https://www.romraider.com/forum/viewtopic.php?f=40&t=20850).
 
-Finding the stored table means locating the code that builds that message. That
-has not been done.
+**This has since been done.** That encoding is a distinctive thing to search a
+decompilation for, and `FUN_00032cac` builds exactly it — the index shifted into
+the top two bits, the code masked with `0x3FFF`. The loop above it walks twelve
+status bytes of eight fault flags each, indexing a table of 96 `uint16` codes
+stored as the P-number in hex, so `0x705` is P0705. Fifty-three real codes per
+firmware, and the definition ships them all, individually switchable. See
+`tools/extract_dtc_table.py`, which locates the table per image rather than
+assuming a fixed address — it is not at one.
+
+The Denso family works the same way and was located later, by searching each image
+for the first eight codes as a sixteen-byte key: 44 codes per firmware across all
+nine, cross-checked against the instruction that indexes them.
+
+What is still **not** established for the Denso family is which fault sets which
+code. Both flag arrays, the per-code records and the routine that sets a bit have
+been found, but no fault has been made to latch one under emulation. See
+`FINDINGS.md` §81.
 
 ---
 

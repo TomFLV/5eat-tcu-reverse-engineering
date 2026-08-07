@@ -49,6 +49,19 @@ jobs:
       - name: Every table address is correct for its firmware
         run: python tools/validate_xml_defs.py
 
+      # The Denso definition ships 196 to 241 tables per firmware across nine
+      # images and was not checked here at all - only the M32R side was. It gained
+      # 396 diagnostic switches in 1.1.6, which is exactly the kind of change that
+      # wants a gate rather than a promise.
+      - name: Every Denso table address is correct for its firmware
+        run: python tools/validate_denso_defs.py
+
+      # Tables that share ROM bytes are reported rather than failed: gear 4 and
+      # gear D5 legitimately share cells. What DOES fail is a table aliasing
+      # itself, which is never intentional.
+      - name: No table aliases its own cells
+        run: python tools/check_table_aliasing.py
+
       - name: Both checksums verify on every M32R image
         run: |
           fail=0

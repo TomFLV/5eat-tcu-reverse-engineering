@@ -65,7 +65,7 @@ cp ghidra-m32r/data/languages/m32r.{cspec,ldefs,pspec,sinc,slaspec} $GHIDRA/Ghid
 # fix pspec schema (add initialized="false" to the 6 memory_block elements), then:
 $GHIDRA/support/sleigh -x $GHIDRA/Ghidra/Processors/M32R/data/languages/m32r.slaspec
 # import:
-cp "/mnt/c/Users/Tom/OneDrive/Desktop/5eat tcu reverse engineering/91D1206000_5EAT.bin" ~/5eat.bin
+cp "<repo>/91D1206000_5EAT.bin" ~/5eat.bin
 $GHIDRA/support/analyzeHeadless ~/ghidra_project 5eatProj -import ~/5eat.bin \
     -processor 'm32r:2:default' -loader BinaryLoader -loader-baseAddr 0x100000
 ```
@@ -191,7 +191,7 @@ for the record, not as tooling you can run (§15f).
 ### Practical note for next session
 Scripts used this session (Ghidra `GhidraScript` Java subclasses) are now in `tools/` in this project folder: `DisasmTest.java` (force-disassemble at a given address, used to validate base address 0), `SeedAnalyze.java` (seed entry points + run full auto-analysis), `XrefDump.java` (list functions + report references to a list of target addresses). To use them again, copy into WSL (`~/my_scripts/`) and run from the WSL home directory:
 ```bash
-cp "/mnt/c/Users/Tom/OneDrive/Desktop/5eat tcu reverse engineering/tools/XrefDump.java" ~/my_scripts/
+cp "<repo>/tools/XrefDump.java" ~/my_scripts/
 cd ~ && ~/ghidra_12.1.2_PUBLIC/support/analyzeHeadless ~/ghidra_project2 5eatProj -process 5eat.bin -noanalysis -scriptPath ~/my_scripts -postScript XrefDump.java
 ```
 
@@ -483,9 +483,9 @@ All 20 use **"Raw" scaling** (`expression="x"`) since real engineering units are
 
 Testing the §11c definition file in the user's actual installed RomRaider (1.0.0 DEC01 2023, `C:\Program Files (x86)\RomRaider`) surfaced real problems, found by decompiling the installed `RomRaider.jar` (via CFR, see `~/romraider_inspect` in WSL) rather than guessing:
 
-- **First "no tables" cause**: not a bug at all — `C:\Users\Tom\Downloads\91D1206000_5EAT.bin` turned out to be a *folder* (from extracting a downloaded zip with a same-named file inside), not the file. RomRaider was opening an empty/nonexistent path. Fixed by pointing at the project folder's copy instead.
+- **First "no tables" cause**: not a bug at all — `<downloads>\91D1206000_5EAT.bin` turned out to be a *folder* (from extracting a downloaded zip with a same-named file inside), not the file. RomRaider was opening an empty/nonexistent path. Fixed by pointing at the project folder's copy instead.
 - **Second "no tables" cause (the real bug)**: decompiling `TableScaleUnmarshaller.unmarshallTable` proved RomRaider's 2D tables have **no "Z Axis" child element** — that was invented, not real schema. For a 2D table, RomRaider only recognizes an `X Axis` (or `Y Axis`) child for the breakpoint axis; **the data address belongs on the outer `<table>` element itself**. Our original 20 tables all had `storageaddress` on the (ignored) fake "Z Axis" child, leaving the real table's address unset — silently skipped, no error logged anywhere (confirmed by also enabling RomRaider's DEBUG-level logging, see below, and seeing nothing). Fixed by moving `storageaddress` onto the outer `<table type="2D">` element and dropping the fake child entirely.
-- **Enabled DEBUG logging** for future troubleshooting: RomRaider's log level is set in `C:\Program Files (x86)\RomRaider\lib\log4j.properties` (`log4j.rootLogger=info,...` → changed to `debug,...`, done via a UAC-elevated PowerShell edit since the install directory isn't user-writable). Log file: `C:\Users\Tom\.RomRaider\rr_system.log`.
+- **Enabled DEBUG logging** for future troubleshooting: RomRaider's log level is set in `C:\Program Files (x86)\RomRaider\lib\log4j.properties` (`log4j.rootLogger=info,...` → changed to `debug,...`, done via a UAC-elevated PowerShell edit since the install directory isn't user-writable). Log file: `<home>\.RomRaider\rr_system.log`.
 
 **Definition file is now generated, not hand-written**: `tools/generate_romraider_def.py` builds `5eat_tcu_91D1206000_romraider_def.xml` from a `FAMILIES` list (each entry: category, name template, list of ROM header addresses, axis label, description template) plus a `romid` block, computing every axis/data address programmatically from the ROM's own embedded `[count]` fields. Regenerate with `python tools/generate_romraider_def.py` rather than hand-editing the XML — avoids the copy-paste address bugs found earlier. `tools/validate_xml_defs.py` re-verifies every generated address against the ROM afterward (60 checks across 30 tables, all passing).
 
@@ -608,7 +608,7 @@ User asked whether other community work exists defining these TCU ROMs — check
 
 ## 11k. Info section cleaned up — one entry instead of three
 
-User feedback: the earlier 3-table "Info - Read This First" category (§11c/11h) looked cluttered/confusing in RomRaider's actual UI — three separate table-looking entries for what's really just documentation. Checked how a real definition handles this (`CarBerryROM`, `github.com/Crowley2012/SubaruTuning` — note: the copy on this PC at `C:\Users\Tom\OneDrive\Documents\CarBerryROM-*.xml` turned out to be a *saved GitHub webpage*, not the raw XML — that's what caused the "crossorigin" parse errors seen in RomRaider's log early this session; fetched the real raw file from GitHub instead). Confirmed: RomRaider has no dedicated "notes/readme" schema element at all — the convention is just an ordinary table with a rich `<description>`. Consolidated to **one single locked, non-editable `type="1D"` table named "Read This First" under category "Info"**, with all three caveats (ID block, static-file-only limitation, checksum fix requirement) combined into one description block. `INFO_ENTRIES` list replaced with a single `INFO_README` string constant and `build_info_table_xml()` takes no arguments now.
+User feedback: the earlier 3-table "Info - Read This First" category (§11c/11h) looked cluttered/confusing in RomRaider's actual UI — three separate table-looking entries for what's really just documentation. Checked how a real definition handles this (`CarBerryROM`, `github.com/Crowley2012/SubaruTuning` — note: the copy on this PC at `<home>\OneDrive\Documents\CarBerryROM-*.xml` turned out to be a *saved GitHub webpage*, not the raw XML — that's what caused the "crossorigin" parse errors seen in RomRaider's log early this session; fetched the real raw file from GitHub instead). Confirmed: RomRaider has no dedicated "notes/readme" schema element at all — the convention is just an ordinary table with a rich `<description>`. Consolidated to **one single locked, non-editable `type="1D"` table named "Read This First" under category "Info"**, with all three caveats (ID block, static-file-only limitation, checksum fix requirement) combined into one description block. `INFO_ENTRIES` list replaced with a single `INFO_README` string constant and `build_info_table_xml()` takes no arguments now.
 
 ---
 
@@ -926,8 +926,8 @@ Corroborated by our own DTC table (§11f): `P0745/P0746/P0748/P074C` are all **P
 ## 11v. Published to GitHub — repo layout and what was excluded
 
 Public repo: **https://github.com/TomFLV/5eat-tcu-reverse-engineering** (owner `TomFLV`).
-Local clone at `C:\Users\Tom\Desktop\5eat-tcu-reverse-engineering` — **separate folder** from
-this working directory (`C:\Users\Tom\Desktop\5eat tcu reverse engineering`). Don't confuse them.
+Local clone at `<repo>` — **separate folder** from
+this working directory (`<home>\Desktop\5eat tcu reverse engineering`). Don't confuse them.
 
 **Published layout** (tools are repo-relative there, NOT flat like the working folder):
 `README.md`, `LICENSE` (MIT, explicitly scoped to exclude the ROM/decompile),
@@ -964,7 +964,7 @@ checking the repository against this note rather than trusting the note.
 
 ## 11w. SECOND ROM: `91FE216300` (512KB variant, Early 2005 USDM Outback XT) — checksum generalized, port path mapped
 
-User supplied a second ROM: **`91FE216300.bin`**, from an **Early 2005 USDM Outback XT** (their identification). Working copy in the project folder; an identical date-stamped original is at `C:\Users\Tom\Downloads\91FE216300_2026-03-21_18h17m30s.bin` (looks like a tool-generated vehicle read). SHA-256 `ccd65cf2bbe96c009ca9bde8cfc2bbd59fe23372edd63968d9d700ed6e58703d`.
+User supplied a second ROM: **`91FE216300.bin`**, from an **Early 2005 USDM Outback XT** (their identification). Working copy in the project folder; an identical date-stamped original is at `<downloads>\91FE216300_2026-03-21_18h17m30s.bin` (looks like a tool-generated vehicle read). SHA-256 `ccd65cf2bbe96c009ca9bde8cfc2bbd59fe23372edd63968d9d700ed6e58703d`.
 
 **It is the larger M32R variant** — 524,288 bytes (512 KB) vs our 384 KB. Same M32R *architecture* (so the whole Ghidra/decompiler toolchain transfers unchanged), different chip: `M32176F4` rather than `M32170F3`/`M32174F3`. This matches the forum's statement that 05-06 USDM TCUs use MCU `WA12212963WWN` vs our `wa12212953www`, and matches the user's vehicle ID. It is **not** the unrelated Denso SH7058 unit.
 
@@ -6319,7 +6319,7 @@ task - and it is the next thing to build. Recorded rather than done, because a
 measurement that returns zero for a reason you understand is a better place to stop
 than one that returns five for a reason you do not.
 
-## 76. The Denso firmware boots
+## 76. The Denso firmware boots (2026-08-07)
 
 Everything before this ran the firmware the way a laboratory runs a tissue sample:
 enter a function, let it execute, read what it wrote. That works, and it produced
@@ -6379,7 +6379,7 @@ trace is the same bug that once made "r1" print r2, wearing a different hat, so 
 trace now prints all sixteen from a loop - the set printed cannot drift out of step
 with the set named.
 
-## 77. CAN traffic simulated straight into the receive buffers
+## 77. CAN traffic simulated straight into the receive buffers (2026-08-07)
 
 The faithful way to give the TCU engine data is to boot the engine controller beside
 it and let it transmit. That needs a second bring-up, an interrupt model and a CAN
@@ -6429,7 +6429,7 @@ Byte 5 reaches 0xFFFFA9F1, which the Select Monitor table names Engine Speed, an
 0xFFFF34CE, which changes sign between the two runs (-21 against +43) and is
 therefore computed rather than copied.
 
-## 78. Attributing writes to the code that made them
+## 78. Attributing writes to the code that made them (2026-08-07)
 
 Naming the 185 shipped tables has now failed four ways, and each failure was
 informative enough to be worth recording rather than quietly retried.
@@ -6514,7 +6514,7 @@ So the entry is the first read site backed up by two and by four bytes. That ski
 whatever the guard was checking, which is a deliberate trade - it exercises the
 decode at the cost of running it in a state the firmware might have refused.
 
-## 79. Testing the definitions before shipping them
+## 79. Testing the definitions before shipping them (2026-08-07)
 
 The M32R definition has had a validator since it became standalone-per-firmware.
 The Denso definition has shipped 152 to 197 tables per firmware across nine
@@ -6571,7 +6571,7 @@ right. It was, though, the only one of the three shipping without an encoding
 declaration, so the generator now emits one - a file that states its encoding
 cannot be misread by a tool that guesses.
 
-## 80. Driving the controller, and provoking it
+## 80. Driving the controller, and provoking it (2026-08-07)
 
 Everything before this measured the controller one question at a time. This runs a
 scripted drive and reads the firmware's own instrument panel each tick, from the
@@ -6635,7 +6635,7 @@ distinguishes, and the single instruction that produces it.
 That is the chain this simulator was built for: drive the car, provoke it, see
 which byte moves, and get back to the line of firmware that moved it.
 
-## 81. The Denso diagnostic chain, and why it does not light up yet
+## 81. The Denso diagnostic chain, and why it does not light up yet (2026-08-07)
 
 The M32R family's diagnostics were worked out long ago and the definition ships 53
 codes per firmware. The Denso family shipped none, so a fault provoked in the
@@ -6764,7 +6764,7 @@ way: the M32R definition's 53 switches per firmware across 16 firmwares had been
 inflating it all along. The corrected figure is 962, and the gear-4-against-D5
 overlap of section 79a is unaffected - those are 3D tables and were never mis-sized.
 
-## 82. The application, checked as an artifact
+## 82. The application, checked as an artifact (2026-08-07)
 
 Everything in section 79 checked the definitions against the ROM bytes. That is a
 different question from whether RomRaider accepts them, and the difference has
