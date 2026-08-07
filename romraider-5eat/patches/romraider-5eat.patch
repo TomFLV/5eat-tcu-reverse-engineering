@@ -1555,10 +1555,26 @@ index 0000000..31e8c39
 +    }
 +}
 diff --git a/src/main/java/com/romraider/swing/DefinitionManager.java b/src/main/java/com/romraider/swing/DefinitionManager.java
-index 151dbc5..dc6cd19 100644
+index 151dbc5..06a25a4 100644
 --- a/src/main/java/com/romraider/swing/DefinitionManager.java
 +++ b/src/main/java/com/romraider/swing/DefinitionManager.java
-@@ -221,7 +221,18 @@ public class DefinitionManager extends javax.swing.JFrame implements ActionListe
+@@ -19,6 +19,7 @@
+ 
+ package com.romraider.swing;
+ 
++import org.apache.log4j.Logger;
+ import java.awt.*;
+ import java.awt.event.ActionEvent;
+ import java.awt.event.ActionListener;
+@@ -42,6 +43,7 @@ import com.romraider.xml.ConversionLayer.ConversionLayer;
+ import com.romraider.xml.ConversionLayer.ConversionLayerFactory;
+ 
+ public class DefinitionManager extends javax.swing.JFrame implements ActionListener {
++    private static final Logger LOGGER = Logger.getLogger(DefinitionManager.class);
+ 
+     private static final long serialVersionUID = -3920843496218196737L;
+     private static final ResourceBundle rb = new ResourceUtil().getBundle(
+@@ -221,7 +223,18 @@ public class DefinitionManager extends javax.swing.JFrame implements ActionListe
  
      public void addFile() {
          final Settings settings = SettingsManager.getSettings();
@@ -1578,6 +1594,73 @@ index 151dbc5..dc6cd19 100644
          fc.setMultiSelectionEnabled(true);
          fc.setFileFilter(new DefinitionFilter());
  
+@@ -348,20 +361,60 @@ public class DefinitionManager extends javax.swing.JFrame implements ActionListe
+      * @exception    FileNotFoundException if the directory or file is not present
+      * @exception    IOException if there's some kind of IO error
+      */
++    /**
++     * Where customize/nameSequences.properties actually is.
++     *
++     * The original looked it up relative to the working directory, which in a
++     * packaged application is wherever the user launched from - for a Start menu
++     * shortcut, not the application folder. Look beside the jar and one level up
++     * as well, which is where a jpackage app-image puts it, and keep the relative
++     * path last so a source build is unaffected.
++     */
++    private static File findSequencesFile() {
++        final java.util.List<File> candidates = new java.util.ArrayList<File>();
++        try {
++            final File jar = new File(DefinitionManager.class.getProtectionDomain()
++                    .getCodeSource().getLocation().toURI());
++            final File base = jar.isFile() ? jar.getParentFile() : jar;
++            candidates.add(new File(base, "customize/nameSequences.properties"));
++            if (base.getParentFile() != null) {
++                candidates.add(new File(base.getParentFile(),
++                        "customize/nameSequences.properties"));
++            }
++        } catch (Exception e) {
++            // Fall through to the relative path.
++        }
++        candidates.add(new File("./customize/nameSequences.properties"));
++        for (File f : candidates) {
++            if (f.isFile()) return f;
++        }
++        return null;
++    }
++
+     private Properties loadSequences() {
+         final Properties sequences = new Properties();
++        final File file = findSequencesFile();
++        // The file is optional - it customises name search sequences and the
++        // manager is perfectly usable without it - so its absence is not worth
++        // interrupting anyone with a modal dialog. It was doing so on every open.
++        if (file == null) {
++            LOGGER.debug("No customize/nameSequences.properties; using defaults");
++            return sequences;
++        }
++        FileInputStream propFile = null;
+         try {
+-            final FileInputStream propFile = new FileInputStream("./customize/nameSequences.properties");
++            propFile = new FileInputStream(file);
+             sequences.load(propFile);
+-            propFile.close();
+-        } catch (FileNotFoundException e) {
+-            JOptionPane.showMessageDialog(null, e.getLocalizedMessage(),
+-                    "FileNotFoundException",
+-                    JOptionPane.ERROR_MESSAGE);
+         } catch (IOException e) {
++            // A file that IS there and will not read is a different matter: the
++            // user put it there and should be told it is broken.
+             JOptionPane.showMessageDialog(null, e.getLocalizedMessage(),
+                     "IOException",
+                     JOptionPane.ERROR_MESSAGE);
++        } finally {
++            if (propFile != null) {
++                try { propFile.close(); } catch (IOException ignored) { }
++            }
+         }
+         return sequences;
+     }
 diff --git a/src/main/java/com/romraider/swing/LookAndFeelManager.java b/src/main/java/com/romraider/swing/LookAndFeelManager.java
 index 0f91ca7..6250e6b 100644
 --- a/src/main/java/com/romraider/swing/LookAndFeelManager.java

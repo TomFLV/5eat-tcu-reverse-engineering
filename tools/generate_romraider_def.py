@@ -2022,7 +2022,13 @@ def build_rom_block(profile, rom_bytes, is_base):
 
 
 def main():
-    parts = ["<roms>", HEADER_COMMENT, ""]
+    # The file carries non-ASCII - the degree sign in temperature units and an em
+    # dash in the header - and was the only definition shipping without an
+    # encoding declaration. XML defaults to UTF-8 so it parsed correctly
+    # everywhere it was tried, but a file that states its encoding cannot be
+    # misread by a tool that guesses from the platform default, which is exactly
+    # how the degree sign turned to a replacement character while testing this.
+    parts = ['<?xml version="1.0" encoding="UTF-8"?>', "<roms>", HEADER_COMMENT, ""]
     summary = []
 
     for idx, profile in enumerate(ROM_PROFILES):
@@ -2045,7 +2051,12 @@ def main():
         summary.append((profile["id"], profile["internalidstring"], total, n_dtc, checked))
 
     parts.append("</roms>")
-    with open(out_path, "w", encoding="utf-8") as f:
+    # newline="\n" so the output does not depend on which platform generated it.
+    # Without it Python's text mode translates on Windows, and regenerating there
+    # rewrote all 81,908 line endings to CRLF in a file that has always shipped
+    # LF - a diff of the entire file, none of it a real change. The Denso
+    # generator already pins this; these two should not disagree.
+    with open(out_path, "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(parts) + "\n")
 
     print(f"Wrote {out_path}")
