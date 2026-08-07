@@ -5792,3 +5792,82 @@ and the native core is used for search - bisection, sweeps, anything where the
 answer will be confirmed by a slower run afterwards. A fast emulator that is subtly
 wrong is worse than a slow one, and this file has enough entries already about
 tools that produced confident wrong answers.
+
+## 68. THE INPUT DEPENDENCY MAP OF THE CONTROLLER
+
+Section 62 could only sweep inputs against one function, because a drive of the
+full task list took ten minutes and 119 inputs would have been twenty hours. On
+the native core each drive is about a third of a second, so the sweep that was out
+of reach takes ninety seconds.
+
+The fidelity question of section 67b does not apply here, and it is worth being
+precise about why. The native core diverges from p-code by 7 percent over a long
+task list and the cause is still open. That would matter if the question were what
+value an address holds. It is not: the question is which addresses move when an
+input moves, and that is answered by comparing two native runs to each other. Any
+systematic error is present in both arms and cancels. The map describes dependency
+structure, not absolute values.
+
+### 68a. Two constants, not a sweep
+
+The first attempt reported every one of the 119 inputs driving all 2,265 moving
+addresses, which is an experiment failing rather than a firmware that is entirely
+coupled. Sweeping an input while the control holds it means the two runs differ at
+every tick from the first, and with 399 tasks sharing state the trajectories
+separate completely.
+
+Holding the input at one constant against another isolates it. The schedule
+selector then drives 15 addresses and an inert input drives none, and the figure is
+stable from the second tick onward rather than growing - so this is real dependency
+and not divergence.
+
+Two harness faults were found on the way, both of the kind that produce a confident
+answer rather than an error. A task list of 399 entries is about 4,400 characters
+and passing it as one argument through `wsl` silently failed to start the process -
+which read as every input driving nothing. And `os.path.join` on Windows produces
+backslashes, which WSL does not treat as separators, so the runs wrote to one file
+while the reader opened a stale one.
+
+### 68b. The map
+
+Sixteen of the 119 inputs drive anything at all. 153 addresses are driven by
+exactly one input.
+
+    input         drives   where
+    0xFFFFA6A2       85    0xFFFF36xx, 0xFFFF85xx, 0xFFFF8Dxx, 0xFFFF8Exx, 0xFFFF91xx
+    0xFFFF8CF1       16    0xFFFF8D48-0xFFFF8D67, one tight cluster
+    0xFFFF9F55       15    0xFFFFBCxx and 0xFFFFBExx
+    0xFFFF380A       13    0xFFFF37xx, 0xFFFF39xx
+    0xFFFF3AAC       10    scattered, including 0xFFFF8654 and 0xFFFF895E
+    0xFFFFA442        8    0xFFFF9F5x, 0xFFFFA042
+    0xFFFFA448        8    the same set but 0xFFFFA023 instead of 0xFFFFA042
+    0xFFFF3808..16    5    each, in a repeating pattern
+    0xFFFFA01A        2
+    0xFFFF3AA8        1    0xFFFF8E84
+
+`0xFFFFA6A2` is much the largest driver in the firmware and has no name yet.
+
+### 68c. Two things the shape of the map says
+
+**There is an array of eight identical channels.** `0xFFFF3808`, `380A`, `380C`,
+`380E`, `3810`, `3812`, `3814` and `3816` each drive the same five slots at the
+same relative offsets - `0x3808` drives `0x37F8`, `0x395A`, `0x395B`, `0x397A`,
+`0x3982`; `0x380C` drives `0x37FC`, `0x395E`, `0x395F`, `0x397C`, `0x3984`. Eight
+inputs two bytes apart, each producing the same four derived quantities two bytes
+apart. That is one routine over an array, and finding what the array is will name
+eight inputs and thirty-odd outputs at once.
+
+**`0xFFFFA442` and `0xFFFFA448` are a pair.** They drive an identical set of six
+addresses and then diverge on exactly one - `0xFFFFA042` against `0xFFFFA023`. Two
+channels of the same measurement, kept apart only at the last step, which is what a
+plausibility check between redundant sensors looks like.
+
+### 68d. A caveat on the schedule selector
+
+The 15 addresses `0xFFFF9F55` drives are all in `0xFFFFBC99`-`0xFFFFBEFB`, and the
+harness puts the stack at `0xFFFFBF00`. These are stack locals of whatever consumed
+the value, not persistent state. The dependency is real - the selector demonstrably
+changes what the code computes - but the addresses it appears at here are
+temporaries, and naming them would be naming stack slots. The single-function sweep
+of section 62 saw the same selector move 48 addresses, so the two agree that it
+matters while disagreeing about where its effect is visible.
