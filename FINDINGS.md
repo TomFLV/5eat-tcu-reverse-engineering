@@ -6114,3 +6114,47 @@ population you do not control tells you about the population, not the thing you 
 trying to measure.
 
 Fifteen tasks left, `0x0006B6A0` the largest at 31 conflicting cells.
+
+## 73. WHERE THE NATIVE CORE STANDS, AND AN INSTRUMENT THAT LIED
+
+With all 395 single-task comparisons complete: **375 of 395 tasks reproduce the
+p-code emulator byte for byte.** Twenty differ.
+
+That is the number worth quoting. The whole-drive figure of section 71 sits at 78
+percent for the reason section 72a gives - sixty ticks of 395 tasks sharing memory,
+where one wrong task moves a great deal of state - and it measures accumulation
+rather than fidelity.
+
+### 73a. Half an hour lost to a mislabelled printf
+
+Task `0x0006B6A0` looked like an infinite loop: native hit the 20,000 step cap on
+every tick while p-code finished. The trace showed a float table search reading
+`@(r0,r1)` with `r1` at zero, which would have meant scanning the interrupt vector
+table instead of the table at `0x000EC350`. That was a clean, plausible diagnosis
+and it was entirely wrong.
+
+The trace format string still had five register slots from an earlier version after
+the arguments had been changed to print different registers. So the field labelled
+`r1` was showing `r2`, and the one labelled `r15` was showing `r4`. `r1` was never
+zero - re-running with honest labels shows it holding `0x000CF978`, exactly the
+ROM pointer the code loads.
+
+**A debugging instrument that lies is worse than not having one**, because it
+produces a confident diagnosis rather than no diagnosis, and there is nothing in
+the output to suggest doubt. The trace now labels every register it prints and
+prints exactly what the labels say.
+
+The real story for that task is duller: p-code ran 19,622 instructions per tick and
+the native step cap was 20,000. The two do nearly identical work; the cap truncated
+one of them just past where the other stopped.
+
+### 73b. The two real bugs so far
+
+`braf` branching absolutely rather than PC-relative, which sent every switch
+statement into the vector table (section 72), and `xtrct` keeping the high half of
+`Rn` in place instead of shifting it down. Both were found by per-task comparison
+rather than by reading the manual, and neither would have been found by comparing
+whole drives.
+
+Twenty tasks remain. `0x0006B6A0`, `0x000709F0` and `0x000709FE` are the largest,
+and the last two are almost certainly the same routine twice.

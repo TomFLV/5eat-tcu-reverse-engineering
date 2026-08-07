@@ -535,9 +535,16 @@ static long long run_entry(uint32_t entry, long long maxsteps) {
         if (cpu.halted) break;
         if (trace_from && pc == trace_from) trace_armed = 1;
         if (trace_left > 0 && (!trace_from || trace_armed)) {
-            fprintf(stderr, "%08X %04X  r0=%08X r1=%08X r2=%08X r4=%08X r15=%08X T=%u\n",
-                    pc, (uint16_t)rd16(pc), cpu.r[0], cpu.r[2], cpu.r[6],
-                    cpu.r[4], cpu.r[15], (unsigned)GET_T);
+            /* Label every register this prints, and print exactly what the labels
+             * say. An earlier version kept the old five-slot format string after
+             * the arguments were changed, so "r1" showed r2 and "r15" showed r4.
+             * Half an hour went into diagnosing a register that was never wrong.
+             * A debugging instrument that lies is worse than none. */
+            fprintf(stderr, "%08X %04X  r0=%08X r1=%08X r2=%08X r3=%08X "
+                            "r4=%08X r5=%08X r6=%08X r15=%08X T=%u\n",
+                    pc, (uint16_t)rd16(pc), cpu.r[0], cpu.r[1], cpu.r[2],
+                    cpu.r[3], cpu.r[4], cpu.r[5], cpu.r[6], cpu.r[15],
+                    (unsigned)GET_T);
             trace_left--;
         }
         step_one();
