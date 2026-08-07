@@ -5465,3 +5465,67 @@ throws out of the emulator step and the drive ends having written nothing, which
 what happened when a function start was guessed wrongly in section 59.
 `DensoDriveLog.java` now catches per-task failures, counts them, and reports which
 entries failed, so a list of 69 guesses yields results from the ones that work.
+
+## 63. THE CALL GRAPH, AND A CORRECTION TO 62b
+
+### 63a. 0x00D98C is not a task table
+
+Section 62b proposed the 69 pointers at `0x00D98C` as a dispatch or task list, on
+the strength of their being scattered and non-repeating. Reading the code around
+them says otherwise. What precedes the region is a run of small stubs that each
+increment a fault counter and jump away:
+
+    0000D946  mov.l ...,r6     ; 0xFFFF3704
+    0000D948  mov.b @r6,r2
+    0000D94A  add 0x1,r2
+    0000D94C  mov.b r2,@r6
+    0000D94E  mov.l ...,r2
+    0000D950  jmp @r2
+
+The pointers are those stubs' literal pool. One of the 69, `0x000A2E18`, is not an
+instruction boundary at all - it failed to decode when the list was run, which is
+the sort of thing a table of real task entries does not contain.
+
+That is the second time a table has been proposed from shape alone and been wrong,
+after the pair-shaped literal pools of section 61. Shape is a way to find
+candidates, not a way to confirm them.
+
+It is not entirely empty of meaning. **25 of the 69 are call-graph roots**, against
+402 roots among 5,051 functions overall - 36 % where chance would give 8 %. A
+literal pool serving dispatch stubs would naturally hold the addresses they jump
+to, so the region does carry task entries without being a task table.
+
+### 63b. What the call graph says
+
+`tools/denso_callgraph.py` resolves 297,557 instructions into 5,051 functions, of
+which 1,225 are called by name. A function start is a register-save prologue or the
+target of a call - the second matters because a leaf using only scratch registers
+saves nothing and would otherwise be invisible.
+
+The gather of section 61 has exactly one caller:
+
+    0002CD9E  bsr 0x0002cf80
+
+and `0x0002CD9C`, the function containing that call, **is itself a root** - nothing
+in the image calls it by name. It can only be reached through a pointer.
+
+That shape holds generally. The largest root calls 43 functions and reaches 44 in
+total; the next calls 36 and reaches 37. There is no deep hierarchy and no main
+that reaches everything. **The firmware is dispatched from a table**: each task is
+invoked through a pointer, so tasks appear in the call graph as roots with nothing
+linking them, and the call graph is a forest of shallow trees rather than one tree.
+
+The practical consequence is that the scheduler does not have to be found. The task
+set is approximately the **402 roots that call at least one function**, and those
+can be run directly.
+
+### 63c. A harness that hid its own results
+
+The 69-entry list did run. It looked like a crash because the wrapper piped the
+run through `grep ... | head -5`, and a task list of guesses produces a stream of
+decode errors that consumed the quota before the RESULT line was reached. The
+output said nothing at all, which reads exactly like a failed run.
+
+Truncating diagnostic output to keep it tidy is how a result gets thrown away
+without anyone noticing. The wrapper now keeps the full log, reports RESULT and the
+failed entries, and counts decode errors separately.
