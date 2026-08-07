@@ -6158,3 +6158,24 @@ whole drives.
 
 Twenty tasks remain. `0x0006B6A0`, `0x000709F0` and `0x000709FE` are the largest,
 and the last two are almost certainly the same routine twice.
+
+### 73c. The instruction counts differ by convention, not by path
+
+Classifying the twenty remaining tasks by comparing instruction counts looked
+decisive: native ran more instructions than p-code on every single one, by 15 to 25
+percent, which reads as the two taking different paths.
+
+It is not. The ratio is too consistent - 1044 against 1253, 828 against 998, 43,760
+against 51,527, 303 against 351 - and three unrelated tasks report exactly 1,200
+under p-code and exactly 1,420 natively. A path divergence does not produce the same
+numbers three times.
+
+The likely cause is that Ghidra's SLEIGH model folds a delayed branch and its delay
+slot into one `step()` while this core counts them separately. Branches are around
+15 to 20 percent of SH-2 code, which is the excess observed.
+
+So instruction count is not a divergence test between these two emulators, and the
+twenty tasks have to be told apart by what they write instead. Several of them -
+`0x0003F9D8`, `0x000404FA`, `0x00041004` - show no conflicting values at all, only
+addresses present in one run and not the other, which is a weaker kind of
+difference than it first appeared.
