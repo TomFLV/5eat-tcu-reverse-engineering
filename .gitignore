@@ -20,7 +20,10 @@ subaru_5eat_service_manual_extract.txt
 
 # Full disassembly listings: ~38 MB per image, 340 MB for the family. Regenerate
 # with tools/ghidra/DensoDisasmAll.java; the script is what is worth keeping.
-disasm-denso/
+# disasm-denso/ was excluded as "~300 MB of generated listings". It is 34 MB in
+# one file - the figure was asserted, never measured. Under GitHub's 100 MB per
+# file limit, smaller than the decompiler output already here, and fourteen tools
+# need it. Published.
 
 # Build output
 build/

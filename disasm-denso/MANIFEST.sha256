@@ -1,0 +1,10 @@
+# disasm-denso
+#
+# SHA-256 of every tracked file in this directory, 1 files, 33.3 MB.
+# Recorded 2026-08-08. Verify with:  python tools/write-manifests.py --check
+#
+# These exist because this repository ships ROM images, decompiler output
+# and generated definitions - files where a truncated copy still loads and
+# is quietly wrong.
+
+7d501b1c25bbe09f2a5940a7f4ba788d954ca2f6e86e17cf31e09bf0e9ac8ea1  Impreza_STI_3.583_JDM2011.asm

@@ -21,11 +21,22 @@ Everything else derives from that and from the repository root, which is compute
 from the tools' own location. Nothing is hardcoded to one machine any more —
 fifteen files used to be.
 
+## What IS in the repository
+
+The SH-2E disassembly of the reference Denso firmware is committed:
+`disasm-denso/Impreza_STI_3.583_JDM2011.asm`, 34 MB, ~650,000 instructions with
+literal pool values resolved inline. Fourteen tools read it, and it was previously
+excluded on a size figure that had been asserted rather than measured.
+
+Regenerate it, or produce it for another image, with Ghidra and the SH-2E language
+this project builds: `tools/ghidra/DensoDisasmAll.java`, see
+[README-sh2e.md](../tools/ghidra/README-sh2e.md).
+
 ## What is NOT in the repository
 
 | Needed by | What | Why not committed | How to get it |
 |---|---|---|---|
-| 14 tools | `disasm-denso/*.asm` | ~300 MB of generated listings | Ghidra + `tools/ghidra/DensoDisasmAll.java` |
+| — | `disasm-denso/*.asm` | **now published** — 34 MB, not the ~300 MB this table used to claim | already in the clone |
 | 6 tools | `$FIVEEAT_WORK/xref.json` | regenerable, large | `python tools/denso_xref.py` |
 | naming tools | `tools/denso_callgraph.json` | regenerable | `python tools/denso_callgraph.py disasm-denso/<image>.asm --dump tools/denso_callgraph.json` |
 | emulator tools | `$FIVEEAT_WORK/sh2/sh2` | a compiled binary | `gcc -O2 -o sh2 tools/sh2/sh2.c` |
