@@ -1,0 +1,4665 @@
+{
+ "0E5208": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "000680F2"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0E5224": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "000680F2"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0E5240": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "000680F2"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0E525C": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "000680F2"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0E5278": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "000680F2"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0E8CC8": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "00029BE4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0E8CE4": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "00029BE4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0E8D00": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "00029BE4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0E8D1C": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "00029BE4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0E8D38": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "00029BE4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0E8D54": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "00029BE4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0E8D70": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "00029BE4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0E8D8C": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "00029BE4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0E8DA8": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "00029BE4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0E8DC4": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "00029BE4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0E8DE0": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "00029BE4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0E8DFC": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "00029BE4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0E8E18": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "00029BE4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0E8E34": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "00029BE4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0E8E50": {
+  "consumers": 95,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "00029BE4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0E8EC0": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E8EDC": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E8EF8": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E8F14": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E8F30": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E8F4C": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E8F68": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E8F84": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E8FA0": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E8FBC": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E8FD8": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E8FF4": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E9010": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E902C": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E9048": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E91EC": {
+  "consumers": 121,
+  "direct": [],
+  "functions": [
+   "0002AAA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0E9208": {
+  "consumers": 121,
+  "direct": [],
+  "functions": [
+   "0002AAA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0E9224": {
+  "consumers": 121,
+  "direct": [],
+  "functions": [
+   "0002AAA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0E9240": {
+  "consumers": 121,
+  "direct": [],
+  "functions": [
+   "0002AAA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0E925C": {
+  "consumers": 121,
+  "direct": [],
+  "functions": [
+   "0002AAA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0E9294": {
+  "consumers": 121,
+  "direct": [],
+  "functions": [
+   "0002AAA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0E92B0": {
+  "consumers": 121,
+  "direct": [],
+  "functions": [
+   "0002AAA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0E92CC": {
+  "consumers": 121,
+  "direct": [],
+  "functions": [
+   "0002AAA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0E92E8": {
+  "consumers": 121,
+  "direct": [],
+  "functions": [
+   "0002AAA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0E9320": {
+  "consumers": 140,
+  "direct": [],
+  "functions": [
+   "000265D8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 66
+ },
+ "0E933C": {
+  "consumers": 140,
+  "direct": [],
+  "functions": [
+   "000265D8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 66
+ },
+ "0E9358": {
+  "consumers": 140,
+  "direct": [],
+  "functions": [
+   "000265D8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 66
+ },
+ "0E93AC": {
+  "consumers": 140,
+  "direct": [],
+  "functions": [
+   "000265D8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 66
+ },
+ "0E93C8": {
+  "consumers": 140,
+  "direct": [],
+  "functions": [
+   "000265D8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 66
+ },
+ "0E93E4": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E9400": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E941C": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E9438": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E9454": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E9470": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E94A8": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E94C4": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E94E0": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E9534": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E9550": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E956C": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E9588": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E95A4": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E95C0": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E95DC": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E95F8": {
+  "consumers": 122,
+  "direct": [],
+  "functions": [
+   "00023E7E"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AWD Solenoid Valve Pressure",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 32
+ },
+ "0E9614": {
+  "consumers": 122,
+  "direct": [],
+  "functions": [
+   "00023E7E"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AWD Solenoid Valve Pressure",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 32
+ },
+ "0E9630": {
+  "consumers": 122,
+  "direct": [],
+  "functions": [
+   "00023E7E"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AWD Solenoid Valve Pressure",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 32
+ },
+ "0E964C": {
+  "consumers": 122,
+  "direct": [],
+  "functions": [
+   "00023E7E"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AWD Solenoid Valve Pressure",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 32
+ },
+ "0E9668": {
+  "consumers": 122,
+  "direct": [],
+  "functions": [
+   "00023E7E"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AWD Solenoid Valve Pressure",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 32
+ },
+ "0E9684": {
+  "consumers": 122,
+  "direct": [],
+  "functions": [
+   "00023E7E"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AWD Solenoid Valve Pressure",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 32
+ },
+ "0E96A0": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E96BC": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E96D8": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E96F4": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E9710": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E972C": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E9748": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E9764": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E9780": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E979C": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E97B8": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E97D4": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E97F0": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E980C": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0E9828": {
+  "consumers": 83,
+  "direct": [],
+  "functions": [
+   "00027A4C"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 45
+ },
+ "0EB394": {
+  "consumers": 221,
+  "direct": [],
+  "functions": [
+   "00073E2E"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 60
+ },
+ "0EB3B0": {
+  "consumers": 221,
+  "direct": [],
+  "functions": [
+   "00073E2E"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 60
+ },
+ "0EB3CC": {
+  "consumers": 221,
+  "direct": [],
+  "functions": [
+   "00073E2E"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 60
+ },
+ "0EB3E8": {
+  "consumers": 221,
+  "direct": [],
+  "functions": [
+   "00073E2E"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 60
+ },
+ "0EB404": {
+  "consumers": 221,
+  "direct": [],
+  "functions": [
+   "00073E2E"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 60
+ },
+ "0EB420": {
+  "consumers": 221,
+  "direct": [],
+  "functions": [
+   "00073E2E"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 60
+ },
+ "0EB43C": {
+  "consumers": 221,
+  "direct": [],
+  "functions": [
+   "00073E2E"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 60
+ },
+ "0EB458": {
+  "consumers": 221,
+  "direct": [],
+  "functions": [
+   "00073E2E"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 60
+ },
+ "0EB474": {
+  "consumers": 221,
+  "direct": [],
+  "functions": [
+   "00073E2E"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 60
+ },
+ "0EB490": {
+  "consumers": 221,
+  "direct": [],
+  "functions": [
+   "00073E2E"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 60
+ },
+ "0EB538": {
+  "consumers": 112,
+  "direct": [],
+  "functions": [
+   "00072A98"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 61
+ },
+ "0EB554": {
+  "consumers": 112,
+  "direct": [],
+  "functions": [
+   "00072A98"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 61
+ },
+ "0EB570": {
+  "consumers": 112,
+  "direct": [],
+  "functions": [
+   "00072A98"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 61
+ },
+ "0EB618": {
+  "consumers": 112,
+  "direct": [],
+  "functions": [
+   "00072A98"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 61
+ },
+ "0EB768": {
+  "consumers": 135,
+  "direct": [],
+  "functions": [
+   "00075484"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 50
+ },
+ "0EB784": {
+  "consumers": 135,
+  "direct": [],
+  "functions": [
+   "00075484"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 50
+ },
+ "0EB7A0": {
+  "consumers": 135,
+  "direct": [],
+  "functions": [
+   "00075484"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 50
+ },
+ "0EB7BC": {
+  "consumers": 135,
+  "direct": [],
+  "functions": [
+   "00075484"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 50
+ },
+ "0EB848": {
+  "consumers": 229,
+  "direct": [],
+  "functions": [
+   "00076062",
+   "0007744C"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 94
+ },
+ "0EB864": {
+  "consumers": 229,
+  "direct": [],
+  "functions": [
+   "00076062",
+   "0007744C"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 94
+ },
+ "0EB880": {
+  "consumers": 229,
+  "direct": [],
+  "functions": [
+   "00076062",
+   "0007744C"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 94
+ },
+ "0EB89C": {
+  "consumers": 229,
+  "direct": [],
+  "functions": [
+   "00076062",
+   "0007744C"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 94
+ },
+ "0EB8B8": {
+  "consumers": 229,
+  "direct": [],
+  "functions": [
+   "00076062",
+   "0007744C"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 94
+ },
+ "0EB8D4": {
+  "consumers": 229,
+  "direct": [],
+  "functions": [
+   "00076062",
+   "0007744C"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 94
+ },
+ "0EB8F0": {
+  "consumers": 229,
+  "direct": [],
+  "functions": [
+   "00076062",
+   "0007744C"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 94
+ },
+ "0EB90C": {
+  "consumers": 229,
+  "direct": [],
+  "functions": [
+   "00076062",
+   "0007744C"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 94
+ },
+ "0EB928": {
+  "consumers": 229,
+  "direct": [],
+  "functions": [
+   "00076062",
+   "0007744C"
+  ],
+  "specific": [
+   "AWD Solenoid Valve Current",
+   "P/L Solenoid Valve Current",
+   "SI-Drive Mode"
+  ],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Current",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Current",
+   "P/L Solenoid Valve Pressure",
+   "SI-Drive Mode"
+  ],
+  "writes": 94
+ },
+ "0EB97C": {
+  "consumers": 112,
+  "direct": [],
+  "functions": [
+   "00076062"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0EB998": {
+  "consumers": 112,
+  "direct": [],
+  "functions": [
+   "00076062"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0EB9B4": {
+  "consumers": 112,
+  "direct": [],
+  "functions": [
+   "00076062"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0EB9D0": {
+  "consumers": 112,
+  "direct": [],
+  "functions": [
+   "00076062"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0EB9EC": {
+  "consumers": 112,
+  "direct": [],
+  "functions": [
+   "00076062"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 54
+ },
+ "0EBA24": {
+  "consumers": 115,
+  "direct": [],
+  "functions": [
+   "00076BA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 117
+ },
+ "0EBA40": {
+  "consumers": 115,
+  "direct": [],
+  "functions": [
+   "00076BA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 117
+ },
+ "0EBA5C": {
+  "consumers": 115,
+  "direct": [],
+  "functions": [
+   "00076BA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 117
+ },
+ "0EBA78": {
+  "consumers": 115,
+  "direct": [],
+  "functions": [
+   "00076BA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 117
+ },
+ "0EBA94": {
+  "consumers": 115,
+  "direct": [],
+  "functions": [
+   "00076BA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 117
+ },
+ "0EBAB0": {
+  "consumers": 115,
+  "direct": [],
+  "functions": [
+   "00076BA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 117
+ },
+ "0EBAE8": {
+  "consumers": 115,
+  "direct": [],
+  "functions": [
+   "00076BA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 117
+ },
+ "0EBB04": {
+  "consumers": 115,
+  "direct": [],
+  "functions": [
+   "00076BA8"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 117
+ },
+ "0EBB74": {
+  "consumers": 150,
+  "direct": [],
+  "functions": [
+   "000759F2"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AWD Solenoid Valve Pressure",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 44
+ },
+ "0EBB90": {
+  "consumers": 150,
+  "direct": [],
+  "functions": [
+   "000759F2"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AWD Solenoid Valve Pressure",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 44
+ },
+ "0EBBAC": {
+  "consumers": 150,
+  "direct": [],
+  "functions": [
+   "000759F2"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AWD Solenoid Valve Pressure",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 44
+ },
+ "0EBBC8": {
+  "consumers": 150,
+  "direct": [],
+  "functions": [
+   "000759F2"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AWD Solenoid Valve Pressure",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 44
+ },
+ "0EBBE4": {
+  "consumers": 150,
+  "direct": [],
+  "functions": [
+   "000759F2"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AWD Solenoid Valve Pressure",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 44
+ },
+ "0EBC00": {
+  "consumers": 150,
+  "direct": [],
+  "functions": [
+   "000759F2"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AWD Solenoid Valve Pressure",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 44
+ },
+ "0EBC1C": {
+  "consumers": 150,
+  "direct": [],
+  "functions": [
+   "000759F2"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AWD Solenoid Valve Pressure",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 44
+ },
+ "0EBC38": {
+  "consumers": 150,
+  "direct": [],
+  "functions": [
+   "000759F2"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AWD Solenoid Valve Pressure",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 44
+ },
+ "0EBC70": {
+  "consumers": 150,
+  "direct": [],
+  "functions": [
+   "000759F2"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AWD Solenoid Valve Pressure",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 44
+ },
+ "0EBC8C": {
+  "consumers": 154,
+  "direct": [],
+  "functions": [
+   "000751AE"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 50
+ },
+ "0EBCA8": {
+  "consumers": 154,
+  "direct": [],
+  "functions": [
+   "000751AE"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 50
+ },
+ "0EBCC4": {
+  "consumers": 154,
+  "direct": [],
+  "functions": [
+   "000751AE"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 50
+ },
+ "0EBCE0": {
+  "consumers": 154,
+  "direct": [],
+  "functions": [
+   "000751AE"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 50
+ },
+ "0EBCFC": {
+  "consumers": 154,
+  "direct": [],
+  "functions": [
+   "000751AE"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 50
+ },
+ "0EBD18": {
+  "consumers": 154,
+  "direct": [],
+  "functions": [
+   "000751AE"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 50
+ },
+ "0EBD34": {
+  "consumers": 154,
+  "direct": [],
+  "functions": [
+   "000751AE"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 50
+ },
+ "0EBD50": {
+  "consumers": 154,
+  "direct": [],
+  "functions": [
+   "000751AE"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 50
+ },
+ "0EBD88": {
+  "consumers": 154,
+  "direct": [],
+  "functions": [
+   "000751AE"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 50
+ },
+ "0EBDDC": {
+  "consumers": 115,
+  "direct": [],
+  "functions": [
+   "00070FA6"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 70
+ },
+ "0EBDF8": {
+  "consumers": 115,
+  "direct": [],
+  "functions": [
+   "00070FA6"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 70
+ },
+ "0EBE14": {
+  "consumers": 115,
+  "direct": [],
+  "functions": [
+   "00070FA6"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 70
+ },
+ "0EBE4C": {
+  "consumers": 115,
+  "direct": [],
+  "functions": [
+   "00070FA6"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 70
+ },
+ "0EBE68": {
+  "consumers": 115,
+  "direct": [],
+  "functions": [
+   "00070FA6"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 70
+ },
+ "0EBF10": {
+  "consumers": 150,
+  "direct": [],
+  "functions": [
+   "000759F2"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AWD Solenoid Valve Pressure",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 44
+ },
+ "0EBF2C": {
+  "consumers": 154,
+  "direct": [],
+  "functions": [
+   "000751AE"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 50
+ },
+ "0EBF64": {
+  "consumers": 113,
+  "direct": [],
+  "functions": [
+   "00076704"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0EBF80": {
+  "consumers": 113,
+  "direct": [],
+  "functions": [
+   "00076704"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0EBFB8": {
+  "consumers": 113,
+  "direct": [],
+  "functions": [
+   "00076704"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0EBFD4": {
+  "consumers": 113,
+  "direct": [],
+  "functions": [
+   "00076704"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0EBFF0": {
+  "consumers": 113,
+  "direct": [],
+  "functions": [
+   "00076704"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 65
+ },
+ "0EC238": {
+  "consumers": 113,
+  "direct": [],
+  "functions": [
+   "0006B6C4",
+   "00076062"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 90
+ },
+ "0EC254": {
+  "consumers": 113,
+  "direct": [],
+  "functions": [
+   "0006B6C4",
+   "00076062"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 90
+ },
+ "0EC270": {
+  "consumers": 113,
+  "direct": [],
+  "functions": [
+   "0006B6C4",
+   "00076062"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 90
+ },
+ "0EC2A8": {
+  "consumers": 110,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "0006B6C4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 89
+ },
+ "0EC2C4": {
+  "consumers": 110,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "0006B6C4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 89
+ },
+ "0EC2E0": {
+  "consumers": 110,
+  "direct": [],
+  "functions": [
+   "00027A4C",
+   "0006B6C4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 89
+ },
+ "0EC318": {
+  "consumers": 110,
+  "direct": [],
+  "functions": [
+   "0006B6C4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 72
+ },
+ "0EC334": {
+  "consumers": 110,
+  "direct": [],
+  "functions": [
+   "0006B6C4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 72
+ },
+ "0EC350": {
+  "consumers": 110,
+  "direct": [],
+  "functions": [
+   "0006B6C4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 72
+ },
+ "0EC36C": {
+  "consumers": 110,
+  "direct": [],
+  "functions": [
+   "0006B6C4"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 72
+ },
+ "0EC3A4": {
+  "consumers": 160,
+  "direct": [],
+  "functions": [
+   "00010C20"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 53
+ },
+ "0EC3C0": {
+  "consumers": 160,
+  "direct": [],
+  "functions": [
+   "00010C20"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 53
+ },
+ "0EC3DC": {
+  "consumers": 160,
+  "direct": [],
+  "functions": [
+   "00010C20"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 53
+ },
+ "0EC3F8": {
+  "consumers": 160,
+  "direct": [],
+  "functions": [
+   "00010C20"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 53
+ },
+ "0EC414": {
+  "consumers": 160,
+  "direct": [],
+  "functions": [
+   "00010C20"
+  ],
+  "specific": [],
+  "via_consumers": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
+   "AWD Solenoid Valve Pressure",
+   "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
+   "Fwd/B Solenoid Valve Target Pressure",
+   "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
+   "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
+   "L/U Solenoid Valve Current",
+   "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
+   "P/L Solenoid Valve Pressure"
+  ],
+  "writes": 53
+ }
+}

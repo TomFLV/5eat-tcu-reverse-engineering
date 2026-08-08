@@ -112,7 +112,10 @@ static uint32_t periph_or(uint32_t a) {
     }
 }
 
+static void note_read(uint32_t a);
+
 static inline uint32_t rd8(uint32_t a) {
+    if (a - RAM_BASE < RAM_SIZE) note_read(a);
     if (a < ROM_SIZE) return rom[a];
     if (a - RAM_BASE < RAM_SIZE)
         return ram[a - RAM_BASE] | (a >= 0xFFFFC000u ? periph_or(a) & 0xFFu : 0);
@@ -132,10 +135,12 @@ static inline uint32_t rd16_raw(uint32_t a) {
  * bit nobody polls while the sixteen bit wait sees nothing at all - both stall,
  * for opposite reasons. rd32 therefore composes raw halves. */
 static inline uint32_t rd16(uint32_t a) {
+    if (a - RAM_BASE < RAM_SIZE) note_read(a);
     uint32_t v = rd16_raw(a);
     return a >= 0xFFFFC000u ? v | (periph_or(a) & 0xFFFFu) : v;
 }
 static inline uint32_t rd32(uint32_t a) {
+    if (a - RAM_BASE < RAM_SIZE) note_read(a);
     uint32_t v = (rd16_raw(a) << 16) | rd16_raw(a + 2);
     return a >= 0xFFFFC000u ? v | periph_or(a) : v;
 }
@@ -188,12 +193,39 @@ static int      track_taskpcs;
 static uint32_t fn_stack[FN_STACK_MAX];
 static int      fn_depth;
 static int      track_fnsets;
+/* SH2_FNENTRIES=<file> supplies the addresses that count as function starts.
+ *
+ * The call stack alone is not enough. It is built from jsr and bsr, and the
+ * functions that read the shipped calibration tables are not reached that way:
+ * the firmware dispatches to them, so they arrive by jmp or braf and never get
+ * pushed. That is why crediting the whole stack still attributed nothing to any
+ * of the twenty readers.
+ *
+ * With a list of real function starts, "which function is running" can be
+ * answered by watching execution instead of by modelling calls: whenever the pc
+ * lands exactly on a known start, that becomes the current function. It handles
+ * every way of getting there at once, and needs no guess about which control
+ * transfers are calls. */
+static uint8_t *fn_entry;       /* one byte per halfword of ROM */
+static uint32_t cur_fn;
+static int      track_entries;
 /* Open-addressed, because a function may write anywhere in RAM and most write
  * almost nothing: a dense array would be 5,464 x 65,536. */
 #define FN_MAP_BITS 20
 #define FN_MAP_SIZE (1u << FN_MAP_BITS)
 static uint64_t *fn_map;        /* (fn << 20) | ram offset, 0 = empty */
 static uint32_t  fn_map_used;
+/* SH2_FNREADS=<file> does for reads what SH2_FNSETS does for writes.
+ *
+ * Needed because the second hop of the naming chain has the same problem the
+ * first did. The functions reading the shipped tables write 280 addresses around
+ * 0xFFFF98xx, and NONE of them appears in the static cross-reference as ever
+ * being read - they are reached by computed address, which the register-aware
+ * xref drops rather than invents. So "who consumes this" cannot be answered
+ * statically, and can be answered by watching. */
+static uint64_t *fr_map;
+static uint32_t  fr_map_used;
+static int       track_fnreads;
 /* SH2_HOT=1 counts executions per address. A long run that ends at the step limit
  * says nothing about why; a histogram says whether it is looping in four
  * instructions or working through a hundred thousand. Tracing would answer the
@@ -217,6 +249,20 @@ static int       track_hot;
 static struct { uint32_t addr; uint8_t len; uint8_t data[8]; } can_feed[CAN_FEED_MAX];
 static int can_feed_n;
 
+/* Same open-addressed table as the write side, keyed the same way. Reads are far
+ * more numerous than writes, so this is capped identically and reports when it
+ * fills rather than silently recording a subset. */
+static void note_read(uint32_t a) {
+    if (!track_fnreads || !cur_fn) return;
+    if (fr_map_used >= FN_MAP_SIZE / 2) return;
+    uint64_t key = ((uint64_t)cur_fn << 20) | (uint64_t)(a - RAM_BASE);
+    uint32_t h = (uint32_t)((key * 0x9E3779B97F4A7C15ull) >> 44)
+               & (FN_MAP_SIZE - 1);
+    while (fr_map[h] && fr_map[h] != key + 1)
+        h = (h + 1) & (FN_MAP_SIZE - 1);
+    if (!fr_map[h]) { fr_map[h] = key + 1; fr_map_used++; }
+}
+
 static inline void wr8(uint32_t a, uint32_t v) {
     if (a - RAM_BASE < RAM_SIZE) {
         if (a == watch_addr)
@@ -236,6 +282,18 @@ static inline void wr8(uint32_t a, uint32_t v) {
          *
          * The cost is that a deep generic caller accumulates everything beneath
          * it, so evidence gets weaker the further up it comes from. */
+        /* The observed current function, when one is known, plus every frame on
+         * the call stack. The first catches dispatched functions the stack never
+         * saw; the second keeps the "this function or something it called"
+         * attribution that naming relies on. */
+        if (track_fnsets && track_entries && cur_fn && fn_map_used < FN_MAP_SIZE / 2) {
+            uint64_t key = ((uint64_t)cur_fn << 20) | (uint64_t)(a - RAM_BASE);
+            uint32_t h = (uint32_t)((key * 0x9E3779B97F4A7C15ull) >> 44)
+                       & (FN_MAP_SIZE - 1);
+            while (fn_map[h] && fn_map[h] != key + 1)
+                h = (h + 1) & (FN_MAP_SIZE - 1);
+            if (!fn_map[h]) { fn_map[h] = key + 1; fn_map_used++; }
+        }
         if (track_fnsets && fn_map_used < FN_MAP_SIZE / 2) {
             for (int f = 0; f < fn_depth; f++) {
                 uint64_t key = ((uint64_t)fn_stack[f] << 20)
@@ -685,6 +743,7 @@ static long long run_entry(uint32_t entry, long long maxsteps) {
         if (pc == SENTINEL || pc == 0 || pc >= ROM_SIZE) break;
         if (cpu.halted) break;
         if (track_hot && pc < ROM_SIZE) hot[pc >> 1]++;
+        if (track_entries && pc < ROM_SIZE && fn_entry[pc >> 1]) cur_fn = pc;
         if (track_taskpcs && cur_task >= 0 && pc < ROM_SIZE)
             taskpcs[(size_t)cur_task * (ROM_SIZE / 2) + (pc >> 1)] = 1;
         if (trace_from && pc == trace_from) trace_armed = 1;
@@ -730,6 +789,8 @@ int main(int argc, char **argv) {
     const char *tsfile = getenv("SH2_TASKSETS");
     const char *tpfile = getenv("SH2_TASKPCS");
     const char *fnfile = getenv("SH2_FNSETS");
+    const char *fefile = getenv("SH2_FNENTRIES");
+    const char *frfile = getenv("SH2_FNREADS");
     { const char *cf = getenv("SH2_CANFEED");
       if (cf) {
           FILE *f = fopen(cf, "r");
@@ -787,6 +848,27 @@ int main(int argc, char **argv) {
     if (fnfile) {
         fn_map = calloc(FN_MAP_SIZE, sizeof *fn_map);
         track_fnsets = fn_map != NULL;
+    }
+    if (frfile) {
+        fr_map = calloc(FN_MAP_SIZE, sizeof *fr_map);
+        track_fnreads = fr_map != NULL;
+    }
+    if (fefile) {
+        fn_entry = calloc(ROM_SIZE / 2, 1);
+        FILE *ef = fopen(fefile, "r");
+        if (fn_entry && ef) {
+            char ln[64];
+            long n = 0;
+            while (fgets(ln, sizeof ln, ef)) {
+                unsigned long a2 = strtoul(ln, 0, 16);
+                if (a2 < ROM_SIZE) { fn_entry[a2 >> 1] = 1; n++; }
+            }
+            fclose(ef);
+            track_entries = 1;
+            fprintf(stderr, "%ld function entries loaded\n", n);
+        } else if (ef) {
+            fclose(ef);
+        }
     }
     if (tpfile) {
         taskpcs = calloc((size_t)nentries * (ROM_SIZE / 2), 1);
@@ -879,6 +961,23 @@ int main(int argc, char **argv) {
           FILE *dfp = fopen(df, "wb");
           if (dfp) { fwrite(ram, 1, RAM_SIZE, dfp); fclose(dfp); }
       } }
+
+    if (track_fnreads) {
+        FILE *rf = fopen(frfile, "w");
+        if (rf) {
+            uint32_t n = 0;
+            for (uint32_t i = 0; i < FN_MAP_SIZE; i++) {
+                if (!fr_map[i]) continue;
+                uint64_t key = fr_map[i] - 1;
+                fprintf(rf, "%08X %08X\n", (uint32_t)(key >> 20),
+                        (uint32_t)(RAM_BASE + (key & 0xFFFFF)));
+                n++;
+            }
+            fclose(rf);
+            fprintf(stderr, "%u function/read pairs -> %s%s\n", n, frfile,
+                    fr_map_used >= FN_MAP_SIZE / 2 ? "  (TABLE FULL - partial)" : "");
+        }
+    }
 
     if (track_fnsets) {
         /* "<function> <address>" per line. Sorting and grouping is the reader's

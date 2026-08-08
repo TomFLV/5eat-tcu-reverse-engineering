@@ -2,7 +2,7 @@
  "0E5208": {
   "evidence": "task",
   "functions": [
-   "000671FE"
+   "000680F2"
   ],
   "tasks": [
    "000709F0",
@@ -41,7 +41,7 @@
  "0E5224": {
   "evidence": "task",
   "functions": [
-   "000671FE"
+   "000680F2"
   ],
   "tasks": [
    "000709F0",
@@ -80,7 +80,7 @@
  "0E5240": {
   "evidence": "task",
   "functions": [
-   "000671FE"
+   "000680F2"
   ],
   "tasks": [
    "000709F0",
@@ -119,7 +119,7 @@
  "0E525C": {
   "evidence": "task",
   "functions": [
-   "000671FE"
+   "000680F2"
   ],
   "tasks": [
    "000709F0",
@@ -158,7 +158,7 @@
  "0E5278": {
   "evidence": "task",
   "functions": [
-   "000671FE"
+   "000680F2"
   ],
   "tasks": [
    "000709F0",
@@ -197,7 +197,7 @@
  "0EB394": {
   "evidence": "task",
   "functions": [
-   "00073E2A"
+   "00073E2E"
   ],
   "tasks": [
    "000709F0",
@@ -237,7 +237,7 @@
  "0EB3B0": {
   "evidence": "task",
   "functions": [
-   "00073E2A"
+   "00073E2E"
   ],
   "tasks": [
    "000709F0",
@@ -277,7 +277,7 @@
  "0EB3CC": {
   "evidence": "task",
   "functions": [
-   "00073E2A"
+   "00073E2E"
   ],
   "tasks": [
    "000709F0",
@@ -317,7 +317,7 @@
  "0EB3E8": {
   "evidence": "task",
   "functions": [
-   "00073E2A"
+   "00073E2E"
   ],
   "tasks": [
    "000709F0",
@@ -357,7 +357,7 @@
  "0EB404": {
   "evidence": "task",
   "functions": [
-   "00073E2A"
+   "00073E2E"
   ],
   "tasks": [
    "000709F0",
@@ -397,7 +397,7 @@
  "0EB420": {
   "evidence": "task",
   "functions": [
-   "00073E2A"
+   "00073E2E"
   ],
   "tasks": [
    "000709F0",
@@ -437,7 +437,7 @@
  "0EB43C": {
   "evidence": "task",
   "functions": [
-   "00073E2A"
+   "00073E2E"
   ],
   "tasks": [
    "000709F0",
@@ -477,7 +477,7 @@
  "0EB458": {
   "evidence": "task",
   "functions": [
-   "00073E2A"
+   "00073E2E"
   ],
   "tasks": [
    "000709F0",
@@ -517,7 +517,7 @@
  "0EB474": {
   "evidence": "task",
   "functions": [
-   "00073E2A"
+   "00073E2E"
   ],
   "tasks": [
    "000709F0",
@@ -557,7 +557,7 @@
  "0EB490": {
   "evidence": "task",
   "functions": [
-   "00073E2A"
+   "00073E2E"
   ],
   "tasks": [
    "000709F0",
@@ -597,7 +597,7 @@
  "0EB554": {
   "evidence": "task",
   "functions": [
-   "00072A8C"
+   "00072A98"
   ],
   "tasks": [
    "000709F0",
@@ -637,7 +637,7 @@
  "0EB768": {
   "evidence": "task",
   "functions": [
-   "000751A6"
+   "00075484"
   ],
   "tasks": [
    "000709F0",
@@ -677,7 +677,7 @@
  "0EB784": {
   "evidence": "task",
   "functions": [
-   "000751A6"
+   "00075484"
   ],
   "tasks": [
    "000709F0",
@@ -717,7 +717,7 @@
  "0EB7A0": {
   "evidence": "task",
   "functions": [
-   "000751A6"
+   "00075484"
   ],
   "tasks": [
    "000709F0",
@@ -757,7 +757,7 @@
  "0EB7BC": {
   "evidence": "task",
   "functions": [
-   "000751A6"
+   "00075484"
   ],
   "tasks": [
    "000709F0",
@@ -797,8 +797,8 @@
  "0EB848": {
   "evidence": "task",
   "functions": [
-   "00076056",
-   "00077448"
+   "00076062",
+   "0007744C"
   ],
   "tasks": [
    "000709F0",
@@ -838,8 +838,8 @@
  "0EB864": {
   "evidence": "task",
   "functions": [
-   "00076056",
-   "00077448"
+   "00076062",
+   "0007744C"
   ],
   "tasks": [
    "000709F0",
@@ -879,8 +879,8 @@
  "0EB880": {
   "evidence": "task",
   "functions": [
-   "00076056",
-   "00077448"
+   "00076062",
+   "0007744C"
   ],
   "tasks": [
    "000709F0",
@@ -920,8 +920,8 @@
  "0EB89C": {
   "evidence": "task",
   "functions": [
-   "00076056",
-   "00077448"
+   "00076062",
+   "0007744C"
   ],
   "tasks": [
    "000709F0",
@@ -961,8 +961,8 @@
  "0EB8B8": {
   "evidence": "task",
   "functions": [
-   "00076056",
-   "00077448"
+   "00076062",
+   "0007744C"
   ],
   "tasks": [
    "000709F0",
@@ -1002,8 +1002,8 @@
  "0EB8D4": {
   "evidence": "task",
   "functions": [
-   "00076056",
-   "00077448"
+   "00076062",
+   "0007744C"
   ],
   "tasks": [
    "000709F0",
@@ -1043,8 +1043,8 @@
  "0EB8F0": {
   "evidence": "task",
   "functions": [
-   "00076056",
-   "00077448"
+   "00076062",
+   "0007744C"
   ],
   "tasks": [
    "000709F0",
@@ -1084,8 +1084,8 @@
  "0EB90C": {
   "evidence": "task",
   "functions": [
-   "00076056",
-   "00077448"
+   "00076062",
+   "0007744C"
   ],
   "tasks": [
    "000709F0",
@@ -1125,8 +1125,8 @@
  "0EB928": {
   "evidence": "task",
   "functions": [
-   "00076056",
-   "00077448"
+   "00076062",
+   "0007744C"
   ],
   "tasks": [
    "000709F0",
@@ -1166,7 +1166,7 @@
  "0EB97C": {
   "evidence": "task",
   "functions": [
-   "00076056"
+   "00076062"
   ],
   "tasks": [
    "000709F0",
@@ -1206,7 +1206,7 @@
  "0EB998": {
   "evidence": "task",
   "functions": [
-   "00076056"
+   "00076062"
   ],
   "tasks": [
    "000709F0",
@@ -1246,7 +1246,7 @@
  "0EB9B4": {
   "evidence": "task",
   "functions": [
-   "00076056"
+   "00076062"
   ],
   "tasks": [
    "000709F0",
@@ -1286,7 +1286,7 @@
  "0EB9D0": {
   "evidence": "task",
   "functions": [
-   "00076056"
+   "00076062"
   ],
   "tasks": [
    "000709F0",
@@ -1326,7 +1326,7 @@
  "0EB9EC": {
   "evidence": "task",
   "functions": [
-   "00076056"
+   "00076062"
   ],
   "tasks": [
    "000709F0",
@@ -1366,7 +1366,7 @@
  "0EBA24": {
   "evidence": "task",
   "functions": [
-   "00076B9C"
+   "00076BA8"
   ],
   "tasks": [
    "000709F0",
@@ -1406,7 +1406,7 @@
  "0EBA40": {
   "evidence": "task",
   "functions": [
-   "00076B9C"
+   "00076BA8"
   ],
   "tasks": [
    "000709F0",
@@ -1446,7 +1446,7 @@
  "0EBA5C": {
   "evidence": "task",
   "functions": [
-   "00076B9C"
+   "00076BA8"
   ],
   "tasks": [
    "000709F0",
@@ -1486,7 +1486,7 @@
  "0EBA78": {
   "evidence": "task",
   "functions": [
-   "00076B9C"
+   "00076BA8"
   ],
   "tasks": [
    "000709F0",
@@ -1526,7 +1526,7 @@
  "0EBA94": {
   "evidence": "task",
   "functions": [
-   "00076B9C"
+   "00076BA8"
   ],
   "tasks": [
    "000709F0",
@@ -1566,7 +1566,7 @@
  "0EBAB0": {
   "evidence": "task",
   "functions": [
-   "00076B9C"
+   "00076BA8"
   ],
   "tasks": [
    "000709F0",
@@ -1606,7 +1606,7 @@
  "0EBAE8": {
   "evidence": "task",
   "functions": [
-   "00076B9C"
+   "00076BA8"
   ],
   "tasks": [
    "000709F0",
@@ -1646,7 +1646,7 @@
  "0EBB04": {
   "evidence": "task",
   "functions": [
-   "00076B9C"
+   "00076BA8"
   ],
   "tasks": [
    "000709F0",
@@ -1686,7 +1686,7 @@
  "0EBB74": {
   "evidence": "task",
   "functions": [
-   "000759EA"
+   "000759F2"
   ],
   "tasks": [
    "000709F0",
@@ -1726,7 +1726,7 @@
  "0EBB90": {
   "evidence": "task",
   "functions": [
-   "000759EA"
+   "000759F2"
   ],
   "tasks": [
    "000709F0",
@@ -1766,7 +1766,7 @@
  "0EBBAC": {
   "evidence": "task",
   "functions": [
-   "000759EA"
+   "000759F2"
   ],
   "tasks": [
    "000709F0",
@@ -1806,7 +1806,7 @@
  "0EBC1C": {
   "evidence": "task",
   "functions": [
-   "000759EA"
+   "000759F2"
   ],
   "tasks": [
    "000709F0",
@@ -1846,7 +1846,7 @@
  "0EBC38": {
   "evidence": "task",
   "functions": [
-   "000759EA"
+   "000759F2"
   ],
   "tasks": [
    "000709F0",
@@ -1886,7 +1886,7 @@
  "0EBC70": {
   "evidence": "task",
   "functions": [
-   "000759EA"
+   "000759F2"
   ],
   "tasks": [
    "000709F0",
@@ -1926,7 +1926,7 @@
  "0EBC8C": {
   "evidence": "task",
   "functions": [
-   "000751A6"
+   "000751AE"
   ],
   "tasks": [
    "000709F0",
@@ -1966,7 +1966,7 @@
  "0EBCA8": {
   "evidence": "task",
   "functions": [
-   "000751A6"
+   "000751AE"
   ],
   "tasks": [
    "000709F0",
@@ -2006,7 +2006,7 @@
  "0EBCC4": {
   "evidence": "task",
   "functions": [
-   "000751A6"
+   "000751AE"
   ],
   "tasks": [
    "000709F0",
@@ -2046,7 +2046,7 @@
  "0EBD34": {
   "evidence": "task",
   "functions": [
-   "000751A6"
+   "000751AE"
   ],
   "tasks": [
    "000709F0",
@@ -2086,7 +2086,7 @@
  "0EBD50": {
   "evidence": "task",
   "functions": [
-   "000751A6"
+   "000751AE"
   ],
   "tasks": [
    "000709F0",
@@ -2126,7 +2126,7 @@
  "0EBD88": {
   "evidence": "task",
   "functions": [
-   "000751A6"
+   "000751AE"
   ],
   "tasks": [
    "000709F0",
@@ -2164,9 +2164,9 @@
   ]
  },
  "0EBDDC": {
-  "evidence": "function",
+  "evidence": "task",
   "functions": [
-   "00070F9A"
+   "00070FA6"
   ],
   "tasks": [
    "000709F0",
@@ -2174,26 +2174,39 @@
    "00070F90"
   ],
   "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
    "AWD Solenoid Valve Current",
    "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
    "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
    "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
    "Front Wheel Speed",
    "Fwd/B Solenoid Valve Current",
    "Fwd/B Solenoid Valve Target Pressure",
    "Gear Position",
    "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
    "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
    "L/U Solenoid Valve Current",
    "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
    "P/L Solenoid Valve Current",
-   "P/L Solenoid Valve Pressure"
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
   ]
  },
  "0EBDF8": {
-  "evidence": "function",
+  "evidence": "task",
   "functions": [
-   "00070F9A"
+   "00070FA6"
   ],
   "tasks": [
    "000709F0",
@@ -2201,26 +2214,39 @@
    "00070F90"
   ],
   "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
    "AWD Solenoid Valve Current",
    "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
    "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
    "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
    "Front Wheel Speed",
    "Fwd/B Solenoid Valve Current",
    "Fwd/B Solenoid Valve Target Pressure",
    "Gear Position",
    "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
    "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
    "L/U Solenoid Valve Current",
    "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
    "P/L Solenoid Valve Current",
-   "P/L Solenoid Valve Pressure"
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
   ]
  },
  "0EBE14": {
-  "evidence": "function",
+  "evidence": "task",
   "functions": [
-   "00070F9A"
+   "00070FA6"
   ],
   "tasks": [
    "000709F0",
@@ -2228,26 +2254,39 @@
    "00070F90"
   ],
   "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
    "AWD Solenoid Valve Current",
    "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
    "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
    "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
    "Front Wheel Speed",
    "Fwd/B Solenoid Valve Current",
    "Fwd/B Solenoid Valve Target Pressure",
    "Gear Position",
    "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
    "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
    "L/U Solenoid Valve Current",
    "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
    "P/L Solenoid Valve Current",
-   "P/L Solenoid Valve Pressure"
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
   ]
  },
  "0EBE4C": {
-  "evidence": "function",
+  "evidence": "task",
   "functions": [
-   "00070F9A"
+   "00070FA6"
   ],
   "tasks": [
    "000709F0",
@@ -2255,26 +2294,39 @@
    "00070F90"
   ],
   "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
    "AWD Solenoid Valve Current",
    "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
    "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
    "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
    "Front Wheel Speed",
    "Fwd/B Solenoid Valve Current",
    "Fwd/B Solenoid Valve Target Pressure",
    "Gear Position",
    "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
    "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
    "L/U Solenoid Valve Current",
    "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
    "P/L Solenoid Valve Current",
-   "P/L Solenoid Valve Pressure"
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
   ]
  },
  "0EBE68": {
-  "evidence": "function",
+  "evidence": "task",
   "functions": [
-   "00070F9A"
+   "00070FA6"
   ],
   "tasks": [
    "000709F0",
@@ -2282,26 +2334,39 @@
    "00070F90"
   ],
   "writes": [
+   "AT Turbine Speed 1",
+   "AT Turbine Speed 2",
+   "ATF Temperature",
    "AWD Solenoid Valve Current",
    "AWD Solenoid Valve Pressure",
+   "Battery Voltage",
    "D/C Solenoid Valve Current",
+   "D/C Solenoid Valve Pressure",
+   "Engine Speed",
    "F/B Solenoid Valve Current",
+   "F/B Solenoid Valve Pressure",
    "Front Wheel Speed",
    "Fwd/B Solenoid Valve Current",
    "Fwd/B Solenoid Valve Target Pressure",
    "Gear Position",
    "H&LR/C Solenoid Valve Current",
+   "H&LR/C Solenoid Valve Pressure",
    "I/C Solenoid Valve Current",
+   "I/C Solenoid Valve Pressure",
    "L/U Solenoid Valve Current",
    "L/U Solenoid Valve Pressure",
+   "Lateral G Sensor Voltage",
    "P/L Solenoid Valve Current",
-   "P/L Solenoid Valve Pressure"
+   "P/L Solenoid Valve Pressure",
+   "Rear Wheel Speed",
+   "SI-Drive Mode",
+   "Turbine Revolution Speed"
   ]
  },
  "0EBF10": {
   "evidence": "task",
   "functions": [
-   "000759EA"
+   "000759F2"
   ],
   "tasks": [
    "000709F0",
@@ -2341,7 +2406,7 @@
  "0EBF2C": {
   "evidence": "task",
   "functions": [
-   "000751A6"
+   "000751AE"
   ],
   "tasks": [
    "000709F0",
@@ -2381,7 +2446,7 @@
  "0EBF64": {
   "evidence": "task",
   "functions": [
-   "000766F8"
+   "00076704"
   ],
   "tasks": [
    "000709F0",
@@ -2421,7 +2486,7 @@
  "0EBF80": {
   "evidence": "task",
   "functions": [
-   "000766F8"
+   "00076704"
   ],
   "tasks": [
    "000709F0",
@@ -2461,7 +2526,7 @@
  "0EBFB8": {
   "evidence": "task",
   "functions": [
-   "000766F8"
+   "00076704"
   ],
   "tasks": [
    "000709F0",
@@ -2501,7 +2566,7 @@
  "0EBFD4": {
   "evidence": "task",
   "functions": [
-   "000766F8"
+   "00076704"
   ],
   "tasks": [
    "000709F0",
@@ -2541,7 +2606,7 @@
  "0EBFF0": {
   "evidence": "task",
   "functions": [
-   "000766F8"
+   "00076704"
   ],
   "tasks": [
    "000709F0",
@@ -2581,8 +2646,8 @@
  "0EC238": {
   "evidence": "task",
   "functions": [
-   "0006B6B8",
-   "00076056"
+   "0006B6C4",
+   "00076062"
   ],
   "tasks": [
    "0006B6A0",
@@ -2623,8 +2688,8 @@
  "0EC254": {
   "evidence": "task",
   "functions": [
-   "0006B6B8",
-   "00076056"
+   "0006B6C4",
+   "00076062"
   ],
   "tasks": [
    "0006B6A0",
@@ -2665,8 +2730,8 @@
  "0EC270": {
   "evidence": "task",
   "functions": [
-   "0006B6B8",
-   "00076056"
+   "0006B6C4",
+   "00076062"
   ],
   "tasks": [
    "0006B6A0",
@@ -2707,8 +2772,8 @@
  "0EC2A8": {
   "evidence": "task",
   "functions": [
-   "00027A40",
-   "0006B6B8"
+   "00027A4C",
+   "0006B6C4"
   ],
   "tasks": [
    "0002B424",
@@ -2750,8 +2815,8 @@
  "0EC2C4": {
   "evidence": "task",
   "functions": [
-   "00027A40",
-   "0006B6B8"
+   "00027A4C",
+   "0006B6C4"
   ],
   "tasks": [
    "0002B424",
@@ -2793,8 +2858,8 @@
  "0EC2E0": {
   "evidence": "task",
   "functions": [
-   "00027A40",
-   "0006B6B8"
+   "00027A4C",
+   "0006B6C4"
   ],
   "tasks": [
    "0002B424",
@@ -2836,7 +2901,7 @@
  "0EC318": {
   "evidence": "task",
   "functions": [
-   "0006B6B8"
+   "0006B6C4"
   ],
   "tasks": [
    "0006B6A0",
@@ -2876,7 +2941,7 @@
  "0EC334": {
   "evidence": "task",
   "functions": [
-   "0006B6B8"
+   "0006B6C4"
   ],
   "tasks": [
    "0006B6A0",
@@ -2916,7 +2981,7 @@
  "0EC350": {
   "evidence": "task",
   "functions": [
-   "0006B6B8"
+   "0006B6C4"
   ],
   "tasks": [
    "0006B6A0",
@@ -2956,7 +3021,7 @@
  "0EC36C": {
   "evidence": "task",
   "functions": [
-   "0006B6B8"
+   "0006B6C4"
   ],
   "tasks": [
    "0006B6A0",

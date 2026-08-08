@@ -6944,3 +6944,53 @@ are the weakest claim, since no resistance check can confirm them.
 The lesson is the same one this project keeps relearning from the other direction:
 a strong conclusion drawn from a weak measurement, stated confidently. The
 whitespace in a text extraction is not a connector.
+
+## 84. Three blockers in the naming chain, and what is left (2026-08-07)
+
+Naming the Denso calibration tables has been the open problem for weeks. This
+round removed three distinct obstacles and did not finish the job; all three are
+worth recording because each looked like the same symptom - zero.
+
+### 84a. The readers are dispatched to, not called
+
+Attributing writes to the innermost function on the call stack recorded nothing
+for all twenty functions that read shipped tables, while 250 of their 274
+reference sites demonstrably executed. The stack is built from jsr and bsr; the
+firmware reaches these functions by jmp, so they were never pushed.
+
+`SH2_FNENTRIES` gives the core the list of function starts and it names whichever
+function the pc is inside, however it got there. 18 of the 20 readers now have
+write sets, of 29 to 117 addresses each. Functions with recorded writes went from
+1,151 to 1,687.
+
+### 84b. What the readers write is invisible to static analysis
+
+Those 18 readers write 280 addresses, clustered around 0xFFFF98xx. **Not one of
+them appears in the register-aware cross-reference as ever being read.** They are
+reached by computed address, which that tool drops rather than invents - the same
+property that made it trustworthy is what makes it blind here.
+
+`SH2_FNREADS` records reads per function the way `SH2_FNSETS` records writes.
+25,345 function/address pairs, 15,050 distinct addresses read by some function,
+against 2,902 the static cross-reference knows about.
+
+### 84c. Everything flows into the publisher
+
+With both hops observed rather than inferred, 171 of 185 tables reach a named
+address - and every one of them reached ALL 141 names. Nothing was distinguished.
+
+The cause is structural. Three functions - 0x00070BA2, 0x000709FE, 0x000709F0 -
+each write 48 of the 141 named addresses while touching about 3,900 addresses
+apiece. They are the routines that publish state to the Select Monitor. Every
+table's output eventually flows into one, so every table reaches every name.
+
+Excluding consumers that write more than 500 addresses restores some
+discrimination: 19 tables carry a name the other 152 do not (AWD and P/L solenoid
+current), and 16 more group separately on solenoid pressures. 155 still share one
+generic set.
+
+So the position is: the machinery now sees what it could not see before, and the
+evidence it produces is still too coarse for most of the tables. That is the same
+answer as section 78 reached from a different direction, and the honest one - a
+table labelled "part of the solenoid pressure path" is worth having; the same
+table labelled "AWD Solenoid Valve Current" would not be.

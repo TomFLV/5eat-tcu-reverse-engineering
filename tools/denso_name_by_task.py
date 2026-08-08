@@ -99,7 +99,19 @@ def one_warm_run():
     env["SH2_TASKSETS"] = "%s/tasksets.txt" % LIN
     env["SH2_TASKPCS"] = "%s/taskpcs.txt" % LIN
     env["SH2_FNSETS"] = "%s/fnsets.txt" % LIN
-    env["WSLENV"] = "SH2_TASKSETS/u:SH2_TASKPCS/u:SH2_FNSETS/u"
+    # Tell the core which addresses are function starts, so it can name the
+    # function that is running however that function was reached. The call stack
+    # only sees jsr and bsr, and the readers of the shipped tables are dispatched
+    # to - they arrive by jmp and were never on it.
+    env["SH2_FNENTRIES"] = "%s/fn_entries.txt" % LIN
+    # Reads as well as writes. The second hop of the naming chain needs to know who
+    # CONSUMES what a table's reader produced, and the static cross-reference sees
+    # none of it: the readers write 280 addresses around 0xFFFF98xx and not one
+    # appears there as ever being read, because they are reached by computed
+    # address.
+    env["SH2_FNREADS"] = "%s/fnreads.txt" % LIN
+    env["WSLENV"] = ("SH2_TASKSETS/u:SH2_TASKPCS/u:SH2_FNSETS/u:"
+                     "SH2_FNENTRIES/u:SH2_FNREADS/u")
     r = subprocess.run(["wsl", SH2, ROM_L, PROFILE, LIN + "/out.csv",
                         "@" + TASKS, "400000"],
                        capture_output=True, text=True, env=env)
