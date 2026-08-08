@@ -1,6 +1,6 @@
 # tools
 #
-# SHA-256 of every tracked file in this directory, 99 files, 5.1 MB.
+# SHA-256 of every tracked file in this directory, 101 files, 5.1 MB.
 # Recorded 2026-08-08. Verify with:  python tools/write-manifests.py --check
 #
 # These exist because this repository ships ROM images, decompiler output
@@ -44,6 +44,8 @@ f913c1ab1e2a6bd8bdbd0b4063cb3136361f204ae233f3ad4799083724cbc82f  denso_name_ind
 43167a45f9860526ec552a9218ca69c4753848c57bfd79cea41b8538f8434dbb  denso_name_tables.py
 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a  denso_names_observed.json
 2efeaa618015c2cce55f0177dfacc9d845cc0f7a9d272d9b7995f576ce4e1b4a  denso_parallel.py
+6ddf39668bb6588b33d3b78a8e4f0168f78b252bcb56525b2e351962c78ef4a2  denso_perturb.py
+335d296df304631e7ffbce6fa287ea401d620c94d2f4f32c3be18c697881e2fb  denso_perturb_results.json
 94c8d73423860340e2efff4e28e1af4691f66bb4ac88a332617ba232102ab99e  denso_probe.py
 a27a2a8e6cb6a9c042e52103b070b6e096e00e2f98369eba65c6918b92d87a92  denso_probe_results.json
 b3860d865b0c609f13def73196ceee7b9c09cfbf846372ec91388079368cbe60  denso_ram_names.json

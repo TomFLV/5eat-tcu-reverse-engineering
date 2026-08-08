@@ -6994,3 +6994,46 @@ evidence it produces is still too coarse for most of the tables. That is the sam
 answer as section 78 reached from a different direction, and the honest one - a
 table labelled "part of the solenoid pressure path" is worth having; the same
 table labelled "AWD Solenoid Valve Current" would not be.
+
+## 85. Change the table and see what moves (2026-08-07)
+
+Four routes to naming the Denso tables are recorded in sections 74, 78 and 84.
+Every one follows the same shape - table, to the function that reads it, to what
+that function writes, to what consumes it, to whether any of it is named - and
+every one ends the same way. The controller is densely connected; three functions
+publish 48 named values each; everything reaches everything. A graph cannot
+distinguish what it cannot separate, and no amount of filtering fixes that.
+
+The simulator could answer the question directly the entire time.
+
+Change the table in the ROM image, run the same drive, compare the whole of RAM
+against an unmodified run. What differs is what the table AFFECTS. Not what it is
+connected to, not what it might influence - what moves when it changes. A table
+whose perturbation moves the lock-up solenoid current controls lock-up, whatever
+the call graph says about it.
+
+This is the method that produced the CAN signal map in section 77c, applied to a
+table instead of a frame byte. That map found real signals where a swept input had
+produced 1,118 false positives, and it worked for the same reason: a controlled
+change, everything else held, whole-image comparison.
+
+The first six tables tried:
+
+    0E5224   ->  AWD Solenoid Valve Pressure
+    0E5240   ->  AWD Solenoid Valve Pressure
+    0E525C   ->  AWD Solenoid Valve Pressure
+    0E5278   ->  AWD Solenoid Valve Pressure
+    0E5208   ->  nothing moved
+    0E8CC8   ->  33 addresses moved, none of them named
+
+Four consecutive tables affecting the same output is coherent. One affecting
+nothing is the honest limit of the method: a table read only under conditions the
+drive never reaches moves nothing, and that reads as no effect rather than as no
+meaning. So the sweep runs four drives - cruise, acceleration, kickdown, and one
+with the ATF hot - at two scale factors each, 1,480 simulations.
+
+Two choices worth recording. Cells are SCALED rather than zeroed: a table of zeros
+can send the firmware down a different branch, and then what moved is the branch
+and not the table. And both a doubling and a halving are run, because in a
+controller full of limits they are not mirror images of each other - an effect that
+saturates upward can still be visible downward.

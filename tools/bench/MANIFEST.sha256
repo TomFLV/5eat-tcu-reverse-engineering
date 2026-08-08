@@ -1,6 +1,6 @@
 # tools/bench
 #
-# SHA-256 of every tracked file in this directory, 5 files, 0.0 MB.
+# SHA-256 of every tracked file in this directory, 6 files, 0.0 MB.
 # Recorded 2026-08-08. Verify with:  python tools/write-manifests.py --check
 #
 # These exist because this repository ships ROM images, decompiler output
@@ -12,3 +12,4 @@ bf64e623a44c70f1ef4765361a27acbb2e7c4ee0cd21b7062f7c5b84a723198e  attach-cantact
 7fe68b5e93fd619acbdef917784fddb4452e74963c02cabe0030e8150eb9ec77  can_selftest.sh
 8d9640bbb68c62b5dd0420bcf69a22809dda0c7eaa94ef36b0a9245bec5622d4  setup-wsl-can.sh
 24912e704f16e11180060fde5c4f575e94f25c3132acf292e6014ddb56035fff  ssm_can.py
+eb52b502be2c1a470ec82ba58028a7ea0ab8bc1f8ecf34fecbbb0d43bfc7370f  watch_perturb.sh

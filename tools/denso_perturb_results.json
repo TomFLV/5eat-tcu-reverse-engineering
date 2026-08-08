@@ -1,0 +1,315 @@
+{
+ "0E5208": {
+  "conditions": {
+   "accelerate_x0.5": {
+    "cells": 46,
+    "moved": 0,
+    "named": []
+   },
+   "accelerate_x2": {
+    "cells": 46,
+    "moved": 0,
+    "named": []
+   },
+   "cruise_x0.5": {
+    "cells": 46,
+    "moved": 0,
+    "named": []
+   },
+   "cruise_x2": {
+    "cells": 46,
+    "moved": 0,
+    "named": []
+   },
+   "hot_x0.5": {
+    "cells": 46,
+    "moved": 0,
+    "named": []
+   },
+   "hot_x2": {
+    "cells": 46,
+    "moved": 0,
+    "named": []
+   },
+   "kickdown_x0.5": {
+    "cells": 46,
+    "moved": 0,
+    "named": []
+   },
+   "kickdown_x2": {
+    "cells": 46,
+    "moved": 0,
+    "named": []
+   }
+  }
+ },
+ "0E5224": {
+  "conditions": {
+   "accelerate_x0.5": {
+    "cells": 47,
+    "moved": 47,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "accelerate_x2": {
+    "cells": 47,
+    "moved": 47,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "cruise_x0.5": {
+    "cells": 47,
+    "moved": 47,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "cruise_x2": {
+    "cells": 47,
+    "moved": 47,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "hot_x0.5": {
+    "cells": 47,
+    "moved": 47,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "hot_x2": {
+    "cells": 47,
+    "moved": 47,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "kickdown_x0.5": {
+    "cells": 47,
+    "moved": 47,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "kickdown_x2": {
+    "cells": 47,
+    "moved": 47,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   }
+  }
+ },
+ "0E5240": {
+  "conditions": {
+   "accelerate_x0.5": {
+    "cells": 49,
+    "moved": 47,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "accelerate_x2": {
+    "cells": 49,
+    "moved": 70,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "cruise_x0.5": {
+    "cells": 49,
+    "moved": 47,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "cruise_x2": {
+    "cells": 49,
+    "moved": 70,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "hot_x0.5": {
+    "cells": 49,
+    "moved": 47,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "hot_x2": {
+    "cells": 49,
+    "moved": 70,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "kickdown_x0.5": {
+    "cells": 49,
+    "moved": 47,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "kickdown_x2": {
+    "cells": 49,
+    "moved": 70,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   }
+  }
+ },
+ "0E525C": {
+  "conditions": {
+   "accelerate_x0.5": {
+    "cells": 49,
+    "moved": 75,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "accelerate_x2": {
+    "cells": 49,
+    "moved": 70,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "cruise_x0.5": {
+    "cells": 49,
+    "moved": 75,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "cruise_x2": {
+    "cells": 49,
+    "moved": 70,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "hot_x0.5": {
+    "cells": 49,
+    "moved": 75,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "hot_x2": {
+    "cells": 49,
+    "moved": 70,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "kickdown_x0.5": {
+    "cells": 49,
+    "moved": 75,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "kickdown_x2": {
+    "cells": 49,
+    "moved": 70,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   }
+  }
+ },
+ "0E5278": {
+  "conditions": {
+   "accelerate_x0.5": {
+    "cells": 51,
+    "moved": 79,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "accelerate_x2": {
+    "cells": 51,
+    "moved": 74,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "cruise_x0.5": {
+    "cells": 51,
+    "moved": 79,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "cruise_x2": {
+    "cells": 51,
+    "moved": 74,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "hot_x0.5": {
+    "cells": 51,
+    "moved": 79,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "hot_x2": {
+    "cells": 51,
+    "moved": 74,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "kickdown_x0.5": {
+    "cells": 51,
+    "moved": 79,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   },
+   "kickdown_x2": {
+    "cells": 51,
+    "moved": 74,
+    "named": [
+     "AWD Solenoid Valve Pressure"
+    ]
+   }
+  }
+ },
+ "0E8CC8": {
+  "conditions": {
+   "accelerate_x0.5": {
+    "cells": 71,
+    "moved": 42,
+    "named": []
+   },
+   "accelerate_x2": {
+    "cells": 71,
+    "moved": 32,
+    "named": []
+   },
+   "cruise_x0.5": {
+    "cells": 71,
+    "moved": 42,
+    "named": []
+   },
+   "cruise_x2": {
+    "cells": 71,
+    "moved": 32,
+    "named": []
+   },
+   "kickdown_x2": {
+    "cells": 71,
+    "moved": 32,
+    "named": []
+   }
+  }
+ }
+}
