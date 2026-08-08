@@ -7147,3 +7147,111 @@ discrepancy to explain away.
 So for an M32R unit the picture is now complete on both sides: which bit in which
 RAM byte carries each code (section 16b, resolved per firmware by
 `tools/m32r_dtc_ram.py`), and what condition sets it (`tools/dtc_conditions.json`).
+
+### 87. FreeSSM names what the firmware only located
+
+FreeSSM knows what a Subaru TCU's SSM parameters mean. This project knows, from the
+firmware, where each one reads from. Neither half is worth much alone.
+
+`tools/freessm_defs.py` pulls the transmission side out of a FreeSSM checkout and
+`tools/freessm_crosscheck.py` joins it against the 512-entry SSM translation table
+already extracted per ROM in `tools/ssm_parameters.json`. FreeSSM is GPLv3, by
+Comer352L. It is not vendored here and nothing is copied out of it.
+
+    join over 25 firmwares   2006 mapped rows
+                              689 agree
+                              234 newly named
+                                0 conflict
+
+The 689 agreements matter more than the 234 new names. Two sources with no path
+between them, on 689 address-to-meaning claims, with nothing to reconcile.
+
+An SSM address is a LOGICAL address Subaru keeps stable across control units and
+model years - 0x00000F is engine speed on everything. Where it lands in RAM is
+per-CPU. Never read a FreeSSM address as a memory location.
+
+#### 87a. Eighteen writable adjustments, and no actuator tests
+
+FreeSSM ships eighteen transmission adjustments, all writable, at SSM 0x72 to 0x82
+plus 0x170/0x171:
+
+    72       Line Pressure Correction              %    90..110, default 100
+    73..78   Gear Shift Line Pressure Correction        per shift: 1-2, 2-3, 3-4,
+                                                        4-3, 4-2, 3-2
+    79       2-4-Brake Pressure 1 Correction       %    90..110, default 100
+    7A..7F   2-4-Brake Pressure 2 Correction            same six shifts
+    80       Correction of Transfer Duty Ratio     %    90..110, default 100
+    81       Slope Control                              allowance / no access
+    82       Center Differential                   %    50..150, default 100
+    171/170  Correction of AWD Clutch Torque       Nm
+
+Per-shift line pressure trim, addressable live over SSM, is the most directly useful
+thing in the whole file for tuning.
+
+It ships no transmission actuator tests at all - all 21 are engine. The actuator
+list has no control-unit column, so this is easy to mistake for a parse failure.
+
+#### 87b. Two fault-flag arrays, and why they looked like a contradiction
+
+The trouble code blocks resolve through the same table, and at first appeared to
+refute section 16b: FreeSSM's DTC addresses come out at 0x8051xx on M32R while 16b
+says 0x8041E2 and up.
+
+Both are right. They are different things.
+
+16b follows a table of twelve POINTERS and takes the flag at offset 2 of each
+five-byte record, so its addresses are the internal fault records - which is exactly
+why they are spaced five apart, the same record stride found on Denso in section 83.
+The 0x8051xx run is the SSM OUTPUT MIRROR, the role 0xFFFFA0xx plays on Denso, and
+71 of its 75 steps are +1 because it is one near-contiguous block a gather routine
+fills each tick.
+
+The records are what the firmware sets. The mirror is what a scan tool reads. A
+bench tool wants the mirror, and `freessm_crosscheck.py` prints those addresses for
+all 25 firmwares.
+
+#### 87c. The current/historic gap splits on the family line by itself
+
+Every code has a current flag and a historic one. The gap between the two blocks is
+constant within a firmware, and the value splits exactly along the M32R/Denso
+boundary:
+
+    +4                all sixteen M32R images
+    +12, +13 or +14   all nine Denso images
+    not constant      none
+
+So M32R interleaves in groups of four - four current bytes then four historic -
+while Denso lays every current byte down first and the whole historic run after, its
+gap being however many entries came first.
+
+Nothing about that split was supplied. It falls out of joining two sources that know
+nothing of this project's family division, which is what makes it evidence rather
+than bookkeeping. An earlier reading of this said +4 everywhere, from eyeballing one
+firmware and generalising.
+
+#### 87d. Three sources on the trouble codes, and the manual's gaps closed
+
+    firmware 53      manual 46      FreeSSM transmission blocks 85
+
+    in all three                                39
+    firmware + FreeSSM, absent from the manual   4   P1760 P1761 P1762 P1841
+    firmware only, listed by neither             3   P0880 P0883 P0955
+    manual states, firmware lacks                0
+
+Section 86b left seven codes the firmware carries and the manual never documents.
+FreeSSM names four of them:
+
+    P1760  Lateral Acceleration Sensor Performance Problem   current 0F2 bit 4
+    P1761  Lateral Acceleration Sensor Circuit Low           current 0F2 bit 3
+    P1762  Lateral Acceleration Sensor Circuit High          current 0F2 bit 2
+    P1841  Transmission Fluid Pressure Sensor Switch B       current 125 bit 4
+
+The lateral acceleration codes corroborate the join independently: the same pass
+labelled SSM 0x055 "Lateral G Sensor Voltage", so the TCU reads that sensor and
+carries three faults for it. Two facts arriving from different columns of the same
+file and agreeing.
+
+P0880, P0883 and P0955 remain undocumented by all three. Their SAE-standard meanings
+are TCM power input signal, TCM power input signal high, and auto shift manual mode
+circuit range/performance - stated here as the generic definitions they are, not as
+anything read out of this firmware.
