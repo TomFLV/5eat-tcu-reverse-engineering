@@ -6916,3 +6916,31 @@ loud. The pinout had already been quoted twice in this session as though it appl
 So section 18d still stands: this project has no harness pinout for the units it
 works on. What would settle it is the wiring diagram section of an FSM for a
 specific vehicle, matched to a specific TCM part number.
+
+
+### 18f. The mismatch was overstated, and the manual mostly holds (2026-08-07)
+
+Section 18e said the bench manual described a different module, on the strength of
+its connector diagram grouping the top row 4|2|1|2 and 4|3|2 where a real unit reads
+3|2|4. That was too strong, and worth correcting in place rather than leaving.
+
+The grouping came from how the diagram's pin numbers are laid out in the PDF's text
+layer. There are no images on that page, so the numbers are real text - but text
+placed to draw a picture, and its spacing is not a dependable model of the housing.
+
+The substantive test went the other way. On a Hitachi 31711AJ675 - confirmed as the
+2006 B9 Tribeca TCM, superseded by 31711AJ676 - the output devices are on the white
+connector, which is exactly what the manual says of B54. Two service sources
+independently give white B54 and grey B55 for the 5EAT. So the connector
+identification holds and the manual is not describing some unrelated module.
+
+What remains genuinely unsettled is narrower: the manual never names a model and
+references a body integrated unit architecture newer than a 2006 car, so individual
+pin FUNCTIONS are plausible rather than confirmed. Every solenoid the table lists
+has a specified winding resistance, and those are measurable on an unplugged,
+unpowered unit - so this is checkable rather than a matter of trust. The CAN pins
+are the weakest claim, since no resistance check can confirm them.
+
+The lesson is the same one this project keeps relearning from the other direction:
+a strong conclusion drawn from a weak measurement, stated confidently. The
+whitespace in a text extraction is not a connector.

@@ -7,7 +7,7 @@
 # and generated definitions - files where a truncated copy still loads and
 # is quietly wrong.
 
-37162c60287dc1cbbb3310993788d77fdb00503bbe4885b3ec4c3eb5487b68f0  BENCH-RIG.md
+86d091b1b474e2f270fdb53451a0eae891c6b6f0d667bf445109a3eb7dee3824  BENCH-RIG.md
 c04ca734fd987f03b851f3b87b931d2dae0655e4c1bb8a5748b273617577a146  ROM-DETAILS.md
 25303a11f430c8a5e85e357d00f6c085e52baf6bbded9df972ba7d0c9c08a445  ROMRAIDER-SETUP.md
 0edd54b64aa00a231f60764644dba6d2a991e1a4f6f65edbe0a00170705b2fc5  RUNNING-THE-TOOLS.md

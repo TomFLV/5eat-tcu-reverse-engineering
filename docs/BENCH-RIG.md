@@ -15,29 +15,22 @@ solenoid output and logging can be exercised without a car.
 > On a Hitachi `31711AJ675` (2006 B9 Tribeca) the connector identification holds:
 > **white is B54** and carries every output device, **grey is B55**.
 >
-> This page said the pinout came from "the 2006 Tribeca USDM service manual". The
-> PDF does not support that: across 269 pages it never names a model — no Tribeca,
-> no Legacy, no Outback — and identifies itself only by engine family, `H6DO`, 44
-> times. That fits a Tribeca and fits a Legacy or Outback 3.0R equally.
+> The manual's provenance is still not established: across 269 pages it never
+> names a model — no Tribeca, no Legacy, no Outback — identifying itself only by
+> engine family, `H6DO`, 44 times, and it references a "body integrated unit"
+> architecture newer than a 2006 car. So treat the pin FUNCTIONS as plausible
+> rather than confirmed, and check the ones you rely on.
 >
-> It was then checked against a real unit and **did not match**. The manual draws
-> its two connectors with these top-row pin groupings:
+> An earlier revision of this page went further and said the manual described a
+> different module outright, on the grounds that its connector diagram groups the
+> top row 4|2|1|2 and 4|3|2 where a real unit reads 3|2|4. That was too strong. The
+> grouping came from how the diagram's numbers are laid out in the PDF's text, which
+> is not a reliable picture of the housing, and the substantive test went the other
+> way: on a Hitachi 31711AJ675 the output devices really are on B54, exactly as this
+> manual says. Measure before you trust, but do not discard it.
 >
->     B54    4 | 2 | 1 | 2
->     B55    4 | 3 | 2
->
-> A TCM in hand has both connectors grouped **3 | 2 | 4**. Pin grouping is a
-> physical property of the connector housing, so this manual describes a different
-> module — and every pin number below, including the CAN lines, is wrong for that
-> unit.
->
-> **Before using any pin here**, compare the groupings on your own connectors with
-> the diagram on PDF page 233 (`5AT(diag)-11`, TCM I/O Signal, under
-> `A: ELECTRICAL SPECIFICATION`). If they do not match, this page does not describe
-> your TCM and you need the wiring diagram section of an FSM for your exact
-> vehicle. See [FINDINGS.md](../FINDINGS.md) §18d — the pinout circulating on the
-> forum is not a substitute; it maps MCU pins to PCB programming pads on a
-> different chip family.
+> The forum pinout is not a substitute either — see [FINDINGS.md](../FINDINGS.md)
+> §18d, it maps MCU pins to PCB programming pads on a different chip family.
 
 The terminal table itself IS in that manual, contrary to what this page used to
 say: section `5AT(diag)-11`, *Transmission Control Module (TCM) I/O Signal*, PDF
