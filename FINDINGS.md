@@ -7075,3 +7075,46 @@ findings stand.
 So the sweep is worth finishing and its output is worth half of what it appears to
 be. That is a smaller claim than the one made when it was launched, and the check
 is the only reason the difference is known. It cost four runs.
+
+## 86. What sets each code, from the manual (2026-08-08)
+
+Sections 81 and 83 established the whole Denso diagnostic machinery - the code
+table, the five-byte record per code, both flag arrays, the routine that ORs a bit
+in, the thousand-count debounce - and could not establish what CONDITION sets any
+of it. No simulated fault would latch a code, because the monitors gate on hardware
+feedback the emulator does not provide.
+
+The manual answers it directly. Each code has a section with a stated DTC DETECTING
+CONDITION: 46 codes, 39 with one, the remaining seven deferred by the manual itself
+to another section rather than missing.
+
+    P0705   the inhibitor switch is open or short
+    P0712   input signal circuit to ATF temperature sensor 1 is open
+    P0715   input signal circuit of TCM is open or shorted
+    P0720   AT vehicle speed signal is abnormal
+    P1844   high and low reverse clutch oil pressure switch malfunction
+
+So the chain is now complete from both ends: the firmware says which bit in which
+byte carries each code, and the manual says what makes that bit set. Neither source
+could have produced the other.
+
+### 86a. Three parsers, two of which produced confident nonsense
+
+Worth recording, because two of the three failures produced output that looked like
+data rather than an error.
+
+Scanning the text linearly and switching state on headings let text from any
+section the pattern missed accumulate into whichever code had matched last. Several
+codes' symptoms arrived concatenated under one entry. Splitting on the headings
+first and parsing each slice in isolation cannot do that, and is what the tool does
+now.
+
+The summary table, "List of Diagnostic Trouble Code", looked like the better source
+- one row per code, no gaps. Its columns shift from page to page, so splitting on
+positions taken from the header interleaved rows into each other and produced
+entries like "cuit (PRNDL or shor on Fluid TemATF tem". Abandoned.
+
+The section letters run A: through Z: and then AA: to AT:, and the space after the
+colon is present early and absent later. Requiring it returned 27 codes of 46 -
+and every one of those 27 was correct, which is exactly why the shortfall was worth
+chasing rather than accepting.

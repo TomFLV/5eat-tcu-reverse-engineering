@@ -1,6 +1,6 @@
 # tools
 #
-# SHA-256 of every tracked file in this directory, 101 files, 5.1 MB.
+# SHA-256 of every tracked file in this directory, 103 files, 5.2 MB.
 # Recorded 2026-08-08. Verify with:  python tools/write-manifests.py --check
 #
 # These exist because this repository ships ROM images, decompiler output
@@ -66,9 +66,11 @@ bcfdff17fda546bb27054bce417485028ae4f73032c3850fd17a71a20e8bac4b  denso_table_na
 cc4f0b985bc9f7cdd4a06e8ded482405372871f480aa1f08f169349f15dd9910  denso_xref.py
 4ce526fc8c5f40996a9c37bdeb0f87f51dfd1f52a28ae032a2dd24c8c82e4b3f  detect_fixed_point.py
 76cb6e3ef189bdd160fab85ea0219589d544f359b6db639be3354975e62fa2b6  downshift_pressure.json
+2ce68e73cc084d0da435d83df889fe7ad338d7ba5423ac432d82441a4aae38a3  dtc_conditions.json
 50a5ec983a63228234833309e952c039fe76cfa44f25e266a60d29807e89b702  dtc_table.json
 872821ffe42efd1f396b0ac68238f0f8bc6a3244cd92c2c9a6578e71423be5e4  extract_atf_blend.py
 0bc440b512a5d3ae651d92b3b8e8c2d03434e81d6b2dc5a105127f080c761418  extract_downshift_pressure.py
+734456b1b498e00d8ca2920727782f93b42370c1d38aa6cacd59996ed41e591f  extract_dtc_conditions.py
 ea07ce4bb9f6102593e4c99ffc26409ae95f27f054bdefd633cb89fedd99eff0  extract_dtc_table.py
 772d849513bad58e3ca80bf6462e395eff776654ec6e9d30e53d2c45e4e02977  extract_line_pressure_targets.py
 9a339ace0f894bcd816a6ecac82dcb51027dad10207fdbb14b532f55ecfd9812  extract_pressure_curves.py

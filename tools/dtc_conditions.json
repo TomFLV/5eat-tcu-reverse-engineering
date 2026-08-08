@@ -1,0 +1,232 @@
+{
+ "P0705": {
+  "cause": "The inhibitor switch is open or short.",
+  "item": "TRANSMISSION RANGE SENSOR CIRCUIT (PRNDL INPUT)",
+  "symptom": "Shift characteristics are erroneous. Shift indicator light does not match with select lever. Shift indicator light does not illuminate. N-D, N-R shock occur."
+ },
+ "P0712": {
+  "cause": "Input signal circuit to ATF temperature sensor 1 is open.",
+  "item": "TRANSMISSION FLUID TEMPERATURE SENSOR CIRCUIT LOW",
+  "symptom": "Excessive shift shock"
+ },
+ "P0713": {
+  "cause": "Input signal circuit to ATF temperature sensor 1 is shorted.",
+  "item": "TRANSMISSION FLUID TEMPERATURE SENSOR CIRCUIT HIGH",
+  "symptom": "Excessive shift shock"
+ },
+ "P0715": {
+  "cause": "Input signal circuit of TCM is open or shorted.",
+  "item": "INPUT/TURBINE SPEED SENSOR CIRCUIT",
+  "symptom": "Excessive shift shock Does not shift to 5th"
+ },
+ "P0719": {
+  "cause": "Brake switch malfunction, open input signal circuit",
+  "item": "TORQUE CONVERTER/BRAKE SWITCH \u201cB\u201d CIRCUIT LOW",
+  "symptom": "Brake down control is not operated at SPORT mode."
+ },
+ "P0720": {
+  "cause": "AT vehicle speed signal is abnormal. The harness connector between TCM and vehicle speed sensor is shorted or open.",
+  "item": "OUTPUT SPEED SENSOR CIRCUIT",
+  "symptom": "Deterioration of shifting quality. Driving performance is poor."
+ },
+ "P0724": {
+  "cause": "Brake switch malfunction, open input signal circuit",
+  "item": "TORQUE CONVERTER/BRAKE SWITCH \u201cB\u201d CIRCUIT HIGH",
+  "symptom": "Gear is not shifted down when climbing a hill."
+ },
+ "P0725": {
+  "cause": "Information of engine speed is not correctly received from ECM.",
+  "item": "ENGINE SPEED INPUT CIRCUIT",
+  "symptom": "No lock-up occurs. (After engine is warmed-up) Step Check Yes No 1 CHECK DTC OF ECM. Is DTC of AT CAN communica- Perform the diag- Go to step 2. tion circuit detected? nosis according to DTC. 2 CHECK DTC OF TCM. Is DTC of AT CAN communica- Perform the diag- Go to step 3. tion circuit detected? nosis according to DTC. 3 CHECK DTC OF TCM. Is any of following DTC Perform the diag- Replace the TCM. detected?/Output Speed Sen- nosis according to <Ref. to 5AT-56, sor Circuit/AT Vehicle Speed DTC. Transmission Con- Sensor Circuit Malfunction trol Module (Rear Wheel) (TCM).>"
+ },
+ "P0731": {
+  "cause": "",
+  "item": "GEAR 1 INCORRECT RATIO",
+  "symptom": ""
+ },
+ "P0732": {
+  "cause": "",
+  "item": "GEAR 2 INCORRECT RATIO",
+  "symptom": ""
+ },
+ "P0733": {
+  "cause": "",
+  "item": "GEAR 3 INCORRECT RATIO",
+  "symptom": ""
+ },
+ "P0734": {
+  "cause": "",
+  "item": "GEAR 4 INCORRECT RATIO",
+  "symptom": ""
+ },
+ "P0735": {
+  "cause": "",
+  "item": "GEAR 5 INCORRECT RATIO",
+  "symptom": ""
+ },
+ "P0736": {
+  "cause": "Target gear ratio and actual gear ratio do not match.",
+  "item": "REVERSE INCORRECT RATIO",
+  "symptom": "Shift point is too high or too low. Excessive shift shock. Gear is not changed. The vehicle does not move in D or R range with the engine running at high speed. Step Check Yes No 1 CHECK DTC OF TCM. Is any DTC of the followings Perform the diag- Go to step 2. detected? P0715, P0720, nosis according to P0753, P0758, P0763, P0768, DTC. P0773, P0751, P0756, P0761, P0766, P0771, P1706, P1710, P1798, P1799 2 CHECK TURBINE SPEED SENSOR USING Does the displayed value of the Go to step 3. Perform the diag- SUBARU SELECT MONITOR. Subaru Select Monitor change nosis according to 1) Lift-up the vehicle and support with rigid according to engine speed and DTC P0715, racks. shifting? P1710. NOTE: Raise all wheels off floor. 2) Start the engine, and drive it. 3) Read the current data of torque converter turbine speed using Subaru Select Monitor. DATA, OPERATION, Subaru Select Monitor.> NOTE: The speed difference between front and rear wheels may light the ABS warning light, but this indicates no malfunction. When AT control di- agnosis is finished, perform the VDC memory clearance procedure of on-board diagnostics system. <Ref. to VDC(diag)-18, CLEAR MEM- ORY MODE, OPERATION, Subaru Select Monitor.> 3 CHECK FRONT AND REAR VEHICLE Do the values displayed for Go to step 4. Perform the diag- SPEED SENSORS. each of the Subaru Select nosis according to Monitor and the speedometer DTC P0720, substantially match? P1706. 4 CHECK INHIBITOR SWITCH. Do the values displayed for the Go to step 5. Perform the diag- Subaru Select Monitor and the nosis according to meter indicator match? DTC P0705. 5 DRIVING CHECK. Is DTC displayed again? Check the DTC. Go to step 6. 1) Turn the ignition switch to OFF. Then, when pro- 2) After restarting the engine, check that the ceeded again to SPORT indicator light is not blinking, and per- step 5, go to step form a drive check based on the inspection 6. Inspection Mode.> 6 CHECK AFTER REPAIR. Is the trouble symptom inre- Replace the trans- Temporary poor pairable (malfunction in shifting mission assembly. contact occurs. such as excessive shift shock, Check that the engine speed increases exces- harness connec- sively when shifting)? tor is not faulty."
+ },
+ "P0741": {
+  "cause": "Defective lock-up clutch or torque converter assembly Defective control valve Defective turbine speed sensor 1 or 2",
+  "item": "TORQUE CONVERTER CLUTCH CIRCUIT PERFORMANCE OR",
+  "symptom": "No lock-up occurs. (After engine is warmed-up) Step Check Yes No 1 CHECK DTC OF TCM. Is any DTC of the followings Perform the diag- Go to step 2. detected? P0715, P0725, nosis according to P0753, P0758, P0763, P0768, each DTC. P0773, P0751, P0756, P0761, P0766, P0771, P1710, P1718, P1798, P1799 2 DRIVING CHECK FOR LOCK-UP CONDI- Are the engine speed and tur- Temporary poor Go to step 3. TION bine speed almost the same? contact or open 1) Perform a drive check based on the inspec- circuit occurs. tion mode with the following conditions. <Ref. Recheck that the Mode.> tor has no faulty. (1) Read the current data of throttle open- ing angle using Subaru Select Monitor. DATA, OPERATION, Subaru Select Moni- tor.> (2) Keep the same vehicle speed at 60 km/ h with 10% or less throttle opening angle which is read currently on Subaru Select CURRENT DATA, OPERATION, Subaru Select Monitor.> (3) Read the current data of L/U solenoid target pressure using Subaru Select Moni- RENT DATA, OPERATION, Subaru Select Monitor.> (4) Check the engine speed and turbine speed when the L/U solenoid target value displayed on Subaru Select Monitor is 500 kPa or more. Step Check Yes No 3 DRIVING CHECK FOR LOCK-UP CONDI- Is DTC P0741 displayed with Replace the trans- Temporary poor TION the SPORT indicator light mission assembly contact or open OPERATION, Subaru Select Monitor.> is displayed. Recheck that the 2) Perform a drive check based on the inspec- When DTC other harness connec- tion mode with the following conditions. <Ref. than P0741 is dis- tor has no faulty. Mode.> the diagnosis cor- (1) Read the current data of throttle open- responding to the ing angle using Subaru Select Monitor. DTC. DATA, OPERATION, Subaru Select Moni- tor.> (2) Keep the same vehicle speed at 60 km/ h with 10% or less throttle opening angle which is read currently on Subaru Select CURRENT DATA, OPERATION, Subaru Select Monitor.> (3) Read the current data of L/U solenoid target pressure using Subaru Select Moni- RENT DATA, OPERATION, Subaru Select Monitor.> (4) Drive the vehicle continuously for one minutes or more with the L/U solenoid tar- get value displayed on Subaru Select Moni- tor at 500 kPa or more. 3) Turn the ignition switch to OFF. 4) Turn the ignition switch to ON. (Engine ON) 5) Perform the step 2) again."
+ },
+ "P0743": {
+  "cause": "The output signal circuit of lock up solenoid is open or shorted.",
+  "item": "TORQUE CONVERTER CLUTCH CIRCUIT ELECTRICAL",
+  "symptom": "No lock-up occurs. (After engine is warmed-up)"
+ },
+ "P0748": {
+  "cause": "Output signal circuit of line pressure solenoid is open or shorted.",
+  "item": "PRESSURE CONTROL SOLENOID \u201cA\u201d ELECTRICAL",
+  "symptom": "Excessive shift shock"
+ },
+ "P0751": {
+  "cause": "Output signal of front brake solenoid does not match with oil pressure.",
+  "item": "SHIFT SOLENOID \u201cA\u201d PERFORMANCE OR STUCK OFF",
+  "symptom": "Locked to 4th or 5th gear."
+ },
+ "P0753": {
+  "cause": "Output signal circuit of front brake solenoid is open or shorted.",
+  "item": "SHIFT SOLENOID \u201cA\u201d ELECTRICAL",
+  "symptom": "Locked to 4th or 5th gear."
+ },
+ "P0756": {
+  "cause": "Output signal value of input clutch solenoid and oil pressure does not match.",
+  "item": "SHIFT SOLENOID \u201cB\u201d PERFORMANCE OR STUCK OFF",
+  "symptom": "Locked to 4th gear."
+ },
+ "P0758": {
+  "cause": "Output signal circuit of input clutch solenoid is open or shorted.",
+  "item": "SHIFT SOLENOID \u201cB\u201d ELECTRICAL",
+  "symptom": "Locked to 4th gear."
+ },
+ "P0761": {
+  "cause": "Output signal value of high & low reverse clutch solenoid and oil pressure does not match.",
+  "item": "SHIFT SOLENOID \u201cC\u201d PERFORMANCE OR STUCK OFF",
+  "symptom": "Locked to 4th gear."
+ },
+ "P0763": {
+  "cause": "Output signal circuit of high & low reverse clutch solenoid is open or shorted.",
+  "item": "SHIFT SOLENOID \u201cC\u201d ELECTRICAL",
+  "symptom": "Locked to 4th gear."
+ },
+ "P0766": {
+  "cause": "Output signal value of direct clutch solenoid and oil pressure does not match.",
+  "item": "SHIFT SOLENOID \u201cD\u201d PERFORMANCE OR STUCK OFF",
+  "symptom": "Locked to 4th gear."
+ },
+ "P0768": {
+  "cause": "The output signal circuit of direct clutch solenoid is open or shorted.",
+  "item": "SOLENOID \u201cD\u201d ELECTRICAL",
+  "symptom": "Locked to 4th gear."
+ },
+ "P0771": {
+  "cause": "Output signal value of low coast brake solenoid and oil pressure does not match.",
+  "item": "SHIFT SOLENOID \u201cE\u201d PERFORMANCE OR STUCK OFF",
+  "symptom": "Locked to 2nd gear. Engine brake does not function at 1st or 2nd of manual mode."
+ },
+ "P0773": {
+  "cause": "Output signal circuit of low coast brake solenoid is open or shorted.",
+  "item": "SHIFT SOLENOID \u201cE\u201d ELECTRICAL",
+  "symptom": "Locked to 2nd gear. Engine brake does not function at 1st or 2nd of manual mode."
+ },
+ "P0801": {
+  "cause": "Shift lock solenoid malfunction, open or short reverse inhibitor control circuit",
+  "item": "REVERSE INHIBIT CONTROL CIRCUIT",
+  "symptom": "Gear is shifted from \u201cN\u201d range to \u201cR\u201d range during driving at 20 km/h (12MPH) or more. Gear can not be shifted from \u201cN\u201d range to \u201cR\u201d range though the vehicle is parked."
+ },
+ "P0817": {
+  "cause": "Open or short in P/N signal output circuit",
+  "item": "STARTER DISABLE CIRCUIT",
+  "symptom": "Engine can be started on other than \u201cP\u201d or \u201cN\u201d range Engine can not be started on \u201cP\u201d or \u201cN\u201d range."
+ },
+ "P0882": {
+  "cause": "Malfunction of PVIGN power supply relay or open, short circuit of PVIGN power supply circuit.",
+  "item": "TCM POWER INPUT SIGNAL LOW",
+  "symptom": "Gear is not changed."
+ },
+ "P0957": {
+  "cause": "Short circuit of back-up light relay output circuit",
+  "item": "BACKUP LIGHT RELAY CIRCUIT LOW",
+  "symptom": "Back-up light does not illuminate in \u201cR\u201d range."
+ },
+ "P0958": {
+  "cause": "Backup light relay malfunction, or open/short circuit in back-up light relay output circuit",
+  "item": "BACKUP LIGHT RELAY CIRCUIT HIGH",
+  "symptom": "Back-up light does not illuminate in \u201cR\u201d range. Back-up light always illuminate except in \u201cR\u201d range."
+ },
+ "P1601": {
+  "cause": "Communication does not complete between control valve memory box.",
+  "item": "TCM DATA COMMUNICATION FAILURE",
+  "symptom": "Shifting quality malfunction"
+ },
+ "P1706": {
+  "cause": "Input signal circuit of TCM is open or shorted.",
+  "item": "AT VEHICLE SPEED SENSOR CIRCUIT MALFUNCTION (REAR",
+  "symptom": "Shifting quality malfunction Tight corner braking phenomenon is occurred."
+ },
+ "P1707": {
+  "cause": "Output signal circuit of transfer solenoid is open or shorted.",
+  "item": "AT AWD SOLENOID VALVE CIRCUIT MALFUNCTION",
+  "symptom": "Tight corner braking phenomenon is occurred. Drivability getting worse."
+ },
+ "P1710": {
+  "cause": "Input signal circuit of TCM is open or shorted.",
+  "item": "TORQUE CONVERTER TURBINE 2 SPEED SIGNAL CIRCUIT 2",
+  "symptom": "Excessive shift shock Does not shift to 5th"
+ },
+ "P1716": {
+  "cause": "Input signal circuit to ATF temperature sensor 2 is open or shorted.",
+  "item": "ATF TEMP. SENSOR 2 CIRCUIT LOW",
+  "symptom": "Excessive shift shock"
+ },
+ "P1717": {
+  "cause": "Input signal circuit to ATF temperature sensor 2 is open or shorted.",
+  "item": "ATF TEMP. SENSOR 2 CIRCUIT HIGH",
+  "symptom": "Excessive shift shock"
+ },
+ "P1718": {
+  "cause": "",
+  "item": "AT CAN COMMUNICATION CIRCUIT",
+  "symptom": ""
+ },
+ "P1798": {
+  "cause": "",
+  "item": "GEAR 1 ENGINE BRAKE",
+  "symptom": ""
+ },
+ "P1799": {
+  "cause": "Perform the interlock judgment when the oil pressure switch pattern detects the specified interlock patterns other than shifting.",
+  "item": "INTERLOCK",
+  "symptom": "Locked to 2nd or 4th gear depending on the vehicle condition at the time of diagnosis. Step Check Yes No 1 CHECK DTC OF TCM. Is any DTC of the followings Perform the diag- Go to step 2. detected? P0751, P0753, nosis according to P0756, P0758, P0761, P0763, DTC. P0766, P0768, P0771, P0773, P1798 2 DRIVING CHECK. Is OFF displayed? Go to step 3. Perform the diag- 1) Turn the ignition switch to OFF. nosis according to 2) After starting the engine again, perform a DTC P0756. drive check with the following conditions. (1) Keep the speed at 20 km/h with SPORT shift mode in 1st. (2) Read the I/C oil pressure switch data of TCM while driving using Subaru Select Monitor. 3 DRIVING CHECK. Is OFF displayed? Go to step 4. Perform the diag- 1) Turn the ignition switch to OFF. nosis according to 2) After starting the engine again, perform a DTC P0766. drive check based on the inspection mode with PROCEDURE, Inspection Mode.> (1) Keep the speed at 20 km/h with manual mode in 1st. (2) Read the D/C oil pressure switch data while driving using Subaru Select Monitor. 4 DRIVING CHECK. Is OFF displayed? Go to step 5. Perform the diag- 1) Turn the ignition switch to OFF. nosis according to 2) After starting the engine again, perform a DTC P0771. drive check with the following conditions. (1) Drive the vehicle at the same speed with manual mode in 3rd, 4th and 5th. (2) Read the LC/B oil pressure switch data while driving using Subaru Select Monitor. 5 DRIVING CHECK. Is DTC displayed? Replace the con- Temporary poor 1) Turn the ignition switch to OFF. trol valve body. contact occurs. 2) After restarting the engine, Perform a drive Check that the check based on the inspection mode. <Ref. to harness connec- Mode.>"
+ },
+ "P1817": {
+  "cause": "Input signal circuit of manual mode switch is open or shorted.",
+  "item": "SPORT MODE SWITCH CIRCUIT (MANUAL SWITCH)",
+  "symptom": "Manual mode can not be set. \u201cSPORT\u201d light illuminates when shifting to \u201cN\u201d \u2192 \u201cD\u201d range."
+ },
+ "P1840": {
+  "cause": "Front brake oil pressure switch malfunction",
+  "item": "TRANSMISSION FLUID PRESSURE SENSOR/SWITCH A CIR-",
+  "symptom": "Excessive shift shock"
+ },
+ "P1842": {
+  "cause": "Input clutch oil pressure switch is malfunction.",
+  "item": "TRANSMISSION FLUID PRESSURE SENSOR/SWITCH C CIR-",
+  "symptom": "Excessive shift shock"
+ },
+ "P1843": {
+  "cause": "Direct clutch oil pressure switch malfunction.",
+  "item": "TRANSMISSION FLUID PRESSURE SENSOR/SWITCH D CIR-",
+  "symptom": "Excessive shift shock"
+ },
+ "P1844": {
+  "cause": "High & low reverse clutch oil pressure switch malfunction.",
+  "item": "TRANSMISSION FLUID PRESSURE SENSOR/SWITCH E CIR-",
+  "symptom": "Excessive shift shock"
+ }
+}
