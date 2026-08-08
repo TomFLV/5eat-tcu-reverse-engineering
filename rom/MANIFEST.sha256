@@ -1,6 +1,6 @@
 # rom
 #
-# SHA-256 of every tracked file in this directory, 16 files, 6.8 MB.
+# SHA-256 of every tracked file in this directory, 17 files, 7.2 MB.
 # Recorded 2026-08-08. Verify with:  python tools/write-manifests.py --check
 #
 # These exist because this repository ships ROM images, decompiler output
@@ -8,6 +8,7 @@
 # is quietly wrong.
 
 5e3eba08a140f206bbdaf2598d6b5f16225bff680e1e8c53b50fd474eabb2225  5EAT_ADE0236000.bin
+56ab78c424d0d2339bc64a2e010fef5e85c9d04dcb35df85b5e753801e2c3cdf  8AF0237300_MB500NJ0VF32C_2006_TRIBECA_USDM.bin
 1beac552ca74e3487e1e8cfa6a98ca6a1b26e7fe96e6dc6591b88ddcc0cafb6a  91A0217300_MB4365.bin
 d583f8076d504f099837c5b913f34eb5e2049a9e300362ba809e0ba3f71a9439  91A0217400_MB4372_A61022.bin
 acf7381752d8b8f6e42d4f0c433e65d87225344d88ea0d3c0b5b293b6fee4ed0  91A1207300_MB4364.bin

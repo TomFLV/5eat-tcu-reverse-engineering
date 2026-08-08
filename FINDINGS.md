@@ -7147,3 +7147,33 @@ discrepancy to explain away.
 So for an M32R unit the picture is now complete on both sides: which bit in which
 RAM byte carries each code (section 16b, resolved per firmware by
 `tools/m32r_dtc_ram.py`), and what condition sets it (`tools/dtc_conditions.json`).
+
+### 88. The 2006 Tribeca firmware, read from a bench unit
+
+    file   rom/8AF0237300_MB500NJ0VF32C_2006_TRIBECA_USDM.bin
+    cal    MB500NJ0VF32C
+    rom id 8AF0237300
+    size   524288 bytes, complete
+    sha256 56ab78c424d0d2339bc64a2e010fef5e85c9d04dcb35df85b5e753801e2c3cdf
+
+Read over K-line SSM from a Hitachi TCU on a bench, at 512 KB in 5462 blocks of 96
+bytes with no retries. The MCU reports itself as M32R_512KB.
+
+**It carries the gear ratios section 39 predicted and nothing else here has.**
+
+    0x00844C   3.842  2.353  1.529  1.000  0.839
+    0x0129B4   same, second copy
+    0x015F7C   same, third copy
+
+Section 39 quoted the 2006 Tribeca manual as 3.841 / 2.352 / 1.529 / 1.000 / 0.839
+and observed that all twenty-five firmwares held carry 3.540 / 2.264 / 1.471 / 1.000
+/ 0.834 instead - so the early Tribeca calibration was one nobody had, and reading it
+would add a variant rather than another member of a family already covered. It said
+to look for five consecutive uint16/1024 values near 0x0844C on M32R. They are at
+0x00844C, and they match the manual to rounding.
+
+The calibration string appears in no other image in this project. It is the
+seventeenth M32R firmware and the only one of its kind here.
+
+Not yet done: the checksum is unverified, because no definition for this calibration
+existed to check it against, and no tables beyond the ratio set have been mapped.
