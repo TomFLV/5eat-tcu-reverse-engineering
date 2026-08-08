@@ -6,7 +6,14 @@ read back out of the reference ROM and the disassembly before publishing.*
 Notes toward running a TCM on a bench with simulated inputs, so shift behaviour,
 solenoid output and logging can be exercised without a car.
 
-> ## The pinout below does not match every 5EAT TCM. Check yours first.
+> ## Check this pinout against your own unit before using it.
+>
+> See [TCM-PINOUT-VERIFY.md](TCM-PINOUT-VERIFY.md) — every solenoid pin has a
+> resistance the manual specifies, so the numbering can be confirmed with a
+> multimeter on an unplugged, unpowered unit before anything is at risk.
+>
+> On a Hitachi `31711AJ675` (2006 B9 Tribeca) the connector identification holds:
+> **white is B54** and carries every output device, **grey is B55**.
 >
 > This page said the pinout came from "the 2006 Tribeca USDM service manual". The
 > PDF does not support that: across 269 pages it never names a model — no Tribeca,

@@ -1,16 +1,17 @@
 # docs
 #
-# SHA-256 of every tracked file in this directory, 11 files, 0.4 MB.
+# SHA-256 of every tracked file in this directory, 12 files, 0.4 MB.
 # Recorded 2026-08-08. Verify with:  python tools/write-manifests.py --check
 #
 # These exist because this repository ships ROM images, decompiler output
 # and generated definitions - files where a truncated copy still loads and
 # is quietly wrong.
 
-be596e2783bfb00a4097360c3422b8f466043eec9eb181e1d19adf5307379e17  BENCH-RIG.md
+37162c60287dc1cbbb3310993788d77fdb00503bbe4885b3ec4c3eb5487b68f0  BENCH-RIG.md
 c04ca734fd987f03b851f3b87b931d2dae0655e4c1bb8a5748b273617577a146  ROM-DETAILS.md
 25303a11f430c8a5e85e357d00f6c085e52baf6bbded9df972ba7d0c9c08a445  ROMRAIDER-SETUP.md
 0edd54b64aa00a231f60764644dba6d2a991e1a4f6f65edbe0a00170705b2fc5  RUNNING-THE-TOOLS.md
+ec9b30f527f5c4cfddbf8e4afc122ae7c989a7512bee74d750a1c1d69604788b  TCM-PINOUT-VERIFY.md
 fea34a35cfe73a32ca674c1d364ab7b790be6233185ddee94b905224c33c73df  TECHNICAL-NOTES.md
 6e235e9696d697477d7eaa0b2d1ec56686d347e27ffc21e449da4cb47980bb8f  denso_can_signal_map.txt
 5c498d0540310684fac61420095be1f54396e4b48ef71a14ae01487445e1757e  forum_thread_13725.txt
