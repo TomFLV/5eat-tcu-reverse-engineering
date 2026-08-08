@@ -6888,3 +6888,31 @@ that was never taken, presented as one. And it left the interface in loopback fo
 the "real" transmit, because bringing a link up again does not clear that flag; it
 needs `loopback off`. The second half of the test was looping frames inside the
 chip and counting them as sent.
+
+### 18e. The bench manual is for a different module (2026-08-07)
+
+The bench notes claimed their pinout came from the 2006 Tribeca USDM service
+manual. Two things are wrong with that.
+
+The PDF never names a model. Across 269 pages there is no Tribeca, no Legacy, no
+Outback - only the engine family `H6DO`, 44 times, which is the six-cylinder boxer
+and fits several cars. The attribution was inherited from wherever the file came
+from rather than read out of it.
+
+More decisively, it was checked against a real TCM and does not match. The manual
+draws its connectors with top-row pin groupings of
+
+    B54    4 | 2 | 1 | 2
+    B55    4 | 3 | 2
+
+and the unit in hand has both connectors grouped 3 | 2 | 4. Pin grouping is a
+physical property of the housing, so this is a different module and every pin
+number in that table - including B54 3 and 4 for the CAN lines, which had just been
+found and published - is wrong for it.
+
+That check cost nothing and was only made because the connectors were described out
+loud. The pinout had already been quoted twice in this session as though it applied.
+
+So section 18d still stands: this project has no harness pinout for the units it
+works on. What would settle it is the wiring diagram section of an FSM for a
+specific vehicle, matched to a specific TCM part number.

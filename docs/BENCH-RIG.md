@@ -6,11 +6,39 @@ read back out of the reference ROM and the disassembly before publishing.*
 Notes toward running a TCM on a bench with simulated inputs, so shift behaviour,
 solenoid output and logging can be exercised without a car.
 
-Everything below is derived from the 2006 Tribeca USDM service manual. **The pinout is
-reconstructed from the fault-finding procedures, not read off a terminal table** — the
-manual has no single table for these connectors. Verify any pin against the manual
-before you put power on it. The pinout that circulates on the forum is for a different
-unit (see [FINDINGS.md](../FINDINGS.md) §18d).
+> ## The pinout below does not match every 5EAT TCM. Check yours first.
+>
+> This page said the pinout came from "the 2006 Tribeca USDM service manual". The
+> PDF does not support that: across 269 pages it never names a model — no Tribeca,
+> no Legacy, no Outback — and identifies itself only by engine family, `H6DO`, 44
+> times. That fits a Tribeca and fits a Legacy or Outback 3.0R equally.
+>
+> It was then checked against a real unit and **did not match**. The manual draws
+> its two connectors with these top-row pin groupings:
+>
+>     B54    4 | 2 | 1 | 2
+>     B55    4 | 3 | 2
+>
+> A TCM in hand has both connectors grouped **3 | 2 | 4**. Pin grouping is a
+> physical property of the connector housing, so this manual describes a different
+> module — and every pin number below, including the CAN lines, is wrong for that
+> unit.
+>
+> **Before using any pin here**, compare the groupings on your own connectors with
+> the diagram on PDF page 233 (`5AT(diag)-11`, TCM I/O Signal, under
+> `A: ELECTRICAL SPECIFICATION`). If they do not match, this page does not describe
+> your TCM and you need the wiring diagram section of an FSM for your exact
+> vehicle. See [FINDINGS.md](../FINDINGS.md) §18d — the pinout circulating on the
+> forum is not a substitute; it maps MCU pins to PCB programming pads on a
+> different chip family.
+
+The terminal table itself IS in that manual, contrary to what this page used to
+say: section `5AT(diag)-11`, *Transmission Control Module (TCM) I/O Signal*, PDF
+page 233, with the connector diagrams above it. It gives every terminal with signal
+name, measuring condition, expected voltage and resistance to ground — including
+the two CAN lines, which the fault-finding pages never name because they defer to
+the LAN section. Earlier revisions reconstructed the pinout from fault-finding
+steps because that table had not been found.
 
 Regenerate with `python tools/extract_tcm_pinout.py <TRANSMISSION_SECTION.txt>`.
 
