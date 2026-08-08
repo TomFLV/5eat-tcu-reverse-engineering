@@ -40,7 +40,29 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROM = os.path.join(REPO, "rom-denso", "Impreza_STI_3.583_JDM2011.bin")
 SSM = os.path.join(HERE, "denso_ssm_addresses.json")
 OUT = os.path.join(WORK, "perturb")
-TASKS = WORK_WSL + "/tasks_ctl.txt"
+
+# The controller's own task list PLUS the frame decoders and the gather.
+#
+# Without them the injected values sit in the CAN receive buffers undecoded and the
+# control path never sees them - the drive is not driving. The instrument check
+# caught this: halving four known shift schedules moved nothing, because nothing
+# was asking for a shift. Entries are the read site backed up two instructions
+# rather than the function start, which guards its top (FINDINGS 77c).
+DECODERS = ["0x00012BD0", "0x00012BD2",   # frame 0x410
+            "0x00012CBA", "0x00012CBC",   # frame 0x412
+            "0x00013732", "0x00013734",   # frame 0x491
+            "0x0002CF80"]                 # the gather, last
+
+
+def task_list():
+    path = os.path.join(OUT, "tasks.txt")
+    base = open(os.path.join(WORK, "tasks_ctl.txt")).read().strip()
+    with open(path, "w", newline="\n") as fh:
+        fh.write(base + "".join("+" + d for d in DECODERS))
+    return "@" + wsl(path)
+
+
+TASKS = None   # set in main once OUT exists
 
 # Values go into the CAN receive buffers the signal map established, which is where
 # the control code looks. Writing to the 0xFFFFA0xx block injects into the
@@ -129,7 +151,7 @@ def run(rom_path, dump_path, profile):
     env["SH2_DUMP"] = wsl(dump_path)
     env["WSLENV"] = "SH2_DUMP/u"
     subprocess.run(["wsl", SH2_WSL, wsl(rom_path), wsl(profile),
-                    WORK_WSL + "/perturb/out.csv", "@" + TASKS, "400000"],
+                    WORK_WSL + "/perturb/out.csv", TASKS, "400000"],
                    capture_output=True, env=env)
     return open(dump_path, "rb").read() if os.path.exists(dump_path) else b""
 
@@ -149,6 +171,8 @@ def main():
     args = ap.parse_args()
 
     os.makedirs(OUT, exist_ok=True)
+    global TASKS
+    TASKS = task_list()
     rom = open(ROM, "rb").read()
     nm = names()
 

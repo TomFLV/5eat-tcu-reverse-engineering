@@ -7037,3 +7037,41 @@ can send the firmware down a different branch, and then what moved is the branch
 and not the table. And both a doubling and a halving are run, because in a
 controller full of limits they are not mirror images of each other - an effect that
 saturates upward can still be visible downward.
+
+### 85a. The instrument check fails, and what that does and does not invalidate
+
+Before trusting the perturbation sweep on unknown tables, it was run on tables
+whose purpose is already established: four shift schedules, identified
+independently, in real units, verified against rimwall's published chart. Halving
+a shift schedule should change when the controller shifts.
+
+    Shift Schedule 1 - Upshift   75 cells ->  0 addresses moved
+    Shift Schedule 2 - Upshift   75 cells ->  5 addresses moved
+    Shift Schedule 3 - Upshift   75 cells ->  0 addresses moved
+    Shift Schedule 4 - Upshift   75 cells ->  0 addresses moved
+
+Nothing gear-related moved in any of them.
+
+The first cause was the drive: the profile injects gear position through frame
+0x491, so the controller was being told what gear it was in and the schedule that
+would otherwise decide had nothing to do. The second was that the sweep ran the
+394-entry control list without the CAN decoders, so injected values sat in the
+receive buffers undecoded and the control path never saw them.
+
+Both were fixed. The check still fails. So the shift decision is not running in
+this task list at all, and no perturbation of a schedule could show up in it.
+
+WHAT THIS INVALIDATES. Any "no effect" result. A table that moves nothing under
+these drives may be inert, or may belong to a subsystem this task list does not
+execute - and the four shift schedules prove at least one such subsystem exists.
+Absence of an effect is not evidence of absence of meaning, and the sweep's
+negatives cannot be read as "this table does nothing".
+
+WHAT IT DOES NOT INVALIDATE. Any positive result. Changing a table and observing
+RAM change is causal regardless of what else the drive fails to exercise: if
+scaling 0E5224 moves AWD solenoid pressure, it moves AWD solenoid pressure. Those
+findings stand.
+
+So the sweep is worth finishing and its output is worth half of what it appears to
+be. That is a smaller claim than the one made when it was launched, and the check
+is the only reason the difference is known. It cost four runs.
