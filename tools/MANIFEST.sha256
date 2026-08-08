@@ -1,6 +1,6 @@
 # tools
 #
-# SHA-256 of every tracked file in this directory, 106 files, 5.2 MB.
+# SHA-256 of every tracked file in this directory, 103 files, 5.2 MB.
 # Recorded 2026-08-08. Verify with:  python tools/write-manifests.py --check
 #
 # These exist because this repository ships ROM images, decompiler output
@@ -67,7 +67,6 @@ cc4f0b985bc9f7cdd4a06e8ded482405372871f480aa1f08f169349f15dd9910  denso_xref.py
 4ce526fc8c5f40996a9c37bdeb0f87f51dfd1f52a28ae032a2dd24c8c82e4b3f  detect_fixed_point.py
 76cb6e3ef189bdd160fab85ea0219589d544f359b6db639be3354975e62fa2b6  downshift_pressure.json
 2ce68e73cc084d0da435d83df889fe7ad338d7ba5423ac432d82441a4aae38a3  dtc_conditions.json
-14ec1cf87969085e9444187bb24ea6ca25837732ae447fff721b1a85bf272268  dtc_ssm_map.json
 50a5ec983a63228234833309e952c039fe76cfa44f25e266a60d29807e89b702  dtc_table.json
 872821ffe42efd1f396b0ac68238f0f8bc6a3244cd92c2c9a6578e71423be5e4  extract_atf_blend.py
 0bc440b512a5d3ae651d92b3b8e8c2d03434e81d6b2dc5a105127f080c761418  extract_downshift_pressure.py
@@ -83,8 +82,6 @@ c6c4af9384ffcd0d35366eafdd42a6e44c88500766f3c7e5b385ee851f08cabf  extract_tcm_pi
 ebeb1233607043ba703f4ee223da00101b928d816a411e2f0e2190ac4ed2adb8  fetch_forum_thread.py
 78dd3cb947eb487363c486eb44b6cc3092e821a4a18a99443bece14acd1f8818  find_denso_pointer_tables.py
 9d29da5c5ea3c9aecd5d594d2edb89bf236917ca62e1eb8d5c6744dfa8f57a65  find_rom_offsets.py
-1ac0f9e89fde39f52969eb047233a1026689f152655db6e4fc19dad5e32ff913  freessm_crosscheck.py
-7533834c17b5badab4c43ecdeab5f4c642c601235087acd17db6a2dd457523a9  freessm_defs.py
 cd560f2a10871a4cf2119a91ddc3a9f63055020122f12a1b3a8664e1b1b067a1  generate_denso_def.py
 9f87415041a43e799c17c9fe8c12b8953db5615f103f02ade36ea18da06382ca  generate_logger_def.py
 40f1113326eb00508d7c131ed8128a5e50412d6a70616be2a6bd8707151f9ade  generate_romraider_def.py

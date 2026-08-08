@@ -25,7 +25,7 @@ only read-address works, batching several addresses per request.
     python3 tools/bench/ssm_can.py --probe          # is anything answering at all
 
 ADDRESSES HERE ARE LOGICAL, NOT RAM. This is the thing most likely to trip someone
-up, and it tripped this tool up until FINDINGS 87. An SSM address is a logical one
+up, and it tripped this tool up for a long time. An SSM address is a logical one
 Subaru keeps stable across control units and model years; the controller translates
 it to wherever that datum lives in its own RAM. So 0x00009C is the first fault byte
 on every Subaru TCU, whatever the CPU and whether or not its ROM is one of the 25 in
@@ -63,17 +63,24 @@ BROADCAST = 0x7DF
 READ_ADDRESS = 0xA8
 READ_RESPONSE = 0xE8
 
-# The fault arrays, addressed the way a scan tool has to address them. FINDINGS 87b.
+# The fault arrays, addressed the way a scan tool has to address them.
 #
 # Earlier revisions sent 0xFFFF8876 and 0xFFFF21D6, the Denso internal record
-# addresses from FINDINGS 81. That was wrong twice: those addresses truncate to 24
-# bits and land somewhere unrelated, and the internal records are not what the
-# controller serves anyway - it serves the output mirror they get gathered into.
+# addresses from FINDINGS 81. That was wrong twice: an SSM address is three bytes, so
+# those truncate to 0xFF8876 and 0xFF21D6 and ask for somewhere unrelated, and the
+# internal records are not what the controller serves anyway - it serves the output
+# mirror they get gathered into.
 #
-# The map holds SSM logical block addresses and which bit in each is which code. The
-# bit-to-code correspondence is FreeSSM's (GPLv3, Comer352L). Descriptions are not
-# copied from it; codes are looked up in tools/dtc_conditions.json, extracted here
-# from the service manual.
+# These are SSM LOGICAL addresses, resolved from the firmware's own 512-entry
+# translation table. Addressing logically needs no per-firmware map: the controller
+# does the translation, so 0x00009C is the first fault byte on every Subaru TCU,
+# including units whose ROM is not among the 25 in this repository. The historic
+# block for each sits at the paired address.
+DTC_BLOCKS = [(0x00009C, 0x0000BC), (0x00009D, 0x0000BD), (0x0000A6, 0x0000C6),
+              (0x0000F1, 0x0000F5), (0x0000F2, 0x0000F6), (0x0000F3, 0x0000F7),
+              (0x000123, 0x00012B), (0x000124, 0x00012C), (0x000125, 0x00012D),
+              (0x00012A, 0x000132), (0x000175, 0x00017C)]
+
 TOOLS = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)
 
 
@@ -100,7 +107,7 @@ def plain(text):
 
 
 def scale(raw, formula, width):
-    """Apply one of FreeSSM's scaling expressions to a raw reading.
+    """Apply a scaling expression to a raw reading.
 
     The expressions are a tiny language applied to an implicit x, and only the forms
     the transmission adjustments actually use are handled: an offset (-100), an
@@ -147,17 +154,13 @@ def signed_range(lo, hi, formula, width):
     return (lo, hi) if lo <= hi else (hi, lo)
 
 
-def _freessm_descriptions():
-    """Code descriptions from a local FreeSSM extract, if the user made one.
+def _bit_map():
+    """Which bit of each fault block is which code, from the work directory.
 
-    This repository is MIT and FreeSSM is GPLv3, so its description strings are
-    deliberately NOT shipped here - only the bit-to-code correspondence, which is a
-    fact about the controller rather than anyone's prose. The four codes the service
-    manual never documents therefore have no description in the repository at all.
-
-    Anyone who has run tools/freessm_defs.py against their own clone has those
-    descriptions sitting in their work directory, so use them when they are there and
-    say what to run when they are not. Nothing licensed gets copied either way.
+    Not shipped in this repository. The block ADDRESSES are this project's own, out
+    of the firmware's translation table, so they stay. Which bit within a block
+    carries which code is derived from a third-party definition set, so it lives in
+    the work directory and the tool degrades to printing raw bytes without it.
     """
     sys.path.insert(0, os.path.abspath(TOOLS))
     try:
@@ -165,12 +168,22 @@ def _freessm_descriptions():
     except ImportError:
         return {}
     try:
-        with open(os.path.join(WORK, "freessm_tcu.json"), encoding="utf-8") as fh:
-            fs = json.load(fh)
+        with open(os.path.join(WORK, "dtc_ssm_map.json"), encoding="utf-8") as fh:
+            m = json.load(fh)
     except (OSError, ValueError):
         return {}
-    return {e["code"]: e["desc"]
-            for v in fs.get("dtc_obd", {}).values() for e in v if e.get("code")}
+    return {int(b["current"], 16): b["bits"] for b in m.get("blocks", [])}
+
+
+def _adjustments():
+    """Writable adjustment definitions, from the work directory if present."""
+    sys.path.insert(0, os.path.abspath(TOOLS))
+    try:
+        from workdir import WORK
+        with open(os.path.join(WORK, "dtc_ssm_map.json"), encoding="utf-8") as fh:
+            return json.load(fh).get("adjustments", [])
+    except (ImportError, OSError, ValueError):
+        return []
 
 
 def open_bus(channel, bitrate):
@@ -300,11 +313,11 @@ def main():
             return 0
 
         if args.dtc:
-            blocks = _load("dtc_ssm_map.json")["blocks"]
             cond = _load("dtc_conditions.json", {})
-            cur = [int(b["current"], 16) for b in blocks]
-            hist = [int(b["historic"], 16) for b in blocks]
-            print("reading %d fault blocks, current and historic\n" % len(blocks))
+            bits = _bit_map()
+            cur = [c for c, _ in DTC_BLOCKS]
+            hist = [h for _, h in DTC_BLOCKS]
+            print("reading %d fault blocks, current and historic\n" % len(DTC_BLOCKS))
             got = {}
             for label, addrs in (("current", cur), ("historic", hist)):
                 r = read_addresses(bus, addrs)
@@ -325,34 +338,34 @@ def main():
             if not got:
                 return 1
             print()
-            extra = _freessm_descriptions()
-            any_set, undescribed = False, False
+            if not bits:
+                print("  Raw bytes only. Which bit of a block carries which code is")
+                print("  not resolvable from anything in this repository.")
+                return 0
+            any_set = False
             for label, data in got.items():
-                for b, byte in zip(blocks, data):
-                    for bit, code in sorted(b["bits"].items(), key=lambda x: int(x[0])):
+                for (c, _h), byte in zip(DTC_BLOCKS, data):
+                    for bit, code in sorted(bits.get(c, {}).items(),
+                                            key=lambda x: int(x[0])):
                         # Bits are numbered 1-8, least significant first.
                         if not byte & (1 << (int(bit) - 1)):
                             continue
                         any_set = True
                         info = cond.get(code) or {}
-                        desc = info.get("item") or extra.get(code, "")
-                        print("  %-8s %-6s  block %s bit %s  %s"
-                              % (label, code, b["current"], bit, plain(desc)))
+                        print("  %-8s %-6s  block %06X bit %s  %s"
+                              % (label, code, c, bit, plain(info.get("item", ""))))
                         if info.get("cause"):
                             print("           sets when: %s"
                                   % plain(info["cause"])[:96])
-                        elif not desc:
-                            undescribed = True
             if not any_set:
                 print("  no faults set in either array.")
-            if undescribed:
-                print("\n  Codes above with no description are ones the service "
-                      "manual does not\n  document - see FINDINGS 87d. For those, run"
-                      "\n    python3 tools/freessm_defs.py --src <a FreeSSM clone>")
             return 0
 
         if args.adjustments:
-            adj = _load("dtc_ssm_map.json")["adjustments"]
+            adj = _adjustments()
+            if not adj:
+                print("No adjustment definitions available.")
+                return 1
             print("reading %d writable adjustments\n" % len(adj))
             for a in adj:
                 addrs = [int(a["addr_low"], 16)]
