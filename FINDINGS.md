@@ -6804,3 +6804,56 @@ alongside it, so the first candidate hits.
 
 The app image was carrying the pre-DTC definitions; they have been refreshed and
 the app's own copy re-checked through the parser rather than assumed identical.
+
+## 83. Reading the controller without J2534 (2026-08-07)
+
+The obvious way to read a Subaru controller's memory is the Select Monitor through
+a Tactrix OpenPort's J2534 library. On this machine that library is
+
+    C:\Windows\SysWOW64\op20pt32.dll   PE machine type 0x14C, 32-bit x86
+
+registered only under `WOW6432Node\PassThruSupport.04.04`, with nothing in
+`System32`. The application this project ships bundles a 64-bit runtime, and a
+64-bit process cannot load a 32-bit library. That is not a configuration problem
+and no setting fixes it.
+
+It stopped mattering once the TCU's own receive table was read. Among the 36
+entries at 0x08600E are
+
+    0x7DF -> FFFF4011     functional broadcast
+    0x7E1 -> FFFF4011     physical request to this controller
+    0x7E9 -> FFFF4019     its response
+
+which is standard ISO 15765 diagnostic addressing. The controller can be read over
+CAN, with the adapter already working, and J2534 drops out of the problem.
+
+The protocol did not need guessing either. Section 11e decompiled RomRaider's own
+SSMProtocol for the iso15765 variant - three-byte addresses,
+READ_ADDRESS_COMMAND = 0xA8, 500,000 baud - and a forum post independently
+confirmed the same command bytes seen in a real TCU's disassembly. Block reads are
+explicitly unsupported on CAN; read-address batches several addresses per request,
+which suits reading fourteen consecutive bytes.
+
+`tools/bench/ssm_can.py` implements it. ISO-TP is written out rather than pulled in
+as a dependency: the requests are a few dozen bytes and one fewer thing to install
+on a bench machine is worth twenty lines.
+
+### 83a. What the transport test caught
+
+Fourteen addresses is a 44-byte request, so it must split across a first frame and
+consecutive frames with flow control between them - the part most likely to be
+wrong and the part reading the code will not reveal. A fake controller on a virtual
+interface answers the other half of the protocol, and the first run came back with
+five bytes of a fourteen-byte reply.
+
+The send routine had the flow-control CAN ID hardcoded to the response ID. That is
+right for the tool talking to a controller and wrong for anything answering, so
+every multi-frame reply was truncated to its first frame while the sender sat
+waiting for a flow control that was on the other ID. It is now a parameter, and the
+exchange completes with all fourteen bytes in order.
+
+That test proves the transport, and nothing more. The command byte, the truncation
+of 0xFFFF8876 to the low 24 bits an SSM address can hold, and the 500 kbit/s
+bitrate are all still assumptions - the M32R units have 24-bit addresses natively
+and this has never run against a Denso unit. If reads come back empty, the address
+width is the first thing to suspect.
