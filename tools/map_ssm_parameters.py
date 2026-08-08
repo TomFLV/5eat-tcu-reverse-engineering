@@ -81,7 +81,19 @@ def fetch_defs(path, offline=False):
     """
     if path and os.path.exists(path):
         return open(path, encoding="utf-8", errors="replace").read()
-    cached = os.path.join(HERE, "SSMFlagbyteDefinitions_en.cpp")
+    # Cache OUTSIDE the repository. This is someone else's GPL source and it has no
+    # business sitting in the working tree even gitignored: one `git add -f`, one
+    # archive of the folder, one copy to a new clone, and it is being redistributed
+    # under a licence that is not ours to grant.
+    try:
+        sys.path.insert(0, HERE)
+        from workdir import WORK
+        cachedir = WORK
+    except ImportError:
+        cachedir = HERE
+    if not os.path.isdir(cachedir):
+        os.makedirs(cachedir)
+    cached = os.path.join(cachedir, "SSMFlagbyteDefinitions_en.cpp")
     if os.path.exists(cached):
         return open(cached, encoding="utf-8", errors="replace").read()
     if offline:
