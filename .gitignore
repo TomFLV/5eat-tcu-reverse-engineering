@@ -33,3 +33,8 @@ decompiled-denso/*.c.tmp
 # docs/RUNNING-THE-TOOLS.md. Committing it would mean a stale copy silently
 # disagreeing with the disassembly it was derived from.
 tools/denso_callgraph.json
+
+# Written after every one of 1,480 runs during a sweep, so it can never match a
+# manifest hashed at any single moment - three CI failures in a row said so. The
+# finished result is copied to tools/denso_table_effects.json deliberately, once.
+tools/denso_perturb_results.json

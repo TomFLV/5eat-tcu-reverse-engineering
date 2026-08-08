@@ -35,10 +35,18 @@ import binascii
 import sys
 import time
 
+# Imported lazily rather than at module load: --help should work on a machine
+# without python-can, and CI has none. Exiting at import made the tool unable to
+# say what it does.
 try:
     import can
 except ImportError:
-    sys.exit("python-can is not installed - run tools/bench/setup-wsl-can.sh")
+    can = None
+
+
+def _need_can():
+    if can is None:
+        sys.exit("python-can is not installed - run tools/bench/setup-wsl-can.sh")
 
 REQ_ID = 0x7E1          # physical request to the transmission controller
 RESP_ID = 0x7E9         # its response
@@ -54,6 +62,7 @@ DTC_BYTES = 14
 
 
 def open_bus(channel, bitrate):
+    _need_can()
     try:
         return can.Bus(interface="socketcan", channel=channel, bitrate=bitrate)
     except Exception as e:

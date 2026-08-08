@@ -34,10 +34,18 @@ import argparse
 import sys
 import time
 
+# Imported lazily rather than at module load: --help should work on a machine
+# without python-can, and CI has none. Exiting at import made the tool unable to
+# say what it does.
 try:
     import can
 except ImportError:
-    sys.exit("python-can is not installed - run tools/bench/setup-wsl-can.sh")
+    can = None
+
+
+def _need_can():
+    if can is None:
+        sys.exit("python-can is not installed - run tools/bench/setup-wsl-can.sh")
 
 # Frame layouts as the emulator mapped them. Byte positions are from the signal
 # map; the SCALING of most of these is not established, so the values below are
@@ -54,6 +62,7 @@ FRAMES = {
 
 
 def bus(channel, bitrate):
+    _need_can()
     try:
         return can.Bus(interface="socketcan", channel=channel, bitrate=bitrate)
     except Exception as e:

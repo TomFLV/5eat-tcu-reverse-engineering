@@ -18,10 +18,9 @@ self-test: run the instrument against a known answer before believing it on an
 unknown one.
 """
 
-import json
+import argparse
 import os
 import struct
-import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -58,6 +57,13 @@ def perturb_data(rom, addr, rows, cols, factor):
 
 
 def main():
+    argparse.ArgumentParser(
+        description="Check the perturbation method against tables whose purpose "
+                    "is already known.",
+        epilog="Takes no arguments: it runs a fixed check against four shift "
+               "schedules established independently and verified against a "
+               "published chart.").parse_args()
+
     os.makedirs(P.OUT, exist_ok=True)
     # The sweep builds its task list in main(); this uses the same one, so the
     # check exercises exactly what the sweep will.
