@@ -7118,3 +7118,32 @@ The section letters run A: through Z: and then AA: to AT:, and the space after t
 colon is present early and absent later. Requiring it returned 27 codes of 46 -
 and every one of those 27 was correct, which is exactly why the shortfall was worth
 chasing rather than accepting.
+
+### 86b. The manual and the firmware corroborate each other exactly
+
+The manual is for an M32R TCU, which settles a question left open in 18e and 18f:
+it never names a model, and the connector-grouping argument for it describing a
+different module was withdrawn as too weak. The codes settle it properly.
+
+    manual states                    46
+    firmware carries                 53
+    present in both                  46
+    in the manual but not the ROM     0
+
+Every code the manual names exists in the M32R firmware's own table, and it names
+nothing the firmware does not carry. A service manual and a decompiled ROM,
+independent sources with no path between them, agreeing on all 46.
+
+The firmware carries seven the manual's diagnostic section does not cover:
+
+    P0880  P0883  P0955  P1760  P1761  P1762  P1841
+
+P0880, P0883 and P0955 sit in group 11 with the TCM power supply and starter
+disable codes; P1760 to P1762 in group 6 alongside P1817. Codes present in the ROM
+and absent from the diagnostics section are the ones a scan tool could report with
+nothing in the book to look up, which makes them worth knowing about rather than a
+discrepancy to explain away.
+
+So for an M32R unit the picture is now complete on both sides: which bit in which
+RAM byte carries each code (section 16b, resolved per firmware by
+`tools/m32r_dtc_ram.py`), and what condition sets it (`tools/dtc_conditions.json`).

@@ -15,7 +15,12 @@ solenoid output and logging can be exercised without a car.
 > On a Hitachi `31711AJ675` (2006 B9 Tribeca) the connector identification holds:
 > **white is B54** and carries every output device, **grey is B55**.
 >
-> The manual's provenance is still not established: across 269 pages it never
+> **The manual is for an M32R TCU** - confirmed by its own contents rather than
+> inferred: every one of the 46 trouble codes it documents exists in the M32R
+> firmware's code table, and it names none the firmware does not carry. Two
+> independent sources with no path between them, agreeing exactly.
+>
+> It still never names a vehicle: across 269 pages it never
 > names a model — no Tribeca, no Legacy, no Outback — identifying itself only by
 > engine family, `H6DO`, 44 times, and it references a "body integrated unit"
 > architecture newer than a 2006 car. So treat the pin FUNCTIONS as plausible
