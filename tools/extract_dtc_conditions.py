@@ -31,11 +31,15 @@ The other obvious source, the "List of Diagnostic Trouble Code" summary table, w
 tried and abandoned: its columns shift from page to page, so splitting on positions
 taken from the header scrambles rows into each other.
 
-A CAUTION THAT APPLIES TO THE WHOLE FILE. This manual names no model - 269 pages,
-no Tribeca, no Legacy, no Outback, only the engine family H6DO. DTC numbers and
-meanings are stable across the 5EAT family, but treat anything connector- or
-pin-specific in it as belonging to whatever vehicle it is for, which is not
-established. See FINDINGS 18e.
+WHICH TCU THIS MANUAL IS FOR: M32R, and its own contents establish that rather than
+any outside claim. All 46 codes it documents exist in the M32R firmware's code
+table, and it names none the firmware does not carry. The firmware carries seven it
+does not cover - P0880, P0883, P0955, P1760 to P1762, P1841 - so a scan tool can
+report codes with nothing in the book to look up. See FINDINGS 86b.
+
+It still names no vehicle across 269 pages - no Tribeca, no Legacy, no Outback, only
+the engine family H6DO - so treat anything connector- or pin-specific in it as
+belonging to whichever car it is for, which remains unestablished. See FINDINGS 18e.
 """
 
 import argparse
