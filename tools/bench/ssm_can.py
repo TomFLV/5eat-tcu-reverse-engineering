@@ -19,19 +19,27 @@ for the iso15765 variant - three-byte addresses, READ_ADDRESS_COMMAND = 0xA8,
 observed in a real TCU's disassembly. Block reads throw "not supported on CAN";
 only read-address works, batching several addresses per request.
 
-    python3 tools/bench/ssm_can.py --dtc            # the two fault arrays
-    python3 tools/bench/ssm_can.py --read FFFF8876 --count 14
+    python3 tools/bench/ssm_can.py --dtc            # faults, decoded to P-codes
+    python3 tools/bench/ssm_can.py --adjustments    # the writable trim values
+    python3 tools/bench/ssm_can.py --read 00009C --count 4
     python3 tools/bench/ssm_can.py --probe          # is anything answering at all
 
-ONE THING TO WATCH. SSM addresses are three bytes and this controller's RAM lives
-at 0xFFFF____, so only the low 24 bits fit. The M32R units have the same protocol
-and 24-bit addresses natively, so this has never been tested against a Denso unit.
-If reads come back empty or wrong, that truncation is the first thing to suspect,
-and --raw lets you send an address byte-for-byte to check.
+ADDRESSES HERE ARE LOGICAL, NOT RAM. This is the thing most likely to trip someone
+up, and it tripped this tool up until FINDINGS 87. An SSM address is a logical one
+Subaru keeps stable across control units and model years; the controller translates
+it to wherever that datum lives in its own RAM. So 0x00009C is the first fault byte
+on every Subaru TCU, whatever the CPU and whether or not its ROM is one of the 25 in
+this repository.
+
+Reading a firmware RAM address instead does not work, and fails quietly rather than
+loudly: an SSM address is three bytes, so 0xFFFF8876 goes out as 0xFF8876 and returns
+whatever happens to live there.
 """
 
 import argparse
 import binascii
+import json
+import os
 import sys
 import time
 
@@ -55,10 +63,114 @@ BROADCAST = 0x7DF
 READ_ADDRESS = 0xA8
 READ_RESPONSE = 0xE8
 
-# The two arrays the whole bench exercise exists to read. FINDINGS 81.
-DTC_LIVE = 0xFFFF8876
-DTC_CONFIRMED = 0xFFFF21D6
-DTC_BYTES = 14
+# The fault arrays, addressed the way a scan tool has to address them. FINDINGS 87b.
+#
+# Earlier revisions sent 0xFFFF8876 and 0xFFFF21D6, the Denso internal record
+# addresses from FINDINGS 81. That was wrong twice: those addresses truncate to 24
+# bits and land somewhere unrelated, and the internal records are not what the
+# controller serves anyway - it serves the output mirror they get gathered into.
+#
+# The map holds SSM logical block addresses and which bit in each is which code. The
+# bit-to-code correspondence is FreeSSM's (GPLv3, Comer352L). Descriptions are not
+# copied from it; codes are looked up in tools/dtc_conditions.json, extracted here
+# from the service manual.
+TOOLS = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)
+
+
+def _load(name, default=None):
+    try:
+        with open(os.path.join(TOOLS, name), encoding="utf-8") as fh:
+            return json.load(fh)
+    except (OSError, ValueError):
+        if default is None:
+            raise
+        return default
+
+
+#: Typographic punctuation the manual uses, and its plain equivalent. The extracted
+#: data is correct and stays that way - this is only for printing. A Windows console
+#: in its default code page renders a curly quote as a replacement character, which
+#: on a bench looks exactly like corrupted data at the moment you least want doubt.
+_PUNCT = {0x2018: "'", 0x2019: "'", 0x201C: '"', 0x201D: '"',
+          0x2013: "-", 0x2014: "-", 0x2026: "...", 0x00B0: " deg"}
+
+
+def plain(text):
+    return (text or "").translate(_PUNCT)
+
+
+def scale(raw, formula, width):
+    """Apply one of FreeSSM's scaling expressions to a raw reading.
+
+    The expressions are a tiny language applied to an implicit x, and only the forms
+    the transmission adjustments actually use are handled: an offset (-100), an
+    offset then a divisor (-100/50), a multiplier (*1), and a signed reinterpretation
+    (s16/50). Anything else returns None and the caller shows the raw value, which is
+    the honest outcome - a wrong number here would be believed.
+
+    s16 is not decoration. 0x171 is a signed torque correction whose stated minimum
+    is 63535, which is -2001 as a signed 16-bit value. Compared unsigned it looks
+    like a minimum above its own maximum, and every reading looks out of range.
+    """
+    if not formula:
+        return None
+    f = formula.strip()
+    if f.startswith("s"):
+        bits = 16 if f.startswith("s16") else 8
+        if raw >= 1 << (bits - 1):
+            raw -= 1 << bits
+        f = f[3:] if f.startswith("s16") else f[2:]
+        if not f:
+            return float(raw)
+    try:
+        if f.startswith("-"):
+            off, _, div = f[1:].partition("/")
+            v = raw - float(off)
+            return v / float(div) if div else v
+        if f.startswith("*"):
+            mul, _, div = f[1:].partition("/")
+            v = raw * float(mul)
+            return v / float(div) if div else v
+        if f.startswith("/"):
+            return raw / float(f[1:])
+    except ValueError:
+        return None
+    return None
+
+
+def signed_range(lo, hi, formula, width):
+    """A stated min/max, reinterpreted signed when the formula says it is."""
+    if formula and formula.strip().startswith("s"):
+        bits = 16 if formula.strip().startswith("s16") else 8
+        lo = lo - (1 << bits) if lo >= 1 << (bits - 1) else lo
+        hi = hi - (1 << bits) if hi >= 1 << (bits - 1) else hi
+    return (lo, hi) if lo <= hi else (hi, lo)
+
+
+def _freessm_descriptions():
+    """Code descriptions from a local FreeSSM extract, if the user made one.
+
+    This repository is MIT and FreeSSM is GPLv3, so its description strings are
+    deliberately NOT shipped here - only the bit-to-code correspondence, which is a
+    fact about the controller rather than anyone's prose. The four codes the service
+    manual never documents therefore have no description in the repository at all.
+
+    Anyone who has run tools/freessm_defs.py against their own clone has those
+    descriptions sitting in their work directory, so use them when they are there and
+    say what to run when they are not. Nothing licensed gets copied either way.
+    """
+    sys.path.insert(0, os.path.abspath(TOOLS))
+    try:
+        from workdir import WORK
+    except ImportError:
+        return {}
+    try:
+        with open(os.path.join(WORK, "freessm_tcu.json"), encoding="utf-8") as fh:
+            fs = json.load(fh)
+    except (OSError, ValueError):
+        return {}
+    return {e["code"]: e["desc"]
+            for v in fs.get("dtc_obd", {}).values() for e in v if e.get("code")}
 
 
 def open_bus(channel, bitrate):
@@ -163,7 +275,9 @@ def main():
     ap.add_argument("--probe", action="store_true",
                     help="is anything answering on the diagnostic IDs")
     ap.add_argument("--dtc", action="store_true",
-                    help="read both fault arrays and decode them")
+                    help="read both fault arrays and decode them to P-codes")
+    ap.add_argument("--adjustments", action="store_true",
+                    help="read the writable line-pressure and AWD trim values")
     ap.add_argument("--read", metavar="HEXADDR")
     ap.add_argument("--count", type=int, default=1)
     args = ap.parse_args()
@@ -173,7 +287,7 @@ def main():
         if args.probe:
             print("listening for any diagnostic traffic on 0x%03X and 0x%03X,"
                   " then asking\n" % (REQ_ID, RESP_ID))
-            r = read_addresses(bus, [DTC_LIVE])
+            r = read_addresses(bus, [0x00009C])   # first fault byte, logical
             if r is None:
                 print("  no answer.")
                 print("  Things to check, in the order worth checking them:")
@@ -186,20 +300,86 @@ def main():
             return 0
 
         if args.dtc:
-            print("reading the two fault arrays\n")
-            for label, base in (("live      0x%08X" % DTC_LIVE, DTC_LIVE),
-                                ("confirmed 0x%08X" % DTC_CONFIRMED,
-                                 DTC_CONFIRMED)):
-                addrs = [base + i for i in range(DTC_BYTES)]
+            blocks = _load("dtc_ssm_map.json")["blocks"]
+            cond = _load("dtc_conditions.json", {})
+            cur = [int(b["current"], 16) for b in blocks]
+            hist = [int(b["historic"], 16) for b in blocks]
+            print("reading %d fault blocks, current and historic\n" % len(blocks))
+            got = {}
+            for label, addrs in (("current", cur), ("historic", hist)):
                 r = read_addresses(bus, addrs)
-                if r is None:
-                    print("  %s  no answer" % label)
+                if r is None or isinstance(r, tuple):
+                    print("  %-8s no answer" % label)
                     continue
                 data = bytes(r)
-                print("  %s  %s" % (label,
-                                    binascii.hexlify(data, " ").decode()))
-                if set(data) <= {0x5A, 0xA5}:
-                    print("       ^ that is the RAM self-test pattern, not faults")
+                got[label] = data
+                print("  %-8s %s" % (label,
+                                     binascii.hexlify(data, " ").decode()))
+                # Twelve bytes of 0x5A/0xA5 decode into a page of plausible faults
+                # if taken at face value. That pattern is the RAM self-test, and it
+                # was nearly reported as twenty real codes once already.
+                if data and set(data) <= {0x5A, 0xA5}:
+                    print("           ^ RAM self-test pattern, not faults")
+                    got.pop(label)
+
+            if not got:
+                return 1
+            print()
+            extra = _freessm_descriptions()
+            any_set, undescribed = False, False
+            for label, data in got.items():
+                for b, byte in zip(blocks, data):
+                    for bit, code in sorted(b["bits"].items(), key=lambda x: int(x[0])):
+                        # Bits are numbered 1-8, least significant first.
+                        if not byte & (1 << (int(bit) - 1)):
+                            continue
+                        any_set = True
+                        info = cond.get(code) or {}
+                        desc = info.get("item") or extra.get(code, "")
+                        print("  %-8s %-6s  block %s bit %s  %s"
+                              % (label, code, b["current"], bit, plain(desc)))
+                        if info.get("cause"):
+                            print("           sets when: %s"
+                                  % plain(info["cause"])[:96])
+                        elif not desc:
+                            undescribed = True
+            if not any_set:
+                print("  no faults set in either array.")
+            if undescribed:
+                print("\n  Codes above with no description are ones the service "
+                      "manual does not\n  document - see FINDINGS 87d. For those, run"
+                      "\n    python3 tools/freessm_defs.py --src <a FreeSSM clone>")
+            return 0
+
+        if args.adjustments:
+            adj = _load("dtc_ssm_map.json")["adjustments"]
+            print("reading %d writable adjustments\n" % len(adj))
+            for a in adj:
+                addrs = [int(a["addr_low"], 16)]
+                if a["addr_high"]:
+                    addrs.insert(0, int(a["addr_high"], 16))
+                r = read_addresses(bus, addrs)
+                if r is None or isinstance(r, tuple):
+                    print("  %-6s %-38s no answer"
+                          % (a["addr_low"], plain(a["title"])[:38]))
+                    continue
+                raw = int.from_bytes(bytes(r), "big")
+                width = len(addrs) * 8
+                lo, hi = signed_range(a["raw_min"], a["raw_max"], a["formula"],
+                                      width)
+                sraw = raw
+                if a["formula"] and a["formula"].strip().startswith("s") \
+                        and raw >= 1 << (width - 1):
+                    sraw = raw - (1 << width)
+                flag = "" if lo <= sraw <= hi else \
+                    "  <- outside the %d..%d the definition allows" % (lo, hi)
+                v = scale(raw, a["formula"], width)
+                shown = ("%8.2f" % v) if v is not None else ("%8d raw" % raw)
+                print("  %-6s %-38s %s %-5s (default %d)%s"
+                      % (a["addr_low"], plain(a["title"])[:38], shown,
+                         plain(a["unit"]), a["raw_default"], flag))
+            print("\nThese are writable over SSM, but this tool only reads. Writing "
+                  "is\nnot implemented and should not be until reads are trusted.")
             return 0
 
         if args.read:

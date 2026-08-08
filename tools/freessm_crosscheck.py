@@ -13,8 +13,11 @@ no connection to any of this firmware work.
 
 WHAT THIS ESTABLISHED, AND THE THING IT LOOKED LIKE IT CONTRADICTED
 
-The join agrees on 689 rows across the 25 firmwares and contradicts on none, which
-is worth more than the 234 rows it newly names.
+The join agrees on 689 rows across the 25 firmwares and contradicts on none. It
+newly names nothing: an earlier reading of this reported 234 new names, but every one
+of those was a switch byte, which carries up to eight named signals one per bit and
+so has no single name field to be empty. Asking the wrong field made a count that
+looked like a result. The 689 agreements are the result.
 
 The trouble code blocks resolve too, and at first they appeared to refute the M32R
 fault-flag addresses in section 16b: FreeSSM's DTC addresses come out at 0x8051xx
@@ -83,7 +86,7 @@ def label_map(fs):
 
 def join(sp, label):
     report = {}
-    tot = dict(rows=0, agrees=0, new=0, conflict=0)
+    tot = dict(rows=0, agrees=0, new=0, conflict=0, switch=0)
     for rom in sorted(sp):
         rows = [r for r in sp[rom]["rows"] if r.get("ram")]
         out = []
@@ -91,10 +94,18 @@ def join(sp, label):
             lb = label.get(r["ssm"])
             if not lb:
                 continue
+            # A switch byte carries up to eight named signals, one per bit, so it
+            # has a "switches" list and no single "name". Testing only the name
+            # field counted all 234 of them as newly named when every one was
+            # already fully described - the count looked like a result and was an
+            # artifact of asking the wrong field.
             had = (r.get("name") or "").strip()
-            status = ("agrees" if had.lower() == lb["name"].lower()
-                      else "conflict") if had else "new"
-            tot[status if status != "agrees" else "agrees"] += 1
+            if not had and r.get("switches"):
+                status = "switch"
+            else:
+                status = ("agrees" if had.lower() == lb["name"].lower()
+                          else "conflict") if had else "new"
+            tot[status] += 1
             out.append(dict(ssm="0x%03X" % r["ssm"], ram="0x%08X" % r["ram"],
                             had=had or None, freessm=lb["name"], unit=lb["unit"],
                             formula=lb["formula"], kind=lb["kind"],
@@ -125,9 +136,10 @@ def main():
     label = label_map(fs)
     print("FreeSSM transmission labels on %d distinct SSM addresses" % len(label))
     report, tot = join(sp, label)
-    print("join over %d firmwares: %d mapped rows, %d agree, %d newly named, "
-          "%d conflict\n" % (len(sp), tot["rows"], tot["agrees"], tot["new"],
-                             tot["conflict"]))
+    print("join over %d firmwares: %d mapped rows, %d agree, %d switch bytes "
+          "already\n  named per bit, %d newly named, %d conflict\n"
+          % (len(sp), tot["rows"], tot["agrees"], tot["switch"], tot["new"],
+             tot["conflict"]))
 
     # --- trouble codes, three independent accounts
     manual = set(json.load(open(args.conditions, encoding="utf-8")))

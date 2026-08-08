@@ -12,7 +12,15 @@
   <transport id="iso9141" name="K-Line" desc="Subaru Select Monitor over the diagnostic K-line">
    <module id="TCU" address="0x18" tester="0xF0" desc="Transmission Control Unit" fastpoll="true" />
   </transport>
-  <ecuparam id="P001" name="Battery Voltage" desc="Select Monitor address 0x01C" target="2">
+  <ecuparam id="P001" name="Engine Speed" desc="Select Monitor address 0x00E" target="2">
+   <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address length="2">0x00000E</address>
+   </ecu>
+   <conversions>
+    <conversion units="rpm" expr="x/4" format="0.00" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P002" name="Battery Voltage" desc="Select Monitor address 0x01C" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x00001C</address>
    </ecu>
@@ -20,7 +28,7 @@
     <conversion units="V" expr="x*2/25" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P002" name="Accelerator Pedal Travel" desc="Select Monitor address 0x029" target="2">
+  <ecuparam id="P003" name="Accelerator Pedal Travel" desc="Select Monitor address 0x029" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000029</address>
    </ecu>
@@ -28,7 +36,7 @@
     <conversion units="%" expr="x/255*100" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P003" name="Front Wheel Speed" desc="Select Monitor address 0x048" target="2">
+  <ecuparam id="P004" name="Front Wheel Speed" desc="Select Monitor address 0x048" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000048</address>
    </ecu>
@@ -36,7 +44,7 @@
     <conversion units="km/h" expr="x*1" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P004" name="Gear Position" desc="Select Monitor address 0x04A" target="2">
+  <ecuparam id="P005" name="Gear Position" desc="Select Monitor address 0x04A" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x00004A</address>
    </ecu>
@@ -44,7 +52,7 @@
     <conversion units="gear" expr="x+1" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P005" name="Turbine Revolution Speed" desc="Select Monitor address 0x04F" target="2">
+  <ecuparam id="P006" name="Turbine Revolution Speed" desc="Select Monitor address 0x04F" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x00004F</address>
    </ecu>
@@ -52,7 +60,7 @@
     <conversion units="rpm" expr="x*32" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P006" name="Rear Wheel Speed" desc="Select Monitor address 0x051" target="2">
+  <ecuparam id="P007" name="Rear Wheel Speed" desc="Select Monitor address 0x051" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000051</address>
    </ecu>
@@ -60,7 +68,7 @@
     <conversion units="km/h" expr="x*1" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P007" name="Lateral G Sensor Voltage" desc="Select Monitor address 0x055" target="2">
+  <ecuparam id="P008" name="Lateral G Sensor Voltage" desc="Select Monitor address 0x055" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000055</address>
    </ecu>
@@ -68,7 +76,7 @@
     <conversion units="V" expr="x/50" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P008" name="ATF Temperature" desc="Select Monitor address 0x056" target="2">
+  <ecuparam id="P009" name="ATF Temperature" desc="Select Monitor address 0x056" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000056</address>
    </ecu>
@@ -76,7 +84,7 @@
     <conversion units="°C" expr="x-50" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P009" name="ATF Temperature 2" desc="Select Monitor address 0x05A" target="2">
+  <ecuparam id="P010" name="ATF Temperature 2" desc="Select Monitor address 0x05A" target="2">
    <ecu id="91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000">
     <address>0x00005A</address>
    </ecu>
@@ -84,7 +92,7 @@
     <conversion units="°C" expr="x-50" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P010" name="AT Turbine Speed 1" desc="Select Monitor address 0x05C" target="2">
+  <ecuparam id="P011" name="AT Turbine Speed 1" desc="Select Monitor address 0x05C" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x00005C</address>
    </ecu>
@@ -92,7 +100,7 @@
     <conversion units="rpm" expr="x*32" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P011" name="AT Turbine Speed 2" desc="Select Monitor address 0x05D" target="2">
+  <ecuparam id="P012" name="AT Turbine Speed 2" desc="Select Monitor address 0x05D" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x00005D</address>
    </ecu>
@@ -100,7 +108,7 @@
     <conversion units="rpm" expr="x*32" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P012" name="H&amp;LR/C Solenoid Valve Current" desc="Select Monitor address 0x140" target="2">
+  <ecuparam id="P013" name="H&amp;LR/C Solenoid Valve Current" desc="Select Monitor address 0x140" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000140</address>
    </ecu>
@@ -108,7 +116,7 @@
     <conversion units="A" expr="x/255" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P013" name="D/C Solenoid Valve Current" desc="Select Monitor address 0x141" target="2">
+  <ecuparam id="P014" name="D/C Solenoid Valve Current" desc="Select Monitor address 0x141" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000141</address>
    </ecu>
@@ -116,7 +124,7 @@
     <conversion units="A" expr="x/255" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P014" name="F/B Solenoid Valve Current" desc="Select Monitor address 0x142" target="2">
+  <ecuparam id="P015" name="F/B Solenoid Valve Current" desc="Select Monitor address 0x142" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000142</address>
    </ecu>
@@ -124,7 +132,7 @@
     <conversion units="A" expr="x/255" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P015" name="I/C Solenoid Valve Current" desc="Select Monitor address 0x143" target="2">
+  <ecuparam id="P016" name="I/C Solenoid Valve Current" desc="Select Monitor address 0x143" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000143</address>
    </ecu>
@@ -132,7 +140,7 @@
     <conversion units="A" expr="x/255" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P016" name="P/L Solenoid Valve Current" desc="Select Monitor address 0x144" target="2">
+  <ecuparam id="P017" name="P/L Solenoid Valve Current" desc="Select Monitor address 0x144" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000144</address>
    </ecu>
@@ -140,7 +148,7 @@
     <conversion units="A" expr="x/255" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P017" name="L/U Solenoid Valve Current" desc="Select Monitor address 0x145" target="2">
+  <ecuparam id="P018" name="L/U Solenoid Valve Current" desc="Select Monitor address 0x145" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000145</address>
    </ecu>
@@ -148,7 +156,7 @@
     <conversion units="A" expr="x/255" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P018" name="AWD Solenoid Valve Current" desc="Select Monitor address 0x146" target="2">
+  <ecuparam id="P019" name="AWD Solenoid Valve Current" desc="Select Monitor address 0x146" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000146</address>
    </ecu>
@@ -156,7 +164,7 @@
     <conversion units="A" expr="x/255" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P019" name="H&amp;LR/C Solenoid Valve Pressure" desc="Select Monitor address 0x148" target="2">
+  <ecuparam id="P020" name="H&amp;LR/C Solenoid Valve Pressure" desc="Select Monitor address 0x148" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000148</address>
    </ecu>
@@ -164,7 +172,7 @@
     <conversion units="kPa" expr="x*10" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P020" name="D/C Solenoid Valve Pressure" desc="Select Monitor address 0x149" target="2">
+  <ecuparam id="P021" name="D/C Solenoid Valve Pressure" desc="Select Monitor address 0x149" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000149</address>
    </ecu>
@@ -172,7 +180,7 @@
     <conversion units="kPa" expr="x*10" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P021" name="F/B Solenoid Valve Pressure" desc="Select Monitor address 0x14A" target="2">
+  <ecuparam id="P022" name="F/B Solenoid Valve Pressure" desc="Select Monitor address 0x14A" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x00014A</address>
    </ecu>
@@ -180,7 +188,7 @@
     <conversion units="kPa" expr="x*10" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P022" name="I/C Solenoid Valve Pressure" desc="Select Monitor address 0x14B" target="2">
+  <ecuparam id="P023" name="I/C Solenoid Valve Pressure" desc="Select Monitor address 0x14B" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x00014B</address>
    </ecu>
@@ -188,7 +196,7 @@
     <conversion units="kPa" expr="x*10" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P023" name="P/L Solenoid Valve Pressure" desc="Select Monitor address 0x14C" target="2">
+  <ecuparam id="P024" name="P/L Solenoid Valve Pressure" desc="Select Monitor address 0x14C" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x00014C</address>
    </ecu>
@@ -196,7 +204,7 @@
     <conversion units="kPa" expr="x*10" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P024" name="L/U Solenoid Valve Pressure" desc="Select Monitor address 0x14D" target="2">
+  <ecuparam id="P025" name="L/U Solenoid Valve Pressure" desc="Select Monitor address 0x14D" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x00014D</address>
    </ecu>
@@ -204,7 +212,7 @@
     <conversion units="kPa" expr="x*10" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P025" name="AWD Solenoid Valve Pressure" desc="Select Monitor address 0x14E" target="2">
+  <ecuparam id="P026" name="AWD Solenoid Valve Pressure" desc="Select Monitor address 0x14E" target="2">
    <ecu id="8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x00014E</address>
    </ecu>
@@ -212,7 +220,7 @@
     <conversion units="kPa" expr="x*10" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P026" name="SI-Drive Mode" desc="Select Monitor address 0x16A. Raw value: FreeSSM gives the conversion as '0=---,1=S,2=S#,3=I,8=S#,16=I'" target="2">
+  <ecuparam id="P027" name="SI-Drive Mode" desc="Select Monitor address 0x16A. Raw value: FreeSSM gives the conversion as '0=---,1=S,2=S#,3=I,8=S#,16=I'" target="2">
    <ecu id="8EFB206000,99DE206000,A3DE207100,B1AE207100,C1D1207000">
     <address>0x00016A</address>
    </ecu>
@@ -220,7 +228,7 @@
     <conversion units="raw" expr="x" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P027" name="Fwd/B Solenoid Valve Current" desc="Select Monitor address 0x185" target="2">
+  <ecuparam id="P028" name="Fwd/B Solenoid Valve Current" desc="Select Monitor address 0x185" target="2">
    <ecu id="8CEB207000,8EFB206000,99DE206000,A3DE207100,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000185</address>
    </ecu>
@@ -228,7 +236,7 @@
     <conversion units="A" expr="x/255" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P028" name="Fwd/B Solenoid Valve Target Pressure" desc="Select Monitor address 0x186" target="2">
+  <ecuparam id="P029" name="Fwd/B Solenoid Valve Target Pressure" desc="Select Monitor address 0x186" target="2">
    <ecu id="8CEB207000,8EFB206000,99DE206000,A3DE207100,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000186</address>
    </ecu>

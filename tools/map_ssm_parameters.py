@@ -121,14 +121,27 @@ def parse_defs(text):
         f = m.group(1).split(";")
         try:
             if section == "mb" and len(f) >= 8:
-                hi, lo, name, unit, conv = f[3], f[4], f[5], f[6], f[7]
-                out.setdefault(int(hi, 16), {}).update(
+                # FreeSSM's own parser reads field 3 as addrLow and field 4 as
+                # addrHigh, and low/high there mean byte SIGNIFICANCE, not address
+                # order: engine speed is "00000F;00000E", so 0x0E carries the most
+                # significant byte and 0x0F the least.
+                #
+                # These two were the wrong way round. That did not corrupt readings,
+                # it silently DROPPED every 16-bit parameter: the generator emits a
+                # pair at whichever address is marked high and requires address+1 to
+                # carry the same name, so starting from 0x0F it looked at 0x10, found
+                # something unrelated, and skipped. Only three transmission blocks
+                # are 16-bit at all, and of those only Engine Speed is carried by
+                # these firmwares - so this restored exactly one parameter, not the
+                # sweep of speeds a first reading of it suggested.
+                lo_addr, hi_addr, name, unit, conv = f[3], f[4], f[5], f[6], f[7]
+                out.setdefault(int(lo_addr, 16), {}).update(
                     {"name": name, "unit": unit, "conv": conv, "kind": "mb",
-                     "half": "high" if lo else "single"})
-                if lo:
-                    out.setdefault(int(lo, 16), {}).update(
+                     "half": "low" if hi_addr else "single"})
+                if hi_addr:
+                    out.setdefault(int(hi_addr, 16), {}).update(
                         {"name": name, "unit": unit, "conv": conv, "kind": "mb",
-                         "half": "low"})
+                         "half": "high"})
             elif section == "sw" and len(f) >= 6:
                 addr, name, states = f[3], f[4], f[5]
                 d = out.setdefault(int(addr, 16), {"switches": []})

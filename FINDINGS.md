@@ -7160,11 +7160,19 @@ Comer352L. It is not vendored here and nothing is copied out of it.
 
     join over 25 firmwares   2006 mapped rows
                               689 agree
-                              234 newly named
+                              234 switch bytes, already named per bit
+                                0 newly named
                                 0 conflict
 
-The 689 agreements matter more than the 234 new names. Two sources with no path
-between them, on 689 address-to-meaning claims, with nothing to reconcile.
+The 689 agreements are the result: two sources with no path between them, on 689
+address-to-meaning claims, with nothing to reconcile.
+
+A first reading of this reported 234 NEW names. That was wrong. Every one of the 234
+is a switch byte, which carries up to eight named signals one per bit and therefore
+has no single name field to be empty; the join was testing that field alone and
+counting fully described rows as undescribed. The join adds no names at all, because
+tools/map_ssm_parameters.py already did it - which is the honest result and the
+reason the two genuine defects below were worth finding.
 
 An SSM address is a LOGICAL address Subaru keeps stable across control units and
 model years - 0x00000F is engine speed on everything. Where it lands in RAM is
@@ -7255,3 +7263,32 @@ P0880, P0883 and P0955 remain undocumented by all three. Their SAE-standard mean
 are TCM power input signal, TCM power input signal high, and auto shift manual mode
 circuit range/performance - stated here as the generic definitions they are, not as
 anything read out of this firmware.
+
+#### 87e. Two defects the cross-check found, which is what it was worth
+
+Neither would have announced itself.
+
+**Every 16-bit logger parameter was being dropped.** `map_ssm_parameters.py` read
+FreeSSM's field 3 as the high byte and field 4 as the low byte. They are the other
+way round - in `"1;1;3;00000F;00000E;Engine Speed"` the fields are addrLow then
+addrHigh, and low/high mean byte significance rather than address order, so 0x0E
+carries the most significant byte. The generator emits a 16-bit pair at whichever
+address is marked high and requires address+1 to carry the same name; starting from
+0x0F it looked at 0x10, found something unrelated, and skipped. Nothing was
+corrupted and nothing warned - the parameter simply was not in the definition, which
+reads as the TCU not offering it. Engine Speed is now present at 0x00000E, length 2,
+`x/4`. It is the only one affected: just three transmission blocks are 16-bit and
+only that one is carried by these firmwares.
+
+**The bench tool was asking for addresses that do not exist.** `ssm_can.py` read
+0xFFFF8876 and 0xFFFF21D6, the Denso internal record addresses from section 81. An
+SSM address is three bytes, so those went out as 0xFF8876 and 0xFF21D6 - different
+locations - and the internal records are not what the controller serves anyway. It
+now reads SSM logical addresses, which need no per-firmware table at all: 0x00009C is
+the first fault byte on every Subaru TCU, including units whose ROM is not among the
+25 here. It decodes bits to P-codes and prints the manual's detecting condition
+beside each.
+
+`--adjustments` reads the eighteen writable trims. The AWD clutch torque entry at
+0x171 is signed - its stated minimum, 63535, is -2001 as int16 - so compared unsigned
+its minimum exceeds its maximum and every reading looks out of range.
