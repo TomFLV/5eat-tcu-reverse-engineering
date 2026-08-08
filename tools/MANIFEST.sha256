@@ -7,7 +7,7 @@
 # and generated definitions - files where a truncated copy still loads and
 # is quietly wrong.
 
-412908408a4d468eb71a91af740940ee956771f805cbdd8db0ffd134ed227aa3  README.md
+bf143e84f3fb0d49ea9a02d68d97aa14ae9b65d7f04d3a6cb0e2bf7d4fc402a0  README.md
 b195bfff12c49576c463810c2ccf2c46a339b28118a6028bd63be5a49e3a8750  atf_blend.json
 e44db24e7755ee0b68f56abfffa0a8a5c9bd869bac278e986c5128099186fa9d  check_table_aliasing.py
 96326f390919831da5e2d4bc4f0222325d850f7b636e94d73a39bc8dcee96d5d  checksum.py

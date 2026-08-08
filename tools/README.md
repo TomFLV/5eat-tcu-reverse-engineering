@@ -160,6 +160,57 @@ calibration table, code, or a constant.
 it, joined against the Select Monitor names. `denso_trace_ssm.py` names the working
 variables behind the Select Monitor staging buffer (FINDINGS section 47).
 
+## Naming the Denso tables
+
+The M32R definition names 274 tables and leaves none unidentified. The Denso one
+names 56 and leaves 110, and closing that gap is the open problem. Four routes are
+recorded in FINDINGS 74, 78 and 84; all follow the table to its reader, the reader
+to what it writes, that to what consumes it, and all end the same way. The
+controller is densely connected, three functions publish 48 named values each, and
+everything reaches everything.
+
+`denso_name_2hop.py` is the last of those, kept because it is the one that made the
+failure legible: with both hops measured rather than inferred, 171 of 185 tables
+reach a named address and every one reaches all 141 names.
+
+`denso_perturb.py` asks the question directly instead. Change the table in the ROM,
+run the same drive, compare whole RAM against an unmodified run. What differs is
+what the table affects.
+
+```bash
+python tools/denso_perturb.py --table 0E5224
+#   0E5224  ->  AWD Solenoid Valve Pressure
+python tools/denso_perturb.py --all --resume --json tools/denso_perturb_results.json
+```
+
+185 tables under four drives at two scale factors, 1,480 runs, about six hours. It
+writes after every run, so `--resume` costs nothing.
+
+**Run `denso_perturb_check.py` first.** It applies the method to four shift
+schedules whose purpose was established independently and verified against a
+published chart. Halving one should change when the controller shifts.
+
+```bash
+python tools/denso_perturb_check.py
+```
+
+**It currently fails**, and that is the most useful thing in this section. Nothing
+gear-related moves, which means the shift decision is not running in the task list
+the sweep drives. So a positive result from the sweep is causal and reliable - the
+table was changed and RAM changed - while a "no effect" result cannot be
+distinguished from "not exercised". Four runs to know that, instead of assuming it.
+
+`m32r_dtc_ram.py` resolves the M32R live fault-flag bytes, following the twelve
+pointers the DTC builder walks, and prints the twelve RAM addresses with the code
+each bit maps to. All sixteen firmwares resolve to the same addresses, and they fit
+the three-byte address an SSM read carries - which the Denso equivalent at
+0xFFFF____ does not.
+
+```bash
+python tools/m32r_dtc_ram.py --ssm
+#   SSM read  8041E2 8041E7 8041EC ... 804219
+```
+
 ## Naming the RAM
 
 `map_ssm_parameters.py` joins the SSM parameter table in the ROM to FreeSSM's list
@@ -205,6 +256,29 @@ tcu-cli selftest definitions/5eat_tcu_romraider_defs.xml rom/*.bin
 
 Pointing a definition at the wrong family is expected to fail: each declines ROMs it
 does not match, which is the safety mechanism and not a bug.
+
+## Integrity
+
+`write-manifests.py` records the SHA-256 of every tracked file in a
+`MANIFEST.sha256` beside it. This repository ships ROM images and decompiler
+output, where a truncated copy still loads and is quietly wrong.
+
+```bash
+python tools/write-manifests.py --check      # 200 files, verify only
+python tools/write-manifests.py              # regenerate after changes
+```
+
+It hashes what git has stored, not the working tree, so line-ending normalisation
+cannot make the same file hash differently on two platforms. Stage before
+regenerating: the index does not contain edits you have not added yet.
+
+`verify-all.sh` runs every mechanical check at once - both definitions against
+their ROMs, both checksum families, the generators reproducing what is committed,
+the manifests, and the hygiene checks. Thirteen checks, non-zero exit on failure.
+
+```bash
+bash tools/verify-all.sh
+```
 
 ## Three things that bite
 

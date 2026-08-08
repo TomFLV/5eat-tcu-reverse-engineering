@@ -173,6 +173,15 @@ is understood — index `= condition × 2 + group × 10` — and the group selec
 ships. What each value of the condition byte means is not established. See
 [FINDINGS.md](FINDINGS.md) §33.
 
+**110 Denso tables per firmware are still unidentified.** The M32R definition names
+274 and leaves none; the Denso one names 56. Five routes to closing that are
+recorded in [FINDINGS.md](FINDINGS.md) §74, §78, §84 and §85 — four trace what a
+table connects to and drown in a controller where three functions publish
+everything, and the fifth changes the table and watches what moves. That one works
+and is the current line of work. Its instrument check does not yet pass, so its
+positive results are reliable and its negatives are not: see
+[`tools/README.md`](tools/README.md#naming-the-denso-tables).
+
 **Denso tables cannot be named by static analysis.** The route from code to table is
 computed at runtime; a fully disassembled image still shows no references to the
 calibration arrays. See [FINDINGS.md](FINDINGS.md) §31.
