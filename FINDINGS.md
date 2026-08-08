@@ -6857,3 +6857,34 @@ of 0xFFFF8876 to the low 24 bits an SSM address can hold, and the 500 kbit/s
 bitrate are all still assumptions - the M32R units have 24-bit addresses natively
 and this has never run against a Denso unit. If reads come back empty, the address
 width is the first thing to suspect.
+
+### 83b. What the CAN adapter will and will not tell you (2026-08-07)
+
+Both channels of the CANtact Pro pass a loopback test - a frame sent with
+`loopback on` comes back inside the controller - so the silicon and the gs_usb
+driver work. The two channels behave identically, which is the useful comparison:
+a channel differing from its twin would say something about how it is wired.
+
+Beyond that, this adapter reports very little, and it is worth recording so it is
+not investigated twice:
+
+    berr-counter      not reported by gs_usb
+    berr-reporting    rejected on both channels
+
+So five transmits into a bus with nothing on it leave every counter at zero and
+the state at ERROR-ACTIVE. A lone CAN node cannot get an acknowledge even on a
+perfectly terminated bus, so errors were expected - and their absence here means
+the driver is not reporting them, not that they did not happen. Absence of
+reported errors from this adapter is not evidence of a healthy bus.
+
+Termination therefore cannot be established in software. A multimeter across CANH
+and CANL with everything powered off: 60 ohms is a correct bus with two
+terminators, 120 ohms is one, open circuit is none.
+
+Two faults in the first version of that self-test are worth recording because both
+produced confident wrong output. It printed "transmit error counter: 0 -> 0" from a
+grep for berr-counter that matched nothing and defaulted to zero - a measurement
+that was never taken, presented as one. And it left the interface in loopback for
+the "real" transmit, because bringing a link up again does not clear that flag; it
+needs `loopback off`. The second half of the test was looping frames inside the
+chip and counting them as sent.
