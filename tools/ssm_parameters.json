@@ -4154,6 +4154,1179 @@
   "table": 119716,
   "traced": 27
  },
+ "8AF0237300_MB500NJ0VF32C_2006_TRIBECA_USDM.bin": {
+  "entries": 512,
+  "filler": 8409788,
+  "identified": 36,
+  "rows": [
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409713,
+    "sources": null,
+    "ssm": 0,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": "kPa",
+    "expr": null,
+    "half": "low",
+    "name": "",
+    "ram": 8409714,
+    "sources": null,
+    "ssm": 1,
+    "switches": null,
+    "unit": "Brake Booster Pressure"
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409715,
+    "sources": null,
+    "ssm": 2,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409716,
+    "sources": null,
+    "ssm": 3,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409717,
+    "sources": null,
+    "ssm": 4,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409718,
+    "sources": null,
+    "ssm": 5,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": "/4",
+    "expr": null,
+    "half": "high",
+    "name": "Engine Speed",
+    "ram": 8409719,
+    "sources": null,
+    "ssm": 14,
+    "switches": null,
+    "unit": "rpm"
+   },
+   {
+    "conv": "/4",
+    "expr": null,
+    "half": "low",
+    "name": "Engine Speed",
+    "ram": 8409720,
+    "sources": null,
+    "ssm": 15,
+    "switches": null,
+    "unit": "rpm"
+   },
+   {
+    "conv": "*2/25",
+    "expr": null,
+    "half": "single",
+    "name": "Battery Voltage",
+    "ram": 8409721,
+    "sources": null,
+    "ssm": 28,
+    "switches": null,
+    "unit": "V"
+   },
+   {
+    "conv": "/255*100",
+    "expr": null,
+    "half": "single",
+    "name": "Accelerator Pedal Travel",
+    "ram": 8409722,
+    "sources": null,
+    "ssm": 41,
+    "switches": null,
+    "unit": "%"
+   },
+   {
+    "conv": "*1",
+    "expr": null,
+    "half": "single",
+    "name": "Front Wheel Speed",
+    "ram": 8409723,
+    "sources": null,
+    "ssm": 72,
+    "switches": null,
+    "unit": "km/h"
+   },
+   {
+    "conv": "+1",
+    "expr": null,
+    "half": "single",
+    "name": "Gear Position",
+    "ram": 8409724,
+    "sources": null,
+    "ssm": 74,
+    "switches": null,
+    "unit": "gear"
+   },
+   {
+    "conv": "*32",
+    "expr": null,
+    "half": "single",
+    "name": "Turbine Revolution Speed",
+    "ram": 8409725,
+    "sources": null,
+    "ssm": 79,
+    "switches": null,
+    "unit": "rpm"
+   },
+   {
+    "conv": "*1",
+    "expr": null,
+    "half": "single",
+    "name": "Rear Wheel Speed",
+    "ram": 8409726,
+    "sources": null,
+    "ssm": 81,
+    "switches": null,
+    "unit": "km/h"
+   },
+   {
+    "conv": "/50",
+    "expr": null,
+    "half": "single",
+    "name": "Lateral G Sensor Voltage",
+    "ram": 8409727,
+    "sources": null,
+    "ssm": 85,
+    "switches": null,
+    "unit": "V"
+   },
+   {
+    "conv": "-50",
+    "expr": null,
+    "half": "single",
+    "name": "ATF Temperature",
+    "ram": 8409728,
+    "sources": null,
+    "ssm": 86,
+    "switches": null,
+    "unit": "\u00b0C"
+   },
+   {
+    "conv": "-50",
+    "expr": null,
+    "half": "single",
+    "name": "ATF Temperature 2",
+    "ram": 8409729,
+    "sources": null,
+    "ssm": 90,
+    "switches": null,
+    "unit": "\u00b0C"
+   },
+   {
+    "conv": "*32",
+    "expr": null,
+    "half": "single",
+    "name": "AT Turbine Speed 1",
+    "ram": 8409730,
+    "sources": null,
+    "ssm": 92,
+    "switches": null,
+    "unit": "rpm"
+   },
+   {
+    "conv": "*32",
+    "expr": null,
+    "half": "single",
+    "name": "AT Turbine Speed 2",
+    "ram": 8409731,
+    "sources": null,
+    "ssm": 93,
+    "switches": null,
+    "unit": "rpm"
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409779,
+    "sources": null,
+    "ssm": 96,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409732,
+    "sources": null,
+    "ssm": 98,
+    "switches": [
+     {
+      "bit": 2,
+      "name": "Air Conditioning Switch",
+      "states": "Off/On"
+     },
+     {
+      "bit": 3,
+      "name": "Power Steering Switch",
+      "states": "Off/On"
+     },
+     {
+      "bit": 4,
+      "name": "Ignition Switch",
+      "states": "Off/On"
+     },
+     {
+      "bit": 5,
+      "name": "Intercooler Auto Washer Switch",
+      "states": "Off/On"
+     },
+     {
+      "bit": 7,
+      "name": "Idle Switch",
+      "states": "Off/On"
+     },
+     {
+      "bit": 8,
+      "name": "Neutral Position Switch",
+      "states": "Off/On"
+     }
+    ],
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409733,
+    "sources": null,
+    "ssm": 106,
+    "switches": [
+     {
+      "bit": 1,
+      "name": "Front Wheel Drive (FWD) Switch",
+      "states": "Off/On"
+     },
+     {
+      "bit": 2,
+      "name": "Kick Down Switch",
+      "states": "Off/On"
+     },
+     {
+      "bit": 3,
+      "name": "Upshift Switch",
+      "states": "Off/On"
+     },
+     {
+      "bit": 4,
+      "name": "Stop Light Switch",
+      "states": "Off/On"
+     },
+     {
+      "bit": 5,
+      "name": "Downshift Switch",
+      "states": "Off/On"
+     },
+     {
+      "bit": 6,
+      "name": "ABS Signal",
+      "states": "Off/On"
+     },
+     {
+      "bit": 7,
+      "name": "Cruise Control Signal",
+      "states": "Off/On"
+     },
+     {
+      "bit": 8,
+      "name": "Tiptronic Mode Switch",
+      "states": "Off/On"
+     }
+    ],
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409734,
+    "sources": null,
+    "ssm": 107,
+    "switches": [
+     {
+      "bit": 1,
+      "name": "N/P Range Signal",
+      "states": "Off/On"
+     },
+     {
+      "bit": 2,
+      "name": "R Range Signal",
+      "states": "Off/On"
+     },
+     {
+      "bit": 3,
+      "name": "D Range Signal",
+      "states": "Off/On"
+     },
+     {
+      "bit": 4,
+      "name": "3rd Range Signal",
+      "states": "Off/On"
+     },
+     {
+      "bit": 5,
+      "name": "2nd Range Signal",
+      "states": "Off/On"
+     },
+     {
+      "bit": 6,
+      "name": "1st Range Signal",
+      "states": "Off/On"
+     },
+     {
+      "bit": 7,
+      "name": "Hold Mode Switch",
+      "states": "Off/On"
+     },
+     {
+      "bit": 8,
+      "name": "Power Mode Switch",
+      "states": "Off/On"
+     }
+    ],
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409735,
+    "sources": null,
+    "ssm": 108,
+    "switches": [
+     {
+      "bit": 1,
+      "name": "Shift Solenoid #1",
+      "states": "Off/On"
+     },
+     {
+      "bit": 2,
+      "name": "Shift Solenoid #2",
+      "states": "Off/On"
+     },
+     {
+      "bit": 3,
+      "name": "Low Clutch Timing Solenoid",
+      "states": "Off/On"
+     },
+     {
+      "bit": 4,
+      "name": "2-4 Brake Timing Solenoid",
+      "states": "Off/On"
+     },
+     {
+      "bit": 5,
+      "name": "Torque Control Signal #2",
+      "states": "Off/On"
+     },
+     {
+      "bit": 6,
+      "name": "Torque Control Signal #1",
+      "states": "Off/On"
+     },
+     {
+      "bit": 7,
+      "name": "Tiptronic Solenoid",
+      "states": "Off/On"
+     },
+     {
+      "bit": 8,
+      "name": "4th Range Signal",
+      "states": "Off/On"
+     }
+    ],
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409736,
+    "sources": null,
+    "ssm": 109,
+    "switches": [
+     {
+      "bit": 1,
+      "name": "Shift Lock Solenoid",
+      "states": "Off/On"
+     },
+     {
+      "bit": 2,
+      "name": "ATF Temperature Lamp",
+      "states": "Off/On"
+     },
+     {
+      "bit": 3,
+      "name": "Rear Differential Oil Temperature Switch",
+      "states": "Off/On"
+     },
+     {
+      "bit": 4,
+      "name": "Diagnosis Lamp",
+      "states": "Off/On"
+     },
+     {
+      "bit": 5,
+      "name": "Shift Output 1",
+      "states": "Off/On"
+     },
+     {
+      "bit": 6,
+      "name": "Shift Output 2",
+      "states": "Off/On"
+     },
+     {
+      "bit": 7,
+      "name": "Shift Output 3",
+      "states": "Off/On"
+     },
+     {
+      "bit": 8,
+      "name": "Shift Output 4",
+      "states": "Off/On"
+     }
+    ],
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409737,
+    "sources": null,
+    "ssm": 110,
+    "switches": [
+     {
+      "bit": 1,
+      "name": "N Range",
+      "states": "Off/On"
+     },
+     {
+      "bit": 2,
+      "name": "Hold Lamp",
+      "states": "Off/On"
+     },
+     {
+      "bit": 3,
+      "name": "Traction Control System (TCS) Switch",
+      "states": "Off/On"
+     },
+     {
+      "bit": 4,
+      "name": "P/N Signal",
+      "states": "Off/On"
+     },
+     {
+      "bit": 5,
+      "name": "Torque Control Cut Signal",
+      "states": "Off/On"
+     },
+     {
+      "bit": 6,
+      "name": "P Range",
+      "states": "Off/On"
+     },
+     {
+      "bit": 7,
+      "name": "Power Mode Lamp",
+      "states": "Off/On"
+     },
+     {
+      "bit": 8,
+      "name": "Economy Switch",
+      "states": "Off/On"
+     }
+    ],
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409738,
+    "sources": null,
+    "ssm": 156,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409739,
+    "sources": null,
+    "ssm": 157,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409740,
+    "sources": null,
+    "ssm": 158,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409741,
+    "sources": null,
+    "ssm": 166,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409742,
+    "sources": null,
+    "ssm": 188,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409743,
+    "sources": null,
+    "ssm": 189,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409744,
+    "sources": null,
+    "ssm": 190,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409745,
+    "sources": null,
+    "ssm": 198,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409746,
+    "sources": null,
+    "ssm": 212,
+    "switches": [
+     {
+      "bit": 1,
+      "name": "AT Power Relay",
+      "states": "Off/On"
+     },
+     {
+      "bit": 2,
+      "name": "Back Lamp Relay",
+      "states": "Off/On"
+     },
+     {
+      "bit": 3,
+      "name": "Inhibitor Switch #3 Monitor",
+      "states": "Low/High"
+     },
+     {
+      "bit": 4,
+      "name": "Inhibitor Switch #4",
+      "states": "Low/High"
+     },
+     {
+      "bit": 5,
+      "name": "Inhibitor Switch #3",
+      "states": "Low/High"
+     },
+     {
+      "bit": 6,
+      "name": "Inhibitor Switch #2",
+      "states": "Low/High"
+     },
+     {
+      "bit": 7,
+      "name": "Inhibitor Switch #1",
+      "states": "Low/High"
+     },
+     {
+      "bit": 8,
+      "name": "Judgement of All Wheel Drive (AWD)",
+      "states": "Off/On"
+     }
+    ],
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409747,
+    "sources": null,
+    "ssm": 213,
+    "switches": [
+     {
+      "bit": 1,
+      "name": "Signal of Identified Electronic Control Module (ECM)",
+      "states": "Off/On"
+     },
+     {
+      "bit": 2,
+      "name": "LC/B Fluid Pressure",
+      "states": "Off/On"
+     },
+     {
+      "bit": 3,
+      "name": "I/C Fluid Pressure",
+      "states": "Off/On"
+     },
+     {
+      "bit": 4,
+      "name": "F/B Fluid Pressure",
+      "states": "Off/On"
+     },
+     {
+      "bit": 5,
+      "name": "D/C Fluid Pressure",
+      "states": "Off/On"
+     },
+     {
+      "bit": 6,
+      "name": "H&LR/C Fluid Pressure",
+      "states": "Off/On"
+     }
+    ],
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409780,
+    "sources": null,
+    "ssm": 233,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409781,
+    "sources": null,
+    "ssm": 234,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409782,
+    "sources": null,
+    "ssm": 235,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8405449,
+    "sources": null,
+    "ssm": 236,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409783,
+    "sources": null,
+    "ssm": 237,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409748,
+    "sources": null,
+    "ssm": 240,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409749,
+    "sources": null,
+    "ssm": 241,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409750,
+    "sources": null,
+    "ssm": 242,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409751,
+    "sources": null,
+    "ssm": 243,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409752,
+    "sources": null,
+    "ssm": 244,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409753,
+    "sources": null,
+    "ssm": 245,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409754,
+    "sources": null,
+    "ssm": 246,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409755,
+    "sources": null,
+    "ssm": 247,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409756,
+    "sources": null,
+    "ssm": 290,
+    "switches": [
+     {
+      "bit": 1,
+      "name": "Center Differential Lamp 6",
+      "states": "Off/On"
+     },
+     {
+      "bit": 2,
+      "name": "Center Differential Lamp 5",
+      "states": "Off/On"
+     },
+     {
+      "bit": 3,
+      "name": "Center Differential Lamp 4",
+      "states": "Off/On"
+     },
+     {
+      "bit": 4,
+      "name": "Center Differential Lamp 3",
+      "states": "Off/On"
+     },
+     {
+      "bit": 5,
+      "name": "Center Differential Lamp 2",
+      "states": "Off/On"
+     },
+     {
+      "bit": 6,
+      "name": "Center Differential Lamp 1",
+      "states": "Off/On"
+     },
+     {
+      "bit": 7,
+      "name": "LU&FWD/B Solenoid Valve",
+      "states": "Off/On"
+     },
+     {
+      "bit": 8,
+      "name": "LC/B Solenoid Valve",
+      "states": "Off/On"
+     }
+    ],
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409757,
+    "sources": null,
+    "ssm": 291,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409758,
+    "sources": null,
+    "ssm": 292,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409759,
+    "sources": null,
+    "ssm": 293,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409761,
+    "sources": null,
+    "ssm": 299,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409762,
+    "sources": null,
+    "ssm": 300,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409763,
+    "sources": null,
+    "ssm": 301,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": "/255",
+    "expr": null,
+    "half": "single",
+    "name": "H&LR/C Solenoid Valve Current",
+    "ram": 8409765,
+    "sources": null,
+    "ssm": 320,
+    "switches": null,
+    "unit": "A"
+   },
+   {
+    "conv": "/255",
+    "expr": null,
+    "half": "single",
+    "name": "D/C Solenoid Valve Current",
+    "ram": 8409766,
+    "sources": null,
+    "ssm": 321,
+    "switches": null,
+    "unit": "A"
+   },
+   {
+    "conv": "/255",
+    "expr": null,
+    "half": "single",
+    "name": "F/B Solenoid Valve Current",
+    "ram": 8409767,
+    "sources": null,
+    "ssm": 322,
+    "switches": null,
+    "unit": "A"
+   },
+   {
+    "conv": "/255",
+    "expr": null,
+    "half": "single",
+    "name": "I/C Solenoid Valve Current",
+    "ram": 8409768,
+    "sources": null,
+    "ssm": 323,
+    "switches": null,
+    "unit": "A"
+   },
+   {
+    "conv": "/255",
+    "expr": null,
+    "half": "single",
+    "name": "P/L Solenoid Valve Current",
+    "ram": 8409769,
+    "sources": null,
+    "ssm": 324,
+    "switches": null,
+    "unit": "A"
+   },
+   {
+    "conv": "/255",
+    "expr": null,
+    "half": "single",
+    "name": "L/U Solenoid Valve Current",
+    "ram": 8409770,
+    "sources": null,
+    "ssm": 325,
+    "switches": null,
+    "unit": "A"
+   },
+   {
+    "conv": "/255",
+    "expr": null,
+    "half": "single",
+    "name": "AWD Solenoid Valve Current",
+    "ram": 8409771,
+    "sources": null,
+    "ssm": 326,
+    "switches": null,
+    "unit": "A"
+   },
+   {
+    "conv": "*10",
+    "expr": null,
+    "half": "single",
+    "name": "H&LR/C Solenoid Valve Pressure",
+    "ram": 8409772,
+    "sources": null,
+    "ssm": 328,
+    "switches": null,
+    "unit": "kPa"
+   },
+   {
+    "conv": "*10",
+    "expr": null,
+    "half": "single",
+    "name": "D/C Solenoid Valve Pressure",
+    "ram": 8409773,
+    "sources": null,
+    "ssm": 329,
+    "switches": null,
+    "unit": "kPa"
+   },
+   {
+    "conv": "*10",
+    "expr": null,
+    "half": "single",
+    "name": "F/B Solenoid Valve Pressure",
+    "ram": 8409774,
+    "sources": null,
+    "ssm": 330,
+    "switches": null,
+    "unit": "kPa"
+   },
+   {
+    "conv": "*10",
+    "expr": null,
+    "half": "single",
+    "name": "I/C Solenoid Valve Pressure",
+    "ram": 8409775,
+    "sources": null,
+    "ssm": 331,
+    "switches": null,
+    "unit": "kPa"
+   },
+   {
+    "conv": "*10",
+    "expr": null,
+    "half": "single",
+    "name": "P/L Solenoid Valve Pressure",
+    "ram": 8409776,
+    "sources": null,
+    "ssm": 332,
+    "switches": null,
+    "unit": "kPa"
+   },
+   {
+    "conv": "*10",
+    "expr": null,
+    "half": "single",
+    "name": "L/U Solenoid Valve Pressure",
+    "ram": 8409777,
+    "sources": null,
+    "ssm": 333,
+    "switches": null,
+    "unit": "kPa"
+   },
+   {
+    "conv": "*10",
+    "expr": null,
+    "half": "single",
+    "name": "AWD Solenoid Valve Pressure",
+    "ram": 8409778,
+    "sources": null,
+    "ssm": 334,
+    "switches": null,
+    "unit": "kPa"
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409760,
+    "sources": null,
+    "ssm": 354,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8409764,
+    "sources": null,
+    "ssm": 359,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8405454,
+    "sources": null,
+    "ssm": 368,
+    "switches": null,
+    "unit": null
+   },
+   {
+    "conv": null,
+    "expr": null,
+    "half": null,
+    "name": null,
+    "ram": 8405455,
+    "sources": null,
+    "ssm": 369,
+    "switches": null,
+    "unit": null
+   }
+  ],
+  "supported": 74,
+  "table": 118528,
+  "traced": 0
+ },
  "8EFB206000_08FB2WA0_14_tribeca_usdm.bin": {
   "entries": 512,
   "filler": 856445,

@@ -1,7 +1,7 @@
 # tools
 #
 # SHA-256 of every tracked file in this directory, 103 files, 5.2 MB.
-# Recorded 2026-08-08. Verify with:  python tools/write-manifests.py --check
+# Recorded 2026-08-09. Verify with:  python tools/write-manifests.py --check
 #
 # These exist because this repository ships ROM images, decompiler output
 # and generated definitions - files where a truncated copy still loads and
@@ -100,7 +100,7 @@ d8e892e05c084fe477068edf7a5091f341b45b49a48c9cca5a111969cccfe02b  scan_threshold
 c864707a36091cf2e99fff11b1dc3b7183b376cda6a1400a50e9c65fd34e7fd9  shift_index.json
 da0bace861797a584ba9a310a20eaaa33ddf4e9f699f17df7dc2a8c9a76c3543  shift_modes.json
 fb77475db6ef8271d0bb904e68b764fd1265a55f8c5ec32c37401282a287e052  shift_tables.json
-f5021722db843022841ab60cc148c99d3492fc609be37d305e5e82065f2e7746  ssm_parameters.json
+b810fbbcf64230861f339b850046d85a32a6d2d1884962c754993f1ea35c7ebc  ssm_parameters.json
 7447a8f76029e5a394dcfff9889d7c68052970c90f31169f82b176c6d8b9c064  survey_denso_tcu.py
 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a  tcm_pinout.json
 328c8a042273c548445a51e59ac4de794a4ec95d39dbdef189663bd116825b46  test_checksum.py
