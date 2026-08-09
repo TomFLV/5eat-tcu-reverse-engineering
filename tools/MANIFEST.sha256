@@ -1,6 +1,6 @@
 # tools
 #
-# SHA-256 of every tracked file in this directory, 103 files, 5.2 MB.
+# SHA-256 of every tracked file in this directory, 104 files, 5.2 MB.
 # Recorded 2026-08-09. Verify with:  python tools/write-manifests.py --check
 #
 # These exist because this repository ships ROM images, decompiler output
@@ -8,6 +8,7 @@
 # is quietly wrong.
 
 bf143e84f3fb0d49ea9a02d68d97aa14ae9b65d7f04d3a6cb0e2bf7d4fc402a0  README.md
+c2beee4e8b3073d061e947129ecf9dd581f6b84f04639b51dfebcb1ae82edf45  annotate_decompile.py
 80f1573296fcbf8e32e33a3634bad5cd27ce8b124645ea555ef216d52c680e9d  atf_blend.json
 e44db24e7755ee0b68f56abfffa0a8a5c9bd869bac278e986c5128099186fa9d  check_table_aliasing.py
 96326f390919831da5e2d4bc4f0222325d850f7b636e94d73a39bc8dcee96d5d  checksum.py
