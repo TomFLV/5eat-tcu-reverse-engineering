@@ -1,4 +1,14 @@
 {
+ "8AF0237300": {
+  "atf_addr": 8407059,
+  "channels": 7,
+  "hi_addr": 118026,
+  "hi_c": 135,
+  "hi_value": 175,
+  "lo_addr": 118025,
+  "lo_c": 15,
+  "lo_value": 55
+ },
  "91A0217300": {
   "atf_addr": 8407047,
   "channels": 7,

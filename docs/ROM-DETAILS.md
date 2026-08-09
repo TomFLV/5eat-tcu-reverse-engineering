@@ -6,9 +6,10 @@ matching the image they belong to. The DTC section was corrected the same day -
 it had said the stored table was never located, and the memory map above it still
 listed the `0x4090` address the page itself refutes.*
 
-Seventeen M32R 5EAT firmwares are held in [`rom/`](../rom/). Sixteen have
-verified checksums and are mapped; the seventeenth, the 2006 Tribeca, was read
-from a bench unit and is not yet mapped. The collection table is at the bottom.
+Seventeen M32R 5EAT firmwares are held in [`rom/`](../rom/). All have verified
+checksums and mapped tables; the 2006 Tribeca was read from a bench unit and is
+decompiled in [`decompiled/`](../decompiled/) like the rest. The collection table
+is at the bottom.
 
 The sections below describe **`91D1206000`** in detail — it is the reference
 firmware the others were mapped against. Structure, memory map, checksum
@@ -230,10 +231,8 @@ been found, but no fault has been made to latch one under emulation. See
 
 ## The rest of the collection
 
-Seventeen M32R 5EAT firmwares are held in [`rom/`](../rom/). Sixteen have valid
-checksums; the 2006 Tribeca image has not had its checksum verified, because no
-definition for that calibration existed to check it against. Only the first two
-have had their tables mapped so far.
+Seventeen M32R 5EAT firmwares are held in [`rom/`](../rom/). All have valid
+checksums and mapped tables.
 
 | Cal ID | ROM ID | Size | Notes | Tables mapped |
 |---|---|---|---|---|
@@ -247,7 +246,7 @@ have had their tables mapped so far.
 | `MB5300` | `ABD1207000` | 384K | 06 JDM Legacy GT | **yes** |
 | `MB558D20` | `ACD1A06000` | 512K | JDM 2007 | **yes** |
 | `MB558D01` | `ACD1207000` | 512K | LGT06 JDM | **yes** |
-| `MB500NJ0VF32C` | `8AF0237300` | 512K | **USDM 2006 Tribeca**, read from a bench unit. Only firmware here with the 3.841 gear set | not yet |
+| `MB500NJ0VF32C` | `8AF0237300` | 512K | **USDM 2006 Tribeca**, read from a bench unit. Only firmware here with the 3.841 gear set | **yes** |
 | `MB562EH` | `ADE0236000` | 512K | — | **yes** |
 
 `ACD1207000` was uploaded under the filename `AC91207000_...`; the ID here is the
