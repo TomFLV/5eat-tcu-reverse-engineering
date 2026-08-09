@@ -1545,6 +1545,13 @@ ROM_PROFILES = [
         "market": "JDM", "submodel": "AAD1A06000 (JDM)", "filesize": "512kb",
         "offsets": {"SpeedTrimA": 162, "SlipThreshold": 168, "RefSpeedBaseline": 168, "PressureB": 164, "PressureC": 164, "ShiftStageD": 164, "PressureThresholdE": 164, "CAN511Threshold": 168, "ShiftCorrection": 168, "SignalResponseCurves": 168},
     },
+    {
+        "id": "8AF0237300", "rom_file": "8AF0237300_MB500NJ0VF32C_2006_TRIBECA_USDM.bin",
+        "xmlid": "SUBARU_5EAT_8AF0237300", "base": "SUBARU_5EAT_91D1206000",
+        "internalidstring": "MB500NJ0", "caseid": "Q7A", "year": "2006",
+        "market": "USDM", "submodel": "8AF0237300 (USDM Tribeca 2006)", "filesize": "512kb",
+        "offsets": {"SpeedTrimA": 144, "SlipThreshold": 148, "RefSpeedBaseline": 148, "PressureB": 144, "PressureC": 144, "ShiftStageD": 144, "PressureThresholdE": 144, "CAN511Threshold": 148, "ShiftCorrection": 148, "SignalResponseCurves": 148},
+    },
 ]
 
 

@@ -7,7 +7,7 @@
 RomRaider tuning definitions for the Subaru 5EAT transmission control unit, with the
 tooling and analysis behind them.
 
-Two controller families are covered: Hitachi M32R (16 firmwares) and Denso SH705x (9).
+Two controller families are covered: Hitachi M32R (17 firmwares) and Denso SH705x (9).
 Shift schedules, line pressure and downshift pressure are in real units. Trouble codes
 are individually switchable. Both checksum families are corrected on save.
 
@@ -56,7 +56,7 @@ pedal position, so there is no byte to change.
 
 ### Hitachi M32R
 
-Sixteen mapped, all checksum-verified. Decompiler output in [`decompiled/`](decompiled/).
+Seventeen mapped, all checksum-verified. Decompiler output in [`decompiled/`](decompiled/).
 
 | Cal ID | ROM ID | Size | Vehicle |
 |---|---|---|---|
@@ -126,7 +126,7 @@ quantity is unknown. Their unit labels say so.
 ## Logging
 
 `definitions/5eat_tcu_logger.xml` is a Select Monitor logger definition for the
-sixteen M32R firmwares. Point RomRaider's logger at it and the parameters the
+seventeen M32R firmwares. Point RomRaider's logger at it and the parameters the
 connected unit actually supports appear — 25 of them, with units and conversions.
 
 Support is not guessed. Each firmware carries its own table of which Select Monitor
@@ -231,7 +231,7 @@ written: the save runs against a copy held in memory.
 | [`romraider-5eat/`](romraider-5eat/) | The Windows application: patches and build script. GPL-2.0, not MIT |
 | [`definitions/`](definitions/) | RomRaider definitions for both families |
 | [`tools/`](tools/) | Generators, validators, extractors ([README](tools/README.md)) |
-| [`decompiled/`](decompiled/) | Ghidra output, sixteen M32R images |
+| [`decompiled/`](decompiled/) | Ghidra output, seventeen M32R images |
 | [`decompiled-denso/`](decompiled-denso/) | Ghidra output, nine Denso images, with per-image coverage |
 | [`rom/`](rom/), [`rom-denso/`](rom-denso/) | ROM images |
 | [`logs/`](logs/) | RomRaider logs from a running 5EAT, the only real-vehicle data here |

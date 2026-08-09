@@ -1,6 +1,6 @@
 # definitions
 #
-# SHA-256 of every tracked file in this directory, 3 files, 7.5 MB.
+# SHA-256 of every tracked file in this directory, 3 files, 7.6 MB.
 # Recorded 2026-08-09. Verify with:  python tools/write-manifests.py --check
 #
 # These exist because this repository ships ROM images, decompiler output
@@ -9,4 +9,4 @@
 
 3822b0a00730bd48cc8aafbcdee5328df1f9349c1ce0b721140983191ea2b8b0  5eat_tcu_denso_romraider_defs.xml
 16d5afd91d122573b5175b7cc792cf24d2fb95e2a098b99ee3228ce5ea6f2bef  5eat_tcu_logger.xml
-571ab675e9a68c1bc5fadba24261c3fb05b14d2ad0cf30e0c3106fc3902edd84  5eat_tcu_romraider_defs.xml
+8e5bde1927441fe8b28296950b2813682afc87b08e7da7cccddcaee9d720ab23  5eat_tcu_romraider_defs.xml

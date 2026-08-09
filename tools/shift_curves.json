@@ -1,4 +1,38 @@
 {
+ "8AF0237300": {
+  "Shift 1-2 Upshift Curve": {
+   "addr": 91476,
+   "rows": 9
+  },
+  "Shift 2-1 Downshift Curve": {
+   "addr": 91550,
+   "rows": 3
+  },
+  "Shift 2-3 Upshift Curve": {
+   "addr": 91576,
+   "rows": 9
+  },
+  "Shift 3-2 Downshift Curve": {
+   "addr": 91650,
+   "rows": 6
+  },
+  "Shift 3-4 Upshift Curve": {
+   "addr": 91700,
+   "rows": 9
+  },
+  "Shift 4-3 Downshift Curve": {
+   "addr": 91774,
+   "rows": 6
+  },
+  "Shift 4-5 Upshift Curve": {
+   "addr": 91824,
+   "rows": 9
+  },
+  "Shift 5-4 Downshift Curve": {
+   "addr": 91898,
+   "rows": 5
+  }
+ },
  "91D0207500": {
   "Shift 1-2 Upshift Curve": {
    "addr": 89576,
