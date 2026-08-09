@@ -147,6 +147,12 @@ the unit the logs in [`logs/`](logs/) came from. The lock-up entries stay M32R-o
 since those addresses mean nothing on a Denso unit. See [FINDINGS.md](FINDINGS.md)
 §42.
 
+For live logging over the Tactrix OpenPort on 64-bit Windows, a 64-bit build of
+FreeSSM — carrying the transmission CAN diagnostics used here — is published as a
+fork: [TomFLV/FreeSSM `64bit-tactrix`](https://github.com/TomFLV/FreeSSM/tree/64bit-tactrix),
+with a [ready-to-run download](https://github.com/TomFLV/FreeSSM/releases/tag/64bit-tactrix-r1).
+It is a modified build of Comer352L's FreeSSM, GPLv3.
+
 ## Known limitations
 
 **The ATF temperature offset is supported but not measured.** The definition applies
@@ -302,7 +308,8 @@ described differently, open an issue.
   module, on the `development` branch, is where the second checksum came from; `master`
   carries no TCU code.
 - [FreeSSM](https://github.com/Comer352L/FreeSSM) — diagnostics, and the
-  `e5at-permanent-adjustments` branch.
+  `e5at-permanent-adjustments` branch. The [64-bit Windows build](https://github.com/TomFLV/FreeSSM/tree/64bit-tactrix)
+  used here is a fork of it.
 - [ghidra-m32r](https://github.com/ripnet/ghidra-m32r) — the Ghidra processor module.
 - [RomRaider](https://github.com/RomRaider/RomRaider) — the editor.
 
