@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5EAT TCU - Car Simulator</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+<style>
+  :root{--bg:#0e1116;--panel:#171b22;--line:#262c36;--fg:#e6edf3;--mut:#8b949e;
+        --accent:#4aa3ff;--good:#3fb950;--warn:#d29922;--bad:#f85149;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 system-ui,Segoe UI,sans-serif;
+       font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+  header{display:flex;align-items:center;gap:14px;padding:10px 18px;border-bottom:1px solid var(--line)}
+  header h1{font-size:15px;margin:0;font-weight:600;letter-spacing:.3px}
+  .pill{font-size:12px;padding:3px 9px;border-radius:20px;border:1px solid var(--line);color:var(--mut)}
+  .pill.on{color:var(--good);border-color:var(--good)}
+  .pill.off{color:var(--bad);border-color:var(--bad)}
+  main{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;padding:16px;max-width:1100px;margin:0 auto}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  #live_groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+  .live-grp{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#12161d}
+  .live-gname{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+  .live-tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  .live-tbl td{padding:2px 4px;border-bottom:1px solid #1c222b;font-size:13px}
+  .live-n{color:var(--fg)} .live-a{color:var(--mut);font-family:ui-monospace,Consolas,monospace;font-size:12px}
+  .live-v{font-family:ui-monospace,Consolas,monospace;text-align:right;color:#7fd1ff}
+  .live-fault .live-v{color:var(--bad,#f85149);font-weight:700}
+  .live-fault{background:rgba(248,81,73,.10)}
+  .live-poke{padding:0 6px;font-size:12px;background:#21262d;border:1px solid var(--line);border-radius:5px;color:var(--mut);cursor:pointer}
+  .live-poke:hover{color:var(--fg)}
+  .cluster{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;gap:10px}
+  .gear{font-size:64px;font-weight:700;text-align:center;line-height:1}
+  .gear small{display:block;font-size:12px;color:var(--mut);font-weight:400;margin-top:6px}
+  .big{font-size:44px;font-weight:700;line-height:1}
+  .big small{font-size:13px;color:var(--mut);font-weight:400}
+  /* fixed-width readouts so changing digit count never reflows the row */
+  .big .num{display:inline-block;min-width:2.4ch;text-align:right}
+  #rpm{min-width:4ch}
+  .metric{text-align:center;min-width:0;overflow:hidden}
+  svg .track{stroke:#22272e;stroke-width:12;fill:none}
+  svg .val{stroke:var(--accent);stroke-width:12;fill:none;stroke-linecap:round;transition:stroke-dashoffset .06s linear}
+  svg.redline .val{stroke:var(--bad)}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+  .row .lbl{width:92px;color:var(--mut)}
+  button{background:#21262d;color:var(--fg);border:1px solid var(--line);border-radius:8px;
+         padding:8px 12px;cursor:pointer;font-size:14px}
+  button:hover{border-color:var(--accent)}
+  button.sel{background:var(--accent);border-color:var(--accent);color:#04101f;font-weight:700}
+  .selector button{width:44px;font-weight:700}
+  input[type=range]{flex:1;accent-color:var(--accent)}
+  .pedal{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
+  .pedal .bar{width:100%;height:150px;background:#0b0e13;border:1px solid var(--line);
+              border-radius:8px;position:relative;overflow:hidden}
+  .pedal .fill{position:absolute;bottom:0;left:0;right:0;background:var(--accent)}
+  .pedal.brake .fill{background:var(--bad)}
+  table{width:100%;border-collapse:collapse}
+  td{padding:4px 6px;border-bottom:1px solid var(--line)}
+  td.k{color:var(--mut)}
+  .dtc{color:var(--bad)}
+  .hint{color:var(--mut);font-size:12px;margin-top:6px}
+  .err{color:var(--bad);padding:8px 12px}
+  .trans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:12px;text-align:center}
+  .tcell{background:#0b0e13;border:1px solid var(--line);border-radius:8px;padding:10px 6px}
+  .tv{font-size:24px;font-weight:700}
+  .tv.act{color:var(--warn)}
+  .tk{font-size:11px;color:var(--mut);margin-top:4px}
+  .sol-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 28px}
+  .sol{display:flex;align-items:center;gap:10px}
+  .sol .sn{width:130px;color:var(--mut)}
+  .sol .sbar{flex:1;height:12px;background:#0b0e13;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .sol .sfill{height:100%;background:var(--accent);width:0;transition:width .12s}
+  .sol .sfill.eng{background:var(--good)}
+  .sol .sp{width:46px;text-align:right}
+  @media(max-width:820px){.trans-grid{grid-template-columns:repeat(3,1fr)}.sol-grid{grid-template-columns:1fr}}
+  #cantable{width:100%;font-size:13px}
+  #cantable td{padding:3px 8px}
+  #cantable .cid{font-weight:700;color:var(--accent)}
+  #cantable .cdata{font-family:ui-monospace,Consolas,monospace;letter-spacing:.5px;color:var(--fg)}
+  #cantable tbody tr:hover{background:#0b0e13}
+  #cantable .src-tcu{color:var(--good)}
+  #cantable .src-car{color:var(--mut)}
+</style>
+</head>
+<body>
+<header>
+  <h1>5EAT TCU — Car Simulator</h1>
+  <span id="link" class="pill">CAN —</span>
+  <span id="ign" class="pill">IGN</span>
+  <span id="counts" class="pill">tx 0 / rx 0</span>
+  <span id="err" class="err"></span>
+  <button id="quitbtn" title="Shut down the app" style="margin-left:auto;background:#3a1d20;color:#f0b7b7;border:1px solid #5c2b2f;border-radius:8px;padding:6px 12px;cursor:pointer">⏻ Quit</button>
+</header>
+
+<main>
+  <!-- FULL WIDTH: getting started (collapsible) -->
+  <details class="panel" id="help" style="grid-column:1/-1">
+    <summary style="cursor:pointer;font-weight:600;font-size:15px">▸ Getting started &amp; help</summary>
+    <div style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;color:var(--mut);font-size:13px;line-height:1.5">
+      <div>
+        <b style="color:var(--fg)">What this is</b><br>
+        A bench tool for developing and testing Subaru 5EAT TCU firmware. It runs a
+        physics-based car simulator that drives the transmission logic, and a live
+        window into a real TCU's internal memory over SSM. Everything works with
+        <b>no hardware</b> (demo / mock), and lights up when you connect the bench.
+      </div>
+      <div>
+        <b style="color:var(--fg)">Demo vs hardware</b><br>
+        With no CANtact connected it runs an internal transmission model so the UI is
+        fully drivable. Plug in a <b>CANtact Pro</b> and a powered TCU on the bench and
+        it drives the real bus and reads the TCU's broadcasts.
+      </div>
+      <div>
+        <b style="color:var(--fg)">Drive it</b><br>
+        Pick a firmware ROM and power level, then drive: throttle/brake sliders, the
+        P-R-N-D-M selector, or the keyboard (<b>W</b> throttle, <b>S</b> brake,
+        <b>P R N D M</b> range, <b>[ ]</b> manual gear). Or run a scripted test drive
+        / duration run and let it log.
+      </div>
+      <div>
+        <b style="color:var(--fg)">Live TCU memory</b><br>
+        The <b>Live TCU memory</b> panel reads the firmware-mapped RAM off a real TCU
+        over SSM (Tactrix OpenPort 2.0 on K-line), or a mock TCU fed by the simulator.
+        The <b>✎</b> button writes a byte (live poke) — <span style="color:var(--warn,#e3b341)">use with care on a real unit</span>.
+      </div>
+      <div>
+        <b style="color:var(--fg)">Firmware ROMs</b><br>
+        Firmware is not shipped with the tool. Point it at your own <code>.bin</code>
+        files via the <code>TCUSIM_ROM_DIR</code> environment variable or a
+        <code>roms/</code> folder. With none found it uses built-in model defaults.
+      </div>
+      <div>
+        <b style="color:var(--fg)">Logging (AI-ready)</b><br>
+        Runs and the live monitor write JSONL logs with full CAN/telemetry capture,
+        for automated analysis. See the Data logging and Live panels. Close the app
+        with the <b>⏻ Quit</b> button in the header.
+      </div>
+    </div>
+  </details>
+
+  <!-- LEFT: instrument cluster -->
+  <section class="panel">
+    <div class="cluster">
+      <div class="metric">
+        <svg width="180" height="180" viewBox="0 0 180 180" id="rpmgauge">
+          <path class="track" d="M30 150 A85 85 0 1 1 150 150"/>
+          <path class="val" id="rpmarc" d="M30 150 A85 85 0 1 1 150 150"/>
+        </svg>
+        <div class="big"><span id="rpm" class="num">0</span><small> rpm</small></div>
+      </div>
+      <div class="metric">
+        <div class="gear" id="gear">P<small>gear</small></div>
+      </div>
+      <div class="metric">
+        <div class="big"><span id="speed" class="num">0</span><small> km/h</small></div>
+        <div class="hint" id="lockup">TCC unlocked</div>
+      </div>
+    </div>
+
+    <div class="row"><span class="lbl">Selector</span>
+      <span class="selector" id="selector">
+        <button data-sel="P">P</button><button data-sel="R">R</button>
+        <button data-sel="N">N</button><button data-sel="D">D</button>
+        <button data-sel="M">M</button>
+      </span>
+      <span id="manbox" style="display:none">
+        <button id="mdown">−</button><b id="mgear" style="margin:0 8px">1</b><button id="mup">+</button>
+      </span>
+    </div>
+
+    <div class="row" style="align-items:stretch;gap:16px">
+      <div class="pedal">
+        <div class="bar"><div class="fill" id="thrfill" style="height:0"></div></div>
+        <b>Throttle</b>
+        <input type="range" id="throttle" min="0" max="100" value="0">
+      </div>
+      <div class="pedal brake">
+        <div class="bar"><div class="fill" id="brkfill" style="height:0"></div></div>
+        <b>Brake</b>
+        <input type="range" id="brake" min="0" max="100" value="0">
+      </div>
+    </div>
+    <div class="hint">Keys: <b>W</b>/<b>S</b> throttle & brake (hold), <b>P R N D M</b> selector,
+      <b>[</b> / <b>]</b> manual down/up.</div>
+  </section>
+
+  <!-- RIGHT: TCU status + controls -->
+  <section class="panel">
+    <div class="row"><span class="lbl">Firmware</span>
+      <select id="romsel" style="flex:1;background:#21262d;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:7px"></select>
+    </div>
+    <div id="rominfo" class="hint"></div>
+
+    <div class="row"><span class="lbl">Ignition</span>
+      <button id="ignbtn" class="sel">ON</button>
+      <span id="dmwrap"><span class="lbl" style="width:auto;margin-left:12px">SI-DRIVE</span>
+      <button data-dm="5" class="dm sel">I</button>
+      <button data-dm="6" class="dm">S</button>
+      <button data-dm="7" class="dm">S#</button></span>
+      <span id="nodm" class="hint" style="margin-left:12px;display:none">no SI-DRIVE on this model</span>
+    </div>
+    <h3 style="margin:14px 0 6px">Test drive</h3>
+    <div class="row"><span class="lbl">Mode</span>
+      <span id="profile">
+        <button data-prof="manual" class="sel">Manual</button>
+        <button data-prof="normal">Normal</button>
+        <button data-prof="aggressive">Aggressive</button>
+      </span>
+    </div>
+    <div class="row"><span class="lbl">Engine</span>
+      <span id="power">
+        <button data-pw="Stock ~250hp" class="sel">Stock</button>
+        <button data-pw="400 hp">400</button>
+        <button data-pw="600 hp">600</button>
+        <button data-pw="800 hp">800</button>
+        <button data-pw="1000+ hp">1000+</button>
+      </span>
+    </div>
+    <div class="hint" id="phasehint"></div>
+
+    <div class="row"><span class="lbl">Auto run</span>
+      <select id="runsel" style="flex:1;background:#21262d;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:7px"></select>
+    </div>
+    <div class="row"><span class="lbl"></span>
+      <button id="runstart">▶ Start</button><button id="runstop">■ Stop</button>
+      <span id="runstatus" class="hint" style="flex:1;margin:0"></span>
+    </div>
+    <div id="rundesc" class="hint"></div>
+    <div id="runlog" class="hint" style="max-height:130px;overflow:auto;white-space:pre-line;font-variant-numeric:tabular-nums"></div>
+
+    <h3 style="margin:14px 0 6px">TCU status</h3>
+    <table>
+      <tr><td class="k">CAN link</td><td id="t_link">—</td></tr>
+      <tr><td class="k">Current gear</td><td id="t_cur">—</td></tr>
+      <tr><td class="k">Target gear</td><td id="t_tgt">—</td></tr>
+      <tr><td class="k">TCC lockup</td><td id="t_lock">—</td></tr>
+      <tr><td class="k">Selector code</td><td id="t_selcode">—</td></tr>
+      <tr><td class="k">ATF temp</td><td id="t_atf">—</td></tr>
+      <tr><td class="k">Active DTCs</td><td id="t_dtc" class="dtc">none</td></tr>
+    </table>
+    <div class="row"><button id="cleardtc">Clear DTC cache</button></div>
+    <p class="hint">DTCs are the codes the TCU is actively broadcasting on 0x422.
+      Keeping the whole monitored bus alive is what stops P1718.</p>
+  </section>
+
+  <!-- FULL WIDTH: engine & vehicle signals -->
+  <section class="panel" style="grid-column:1/-1">
+    <h3 style="margin:0 0 10px">Engine &amp; vehicle signals</h3>
+    <div class="trans-grid">
+      <div class="tcell"><div class="tv" id="sg_pedal">0</div><div class="tk">Accel pedal %</div></div>
+      <div class="tcell"><div class="tv" id="sg_load">0</div><div class="tk">Engine load</div></div>
+      <div class="tcell"><div class="tv" id="sg_brake">0</div><div class="tk">Brake %</div></div>
+      <div class="tcell"><div class="tv" id="sg_veh">0</div><div class="tk">Vehicle speed (km/h)</div></div>
+      <div class="tcell"><div class="tv" id="sg_wheel">0</div><div class="tk">Wheel speed (km/h)</div></div>
+      <div class="tcell"><div class="tv" id="sg_coolant">0</div><div class="tk">Engine coolant (°C)</div></div>
+      <div class="tcell"><div class="tv" id="sg_amb">0</div><div class="tk">Ambient (raw)</div></div>
+    </div>
+  </section>
+
+  <!-- FULL WIDTH: transmission internals -->
+  <section class="panel" style="grid-column:1/-1">
+    <h3 style="margin:0 0 10px">Transmission internals</h3>
+    <div class="trans-grid">
+      <div class="tcell"><div class="tv" id="turb">0</div><div class="tk">Turbine / input (rpm)</div></div>
+      <div class="tcell"><div class="tv" id="outrpm">0</div><div class="tk">Output shaft (rpm)</div></div>
+      <div class="tcell"><div class="tv" id="slip">0</div><div class="tk">Converter slip (rpm)</div></div>
+      <div class="tcell"><div class="tv" id="linep">0</div><div class="tk">Line pressure (kPa)</div></div>
+      <div class="tcell"><div class="tv" id="shiftst">—</div><div class="tk">Shift status</div></div>
+      <div class="tcell"><div class="tv" id="atf1">0</div><div class="tk">ATF sensor 1 (°C)</div></div>
+      <div class="tcell"><div class="tv" id="atf2">0</div><div class="tk">ATF sensor 2 (°C)</div></div>
+    </div>
+    <h4 style="margin:16px 0 8px;color:var(--mut);font-weight:600">Solenoids
+      <span class="hint" style="display:inline">— modeled in demo; live currents/pressures come from the TCU over SSM</span></h4>
+    <div class="sol-grid" id="sols">
+      <div class="sol"><span class="sn">P/L line pressure</span><div class="sbar"><div class="sfill" id="s_PL"></div></div><span class="sp" id="p_PL">0%</span></div>
+      <div class="sol"><span class="sn">L/U lockup</span><div class="sbar"><div class="sfill" id="s_LU"></div></div><span class="sp" id="p_LU">0%</span></div>
+      <div class="sol"><span class="sn">I/C input clutch</span><div class="sbar"><div class="sfill" id="s_IC"></div></div><span class="sp" id="p_IC">0%</span></div>
+      <div class="sol"><span class="sn">D/C direct clutch</span><div class="sbar"><div class="sfill" id="s_DC"></div></div><span class="sp" id="p_DC">0%</span></div>
+      <div class="sol"><span class="sn">F/B front brake</span><div class="sbar"><div class="sfill" id="s_FB"></div></div><span class="sp" id="p_FB">0%</span></div>
+      <div class="sol"><span class="sn">H&amp;LR/C hi-lo reverse</span><div class="sbar"><div class="sfill" id="s_HLR"></div></div><span class="sp" id="p_HLR">0%</span></div>
+      <div class="sol"><span class="sn">AWD transfer</span><div class="sbar"><div class="sfill" id="s_AWD"></div></div><span class="sp" id="p_AWD">0%</span></div>
+    </div>
+  </section>
+
+  <!-- FULL WIDTH: live CAN bus monitor -->
+  <section class="panel" style="grid-column:1/-1">
+    <h3 style="margin:0 0 8px">Live CAN bus <span id="canmode" class="pill">demo</span></h3>
+    <div style="overflow-x:auto">
+      <table id="cantable">
+        <thead><tr><td class="k">ID</td><td class="k">Message</td><td class="k">Src</td><td class="k">Data (hex)</td><td class="k">Decode</td><td class="k">#</td></tr></thead>
+        <tbody id="canbody"></tbody>
+      </table>
+    </div>
+    <p class="hint" style="margin-top:6px">Car → TCU frames (the simulated bus) and the TCU's own broadcast. In demo the TCU frames are synthesized; with a CANtact + TCU on the bench these are the real frames off the wire.</p>
+  </section>
+
+  <!-- FULL WIDTH: live TCU memory monitor (SSM) -->
+  <section class="panel" style="grid-column:1/-1">
+    <h3 style="margin:0 0 8px">Live TCU memory <span id="live_state" class="pill">disconnected</span>
+      <span id="live_stats" class="hint" style="display:inline;margin-left:8px"></span></h3>
+    <p class="hint" style="margin:0 0 10px">Reads the firmware-mapped RAM off a real TCU over SSM (Tactrix OpenPort 2.0 on K-line), or a mock TCU fed by the simulator when no cable is present. Values are decoded from the 8AF0237300 firmware trace. Writes are live pokes (SSM 0xB8) — use with care on a real unit.</p>
+    <div class="row" style="flex-wrap:wrap;gap:8px">
+      <label class="hint" style="margin:0">source
+        <select id="live_kind" style="background:#21262d;color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px">
+          <option value="mock">Mock (simulator)</option>
+          <option value="tactrix-serial">Tactrix OpenPort 2.0 (serial)</option>
+        </select></label>
+      <span id="live_serialopts" style="display:none">
+        <label class="hint" style="margin:0">port
+          <select id="live_port" style="background:#21262d;color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px"></select></label>
+        <label class="hint" style="margin:0">baud
+          <select id="live_baud" style="background:#21262d;color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px"><option>4800</option><option>9600</option><option>15625</option><option>38400</option></select></label>
+        <button id="live_ports">↻ ports</button>
+      </span>
+      <button id="live_connect" class="sel">Connect</button>
+      <button id="live_disconnect">Disconnect</button>
+      <button id="live_logbtn">● Start log</button>
+      <span id="live_err" class="err" style="flex:1"></span>
+    </div>
+    <div id="live_init" class="hint" style="margin:8px 0 0"></div>
+    <div id="live_groups" style="margin-top:10px"></div>
+  </section>
+
+  <!-- FULL WIDTH: AI-ready data logging -->
+  <section class="panel" style="grid-column:1/-1">
+    <h3 style="margin:0 0 8px">Data logging — AI-ready</h3>
+    <p class="hint" style="margin:0 0 10px">Runs the selected scenario/duration faster-than-real-time and writes a JSONL log with the full CAN capture (RX + TX frames), telemetry, shift events and summary — for the current firmware + power. Machine-readable for automated firmware analysis.</p>
+    <div class="row">
+      <button id="genlog">▶ Generate log (current run + firmware + power)</button>
+      <label class="hint" style="margin:0">sample <select id="samplehz" style="background:#21262d;color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:4px"><option>2</option><option selected>5</option><option>10</option><option>20</option></select> Hz</label>
+      <span id="genstatus" class="hint" style="flex:1;margin:0"></span>
+    </div>
+    <div id="loglist" class="hint" style="max-height:150px;overflow:auto;margin-top:8px"></div>
+  </section>
+
+  <!-- FULL WIDTH: self-test -->
+  <section class="panel" style="grid-column:1/-1">
+    <h3 style="margin:0 0 8px">Self-test</h3>
+    <p class="hint" style="margin:0 0 8px">Runs the full test suite — CAN byte-correctness, all ROMs, determinism, log integrity, edge cases, physics bounds across every power level.</p>
+    <div class="row">
+      <button id="runtests">▶ Run full test suite</button>
+      <span id="testsummary" class="hint" style="flex:1;margin:0"></span>
+    </div>
+    <div id="testresults" style="max-height:300px;overflow:auto;white-space:pre;font-family:ui-monospace,Consolas,monospace;font-size:13px;margin-top:8px"></div>
+  </section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+let st = {throttle:0, brake:0, selector:"P", manual_gear:1, drive_mode:5, ignition:true};
+let ws, wsReady=false;
+let dispRpm=0, dispSpeed=0;   // low-pass display values to kill twitch
+let curPower="Stock ~250hp";  // tracked from snapshot for headless requests
+
+function connect(){
+  ws = new WebSocket((location.protocol==="https:"?"wss":"ws")+"://"+location.host+"/ws");
+  ws.onopen = ()=>{wsReady=true;};
+  ws.onclose = ()=>{wsReady=false; setTimeout(connect,800);};
+  ws.onmessage = e => { const m=JSON.parse(e.data);
+    if(m.live_result!==undefined){ onLiveResult(m.live_result); return; }
+    render(m); };
+}
+function send(obj){ if(wsReady) ws.send(JSON.stringify(obj)); }
+function input(part){ Object.assign(st, part); send(Object.assign({cmd:"input"}, part)); }
+
+// --- RPM arc geometry ---
+const arc = $("#rpmarc");
+const LEN = arc.getTotalLength();
+arc.style.strokeDasharray = LEN;
+function setArc(frac){ arc.style.strokeDashoffset = LEN*(1-Math.max(0,Math.min(1,frac))); }
+
+function render(s){
+  if(s.demo){ $("#err").style.color="var(--warn)";
+    $("#err").textContent = "DEMO — no CANtact/TCU connected; internal transmission model. Connect hardware for the real TCU."; }
+  else if(s.start_error){ $("#err").style.color="var(--bad)"; $("#err").textContent = "CAN open failed: "+s.start_error; }
+  else { $("#err").textContent=""; }
+  dispRpm += (s.engine_rpm - dispRpm) * 0.3;
+  dispSpeed += (s.speed_kmh - dispSpeed) * 0.3;
+  if(Math.abs(s.engine_rpm-dispRpm)<2) dispRpm=s.engine_rpm;
+  if(Math.abs(s.speed_kmh-dispSpeed)<0.3) dispSpeed=s.speed_kmh;
+  $("#rpm").textContent = Math.round(dispRpm);
+  $("#speed").textContent = Math.round(dispSpeed);
+  $("#gear").firstChild.textContent = s.gear_label;
+  setArc(dispRpm/6500);
+  $("#rpmgauge").classList.toggle("redline", s.engine_rpm>5800);
+  $("#lockup").textContent = s.tcu_lockup ? "TCC locked" : "TCC unlocked";
+
+  const link = s.can_link_up;
+  const lp=$("#link");
+  if(s.demo){ lp.textContent="DEMO"; lp.className="pill"; }
+  else { lp.textContent = "CAN "+(link?"up":"down"); lp.className = "pill "+(link?"on":"off"); }
+  $("#ign").className = "pill "+(s.ignition?"on":"off");
+  $("#counts").textContent = `tx ${s.tx_count} / rx ${s.rx_count}`+(s.tx_errors?` / err ${s.tx_errors}`:"");
+
+  $("#t_link").textContent = s.demo?"demo (no TCU)":(link?"up":"down");
+  $("#t_cur").textContent = gearName(s.tcu_current_gear);
+  $("#t_tgt").textContent = gearName(s.tcu_target_gear);
+  $("#t_lock").textContent = s.tcu_lockup?"engaged":"open";
+  $("#t_selcode").textContent = "0x"+(s.tcu_selector_code||0).toString(16);
+  $("#t_atf").textContent = s.tcu_atf_temp_c+" °C";
+  $("#t_dtc").textContent = (s.tcu_dtcs&&s.tcu_dtcs.length)? s.tcu_dtcs.join(", ") : "none";
+
+  // transmission internals
+  $("#turb").textContent = s.turbine_rpm;
+  $("#outrpm").textContent = s.output_rpm;
+  $("#slip").textContent = s.tcc_slip;
+  $("#linep").textContent = s.line_pressure_kpa;
+  $("#atf1").textContent = Math.round(s.atf1||0);
+  $("#atf2").textContent = Math.round(s.atf2||0);
+  if(s.rom_name){ $("#rominfo").textContent = s.rom_name + " — ratios "
+    + (s.rom_ratios_valid ? "["+s.gear_ratios.join(", ")+"]" : "(default; not extractable from this ROM)"); }
+  if(s.rom_id && $("#romsel").value!==s.rom_id) $("#romsel").value=s.rom_id;
+  $("#dmwrap").style.display = s.si_drive===false ? "none" : "inline";
+  $("#nodm").style.display = s.si_drive===false ? "inline" : "none";
+  curPower = s.power || curPower;
+  const sh=$("#shiftst"); sh.textContent = s.shifting? ("SHIFT "+s.shifting.toUpperCase()):"steady";
+  sh.classList.toggle("act", !!s.shifting);
+  const sol = s.solenoids||{};
+  ["PL","LU","IC","DC","FB","HLR","AWD"].forEach(k=>{
+    const v = sol[k]||0, f=$("#s_"+k), p=$("#p_"+k);
+    if(f){ f.style.width=v+"%"; f.classList.toggle("eng", v>=100); }
+    if(p) p.textContent=v+"%";
+  });
+
+  // engine & vehicle signals
+  $("#sg_pedal").textContent = s.pedal_pct||0;
+  $("#sg_load").textContent = s.engine_load||0;
+  $("#sg_brake").textContent = s.brake_pct||0;
+  $("#sg_veh").textContent = Math.round(s.speed_kmh||0);
+  $("#sg_wheel").textContent = Math.round(s.speed_kmh||0);
+  $("#sg_coolant").textContent = Math.round(s.coolant_c||0);
+  $("#sg_amb").textContent = s.ambient_c||0;
+
+  // live CAN bus monitor
+  const cf = s.can_frames||[];
+  $("#canbody").innerHTML = cf.map(f=>
+    `<tr><td class="cid">0x${f.id}</td><td>${f.name||''}</td>`
+    +`<td class="src-${(f.src||'').toLowerCase()==='tcu'?'tcu':'car'}">${f.src||''}</td>`
+    +`<td class="cdata">${f.bytes||''}</td><td>${f.decode||''}</td>`
+    +`<td style="color:var(--mut)">${f.n||''}</td></tr>`).join("");
+  const cm=$("#canmode");
+  cm.textContent = s.demo ? "demo (synthesized TCU)" : "live hardware";
+  cm.className = "pill" + (s.demo ? "" : " on");
+
+  if(s.live) renderLive(s.live);
+
+  // sync control widgets to the ACTUAL sim state (server is authoritative -
+  // fixes the selector/ignition/mode showing stale values when the sim or an
+  // auto-profile changed them).
+  if(s.selector!==st.selector){ st.selector=s.selector; markSelector(); }
+  $("#ignbtn").textContent = s.ignition?"ON":"OFF"; $("#ignbtn").classList.toggle("sel", !!s.ignition);
+  document.querySelectorAll(".dm").forEach(b=>b.classList.toggle("sel", +b.dataset.dm===s.drive_mode));
+  if(s.manual_gear!==st.manual_gear){ st.manual_gear=s.manual_gear; $("#mgear").textContent=s.manual_gear; }
+
+  // test-drive panel state
+  document.querySelectorAll("[data-prof]").forEach(b=>b.classList.toggle("sel", b.dataset.prof===s.profile));
+  document.querySelectorAll("[data-pw]").forEach(b=>b.classList.toggle("sel", b.dataset.pw===s.power));
+  const auto = s.profile!=="manual" || s.run_active;
+  $("#throttle").disabled = auto; $("#brake").disabled = auto;
+  $("#phasehint").textContent = s.run_active ? "" : (s.profile!=="manual" ? ("auto-driving: "+s.profile+" — "+s.phase) : "manual control");
+  if(auto){
+    $("#throttle").value=Math.round(s.throttle*100); $("#thrfill").style.height=(s.throttle*100)+"%";
+    $("#brake").value=Math.round(s.brake*100); $("#brkfill").style.height=(s.brake*100)+"%";
+  }
+
+  // automated run status + shift-event log
+  if(s.run_active){ $("#runstatus").style.color="var(--good)";
+    $("#runstatus").textContent = "▶ "+s.run_phase+"  "+s.run_elapsed+"s"; }
+  else { $("#runstatus").style.color="var(--mut)"; $("#runstatus").textContent = s.run_summary?"done":""; }
+  let log=(s.run_events||[]).map(e=>`${e.t}s  ${e.shift} ${e.dir}  @ ${e.speed} km/h  ${e.rpm} rpm`).join("\n");
+  if(s.run_summary){ const r=s.run_summary;
+    log += `\n— ${r.run} @ ${r.power}: ${r.duration}s, ${r.shifts} shifts`
+      + (r.t100?`, 0-100 ${r.t100}s`:"") + `, max ${r.max_speed} km/h`
+      + (r.dtcs&&r.dtcs.length?`, DTCs ${r.dtcs.join(",")}`:""); }
+  $("#runlog").textContent = log;
+}
+function gearName(g){ return g>=1?g:(g===-1?"R":"P/N"); }
+
+// --- controls ---
+$("#selector").addEventListener("click", e=>{
+  const b=e.target.closest("[data-sel]"); if(!b) return;
+  input({selector:b.dataset.sel});
+});
+document.querySelectorAll(".dm").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".dm").forEach(x=>x.classList.remove("sel"));
+  b.classList.add("sel"); input({drive_mode:+b.dataset.dm});
+});
+$("#ignbtn").onclick=()=>{ st.ignition=!st.ignition; $("#ignbtn").textContent=st.ignition?"ON":"OFF";
+  $("#ignbtn").classList.toggle("sel",st.ignition); input({ignition:st.ignition}); };
+$("#throttle").oninput=e=>{ input({throttle:e.target.value/100}); $("#thrfill").style.height=e.target.value+"%"; };
+$("#brake").oninput=e=>{ input({brake:e.target.value/100}); $("#brkfill").style.height=e.target.value+"%"; };
+$("#mup").onclick=()=>{ st.manual_gear=Math.min(5,st.manual_gear+1); $("#mgear").textContent=st.manual_gear; input({manual_gear:st.manual_gear}); };
+$("#mdown").onclick=()=>{ st.manual_gear=Math.max(1,st.manual_gear-1); $("#mgear").textContent=st.manual_gear; input({manual_gear:st.manual_gear}); };
+$("#cleardtc").onclick=()=>send({cmd:"clear_dtc"});
+$("#profile").addEventListener("click", e=>{ const b=e.target.closest("[data-prof]"); if(b) input({profile:b.dataset.prof}); });
+$("#power").addEventListener("click", e=>{ const b=e.target.closest("[data-pw]"); if(b) input({power:b.dataset.pw}); });
+
+// automated runs
+let RUNDESCS={};
+fetch("/api/runs").then(r=>r.json()).then(d=>{
+  const sel=$("#runsel"); sel.innerHTML="";
+  d.runs.forEach(r=>{ RUNDESCS[r.id]=r.desc; const o=document.createElement("option"); o.value=r.id; o.textContent=r.name; sel.appendChild(o); });
+  $("#rundesc").textContent = d.runs.length?RUNDESCS[d.runs[0].id]:"";
+});
+$("#runsel").onchange=e=>{ $("#rundesc").textContent = RUNDESCS[e.target.value]||""; };
+$("#runstart").onclick=()=>send({cmd:"start_run", run_id:$("#runsel").value});
+$("#runstop").onclick=()=>send({cmd:"stop_run"});
+
+// firmware (ROM) selector
+fetch("/api/roms").then(r=>r.json()).then(d=>{
+  const sel=$("#romsel"); sel.innerHTML="";
+  const valid=d.roms.filter(r=>r.valid_5eat), inval=d.roms.filter(r=>!r.valid_5eat);
+  const mk=(label,list)=>{ if(!list.length) return; const og=document.createElement("optgroup"); og.label=label;
+    list.forEach(r=>{const o=document.createElement("option");o.value=r.id;o.textContent=r.name;og.appendChild(o);}); sel.appendChild(og); };
+  mk("5EAT firmware — ratios extracted", valid);
+  mk("Other ROMs — model defaults used", inval);
+  if(valid.length){ sel.value=valid[0].id; send({cmd:"set_rom", rom_id:valid[0].id}); }
+});
+$("#romsel").onchange=e=>send({cmd:"set_rom", rom_id:e.target.value});
+
+// AI-ready logging
+function loadLogs(){ fetch("/api/logs").then(r=>r.json()).then(d=>{
+  $("#loglist").innerHTML = d.logs.length
+    ? d.logs.map(l=>`<div><a href="/api/log/${l.name}" download style="color:var(--accent)">${l.name}</a> <span style="color:var(--mut)">${(l.size/1024).toFixed(0)} KB</span></div>`).join("")
+    : "no logs yet";
+}); }
+$("#genlog").onclick=()=>{
+  const run=$("#runsel").value, rom=$("#romsel").value, hz=+$("#samplehz").value;
+  $("#genstatus").textContent="running headless…"; $("#genlog").disabled=true;
+  fetch("/api/headless",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({run_id:run,power:curPower,rom:rom,sample_hz:hz})})
+    .then(r=>r.json()).then(d=>{ $("#genlog").disabled=false; const su=d.summary||{};
+      $("#genstatus").textContent=`done: ${d.run} @ ${d.power} — ${su.duration||'?'}s, ${su.shifts||0} shifts, ${d.samples} samples`;
+      loadLogs(); })
+    .catch(e=>{ $("#genlog").disabled=false; $("#genstatus").textContent="error: "+e; });
+};
+loadLogs();
+
+// self-test
+$("#runtests").onclick=()=>{
+  $("#testsummary").textContent="running full suite… (a few seconds)"; $("#testsummary").style.color="var(--mut)";
+  $("#runtests").disabled=true;
+  fetch("/api/selftest",{method:"POST"}).then(r=>r.json()).then(d=>{
+    $("#runtests").disabled=false;
+    const allpass = d.passed===d.total;
+    $("#testsummary").textContent = `${d.passed}/${d.total} passed`;
+    $("#testsummary").style.color = allpass?"var(--good)":"var(--bad)";
+    $("#testresults").innerHTML = d.results.map(r=>
+      `<span style="color:${r.pass?'var(--good)':'var(--bad)'}">[${r.pass?'PASS':'FAIL'}]</span> ${r.name}${r.detail?'  &lt;&lt; '+r.detail:''}`
+    ).join("\n");
+  }).catch(e=>{ $("#runtests").disabled=false; $("#testsummary").textContent="error: "+e; });
+};
+
+function markSelector(){ document.querySelectorAll("[data-sel]").forEach(b=>
+  b.classList.toggle("sel", b.dataset.sel===st.selector));
+  $("#manbox").style.display = st.selector==="M"?"inline":"none"; }
+const _origInput=input;
+input=function(p){ _origInput(p); if(p.selector) markSelector(); };
+
+// --- keyboard driving ---
+const held={};
+addEventListener("keydown",e=>{
+  const k=e.key.toLowerCase();
+  if(["p","r","n","d","m"].includes(k)){ input({selector:k.toUpperCase()}); }
+  else if(k==="w"&&!held.w){held.w=setInterval(()=>{ let v=Math.min(100,+$("#throttle").value+6);
+    $("#throttle").value=v; $("#thrfill").style.height=v+"%"; input({throttle:v/100});},50);}
+  else if(k==="s"&&!held.s){held.s=setInterval(()=>{ let v=Math.min(100,+$("#brake").value+8);
+    $("#brake").value=v; $("#brkfill").style.height=v+"%"; input({brake:v/100});},50);}
+  else if(k==="]"){ $("#mup").click(); }
+  else if(k==="["){ $("#mdown").click(); }
+});
+addEventListener("keyup",e=>{
+  const k=e.key.toLowerCase();
+  if(k==="w"&&held.w){clearInterval(held.w);held.w=null;$("#throttle").value=0;$("#thrfill").style.height=0;input({throttle:0});}
+  if(k==="s"&&held.s){clearInterval(held.s);held.s=null;$("#brake").value=0;$("#brkfill").style.height=0;input({brake:0});}
+});
+
+// --- live TCU memory monitor ---
+function renderLive(L){
+  const st=$("#live_state");
+  st.textContent = L.connected ? ("connected — "+(L.kind||"")) : "disconnected";
+  st.className = "pill" + (L.connected ? " on" : "");
+  $("#live_stats").textContent = L.connected
+    ? `${L.hz.toFixed(1)} Hz · ${L.polls} polls · ${L.errs} err${L.logging?" · ● logging "+(L.log_name||""):""}` : "";
+  $("#live_err").textContent = L.error || "";
+  $("#live_init").textContent = (L.init && (L.init.rom_id||L.init.note))
+    ? ("ECU: "+(L.init.rom_id?("ROM "+L.init.rom_id+"  SSM "+(L.init.ssm_id||"")):L.init.note)) : "";
+  $("#live_logbtn").textContent = L.logging ? "■ Stop log" : "● Start log";
+  const groups = L.groups||[];
+  $("#live_groups").innerHTML = groups.map(g=>
+    `<div class="live-grp"><div class="live-gname">${g.name}</div>`
+    + `<table class="live-tbl"><tbody>` + g.rows.map(r=>{
+        const fault = r.bits && r.bits.length && /FAULT/i.test(r.display);
+        return `<tr${fault?' class="live-fault"':''}>`
+          + `<td class="live-n" title="${r.src||''}">${r.name}</td>`
+          + `<td class="live-a">0x${r.addr.toString(16).toUpperCase()}</td>`
+          + `<td class="live-v">${r.display}</td>`
+          + `<td class="live-p"><button class="live-poke" data-addr="${r.addr}" data-name="${r.name}" title="poke a byte">✎</button></td></tr>`;
+      }).join("") + `</tbody></table></div>`).join("");
+}
+function onLiveResult(r){
+  if(!r.ok){ $("#live_err").textContent = "connect failed: "+(r.error||"?"); }
+  else { $("#live_err").textContent = ""; }
+}
+$("#live_kind").onchange = e => {
+  $("#live_serialopts").style.display = e.target.value==="mock" ? "none" : "inline";
+  if(e.target.value!=="mock") loadPorts();
+};
+function loadPorts(){ fetch("/api/live/ports").then(r=>r.json()).then(d=>{
+  const sel=$("#live_port"); sel.innerHTML="";
+  (d.ports||[]).forEach(p=>{ const o=document.createElement("option");
+    o.value=p.device; o.textContent=p.device+(p.desc?(" — "+p.desc):""); sel.appendChild(o); });
+  if(!(d.ports||[]).length){ const o=document.createElement("option");
+    o.value=""; o.textContent="(no COM ports found)"; sel.appendChild(o); }
+}); }
+$("#live_ports").onclick = loadPorts;
+$("#live_connect").onclick = ()=>{
+  const kind=$("#live_kind").value;
+  const spec = kind==="mock" ? {kind} : {kind, port:$("#live_port").value, baud:+$("#live_baud").value};
+  send({cmd:"live_connect", spec});
+};
+$("#live_disconnect").onclick = ()=>send({cmd:"live_disconnect"});
+$("#live_logbtn").onclick = ()=>{
+  const on = $("#live_logbtn").textContent.indexOf("Start")>=0;
+  send({cmd:"live_log", on}); if(on) setTimeout(loadLogs,400);
+};
+$("#live_groups").addEventListener("click", e=>{
+  const b=e.target.closest(".live-poke"); if(!b) return;
+  const raw = prompt("Write byte to 0x"+(+b.dataset.addr).toString(16).toUpperCase()
+                     +" ("+b.dataset.name+").\nValue 0-255, or 0x.. for hex:");
+  if(raw===null||raw.trim()==="") return;
+  let v = raw.trim().toLowerCase().startsWith("0x") ? parseInt(raw.trim(),16) : parseInt(raw.trim(),10);
+  if(isNaN(v)||v<0||v>255){ alert("value must be 0-255"); return; }
+  send({cmd:"live_poke", addr:+b.dataset.addr, value:v});
+});
+
+// --- quit the standalone app ---
+$("#quitbtn").onclick = ()=>{
+  if(!confirm("Shut down the TCU Simulator app?")) return;
+  fetch("/api/quit",{method:"POST"}).catch(()=>{});
+  document.body.innerHTML = "<div style='font:16px system-ui;color:#8b949e;"
+    + "display:flex;height:100vh;align-items:center;justify-content:center'>"
+    + "App is shutting down — you can close this window.</div>";
+};
+
+markSelector(); connect();
+</script>
+</body>
+</html>

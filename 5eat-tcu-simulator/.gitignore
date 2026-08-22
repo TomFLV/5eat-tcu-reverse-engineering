@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Build / packaging artifacts
+build/
+dist/
+*.spec.bak
+
+# Bundled driver binaries — fetched at build time via fetch_drivers.ps1, not tracked
+drivers/**/*.exe
+drivers/**/*.zip
+
+# Firmware ROMs — bring your own; never commit vehicle firmware
+roms/
+*.bin
+*.hex
+
+# Runtime output
+logs/
+*.log
+server.err
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,8 @@
+python-can>=4.6
+gs_usb>=0.3
+pyusb>=1.2
+libusb-package>=1.0
+fastapi>=0.110
+uvicorn>=0.29
+websockets>=12
+pyserial>=3.5
