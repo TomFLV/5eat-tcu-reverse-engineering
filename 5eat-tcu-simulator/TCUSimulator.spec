@@ -6,7 +6,9 @@
 # web data file, faster start, no per-launch temp extraction.
 from PyInstaller.utils.hooks import collect_all, collect_data_files
 
+import glob as _glob
 datas = [("tcu_sim/web/index.html", "tcu_sim/web")]
+datas += [(f, "roms") for f in _glob.glob("roms/*.bin")]   # supplied TCU ROM set
 binaries = []
 hiddenimports = [
     # python-can loads interface backends dynamically

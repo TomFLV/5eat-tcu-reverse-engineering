@@ -8,8 +8,10 @@ over SSM — so you can watch and tune behaviour on the bench.
 Everything runs with **no hardware** (demo / mock mode), and lights up with real
 data when you connect a CANtact Pro and a powered TCU.
 
-> **Scope:** this is a clean-room developer/bench tool. It does **not** contain or
-> distribute any vehicle firmware. Bring your own ROM `.bin` files (see below).
+> **Firmware:** the full 5EAT TCU ROM set (both the Hitachi/M32R and Denso/SH7058
+> families) is supplied in [`roms/`](roms/) and bundled with the packaged app, so the
+> firmware selector is populated out of the box. These are OEM calibration binaries,
+> included here for bench development and research.
 
 ---
 
@@ -73,13 +75,12 @@ python app.py            # native app window; use --shell browser for a browser 
 - **Quit:** the **⏻ Quit** button in the header shuts the app (and releases the
   CANtact) cleanly.
 
-### Firmware ROMs (bring your own)
-Firmware is not distributed with this tool. Point it at a folder of `.bin` files:
-```bash
-set TCUSIM_ROM_DIR=C:\path\to\roms      # Windows (or export on *nix)
-```
-or drop them in a `roms/` folder next to the app. With no ROMs found, the simulator
-uses built-in model defaults.
+### Firmware ROMs (supplied)
+The full TCU ROM set ships in [`roms/`](roms/) — 25 firmwares across the Hitachi/M32R
+and Denso/SH7058 families — so the selector is populated with no setup. Gear ratios
+are extracted from the Hitachi family; other firmwares are still selectable and fall
+back to model defaults for parameters not yet mapped. To use a different set, point
+`TCUSIM_ROM_DIR` at your own folder of `.bin` files (it overrides the bundled set).
 
 ---
 

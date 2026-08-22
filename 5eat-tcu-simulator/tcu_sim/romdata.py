@@ -3,22 +3,22 @@ simulator loads real values from the selected .bin so it reflects that firmware,
 not a hardcoded constant. Today: gear ratios (extracted, verified). Shift maps
 are stored as packed polylines and are the next extraction (see notes in chat).
 
-Bring your own ROMs: firmware is not distributed with this tool. Point it at a
-folder of .bin files with the TCUSIM_ROM_DIR environment variable, or drop them in
-a `roms/` folder next to the app / in the working directory. The selector shows a
-year/model name parsed from the file name + part number. With no ROMs found the
-simulator falls back to built-in model defaults.
+The full TCU ROM set is supplied in the `roms/` folder (bundled with the packaged
+app). To use a different set, point TCUSIM_ROM_DIR at a folder of .bin files. The
+selector shows a year/model name parsed from the file name + part number. With no
+ROMs found the simulator falls back to built-in model defaults.
 """
 from __future__ import annotations
 import os
 import re
 import struct
 
-from .paths import app_base
+from .paths import app_base, bundled_base
 
 _CANDIDATE_DIRS = [
     os.environ.get("TCUSIM_ROM_DIR", ""),
-    os.path.join(app_base(), "roms"),
+    os.path.join(bundled_base(), "roms"),   # supplied set (dev root or PyInstaller bundle)
+    os.path.join(app_base(), "roms"),       # next to the .exe / project root
     os.path.join(os.path.dirname(__file__), "roms"),
     os.path.join(os.getcwd(), "roms"),
 ]

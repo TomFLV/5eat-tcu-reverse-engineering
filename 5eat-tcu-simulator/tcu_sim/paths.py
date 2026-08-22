@@ -25,4 +25,13 @@ def web_dir() -> Path:
     return Path(__file__).parent / "web"
 
 
+def bundled_base() -> str:
+    """Base dir for read-only data bundled WITH the app (the ROM set). In a
+    PyInstaller build this is the unpacked bundle dir (_MEIPASS); in dev it's the
+    project root, so a top-level `roms/` folder is found either way."""
+    if is_frozen():
+        return getattr(sys, "_MEIPASS", app_base())
+    return os.path.dirname(os.path.dirname(__file__))
+
+
 LOG_DIR = os.path.join(app_base(), "logs")

@@ -15,10 +15,11 @@ dist/
 drivers/**/*.exe
 drivers/**/*.zip
 
-# Firmware ROMs — bring your own; never commit vehicle firmware
-roms/
+# Firmware: the supplied TCU ROM set in roms/ IS tracked; ignore stray firmware elsewhere
 *.bin
 *.hex
+!roms/
+!roms/*.bin
 
 # Runtime output
 logs/
