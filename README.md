@@ -11,6 +11,35 @@ Two controller families are covered: Hitachi M32R (17 firmwares) and Denso SH705
 Shift schedules, line pressure and downshift pressure are in real units. Trouble codes
 are individually switchable. Both checksum families are corrected on save.
 
+---
+
+## Bench Simulator
+
+A physics-driven bench simulator that runs the 5EAT TCU as if it were in a moving car,
+plus a live window into a real TCU's internal memory over SSM. Pick a firmware, drive it
+(or let it auto-drive), and watch the transmission logic, CAN bus, solenoids and ATF
+temperatures respond in real time — **with no hardware required**.
+
+<p align="center">
+  <img src="5eat-tcu-simulator/docs/simulator-demo.gif" alt="5EAT TCU Simulator running" width="900">
+</p>
+
+**[▶ Download the app](../../releases/tag/sim-v1.0.0)** &nbsp;·&nbsp; **[Source &amp; documentation](5eat-tcu-simulator/)**
+
+- Real-time vehicle physics driving the TCU logic — not a message replayer
+- All **25 TCU ROMs bundled**; power levels from stock to 1000+ hp; calm/normal/spirited drivers
+- **Live memory monitor + pokes** over SSM (Tactrix OpenPort 2.0), or a mock TCU with no hardware
+- Live CAN decode, dual-sensor ATF thermal model, AI-ready JSONL logging
+- Standalone Windows app (native window or browser) + a driver-bundling installer
+
+<p align="center">
+  <img src="5eat-tcu-simulator/docs/simulator-full.png" alt="Full dashboard" width="900">
+</p>
+
+---
+
+## RomRaider tuning definitions
+
 ### [Download the Windows app](../../releases/latest)
 
 Extract the folder and run `RomRaider-TCU.exe`, then `File > Open` a ROM from
