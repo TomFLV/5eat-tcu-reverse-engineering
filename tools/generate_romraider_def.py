@@ -2003,24 +2003,18 @@ def build_rom_block(profile, rom_bytes, is_base):
                 parts.append("")
                 total += 1
 
-        pcurves = PRESSURE_CURVES_BY_ROM.get(profile["id"], [])
-        if pcurves:
-            if is_base:
-                parts.append("  <!-- ============ Transmission - Line Pressure ============ -->")
-            for i, c in enumerate(pcurves, 1):
-                # Re-derive the record count from the ROM rather than trusting the
-                # extracted JSON: the terminating breakpoint is 0xFF00, so if the
-                # table has moved or resized in this firmware the count will not
-                # land on it and generation must fail loudly.
-                end = c["addr"] + (c["rows"] - 1) * 4
-                if u16(end) != 0xFF00:
-                    raise SystemExit(
-                        f"{profile['id']}: line pressure curve {i} at "
-                        f"0x{c['addr']:06X} does not end with the 0xFF00 sentinel "
-                        f"after {c['rows']} records (found 0x{u16(end):04X})")
-                parts.append(build_pressure_curve_xml(i, c))
-                parts.append("")
-                total += 1
+        # RETRACTED: the "Line Pressure Target N (kPa) - RPM" curves at these
+        # addresses (base 0x135BC/0x135D8 on the 384K images) were identified only
+        # by a literal 1370/953-kPa value scan; their consuming function was never
+        # traced (see the note in build_pressure_curve_xml). A later independent
+        # dataflow review of the exact 91FE207100/MB436L image traced the consumer
+        # and showed these are driver-demand breakpoints plus calculated
+        # gear-ratio-gate records, NOT line-pressure targets. Since a literal 1370
+        # is a plausible non-pressure constant and the real torque->kPa target maps
+        # store computed values (e.g. 524 -> 1372, emitted above), the pressure
+        # label is withdrawn and these tables are no longer emitted. See FINDINGS
+        # section on the retracted pressure-curve claim. The pressure_curves.json
+        # data and build_pressure_curve_xml() are kept only for historical trace.
 
         parts.append(" </rom>")
         return parts, total, 0

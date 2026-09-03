@@ -7177,3 +7177,34 @@ seventeenth M32R firmware and the only one of its kind here.
 
 Not yet done: the checksum is unverified, because no definition for this calibration
 existed to check it against, and no tables beyond the ratio set have been mapped.
+
+## 87. Retracting the 0x135BC/0x135D8 "Line Pressure Target" curves (2026-08-27)
+
+Incorporating external static review of the exact `91FE207100 / MB436L` image
+(an independent dataflow-traced r23 package) plus discussion on the RomRaider
+thread. Their strongest correction lands on ours: the two "Line Pressure Target N
+(1370/953 kPa) - RPM" curves at base `0x135BC`/`0x135D8` are **not** line-pressure
+targets.
+
+How we had them: found only by scanning for the literal `1370`/`953` as a big-endian
+`uint16` at a regular stride (§ the pressure-curve scan / `extract_pressure_curves.py`),
+with the consuming function never traced — the definition's own description said so
+("the consuming function has not been traced"). That is the value-scan failure mode
+this log has been bitten by before.
+
+The correction: an independent review traced the consumer on the exact MB436L image
+and found these records are **driver-demand breakpoints plus calculated gear-ratio
+gate records**, not pressure. Two things corroborate it from our own work: a literal
+`1370` is a perfectly ordinary non-pressure constant, and the line-pressure target
+maps we *did* trace (§19, torque in → kPa out) store **computed** values (e.g. base
+`524` → 1372 kPa), not the literal 1370 — so a table holding the literal is unlikely
+to be the real pressure map.
+
+Action: the pressure-curve emission is disabled in `generate_romraider_def.py`; the
+`pressure_curves.json` data and `build_pressure_curve_xml()` are kept only for
+historical trace. Regenerated the definition (removed 64 mislabeled tables across the
+family) and re-validated: `tools/validate_xml_defs.py` passes, 6232 checks across 17
+firmwares, every remaining table address matching its firmware. The genuine
+torque→kPa target maps (§19) and the downshift-pressure work are unaffected. The new
+"driver-demand / gear-ratio-gate" identity is recorded as the external finding, not
+re-asserted as our own until traced here.
