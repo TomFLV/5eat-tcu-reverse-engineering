@@ -7275,3 +7275,27 @@ normal). The open item is therefore no longer "which offset" but a bounded **10 
 difference between the internal table encoding (`x-40`) and the external SSM report
 (`x-50`)** — likely a raw-vs-calibrated bias, closable with one bench reading at a
 known temperature.
+
+## 90. Corrections from the thread, and FreeSSM was useful after all (2026-08-27)
+
+Point-by-point corrections rimwall raised against earlier FINDINGS conclusions:
+
+- **§40 was wrong to dismiss FreeSSM.** `SSMFlagbyteDefinitions_en.cpp` holds the
+  ordered SSM parameter list (units + conversions) for both the ECU and the TCU, and
+  the same list is replicated in the TCU ROM right after `SSM_Get_Base` (e.g. the
+  table at `PTR_DAT_0001d600` in `ACD1A06000`, which is present in our decompile).
+  That lets specific RAM addresses be tied to real parameters and then traced back
+  through the logic to define more variables and tables. This is a live lead for
+  expanding the logger/def, not a dead end.
+- **§40b** — the bitfield "switches" are also enumerated in FreeSSM (and the RR logger
+  XML), so each bit can be traced to the code that sets it.
+- **§41b** — the ATF-temp offsets are resolved in §89 above (`x-50` SSM, index 0x56/0x5A).
+- **§52c** — Denso IDA utilities were ported to Ghidra scripts by the community
+  (thread t=17796); worth diffing against our own scripts to confirm parity. The §52c
+  reference to "disputed DTCs in §24" is a mis-cross-reference (§24 is not about DTCs).
+- CAN-message construction in the ROM (thread t=20850) is another route to bind RAM
+  variables to real-world values, then trace them back to tables.
+
+These are recorded as leads/corrections; the SSM-parameter-list mapping (matching the
+0x1d600 table against FreeSSM to name more RAM variables) is the next substantive
+expansion and is not yet applied to the definition.
