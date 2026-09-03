@@ -228,9 +228,13 @@ positive results are reliable and its negatives are not: see
 computed at runtime; a fully disassembled image still shows no references to the
 calibration arrays. See [FINDINGS.md](FINDINGS.md) §31.
 
-**Disabling a DTC is inferred, not tested.** Blanking an entry should stop the code
-being reported, which is what the firmware's unused slots contain, but nobody has
-confirmed it on a car. It suppresses the code, not the fault.
+**Writing a zero DTC word is not a proven disable.** Blanking an entry makes it
+identical to the slots the factory leaves empty, but the firmware does **not** test
+the code word for nonzero before selecting or reporting a fault — so detection,
+failsafe, persistence and selection can all remain active, and it is unverified that a
+zero word even stops a scan tool reporting the fault. At best it suppresses the code,
+not the fault; nobody has confirmed the effect on a car. Treat it as an experimental
+code-word replacement, not a DTC-disable control.
 
 **Which fault sets which Denso code is not established.** The code table, the
 per-code records, both flag arrays and the routine that sets a bit have all been
