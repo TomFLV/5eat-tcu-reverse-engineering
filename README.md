@@ -203,10 +203,13 @@ giving its address. Separating them needs the duty addresses themselves logged. 
 A log does establish the behaviour: lock-up engages in **fourth and fifth only**,
 reaching about half the pressure in fourth that it does in fifth.
 
-**Which driving condition selects which schedule is unknown.** The selection mechanism
-is understood — index `= condition × 2 + group × 10` — and the group selector now
-ships. What each value of the condition byte means is not established. See
-[FINDINGS.md](FINDINGS.md) §33.
+**The shift-schedule selector is now fully decoded.** The index is
+`(mapped_drive_mode × 50) + (shift_lever_mode × 10) + (gear × 2)`, read from the
+pointer tables at `0x180E8`/`0x180EC` by `FUN_0004bcd8`, and the drive-mode values map
+to named modes (Normal, Sport#, Slope, Manual, Kickdown, ATF-Temp-Low, I-Mode, …).
+Verified from source against the community-supplied mapping. Several mode slots remain
+labelled "unknown" where no name is yet confirmed. See [FINDINGS.md](FINDINGS.md) §33
+and §88.
 
 **110 Denso tables per firmware are still unidentified.** The M32R definition names
 274 and leaves none; the Denso one names 56. Five routes to closing that are

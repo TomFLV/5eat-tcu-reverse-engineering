@@ -7208,3 +7208,45 @@ firmwares, every remaining table address matching its firmware. The genuine
 torque→kPa target maps (§19) and the downshift-pressure work are unaffected. The new
 "driver-demand / gear-ratio-gate" identity is recorded as the external finding, not
 re-asserted as our own until traced here.
+
+## 88. The shift-schedule selector, fully decoded (2026-08-27)
+
+The RomRaider thread supplied the drive-mode mapping; it verifies **exactly** against
+our own decompile, so §33's open question — "which driving condition selects which
+schedule" — is now answered from source.
+
+The selector is `FUN_0004bcd8` (@ `0x4bcd8`, present in `ACD1A06000` and
+`ACD1207000`). It builds a flat index and reads the shift-up/down table pointers:
+
+```
+index = (mapped_drive_mode * 50) + (shift_lever_mode * 10) + (gear * 2)
+up_table   = PTR_DAT_000180e8[index]      down_table = PTR_DAT_000180ec[index]
+```
+
+The multipliers are exactly rimwall's: `*2` = up/down pair, `*10` = 5 gears × 2,
+`*50` = 5 lever modes × 5 gears × 2. Ten mapped modes × 5 lever × 5 gears × 2 = **500
+table slots**, matching the independent r23 review's "500-entry shift-schedule family."
+
+Internal drive mode (`DAT_00804814`) → mapped offset (`sVar1`) → real-world name:
+
+| internal | offset | drive mode |
+|---:|---:|---|
+| 0x0 | 0 | Normal (Sport) |
+| 0x1 | 1 | Sport# |
+| 0x5 | 1 | (unknown — shares the Sport# table) |
+| 0xC | 2 | Slope |
+| 0x3 | 3 | (unknown) |
+| 0x4 | 4, or 8 if `DAT_008055fc & 0x80` | Manual Mode |
+| 0x6 | 5 | (unknown) |
+| 0xD | 6 | Kickdown / hard acceleration |
+| 0x8 | 7 | ATF Temp Low |
+| 0x9 | 8 | (unknown) |
+| 0xB | 9 | I-Mode |
+| else | 0 | fallback = Normal |
+
+Shift lever mode comes from `DAT_00804817`, which holds the range/selector codes we
+already know (0x84 = Park, etc.) mapped to 0-4; gear is `DAT_00804832`. So the shift
+schedules can now be named `[DriveMode]_[LeverMode]_[Gear]_[Up/Down]` rather than by
+raw group index. Denso works differently (12 tables in 6 up/down pairs for modes
+1,2,3 and 5,6,7; mode 4 hard-coded) — recorded for the Denso side, not applied to the
+M32R definition here.
