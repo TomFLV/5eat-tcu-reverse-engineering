@@ -7311,3 +7311,27 @@ does not name these, so `generate_logger_def.py` now carries a `DTC_GROUP_NAMES`
 that applies the name **only where that image's own SSM table routes the slot to RAM**,
 keeping support firmware-stated per image. Logger went 31 → 55 parameters. This lets
 the live DTC state be logged directly over SSM, not just read as stored codes.
+
+## 92. Selective adoption of the r23 MB436L package (2026-08-27)
+
+Assessed the external r23 definition (254 views, MB436L-only) for adoption into our
+family-wide def. Verified its tables against our own `91FE207100` ROM and diffed
+against what we already ship:
+
+- **Core P/L work overlaps and cross-confirms ours.** The 9 base-target curves, the
+  ten Downshift N-M P/L targets, and the ramp step/hold are already in our def (we
+  found them independently); their addresses and data verify in our ROM. Example:
+  `P/L Base-Target Curve 1` @`0x0121EC` reads a clean 0..2500 input → 7500..8700
+  target curve; `Final-Target Ceiling A0` @`0x012690` caps at 13720 (= 1372 kPa, the
+  manual's full-throttle line-pressure figure) and rolls off with engine speed. Two
+  independent analyses landing on the same addresses is strong mutual confirmation.
+- **Adopted the additive, verifiable part:** the 24 DTC-group SSM logger parameters
+  (§91), each re-verified against our own SSM tables before inclusion.
+- **Not adopted wholesale:** the remainder of the r23 def (P/L arbitration, target
+  limits, control-state, adaptive-mode, the full ceiling set) is deeper
+  calculated/internal structure that its own author marks hardware-pending. Pulling it
+  into an edit-oriented, family-wide def without tracing each table across all 16 M32R
+  images ourselves would import unverified claims and break the per-image address
+  verification our generator enforces. It stays available as an MB436L-specific
+  research resource; a proper family-wide port of any given internal-P/L table is a
+  bounded follow-up, done the same way as the tables we already carry.
