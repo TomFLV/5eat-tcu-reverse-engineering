@@ -1,7 +1,7 @@
 # tools
 #
 # SHA-256 of every tracked file in this directory, 104 files, 5.2 MB.
-# Recorded 2026-08-09. Verify with:  python tools/write-manifests.py --check
+# Recorded 2026-09-03. Verify with:  python tools/write-manifests.py --check
 #
 # These exist because this repository ships ROM images, decompiler output
 # and generated definitions - files where a truncated copy still loads and
@@ -84,8 +84,8 @@ ebeb1233607043ba703f4ee223da00101b928d816a411e2f0e2190ac4ed2adb8  fetch_forum_th
 78dd3cb947eb487363c486eb44b6cc3092e821a4a18a99443bece14acd1f8818  find_denso_pointer_tables.py
 9d29da5c5ea3c9aecd5d594d2edb89bf236917ca62e1eb8d5c6744dfa8f57a65  find_rom_offsets.py
 cd560f2a10871a4cf2119a91ddc3a9f63055020122f12a1b3a8664e1b1b067a1  generate_denso_def.py
-9f87415041a43e799c17c9fe8c12b8953db5615f103f02ade36ea18da06382ca  generate_logger_def.py
-7d3262ad0d4faf4a7b5d561f50196a64ef92f89342ab8205aece17f6b3160a0c  generate_romraider_def.py
+69759f98737af0d32ee745ecfef55eeecb9d261d3ae4d9129f35c841fefb5a08  generate_logger_def.py
+5d47514a712c37af0a6c0dc3897fb2ae751c8ecbccf37fe86e9d5c388d6d7306  generate_romraider_def.py
 504d5fe8eba44c82a3b123e4fadb39c6dde02e947e36c2706fc7e115d85021a3  hysteresis_by_rom.json
 48db6eff94835f913ae94990735548ab3b8950d29d5e05104d9b146422f1ae36  hysteresis_curves.json
 27eefe55600fc34ae1616142bcfada1944551123f16669627981e84eb27a9deb  line_pressure_targets.json
