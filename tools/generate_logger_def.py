@@ -136,6 +136,28 @@ def collect_switches(data, ids):
     return out
 
 
+# DTC status bitfields, named from the community MB436L r23 review and verified here:
+# each Select Monitor index below points, in every image that supports it, to a real
+# RAM byte (not the filler address) in the DTC status block that FUN_0002b330 fills
+# from the dtc_inputs_grp0..11 collectors. FreeSSM does not name these; the overlay
+# applies the name only where that image's own SSM table actually routes the slot to
+# RAM, so support stays firmware-stated per image. One byte each, a raw bitfield.
+DTC_GROUP_NAMES = {
+    0x09C: "DTC Group 0 Current Bits",  0x0BC: "DTC Group 0 Confirmed Bits",
+    0x09D: "DTC Group 1 Current Bits",  0x0BD: "DTC Group 1 Confirmed Bits",
+    0x09E: "DTC Group 2 Current Bits",  0x0BE: "DTC Group 2 Confirmed Bits",
+    0x0A6: "DTC Group 3 Current Bits",  0x0C6: "DTC Group 3 Confirmed Bits",
+    0x0F0: "DTC Group 4 Current Bits",  0x0F4: "DTC Group 4 Confirmed Bits",
+    0x0F1: "DTC Group 5 Current Bits",  0x0F5: "DTC Group 5 Confirmed Bits",
+    0x0F2: "DTC Group 6 Current Bits",  0x0F6: "DTC Group 6 Confirmed Bits",
+    0x0F3: "DTC Group 7 Current Bits",  0x0F7: "DTC Group 7 Confirmed Bits",
+    0x123: "DTC Group 8 Current Bits",  0x12B: "DTC Group 8 Confirmed Bits",
+    0x124: "DTC Group 9 Current Bits",  0x12C: "DTC Group 9 Confirmed Bits",
+    0x125: "DTC Group 10 Current Bits", 0x12D: "DTC Group 10 Confirmed Bits",
+    0x162: "DTC Group 11 Current Bits", 0x167: "DTC Group 11 Confirmed Bits",
+}
+
+
 def collect(data, ids):
     """(ssm, name, unit, conv, length) -> sorted list of unit ids supporting it."""
     params = {}
@@ -143,21 +165,28 @@ def collect(data, ids):
         uid = ids.get(rom)
         if not uid:
             continue
+        filler = info.get("filler")
         rows = {r["ssm"]: r for r in info["rows"]}
         for ssm, r in rows.items():
-            if not r.get("name"):
+            name = r.get("name")
+            unit = r.get("unit")
+            conv = r.get("conv")
+            half = r.get("half")
+            # Overlay the DTC-group names onto supported-but-unnamed slots only.
+            if not name and ssm in DTC_GROUP_NAMES and r.get("ram") != filler:
+                name, unit, conv, half = DTC_GROUP_NAMES[ssm], "raw bitfield", None, None
+            if not name:
                 continue
             # A 16-bit quantity occupies two Select Monitor addresses. Emit it once,
             # at the lower address with length 2, rather than as two useless halves.
-            half = r.get("half")
             if half == "low":
                 continue
             length = 1
             if half == "high":
-                if (ssm + 1) not in rows or rows[ssm + 1].get("name") != r["name"]:
+                if (ssm + 1) not in rows or rows[ssm + 1].get("name") != name:
                     continue
                 length = 2
-            key = (ssm, r["name"], r.get("unit") or "", r.get("conv") or "", length)
+            key = (ssm, name, unit or "", conv or "", length)
             params.setdefault(key, set()).add(uid)
     return params
 

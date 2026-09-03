@@ -7299,3 +7299,15 @@ Point-by-point corrections rimwall raised against earlier FINDINGS conclusions:
 These are recorded as leads/corrections; the SSM-parameter-list mapping (matching the
 0x1d600 table against FreeSSM to name more RAM variables) is the next substantive
 expansion and is not yet applied to the definition.
+
+## 91. Logger: the DTC status bitfields, verified and added (2026-08-27)
+
+The community r23 stock-SSM logger named 24 Select Monitor slots our logger was
+leaving unnamed: `DTC Group 0..11 Current Bits` and `Confirmed Bits`. Verified against
+our own extracted SSM tables before adopting — in the exact `91FE207100/MB436L` image
+all 24 route to real RAM `0x80525E..0x805278` (not the filler address), the same DTC
+status block `FUN_0002b330` fills from the `dtc_inputs_grp0..11` collectors. FreeSSM
+does not name these, so `generate_logger_def.py` now carries a `DTC_GROUP_NAMES` overlay
+that applies the name **only where that image's own SSM table routes the slot to RAM**,
+keeping support firmware-stated per image. Logger went 31 → 55 parameters. This lets
+the live DTC state be logged directly over SSM, not just read as stored codes.

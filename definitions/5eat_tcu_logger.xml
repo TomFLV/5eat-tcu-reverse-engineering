@@ -108,7 +108,183 @@
     <conversion units="rpm" expr="x*32" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P013" name="H&amp;LR/C Solenoid Valve Current" desc="Select Monitor address 0x140" target="2">
+  <ecuparam id="P013" name="DTC Group 0 Current Bits" desc="Select Monitor address 0x09C" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x00009C</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P014" name="DTC Group 1 Current Bits" desc="Select Monitor address 0x09D" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x00009D</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P015" name="DTC Group 2 Current Bits" desc="Select Monitor address 0x09E" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x00009E</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P016" name="DTC Group 3 Current Bits" desc="Select Monitor address 0x0A6" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x0000A6</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P017" name="DTC Group 0 Confirmed Bits" desc="Select Monitor address 0x0BC" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x0000BC</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P018" name="DTC Group 1 Confirmed Bits" desc="Select Monitor address 0x0BD" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x0000BD</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P019" name="DTC Group 2 Confirmed Bits" desc="Select Monitor address 0x0BE" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x0000BE</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P020" name="DTC Group 3 Confirmed Bits" desc="Select Monitor address 0x0C6" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x0000C6</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P021" name="DTC Group 4 Current Bits" desc="Select Monitor address 0x0F0" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x0000F0</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P022" name="DTC Group 5 Current Bits" desc="Select Monitor address 0x0F1" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x0000F1</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P023" name="DTC Group 6 Current Bits" desc="Select Monitor address 0x0F2" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x0000F2</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P024" name="DTC Group 7 Current Bits" desc="Select Monitor address 0x0F3" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x0000F3</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P025" name="DTC Group 4 Confirmed Bits" desc="Select Monitor address 0x0F4" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x0000F4</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P026" name="DTC Group 5 Confirmed Bits" desc="Select Monitor address 0x0F5" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x0000F5</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P027" name="DTC Group 6 Confirmed Bits" desc="Select Monitor address 0x0F6" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x0000F6</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P028" name="DTC Group 7 Confirmed Bits" desc="Select Monitor address 0x0F7" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x0000F7</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P029" name="DTC Group 8 Current Bits" desc="Select Monitor address 0x123" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x000123</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P030" name="DTC Group 9 Current Bits" desc="Select Monitor address 0x124" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x000124</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P031" name="DTC Group 10 Current Bits" desc="Select Monitor address 0x125" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x000125</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P032" name="DTC Group 8 Confirmed Bits" desc="Select Monitor address 0x12B" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x00012B</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P033" name="DTC Group 9 Confirmed Bits" desc="Select Monitor address 0x12C" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x00012C</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P034" name="DTC Group 10 Confirmed Bits" desc="Select Monitor address 0x12D" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x00012D</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P035" name="H&amp;LR/C Solenoid Valve Current" desc="Select Monitor address 0x140" target="2">
    <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000140</address>
    </ecu>
@@ -116,7 +292,7 @@
     <conversion units="A" expr="x/255" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P014" name="D/C Solenoid Valve Current" desc="Select Monitor address 0x141" target="2">
+  <ecuparam id="P036" name="D/C Solenoid Valve Current" desc="Select Monitor address 0x141" target="2">
    <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000141</address>
    </ecu>
@@ -124,7 +300,7 @@
     <conversion units="A" expr="x/255" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P015" name="F/B Solenoid Valve Current" desc="Select Monitor address 0x142" target="2">
+  <ecuparam id="P037" name="F/B Solenoid Valve Current" desc="Select Monitor address 0x142" target="2">
    <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000142</address>
    </ecu>
@@ -132,7 +308,7 @@
     <conversion units="A" expr="x/255" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P016" name="I/C Solenoid Valve Current" desc="Select Monitor address 0x143" target="2">
+  <ecuparam id="P038" name="I/C Solenoid Valve Current" desc="Select Monitor address 0x143" target="2">
    <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000143</address>
    </ecu>
@@ -140,7 +316,7 @@
     <conversion units="A" expr="x/255" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P017" name="P/L Solenoid Valve Current" desc="Select Monitor address 0x144" target="2">
+  <ecuparam id="P039" name="P/L Solenoid Valve Current" desc="Select Monitor address 0x144" target="2">
    <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000144</address>
    </ecu>
@@ -148,7 +324,7 @@
     <conversion units="A" expr="x/255" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P018" name="L/U Solenoid Valve Current" desc="Select Monitor address 0x145" target="2">
+  <ecuparam id="P040" name="L/U Solenoid Valve Current" desc="Select Monitor address 0x145" target="2">
    <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000145</address>
    </ecu>
@@ -156,7 +332,7 @@
     <conversion units="A" expr="x/255" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P019" name="AWD Solenoid Valve Current" desc="Select Monitor address 0x146" target="2">
+  <ecuparam id="P041" name="AWD Solenoid Valve Current" desc="Select Monitor address 0x146" target="2">
    <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000146</address>
    </ecu>
@@ -164,7 +340,7 @@
     <conversion units="A" expr="x/255" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P020" name="H&amp;LR/C Solenoid Valve Pressure" desc="Select Monitor address 0x148" target="2">
+  <ecuparam id="P042" name="H&amp;LR/C Solenoid Valve Pressure" desc="Select Monitor address 0x148" target="2">
    <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000148</address>
    </ecu>
@@ -172,7 +348,7 @@
     <conversion units="kPa" expr="x*10" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P021" name="D/C Solenoid Valve Pressure" desc="Select Monitor address 0x149" target="2">
+  <ecuparam id="P043" name="D/C Solenoid Valve Pressure" desc="Select Monitor address 0x149" target="2">
    <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000149</address>
    </ecu>
@@ -180,7 +356,7 @@
     <conversion units="kPa" expr="x*10" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P022" name="F/B Solenoid Valve Pressure" desc="Select Monitor address 0x14A" target="2">
+  <ecuparam id="P044" name="F/B Solenoid Valve Pressure" desc="Select Monitor address 0x14A" target="2">
    <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x00014A</address>
    </ecu>
@@ -188,7 +364,7 @@
     <conversion units="kPa" expr="x*10" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P023" name="I/C Solenoid Valve Pressure" desc="Select Monitor address 0x14B" target="2">
+  <ecuparam id="P045" name="I/C Solenoid Valve Pressure" desc="Select Monitor address 0x14B" target="2">
    <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x00014B</address>
    </ecu>
@@ -196,7 +372,7 @@
     <conversion units="kPa" expr="x*10" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P024" name="P/L Solenoid Valve Pressure" desc="Select Monitor address 0x14C" target="2">
+  <ecuparam id="P046" name="P/L Solenoid Valve Pressure" desc="Select Monitor address 0x14C" target="2">
    <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x00014C</address>
    </ecu>
@@ -204,7 +380,7 @@
     <conversion units="kPa" expr="x*10" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P025" name="L/U Solenoid Valve Pressure" desc="Select Monitor address 0x14D" target="2">
+  <ecuparam id="P047" name="L/U Solenoid Valve Pressure" desc="Select Monitor address 0x14D" target="2">
    <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x00014D</address>
    </ecu>
@@ -212,7 +388,7 @@
     <conversion units="kPa" expr="x*10" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P026" name="AWD Solenoid Valve Pressure" desc="Select Monitor address 0x14E" target="2">
+  <ecuparam id="P048" name="AWD Solenoid Valve Pressure" desc="Select Monitor address 0x14E" target="2">
    <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x00014E</address>
    </ecu>
@@ -220,7 +396,23 @@
     <conversion units="kPa" expr="x*10" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P027" name="SI-Drive Mode" desc="Select Monitor address 0x16A. Raw value: FreeSSM gives the conversion as '0=---,1=S,2=S#,3=I,8=S#,16=I'" target="2">
+  <ecuparam id="P049" name="DTC Group 11 Current Bits" desc="Select Monitor address 0x162" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x000162</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P050" name="DTC Group 11 Confirmed Bits" desc="Select Monitor address 0x167" target="2">
+   <ecu id="8AF0237300,8CEB207000,8EFB206000,91A0217300,91A0217400,91A1207300,91D0207500,91D1206000,91D1207900,91F0217100,91FE207100,91FE216300,99DE206000,A3DE207100,AAD1A06000,AAD1A07100,ABD1207000,ABD1A03100,ACD1207000,ACD1A06000,ADE0236000,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
+    <address>0x000167</address>
+   </ecu>
+   <conversions>
+    <conversion units="raw bitfield" expr="x" format="0" />
+   </conversions>
+  </ecuparam>
+  <ecuparam id="P051" name="SI-Drive Mode" desc="Select Monitor address 0x16A. Raw value: FreeSSM gives the conversion as '0=---,1=S,2=S#,3=I,8=S#,16=I'" target="2">
    <ecu id="8EFB206000,99DE206000,A3DE207100,B1AE207100,C1D1207000">
     <address>0x00016A</address>
    </ecu>
@@ -228,7 +420,7 @@
     <conversion units="raw" expr="x" format="0" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P028" name="Fwd/B Solenoid Valve Current" desc="Select Monitor address 0x185" target="2">
+  <ecuparam id="P052" name="Fwd/B Solenoid Valve Current" desc="Select Monitor address 0x185" target="2">
    <ecu id="8CEB207000,8EFB206000,99DE206000,A3DE207100,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000185</address>
    </ecu>
@@ -236,7 +428,7 @@
     <conversion units="A" expr="x/255" format="0.00" />
    </conversions>
   </ecuparam>
-  <ecuparam id="P029" name="Fwd/B Solenoid Valve Target Pressure" desc="Select Monitor address 0x186" target="2">
+  <ecuparam id="P053" name="Fwd/B Solenoid Valve Target Pressure" desc="Select Monitor address 0x186" target="2">
    <ecu id="8CEB207000,8EFB206000,99DE206000,A3DE207100,AED1207100,AED1A0A100,AFDE217000,B1AE207100,C1D1207000">
     <address>0x000186</address>
    </ecu>
