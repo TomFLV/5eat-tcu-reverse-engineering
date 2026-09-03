@@ -184,14 +184,18 @@ It is a modified build of Comer352L's FreeSSM, GPLv3.
 
 ## Known limitations
 
-**The ATF temperature offset is supported but not measured.** The definition applies
-`x-40` to every ATF temperature axis. The firmware's own Select Monitor path implies
-`x-55` for the same variable, which would put every temperature axis here out by
-15 °C. The Denso firmwares settle the argument as far as static analysis can: they
-store temperature axes as floats in real degrees, calibrated over 20-130 °C, and
-`x-40` puts the M32R blend window at 15-135 °C, bracketing that range, where `x-55`
-would place its warm limit inside it. That is consistency across two families, not
-a measurement — one reading at a known temperature on a bench unit would close it.
+**The ATF temperature offset differs between the table axes and the SSM report.**
+The definition applies `x-40` to every ATF temperature axis; that is validated against
+the factory manual (constants land at 71/75 °C inside the 70-80 °C normal band, 55 °C
+at the top of the 45-55 °C test range). The **SSM Select Monitor report is now
+confirmed to be `x-50`** — index `0x56` = ATF Sensor 1 (oil pan), `0x5A` = ATF Sensor 2
+(torque-converter outlet), cross-checked against CAN `0x422` by community reverse
+engineering and matching the RomRaider logger definition; our logger uses `x-50`
+accordingly. (Index `0x49` is the *4AT* non-linear path, not the 5EAT.) So the earlier
+`x-55` hypothesis is superseded, and the remaining question is sharpened to a **10 °C
+internal-vs-external difference** (axis `x-40` vs report `x-50`) rather than an open
+choice — the manual-validated axis is kept as-is pending one bench reading at a known
+temperature. See [FINDINGS.md](FINDINGS.md) §89.
 See [FINDINGS.md](FINDINGS.md) §41.
 
 **Torque converter lockup is not identified.** Narrowed to two of the seven solenoid

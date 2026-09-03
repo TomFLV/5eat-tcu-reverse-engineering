@@ -7250,3 +7250,28 @@ schedules can now be named `[DriveMode]_[LeverMode]_[Gear]_[Up/Down]` rather tha
 raw group index. Denso works differently (12 tables in 6 up/down pairs for modes
 1,2,3 and 5,6,7; mode 4 hard-coded) — recorded for the Denso side, not applied to the
 M32R definition here.
+
+## 89. ATF temperature: the SSM offset is -50, not -55 (2026-08-27)
+
+The community ATF-temperature thread settles the Select Monitor side of the §55c
+question. Authoritative points from the thread (rimwall, who RE'd the exact SM path,
+plus the RomRaider logger definition):
+
+- SSM index `0x56` = **ATF Temperature Sensor 1 (oil pan)**, index `0x5A` = **Sensor 2
+  (torque-converter outlet)**, both for the 5EAT. Conversion is **`x - 50` °C**,
+  matching the RR logger def (`P104`, address `0x000056`, `expr="x-50"`) and
+  cross-checked against CAN `0x422`, which carries the same raw ATF-temp value.
+- Index `0x49` is a *4AT* path with a non-linear lookup table (e.g. byte `0x3A`=58 →
+  15 °C), not the 5EAT — earlier confusion between the two produced the wrong offset.
+- TCU capability bits sit immediately after the TCU ID bytes in the ROM (same scheme
+  as the ECU); some parameters occupy two index slots (e.g. `0x0E`/`0x0F` = engine
+  speed).
+
+Effect on our repo: our `5eat_tcu_logger.xml` already uses `x-50` for `0x56`/`0x5A`
+(P009/P010), so the SSM side is correct. The `x-55` hypothesis from §55c is superseded
+by `x-50`. The definition's **table axes keep `x-40`**, which is manual-validated
+(71/75 °C land in the 70-80 °C normal band; `x-50` would drop them to 61/65 °C, below
+normal). The open item is therefore no longer "which offset" but a bounded **10 °C
+difference between the internal table encoding (`x-40`) and the external SSM report
+(`x-50`)** — likely a raw-vs-calibrated bias, closable with one bench reading at a
+known temperature.
