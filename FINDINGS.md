@@ -7359,3 +7359,29 @@ the decompile, not guessed:
 
 Still open: name modes 0x3/0x6/0x9 precisely (trace the trigger-bit producers and
 `FUN_0004a928`); then the shift tables can carry real condition names, not offsets.
+
+## 94. Drive-mode offsets, closed out (2026-08-27)
+
+Finished the §93 trace. Enumerating every producer of the internal drive-mode byte
+`DAT_00804814` (via `FUN_0004a6a0` -> `FUN_0004a74c`/`FUN_0004a928`), the internal
+values that are ever set are {0,1,3,4,5,6,8,0xB,0xC,0xD}. Mapping those through
+`FUN_0004bcd8` gives the final shift-table offset and name:
+
+| offset | internal | drive mode | basis |
+|---:|---|---|---|
+| 0 | 0x0 | Normal | default |
+| 1 | 0x1, 0x5 | Sport# | two internal states share it |
+| 2 | 0xC | Slope | `DAT_00804aa8==4` |
+| 3 | 0x3 | **condition schedule** (not user-selectable) | `DAT_008055fc` bit7, a speed-threshold hysteresis (`DAT_008047da`, state `DAT_00804846`, cals 0x8458/59/5c) |
+| 4/8 | 0x4 | Manual | `DAT_008056f0` bit0 |
+| 5 | 0x6 | **condition schedule** | `DAT_008055f4` bit6, set by `FUN_0004bac8` (range-gated, `DAT_00804926` bit7) |
+| 6 | 0xD | Kickdown / hard accel | non-slope, `DAT_0080480b` bit1 |
+| 7 | 0x8 | **ATF Temp Low** (confirmed) | `DAT_00805668` bit2 / `DAT_008057b4` bit1 |
+| 8 | 0x9 | **unreachable** — no producer sets internal 0x9 | dead mapping |
+| 9 | 0xB | I-Mode | `DAT_0080480b` bit0 / `DAT_00008030` bit2 |
+
+So every offset is accounted for: named user modes (Normal, Sport#, Slope, Manual,
+Kickdown, ATF-Temp-Low, I-Mode), two internal condition schedules (offsets 3 and 5,
+deliberately left with functional rather than marketing names), and one dead entry
+(offset 8). The precise external label of offsets 3 and 5 (e.g. grade-hold) would need
+a bench correlation; the software role is established.
