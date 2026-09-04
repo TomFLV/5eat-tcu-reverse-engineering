@@ -7385,3 +7385,29 @@ Kickdown, ATF-Temp-Low, I-Mode), two internal condition schedules (offsets 3 and
 deliberately left with functional rather than marketing names), and one dead entry
 (offset 8). The precise external label of offsets 3 and 5 (e.g. grade-hold) would need
 a bench correlation; the software role is established.
+
+## 95. The 0x135xx region, traced to its consumer (2026-08-27)
+
+Closing the loop left open in §87. We removed the "Line Pressure Target" curves at
+`0x135BC`/`0x135D8` on external evidence; now the consumer is traced in our own MB436L
+decompile, so the identity is ours, not borrowed.
+
+`FUN_00036530` is a shift-decision routine. It reads gear/mode-indexed **pointer
+tables** in this region (`&DAT_000134b8`, `&DAT_000135e4`, `&PTR_DAT_0001360c`, each
+`[index*4]`), and for each walks a run of 4-byte breakpoint records:
+
+```
+for (p = *(byte**)(&DAT_000135e4 + gear*4); *p < DAT_00804812 && *p != 0xFF; p += 4) {}
+if (*(ushort*)(p + 2) < DAT_008042da) { ... shift decision ... }
+```
+
+So the first column is a **breakpoint** compared against a demand/state input
+(`DAT_00804812`), and the second column — the value we had misread as 1370/953 kPa — is
+a **gate threshold compared against the gear-ratio-derived quantity `DAT_008042da`**
+(used elsewhere as `DAT_008042da * 0x32 / 0x100`). It never feeds pressure control.
+
+Conclusion: these are shift-decision driver-demand/gear-ratio-gate records, exactly as
+the external review said, confirmed here. The literal 1370 was a coincidental gate
+constant. They stay excluded from the pressure section; a future pass could re-expose
+them as editable shift-gate tables once the per-gear pointer/record layout is fully
+mapped, but they are not line-pressure targets.
