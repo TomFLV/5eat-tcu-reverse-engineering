@@ -1,4 +1,4 @@
-# .github/workflows
+# 5eat-tcu-simulator/tcu_sim/web
 #
 # SHA-256 of every tracked file in this directory, 1 files, 0.0 MB.
 # Recorded 2026-09-04. Verify with:  python tools/write-manifests.py --check
@@ -7,4 +7,4 @@
 # and generated definitions - files where a truncated copy still loads and
 # is quietly wrong.
 
-f44ba83c2a7d9646140a938302c00bdcf7118a4aefe4e88aada37f651787e033  verify.yml
+199c107e5b695707ab21649940bb6f77644dd296d3c96e827fa95daa913dcd0c  index.html

@@ -8,14 +8,6 @@ over SSM — so you can watch and tune behaviour on the bench.
 Everything runs with **no hardware** (demo / mock mode), and lights up with real
 data when you connect a CANtact Pro and a powered TCU.
 
-<p align="center">
-  <img src="docs/simulator-demo.gif" alt="5EAT TCU Simulator running" width="900">
-</p>
-
-<p align="center">
-  <img src="docs/simulator-full.png" alt="Full dashboard" width="900">
-</p>
-
 > **Firmware:** the full 5EAT TCU ROM set (both the Hitachi/M32R and Denso/SH7058
 > families) is supplied in [`roms/`](roms/) and bundled with the packaged app, so the
 > firmware selector is populated out of the box. These are OEM calibration binaries,

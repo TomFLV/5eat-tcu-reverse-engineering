@@ -102,10 +102,34 @@ WATCH: List[Dict] = [
          labels=["rx busy", "req pending", "write ok", "reflash mode",
                  "special cmd", "", "", "power-ok"],
          src="diag flags DAT_00805261"),
+
+    # ---- SSM-index reads: firmware-portable. The TCU routes indices < 0x200
+    # through its own Select Monitor translation table, so these resolve correctly
+    # on any supported image without per-firmware RAM addresses. ATF conversion is
+    # x-50 C (community RE + RomRaider logger, cross-checked vs CAN 0x422). --------
+    dict(name="ATF Sensor 1 (SSM 0x56)", addr=0x56, size=1, fmt="u8",
+         scale=1.0, off=-50.0, unit="°C",
+         group="SSM diagnostics", src="SSM idx 0x56, x-50 (oil pan)"),
+    dict(name="ATF Sensor 2 (SSM 0x5A)", addr=0x5A, size=1, fmt="u8",
+         scale=1.0, off=-50.0, unit="°C",
+         group="SSM diagnostics", src="SSM idx 0x5A, x-50 (TC outlet)"),
 ]
 
+# DTC status bitfields over SSM. Firmware-portable indices, verified against the
+# in-ROM SSM table (FINDINGS 91): index -> DTC status block current/confirmed byte.
+_DTC_SSM = [  # (group, current_idx, confirmed_idx)
+    (0, 0x9C, 0xBC), (1, 0x9D, 0xBD), (2, 0x9E, 0xBE), (3, 0xA6, 0xC6),
+    (4, 0xF0, 0xF4), (5, 0xF1, 0xF5), (6, 0xF2, 0xF6), (7, 0xF3, 0xF7),
+    (8, 0x123, 0x12B), (9, 0x124, 0x12C), (10, 0x125, 0x12D), (11, 0x162, 0x167),
+]
+for _g, _cur, _conf in _DTC_SSM:
+    WATCH.append(dict(name="DTC Group %d Current" % _g, addr=_cur, size=1, fmt="bits8",
+                      group="SSM diagnostics", src="SSM DTC status (current bits)"))
+    WATCH.append(dict(name="DTC Group %d Confirmed" % _g, addr=_conf, size=1, fmt="bits8",
+                      group="SSM diagnostics", src="SSM DTC status (confirmed bits)"))
+
 GROUP_ORDER = ["Range & gear", "Speeds", "ATF & thermal", "Line pressure",
-               "Memory box", "DTC flags", "Diagnostics"]
+               "Memory box", "DTC flags", "Diagnostics", "SSM diagnostics"]
 
 
 def all_byte_addrs(watch: List[Dict] = WATCH) -> List[int]:

@@ -1,0 +1,26 @@
+# 5eat-tcu-simulator
+#
+# SHA-256 of every tracked file in this directory, 17 files, 0.0 MB.
+# Recorded 2026-09-04. Verify with:  python tools/write-manifests.py --check
+#
+# These exist because this repository ships ROM images, decompiler output
+# and generated definitions - files where a truncated copy still loads and
+# is quietly wrong.
+
+9185c1bf1b8c13aa94927e037d2ebc0ee822f818e18bd08bfbc80ca83101c60b  .gitignore
+087b20b12ee4992c63e9f4958afc574ca7407de08bd070b17b806a072a49c3a1  CHANGELOG.md
+279ea525ed0c1cd34399f2adc0644addb0a1bc03e9ba9d9432f54cd052adf267  LICENSE
+2fc28918c302cb3f7ebef48a3d3e637d74f1af5e1b86896030664c7dcc2b905a  README.md
+058b0824d4a474168955897ba35e3e53756749d173011d0efdae443a3ef5ec7c  TCUSimulator.spec
+77d7dc0331ed119b79451a58c9581c786f675bfa00a518de5af79b7311ecb1f2  app.py
+964d9fea7e363412c28080caa2a1f0687c3aa0323c931f1def1e7785c3351b2e  batch_analyze.py
+a587a8f742e1dcc2ef49421077fc20b8772187f6d9a23bcc64c806c32948ff18  build.ps1
+c70506fbf159db1c99fe52ce4f519eb53bce97e389a36198434a6a0d72ab4f5c  fetch_drivers.ps1
+1aba47c3d4d0f0cf539cd3dda5508095b3dac7d59fbdaa89dfd9f0e49d121351  installer.iss
+2ab54221bbb4545479f398fded607081bf30ee63980a2c73191f435107628e46  llm_agent.py
+29c2ece36ac6365dc0562cf84a58cfc231561a9a21a3fbd260d79385eff3a421  requirements.txt
+d956bc4b850cff4136fe8e35e83094f32528e67bd7f2d9350a12e364af6aa2db  run.py
+6baa61f5b3c67495815752d0f4c8d2268cfd0c5b4bafd40392b2553ab8af2c39  show_simulation.py
+fc7df9665e0ebe618ba14274a979b7cd98062dd74ca5f17db0801464606c3a51  test_live.py
+aab9d4de8a7bf7e6fcaab1a1ec534bf4f096f9170b59f5b437e3a16cdc452312  test_suite.py
+801c6ce2faf98b0f4b49f2f891a0b0d2a40a9247144355c159b6859d63445917  validate_all.py

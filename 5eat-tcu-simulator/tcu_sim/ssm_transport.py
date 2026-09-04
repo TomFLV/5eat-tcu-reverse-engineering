@@ -92,6 +92,13 @@ class MockTransport(Transport):
         self._ram[0x8052D8] = ndtc & 0xFF
         self._ram[0x8052D5] = ndtc & 0xFF
         self._ram[0x805261] = 0x80                     # power-ok
+        # SSM-index reads (TCU translates idx<0x200): ATF as (temp+50) so x-50 recovers
+        # it; DTC group current/confirmed bytes are 0 when healthy.
+        self._ram[0x56] = int(max(0, min(255, s.atf_temp1 + 50)))
+        self._ram[0x5A] = int(max(0, min(255, s.atf_temp2 + 50)))
+        for idx in (0x9C, 0x9D, 0x9E, 0xA6, 0xF0, 0xF1, 0xF2, 0xF3, 0x123, 0x124, 0x125, 0x162,
+                    0xBC, 0xBD, 0xBE, 0xC6, 0xF4, 0xF5, 0xF6, 0xF7, 0x12B, 0x12C, 0x12D, 0x167):
+            self._ram[idx] = 0x00
         # user pokes override synthesized values
         self._ram.update(self._pokes)
 

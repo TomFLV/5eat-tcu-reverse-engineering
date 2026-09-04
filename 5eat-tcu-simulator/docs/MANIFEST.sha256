@@ -1,0 +1,12 @@
+# 5eat-tcu-simulator/docs
+#
+# SHA-256 of every tracked file in this directory, 3 files, 1.0 MB.
+# Recorded 2026-09-04. Verify with:  python tools/write-manifests.py --check
+#
+# These exist because this repository ships ROM images, decompiler output
+# and generated definitions - files where a truncated copy still loads and
+# is quietly wrong.
+
+032858fe45331b9523725a3cad378db1df01c07fe6aa171c69c1fc0e04db568f  simulator-demo.gif
+96afc2df691d9249ee93c368cb8edc0810641ceab82d88fa4ce37ea7e27af3d4  simulator-full.png
+bce3c22b08a5db9f09ae9f9052c3e2adca2e26e2165c06f44b3f833b58f56de6  simulator.png

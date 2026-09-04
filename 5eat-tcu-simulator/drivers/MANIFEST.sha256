@@ -1,4 +1,4 @@
-# .github/workflows
+# 5eat-tcu-simulator/drivers
 #
 # SHA-256 of every tracked file in this directory, 1 files, 0.0 MB.
 # Recorded 2026-09-04. Verify with:  python tools/write-manifests.py --check
@@ -7,4 +7,4 @@
 # and generated definitions - files where a truncated copy still loads and
 # is quietly wrong.
 
-f44ba83c2a7d9646140a938302c00bdcf7118a4aefe4e88aada37f651787e033  verify.yml
+53d7ef1601d4dfc27332cae54b94394699ebeb4922c4e28ab3c0309ee3d9d4fd  README.md

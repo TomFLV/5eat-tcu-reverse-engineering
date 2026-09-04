@@ -1,0 +1,24 @@
+# 5eat-tcu-simulator/tcu_sim
+#
+# SHA-256 of every tracked file in this directory, 15 files, 0.1 MB.
+# Recorded 2026-09-04. Verify with:  python tools/write-manifests.py --check
+#
+# These exist because this repository ships ROM images, decompiler output
+# and generated definitions - files where a truncated copy still loads and
+# is quietly wrong.
+
+11166a55ae1e3595df55cf91afd13da1a512a645b85883b04e502814967debd3  __init__.py
+cba455c62ec5b5e6b131913f0488fd4291d600e6f4211a60a343dab3aac1b790  can_gateway.py
+b8dbfe11d2288d5d72dbeab15ea9586028c611d6b1afd39a1b29da2aec467a57  driver.py
+3a659e15dd0f10e162db209517a5fce7a806fdb0a3ba90a11a4a144fa5f554e5  live.py
+2f2ca579be94e92bc1bf31d40c0f01d3fff2fe4f2da6452d903d86f6b7fd6385  messages.py
+9848e8468837e45a6847f266e7362f50c3ce3e3da88196fa816a140ca75fa06f  paths.py
+6af8b1314eb1a8667d992b6f5a5ec5ca50fb2c69f0a90203b6b6178fa7b176b0  romdata.py
+c1c6f29e4b4afe1afae5eeab35b2ed63c9bae40850342f8947b584aaa83c42a0  runs.py
+987910881ab56a65121b6aa697882f632cb7303696bf9d92f687fe836c5ec374  selftest.py
+835da7b88a8f13e814247586901b1195b5e3ae9e8d38e5d85ae8640da404afec  server.py
+c7e8ef5a66d79a97ca15b525f1ff5209a0ac8970f9ae5ee44c9ea2bc02189a12  simulator.py
+9b9ba942997641a45ed161b8726531505336a134fbb673e2f14268e67f1236fe  ssm.py
+206693dd0383d59417b9ffa5f2d1139b4fa52fb0dc2a9d3fd300aacadbfe58b7  ssm_transport.py
+6888d168207856c171b4f8fa86f6a56bd3115d9069438e8e205feae690ffa7ae  tcu_map.py
+cb42cb36f99341058938e4e697fd709df0c7fbeac8bd11eca138f835e6362713  vehicle.py

@@ -1,7 +1,7 @@
 # decompiled
 #
 # SHA-256 of every tracked file in this directory, 19 files, 18.3 MB.
-# Recorded 2026-08-09. Verify with:  python tools/write-manifests.py --check
+# Recorded 2026-09-04. Verify with:  python tools/write-manifests.py --check
 #
 # These exist because this repository ships ROM images, decompiler output
 # and generated definitions - files where a truncated copy still loads and

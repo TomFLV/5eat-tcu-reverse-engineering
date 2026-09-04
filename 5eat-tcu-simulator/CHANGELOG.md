@@ -19,3 +19,9 @@ Initial public release.
 - Web dashboard with live CAN monitor, self-test, and AI-ready logging.
 - Standalone packaging: native app window or browser, portable zip, and a
   driver-bundling Windows installer.
+
+## v1.0.1
+- Live monitor: added firmware-portable SSM-index reads — ATF Sensor 1/2
+  (index 0x56/0x5A, x-50 °C) and the 12 DTC-group current/confirmed bitfields
+  (0x9C–0x167), matching the analysis repo's verified SSM mapping (FINDINGS §89/§91).
+  These resolve on any supported image through the TCU's own translation table.
