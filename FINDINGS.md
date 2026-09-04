@@ -7335,3 +7335,27 @@ against what we already ship:
   verification our generator enforces. It stays available as an MB436L-specific
   research resource; a proper family-wide port of any given internal-P/L table is a
   bounded follow-up, done the same way as the tables we already carry.
+
+## 93. Naming the drive modes, from source (2026-08-27) — in progress
+
+Continuing §88. Traced the writer of the internal drive-mode byte `DAT_00804814`:
+`FUN_0004a5ac` calls `FUN_0004a6a0`, which selects the mode. Findings so far, all from
+the decompile, not guessed:
+
+- **Offset 7 (mode 0x8) = "ATF Temp Low" is confirmed.** `FUN_0004a6a0`/`FUN_0004a74c`
+  return 0x8 when `DAT_00805668` bit2 or `DAT_008057b4` bit1 is set — ATF-temp-low
+  indicators. This verifies rimwall's label against our source.
+- **Manual (mode 0x4)** is entered via `DAT_008056f0` bit0 (with the primary gate
+  `DAT_008055fc` bit0 set) — consistent with the Manual-mode handling in `FUN_0004bcd8`.
+- **Offset 3 (mode 0x3) and offset 5 (mode 0x6) are condition-driven, not
+  user-selectable.** Mode 0x3 fires on `DAT_008055fc` bit7, which is set by a
+  hysteresis routine (`~line 0x4a...`) around a speed/threshold `DAT_008047da` gated by
+  state `DAT_00804846` and cal bytes `0x8458/0x8459/0x845c`; mode 0x6 fires on
+  `DAT_008055f4` bit6. These look like protective/condition schedules (grade, hold, or
+  similar), but the precise real-world name is **not yet established** and is left
+  unnamed rather than guessed.
+- **Offset 8 (mode 0x9)** comes from the alternate path `FUN_0004a928` (taken when
+  `DAT_00008031` bit2 is set) — **not yet traced**.
+
+Still open: name modes 0x3/0x6/0x9 precisely (trace the trigger-bit producers and
+`FUN_0004a928`); then the shift tables can carry real condition names, not offsets.
